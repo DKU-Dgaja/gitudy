@@ -5,7 +5,7 @@
 ![image](https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/889/5433339629c90bc59e5d7598ecd454fc_res.jpeg)
 
 # Dgaja Team Staff
-### Design
+### Designer
 |                                           ???                                            |
 |:----------------------------------------------------------------------------------------:|
 | <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> |
