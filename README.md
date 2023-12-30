@@ -25,10 +25,10 @@
 ### Mentor
 |                             [홍찬희](https://github.com/ghdcksgml1)                              |
 |:----------------------------------------------------------------------------------------:|
-| <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/79779676/817cd7d2-95c3-4b5c-8f22-4a4b785ebf45" width=100 height=100> |
+| <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> |
+
 
 # Project Architecture
-
 <div align="center">
   <img src="https://previews.123rf.com/images/aquir/aquir1906/aquir190606651/125693673-%EC%98%88%EC%8B%9C-%EC%8A%A4%ED%83%AC%ED%94%84-%EC%98%88-%EC%82%AC%EA%B0%81%ED%98%95-%EA%B7%B8%EB%9F%B0-%EC%A7%80-%EA%B8%B0%ED%98%B8%EC%9E%85%EB%8B%88%EB%8B%A4-%EC%98%88%EC%8B%9C.jpg" width="500">
 </div>
