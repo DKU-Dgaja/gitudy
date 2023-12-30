@@ -20,7 +20,8 @@
 ### Backend
 |                             [구영민](https://github.com/rndudals)                              |                [이정우](https://github.com/j-ra1n)                |                            [이주성](https://github.com/jusung-c)                            |
 |:----------------------------------------------------------------------------------------:|:-------------------------------------------------------------------:|:----------------------------------------------------------------------------------------:|
-| <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> | <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> | <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> |
+| <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> | <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/118893707/ace52e32-503d-4d0e-b5ef-74b800687468" width=100 height=100>
+" width=100 height=100> | <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> |
 
 ### Mentor
 |                             [홍찬희](https://github.com/ghdcksgml1)                              |
