@@ -14,7 +14,7 @@
 ### Android
 |                             [탁세하](https://github.com/saesang)                              |
 |:----------------------------------------------------------------------------------------:|
-| <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> |
+| <img src = "https://github.com/DKU-Dgaja/dku-dgaja/assets/86196342/f3249741-6353-42ed-9dc2-c923e97e419c" width=100 height=100> |
 
 
 ### Backend
