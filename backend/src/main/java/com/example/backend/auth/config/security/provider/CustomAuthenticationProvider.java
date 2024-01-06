@@ -12,7 +12,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AuthenticationProviderService implements AuthenticationProvider {
+public class CustomAuthenticationProvider implements AuthenticationProvider {
     // 사용자 세부 정보를 불러오는 작업을 위임할 UserDetailsService
     @Autowired
     private JpaUserDetailsService userDetailsService;
