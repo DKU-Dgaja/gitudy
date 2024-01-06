@@ -1,4 +1,4 @@
-package com.example.backend.auth.config.security;
+package com.example.backend.auth.config.security.auth;
 
 import com.example.backend.domain.define.user.User;
 import org.springframework.security.core.GrantedAuthority;

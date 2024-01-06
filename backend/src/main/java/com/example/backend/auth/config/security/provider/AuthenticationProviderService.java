@@ -1,5 +1,7 @@
-package com.example.backend.auth.config.security;
+package com.example.backend.auth.config.security.provider;
 
+import com.example.backend.auth.config.security.auth.CustomUserDetails;
+import com.example.backend.auth.config.security.auth.JpaUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -22,11 +24,11 @@ public class AuthenticationProviderService implements AuthenticationProvider {
     // 인증 논리 구현
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-        String username = authentication.getName();
+        String email = authentication.getName();
         String password = authentication.getCredentials().toString();
 
         // UserDetailsService로 DB에서 사용자 세부 정보 획득
-        CustomUserDetails user = userDetailsService.loadUserByUsername(username);
+        CustomUserDetails user = userDetailsService.loadUserByUsername(email);
 
         // encoder로 암호 검증
         return checkPassword(user, password);

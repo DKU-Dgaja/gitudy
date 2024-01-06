@@ -1,4 +1,4 @@
-package com.example.backend.auth.config.security;
+package com.example.backend.auth.config.security.auth;
 
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.repository.UserRepository;
@@ -20,7 +20,7 @@ public class JpaUserDetailsService implements UserDetailsService {
         Supplier<UsernameNotFoundException> exceptionSupplier = () -> new UsernameNotFoundException(">>>> Security Exception: 해당 사용자를 찾을 수 없습니다.");
 
         // 사용자 인스턴스(Optional) 찾아서 반환
-        User u = userRepository.findUserByName(username).orElseThrow(exceptionSupplier);
+        User u = userRepository.findByEmail(username).orElseThrow(exceptionSupplier);
 
         // 찾은 사용자를 UserDetails 타입으로 데코레이트해서 반환
         return new CustomUserDetails(u);
