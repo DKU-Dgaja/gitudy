@@ -9,4 +9,9 @@ public class TestController {
     public String test() {
         return "test!!";
     }
+
+    @GetMapping("/auth/login")
+    public String login() {
+        return "login!!";
+    }
 }

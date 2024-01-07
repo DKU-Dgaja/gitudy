@@ -39,10 +39,11 @@ public class SecurityConfig {
         http
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeHttpRequest ->
-                        authorizeHttpRequest
-//                                .anyRequest().permitAll()
-                                .requestMatchers("/test").permitAll()
-                                .anyRequest().hasAnyAuthority("USER", "ADMIN")
+                                authorizeHttpRequest
+                                        // UnAuth Area
+                                        .requestMatchers("/auth/**").permitAll()
+                                        // Others
+                                        .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )
                 .sessionManagement((sessionManagement) ->
                         sessionManagement
