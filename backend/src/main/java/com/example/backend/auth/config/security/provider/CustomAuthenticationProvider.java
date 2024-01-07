@@ -1,13 +1,14 @@
 package com.example.backend.auth.config.security.provider;
 
-import com.example.backend.auth.config.security.auth.CustomUserDetails;
 import com.example.backend.auth.config.security.auth.JpaUserDetailsService;
+import com.example.backend.domain.define.user.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +29,13 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
         String password = authentication.getCredentials().toString();
 
         // UserDetailsService로 DB에서 사용자 세부 정보 획득
-        CustomUserDetails user = userDetailsService.loadUserByUsername(email);
+        UserDetails user = userDetailsService.loadUserByUsername(email);
 
         // encoder로 암호 검증
         return checkPassword(user, password);
     }
 
-    private Authentication checkPassword(CustomUserDetails user, String rawPassword) {
+    private Authentication checkPassword(UserDetails user, String rawPassword) {
         // 사용자 입력 비밀번호와 DB 비밀번호의 인코딩이 일치하는지 확인
         if (encoder.matches(rawPassword, user.getPassword())) {
             System.out.println("로그인 성공!");

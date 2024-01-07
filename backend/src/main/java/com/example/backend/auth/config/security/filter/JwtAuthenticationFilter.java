@@ -1,7 +1,6 @@
 package com.example.backend.auth.config.security.filter;
 
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.config.security.auth.CustomUserDetails;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.user.User;
@@ -11,7 +10,6 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
-import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -19,20 +17,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
-import javax.crypto.SecretKey;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.List;
 
@@ -106,13 +100,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (userEmail != null && jwtService.isTokenValid(accessToken, userEmail)) {
             Claims claims = jwtService.extractAllClaims(accessToken);
 
-            // JWT 토큰의 Claim을 사용해 User를 생성한 후 UserDetails 타입으로 데코레이트
-            UserDetails userDetails = new CustomUserDetails(User.builder()
+            // JWT 토큰의 Claim을 사용해 User 생성
+            UserDetails userDetails = User.builder()
                     .email(userEmail)
                     .role(UserRole.valueOf(claims.get("role", String.class)))
                     .name(claims.get("name", String.class))
                     .profileImageUrl(claims.get("profileImageUrl", String.class))
-                    .build());
+                    .build();
 
             // UserDetails를 사용해 Authentication 생성
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(

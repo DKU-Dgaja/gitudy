@@ -2,8 +2,6 @@ package com.example.backend.auth.config.security;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.config.security.auth.CustomUserDetails;
-import com.example.backend.auth.config.security.filter.JwtAuthenticationFilter;
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserRole;
 import com.example.backend.domain.define.user.repository.UserRepository;
@@ -13,13 +11,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -90,7 +85,7 @@ class SecurityConfigTest extends TestConfig {
         claimsMap.put("profileImageUrl", savedUser.getProfileImageUrl());
 
         // JWT Access Token 생성
-        String atk = jwtService.generateAccessToken(claimsMap, new CustomUserDetails(savedUser));
+        String atk = jwtService.generateAccessToken(claimsMap, savedUser);
 
         // when
         mockMvc.perform(
