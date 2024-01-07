@@ -54,7 +54,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info(">>>> [ Jwt 인증 필터에 진입합니다. ] <<<<");
 
         // 헤더에서 JWT 토큰 추출
-        String jwtToken = request.getHeader("Authentication");
+        String jwtToken = request.getHeader("Authorization");
         String userEmail;
 
         // JWT 토큰이 헤더에 없다면 사용자 인증이 되지 않은 상태이므로 다음 인증 필터로 이동
