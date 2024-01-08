@@ -3,6 +3,7 @@ package com.example.backend.auth.api.controller.auth;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import lombok.RequiredArgsConstructor;
@@ -17,11 +18,15 @@ import java.util.List;
 @RestController
 public class AuthController {
     private final AuthService authService;
+    private final OAuthService oAuthService;
 
     @GetMapping("/loginPage")
     public JsonResult<List<AuthLoginPageResponse>> loginPage() {
 
-        return JsonResult.successOf();
+        // 일단 임시로 state값을 넣어줬습니다.
+        List<AuthLoginPageResponse> loginPages = oAuthService.loginPage("randomState");
+
+        return JsonResult.successOf(loginPages);
     }
 
     @GetMapping("/{platformType}/login")
@@ -30,6 +35,8 @@ public class AuthController {
             @RequestParam("code") String code,
             @RequestParam("state") String loginState) {
 
-        return JsonResult.successOf();
+        AuthLoginResponse loginResponse = authService.login(platformType, code, loginState);
+
+        return JsonResult.successOf(loginResponse);
     }
 }

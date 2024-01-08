@@ -2,8 +2,9 @@ package com.example.backend.auth.api.service.oauth;
 
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.service.oauth.adapter.OAuthAdapter;
-import com.example.backend.auth.api.service.oauth.adapter.github.OAuthGithubAdapter;
+import com.example.backend.auth.api.service.oauth.adapter.github.GithubAdapter;
 import com.example.backend.auth.api.service.oauth.builder.OAuthURLBuilder;
+import com.example.backend.auth.api.service.oauth.builder.github.GithubURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import lombok.extern.slf4j.Slf4j;
@@ -23,8 +24,14 @@ public class OAuthService {
     private Map<UserPlatformType, OAuthFactory> adapterMap;
 
     // 플랫폼별 Adapter, URLBuilder 등록
-    public OAuthService() {
-        this.adapterMap = new HashMap<>();
+    public OAuthService(GithubAdapter githubAdapter, GithubURLBuilder githubURLBuilder) {
+        this.adapterMap = new HashMap<>() {{
+            // 깃허브 플랫폼 추가
+            put(GITHUB, OAuthFactory.builder()
+                            .oAuthAdapter(githubAdapter)
+                            .oAuthURLBuilder(githubURLBuilder)
+                            .build());
+        }};
     }
 
     // OAuth 2.0 로그인 페이지 생성
