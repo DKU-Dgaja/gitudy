@@ -11,6 +11,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -20,8 +22,8 @@ public class AuthService {
     private final UserRepository userRepository;
     private final OAuthService oAuthService;
 
-    public AuthLoginPageResponse loginPage() {
-        AuthLoginPageResponse loginPages = oAuthService.loginPage();
+    public List<AuthLoginPageResponse> loginPage() {
+        List<AuthLoginPageResponse> loginPages = oAuthService.loginPage();
 
         return null;
     }
