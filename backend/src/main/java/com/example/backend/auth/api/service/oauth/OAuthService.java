@@ -3,11 +3,13 @@ package com.example.backend.auth.api.service.oauth;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.service.oauth.adapter.OAuthAdapter;
 import com.example.backend.auth.api.service.oauth.adapter.github.OAuthGithubAdapter;
+import com.example.backend.auth.api.service.oauth.builder.OAuthURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,14 +19,53 @@ import static com.example.backend.domain.define.user.constant.UserPlatformType.G
 @Slf4j
 @Service
 public class OAuthService {
+    // 각 플랫폼에 해당하는 Factory 객체를 매핑해 관리한다.
+    private Map<UserPlatformType, OAuthFactory> adapterMap;
 
-    public List<AuthLoginPageResponse> loginPage() {
-
-        return null;
+    // 플랫폼별 Adapter, URLBuilder 등록
+    public OAuthService() {
+        this.adapterMap = new HashMap<>();
     }
 
-    public OAuthResponse login(UserPlatformType platformType, String code, String state) {
+    // OAuth 2.0 로그인 페이지 생성
+    public List<AuthLoginPageResponse> loginPage(String state) {
+        List<AuthLoginPageResponse> urls = new ArrayList<>();
 
-        return null;
+        // 지원하는 모든 플랫폼의 로그인 페이지를 생성해 반환한다.
+        for (UserPlatformType type : adapterMap.keySet()) {
+            // 각 플랫폼에 해당하는 OAuthFactory 획득
+            OAuthFactory oAuthFactory = adapterMap.get(type);
+
+            // URL 빌더를 사용해 로그인 페이지 URL 생성
+            String loginPage = oAuthFactory.getOAuthURLBuilder().authorize(state);
+
+            urls.add(AuthLoginPageResponse.builder()
+                    .platformType(type)
+                    .url(loginPage)
+                    .build());
+        }
+
+        return urls;
+    }
+
+    // OAuth 2.0 로그인 요청 메서드
+    public OAuthResponse login(UserPlatformType platformType, String code, String state) {
+        OAuthFactory factory = adapterMap.get(platformType);
+
+        OAuthURLBuilder urlBuilder = factory.getOAuthURLBuilder();
+        OAuthAdapter adapter = factory.getOAuthAdapter();
+        log.info(">>>> {} Login Start", platformType);
+
+        // code, state를 이용해 Access Token 요청 URL 생성
+        String token = urlBuilder.token(code, state);
+
+        // Access Token 획득
+        String accessToken = adapter.getToken(token);
+
+        // 사용자 프로필 조회
+        OAuthResponse userInfo = adapter.getProfile(accessToken);
+        log.info(">>>> {} Login Success", platformType);
+
+        return userInfo;
     }
 }

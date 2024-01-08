@@ -22,12 +22,6 @@ public class AuthService {
     private final UserRepository userRepository;
     private final OAuthService oAuthService;
 
-    public List<AuthLoginPageResponse> loginPage() {
-        List<AuthLoginPageResponse> loginPages = oAuthService.loginPage();
-
-        return null;
-    }
-
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
         OAuthResponse loginResponse = oAuthService.login(platformType, code, state);
 
