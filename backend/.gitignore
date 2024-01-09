@@ -22,7 +22,6 @@ bin/
 .DS_Store
 
 ### IntelliJ IDEA ###
-*.yml
 .idea
 *.iws
 *.iml
@@ -40,3 +39,7 @@ out/
 
 ### VS Code ###
 .vscode/
+
+### resources
+*.yml
+*.sql
