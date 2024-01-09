@@ -20,6 +20,8 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
+    private static final long HOUR = 1000 * 60 * 60;
+    private static final long DAY = HOUR * 24;
 
     @Value("${jwt.secretKey}")
     private String secretKey;
@@ -28,7 +30,8 @@ public class JwtService {
         JWT AccessToken 생성
     */
     public String generateAccessToken(Map<String, String> customClaims, UserDetails userDetails) {
-        return generateAccessToken(customClaims, userDetails, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24));
+        // JWT AccessToken의 만료 시간을 1일로 설정한다.
+        return generateAccessToken(customClaims, userDetails, new Date(System.currentTimeMillis() + DAY));
     }
 
     public String generateAccessToken(Map<String, String> customClaims, UserDetails userDetails, Date expiredTime) {

@@ -22,7 +22,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class JwtServiceTest extends TestConfig {
 
     @Autowired
@@ -41,11 +40,15 @@ class JwtServiceTest extends TestConfig {
     void extractAllClaimsTest() {
         // given
         User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
+        String email = savedUser.getEmail();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("role", role);
+        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -53,10 +56,10 @@ class JwtServiceTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(claims.getSubject()).isEqualTo("hong@kakao.com"),
-                () -> assertThat(claims.get("role")).isEqualTo(UserRole.USER.name()),
-                () -> assertThat(claims.get("name")).isEqualTo("홍길동"),
-                () -> assertThat(claims.get("profileImageUrl")).isEqualTo("https://google.com")
+                () -> assertThat(claims.getSubject()).isEqualTo(email),
+                () -> assertThat(claims.get("role")).isEqualTo(role),
+                () -> assertThat(claims.get("name")).isEqualTo(name),
+                () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
         );
     }
 
@@ -65,18 +68,21 @@ class JwtServiceTest extends TestConfig {
     void extractSubjectTest() {
         // given
         User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("role", role);
+        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
         String subject = jwtService.extractSubject(atk);
 
         // then
-        assertThat(subject).isEqualTo(savedUser.getUsername());
+        assertThat(subject).isEqualTo(name);
 
     }
 
@@ -85,11 +91,14 @@ class JwtServiceTest extends TestConfig {
     void extractExpirationTest() {
         // given
         User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("role", role);
+        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -104,24 +113,28 @@ class JwtServiceTest extends TestConfig {
     void generateAccessTokenTest() {
         // given
         User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
+        String email = savedUser.getEmail();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("role", role);
+        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
         Claims claims = jwtService.extractAllClaims(atk);
-        boolean result = jwtService.isTokenValid(atk, savedUser.getUsername());
+        boolean result = jwtService.isTokenValid(atk, name);
 
         // then
         assertThat(result).isTrue();
         assertAll(
-                () -> assertThat(claims.getSubject()).isEqualTo("hong@kakao.com"),
-                () -> assertThat(claims.get("role")).isEqualTo(UserRole.USER.name()),
-                () -> assertThat(claims.get("name")).isEqualTo("홍길동"),
-                () -> assertThat(claims.get("profileImageUrl")).isEqualTo("https://google.com")
+                () -> assertThat(claims.getSubject()).isEqualTo(email),
+                () -> assertThat(claims.get("role")).isEqualTo(role),
+                () -> assertThat(claims.get("name")).isEqualTo(name),
+                () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
         );
     }
 
@@ -130,18 +143,21 @@ class JwtServiceTest extends TestConfig {
     void isTokenIllegal() {
         // given
         User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
 
         HashMap<String, String> map = new HashMap<>();
-//        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("role", role);
+//        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
 
         // then
         JwtException exception = assertThrows(JwtException.class,
-                () -> jwtService.isTokenValid(atk, savedUser.getUsername()));
+                () -> jwtService.isTokenValid(atk, name));
         assertThat(exception.getMessage()).isEqualTo(ExceptionMessage.JWT_ILLEGAL_ARGUMENT.getText());
 
     }
@@ -151,12 +167,16 @@ class JwtServiceTest extends TestConfig {
     void isTokenInvalid() {
         // given
         String s = "Another Requestor";
+
         User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("role", role);
+        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -171,11 +191,14 @@ class JwtServiceTest extends TestConfig {
     void isTokenExpired() {
         // given
         User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("role", role);
+        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
 
         // when
         // 만료된 시간으로 설정된 JWT 토큰 생성
@@ -183,6 +206,6 @@ class JwtServiceTest extends TestConfig {
 
         // then
         assertThrows(ExpiredJwtException.class,
-                () -> jwtService.isTokenValid(expiredToken, savedUser.getUsername()));
+                () -> jwtService.isTokenValid(expiredToken, name));
     }
 }
