@@ -25,7 +25,7 @@ class GithubURLBuilderTest extends TestConfig {
     @DisplayName("authorize(인가 코드 요청) URL을 성공적으로 생성한다.")
     void authorizeURIBuildSuccess() {
         // given
-        String state = "test state";
+        String state = "testState";
 
         // when
         String authorizeURL = urlBuilder.authorize(state);
@@ -44,8 +44,8 @@ class GithubURLBuilderTest extends TestConfig {
     @DisplayName("token(Access Token 요청) URL을 성공적으로 생성한다.")
     void tokenURIBuildSuccess() {
         // given
-        String code = "test code";
-        String state = "test state";
+        String code = "testCode";
+        String state = "testState";
 
         // when
         String tokenURL = urlBuilder.token(code, state);
