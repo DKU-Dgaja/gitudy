@@ -2,7 +2,6 @@ package com.example.backend.external.clients.oauth.github.response;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /*
     Github에 사용자 정보를 요청 후 반환받을 DTO

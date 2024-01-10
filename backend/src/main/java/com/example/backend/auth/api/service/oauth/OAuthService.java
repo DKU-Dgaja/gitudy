@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
 
@@ -36,21 +37,22 @@ public class OAuthService {
 
     // OAuth 2.0 로그인 페이지 생성
     public List<AuthLoginPageResponse> loginPage(String state) {
-        List<AuthLoginPageResponse> urls = new ArrayList<>();
-
         // 지원하는 모든 플랫폼의 로그인 페이지를 생성해 반환한다.
-        for (UserPlatformType type : adapterMap.keySet()) {
-            // 각 플랫폼에 해당하는 OAuthFactory 획득
-            OAuthFactory oAuthFactory = adapterMap.get(type);
+        List<AuthLoginPageResponse> urls = adapterMap.keySet().stream()
+                .map(type -> {
+                    // 각 플랫폼에 해당하는 OAuthFactory 획득
+                    OAuthFactory oAuthFactory = adapterMap.get(type);
 
-            // URL 빌더를 사용해 로그인 페이지 URL 생성
-            String loginPage = oAuthFactory.getOAuthURLBuilder().authorize(state);
+                    // URL 빌더를 사용해 로그인 페이지 URL 생성
+                    String loginPage = oAuthFactory.getOAuthURLBuilder().authorize(state);
 
-            urls.add(AuthLoginPageResponse.builder()
-                    .platformType(type)
-                    .url(loginPage)
-                    .build());
-        }
+                    // 로그인 페이지 DTO 생성
+                    return AuthLoginPageResponse.builder()
+                            .platformType(type)
+                            .url(loginPage)
+                            .build();
+                })
+                .collect(Collectors.toList());
 
         return urls;
     }

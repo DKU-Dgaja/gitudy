@@ -1,8 +1,5 @@
 package com.example.backend.auth.api.service.jwt;
 
-import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.jwt.JwtException;
-import com.example.backend.domain.define.user.constant.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Date;
 import java.util.function.Function;

@@ -2,7 +2,6 @@ package com.example.backend.auth.api.service.oauth.adapter;
 
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 
-
 public interface OAuthAdapter {
 
     // OAuth Access Token 요청 메서드

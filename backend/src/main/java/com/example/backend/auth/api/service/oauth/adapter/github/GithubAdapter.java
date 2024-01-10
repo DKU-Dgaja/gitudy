@@ -4,7 +4,6 @@ import com.example.backend.auth.api.service.oauth.adapter.OAuthAdapter;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.external.clients.oauth.github.GithubProfileClients;
 import com.example.backend.external.clients.oauth.github.GithubTokenClients;
 import com.example.backend.external.clients.oauth.github.response.GithubProfileResponse;
