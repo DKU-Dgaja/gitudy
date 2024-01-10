@@ -1,14 +1,9 @@
 package com.example.backend;
 
+import com.example.backend.auth.TestConfig;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
 
-@ActiveProfiles("test")
-@SpringBootTest
-@ConfigurationPropertiesScan
-class BackendApplicationTests {
+class BackendApplicationTests extends TestConfig {
 
     @Test
     void contextLoads() {
