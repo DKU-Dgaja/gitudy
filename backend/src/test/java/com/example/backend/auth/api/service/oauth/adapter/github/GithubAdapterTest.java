@@ -20,7 +20,6 @@ import static com.example.backend.domain.define.user.constant.UserPlatformType.G
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 
-@AutoConfigureMockMvc
 class GithubAdapterTest extends TestConfig {
 
     @Autowired
