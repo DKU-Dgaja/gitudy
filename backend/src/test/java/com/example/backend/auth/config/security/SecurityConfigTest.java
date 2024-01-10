@@ -52,7 +52,7 @@ class SecurityConfigTest extends TestConfig {
     @DisplayName("모든 사용자는 인증 없이 \"/auth/**\" URI에 접근 가능하다.")
     void authUriPermitAllTest() throws Exception {
         // given
-        String uri = "/auth/login";
+        String uri = "/auth/test";
 
         // when
         mockMvc.perform(

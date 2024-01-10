@@ -10,8 +10,8 @@ public class TestController {
         return "test!!";
     }
 
-    @GetMapping("/auth/login")
+    @GetMapping("/auth/test")
     public String login() {
-        return "login!!";
+        return "test!!";
     }
 }

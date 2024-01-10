@@ -79,19 +79,9 @@ public class JwtService {
     public boolean isTokenValid(String token, String username) {
         Claims claims = extractAllClaims(token);
 
-        try {
-            if (!claims.containsKey("role")) {
-                UserRole.valueOf(claims.get("role", String.class));
-                return false;
-            }
-
-            if (!claims.containsKey("name")) return false;
-
-            if (!claims.containsKey("profileImageUrl")) return false;
-
-        } catch (RuntimeException e) {
-            throw new JwtException(ExceptionMessage.JWT_ILLEGAL_ARGUMENT);
-        }
+        if (!claims.containsKey("role")) return false;
+        if (!claims.containsKey("name")) return false;
+        if (!claims.containsKey("profileImageUrl")) return false;
 
         String subject = claims.getSubject();
         return (subject.equals(username)) && !isTokenExpired(token);
