@@ -16,7 +16,12 @@ public enum ExceptionMessage {
     JWT_INVALID_HEADER("Header의 형식이 올바르지 않습니다."),
 
     // SecurityException
-    SECURITY_USER_NOT_FOUND("해당 email을 가진 사용자를 찾을 수 없습니다.");
+    SECURITY_USER_NOT_FOUND("해당 email을 가진 사용자를 찾을 수 없습니다."),
 
+    // OAuthException
+    OAUTH_INVALID_TOKEN_URL("token URL이 올바르지 않습니다."),
+    OAUTH_INVALID_ACCESS_TOKEN("access_token이 올바르지 않습니다."),
+
+    ;
     private final String text;
 }

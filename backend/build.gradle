@@ -53,7 +53,12 @@ dependencies {
     // security
     implementation 'org.springframework.boot:spring-boot-starter-security'
     testImplementation 'org.springframework.security:spring-security-test'
-    
+
+    // Reflections
+    implementation group: 'org.reflections', name: 'reflections', version: '0.10.2'
+
+    // Webflux
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 }
 
 tasks.named('test') {
