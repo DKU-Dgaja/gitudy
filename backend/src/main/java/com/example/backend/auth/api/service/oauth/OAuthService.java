@@ -64,10 +64,10 @@ public class OAuthService {
         log.info(">>>> {} Login Start", platformType);
 
         // code, state를 이용해 Access Token 요청 URL 생성
-        String token = urlBuilder.token(code, state);
+        String tokenUrl = urlBuilder.token(code, state);
 
         // Access Token 획득
-        String accessToken = adapter.getToken(token);
+        String accessToken = adapter.getToken(tokenUrl);
 
         // 사용자 프로필 조회
         OAuthResponse userInfo = adapter.getProfile(accessToken);

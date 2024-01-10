@@ -29,6 +29,11 @@ public class GithubAdapter implements OAuthAdapter {
         try {
             GithubTokenResponse token = githubTokenClients.getToken(URI.create(tokenURL));
 
+            // 받아온 token이 null일 경우 예외 발생
+            if (token.getAccess_token() == null) {
+                throw new OAuthException(ExceptionMessage.OAUTH_INVALID_TOKEN_URL);
+            }
+
             return token.getAccess_token();
         } catch (RuntimeException e) {
             log.error(">>>> [ Github Oauth 인증 에러 발생: {}", ExceptionMessage.OAUTH_INVALID_TOKEN_URL.getText());

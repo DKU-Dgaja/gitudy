@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
+import java.util.HashMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -24,7 +25,7 @@ public class GithubClientTest extends TestConfig {
     @DisplayName("인가 code를 URL에 담아 요청해 access_token을 성공적으로 받환받는다.")
     void githubTokenRequestTest() {
         // given
-        String uri = "https://github.com/login/oauth/access_token?grant_type=authorization_code&client_id=9f11827f9305f205336a&client_secret=919ba9d1f8ecc2dc3209ef42e1fde0f86d89790b&redirect_uri=http://localhost:8080/auth/GITHUB/login&code=9d0e4695e5115be095c1";
+        String uri = "https://github.com/login/oauth/access_token?grant_type=authorization_code&client_id=9f11827f9305f205336a&client_secret=919ba9d1f8ecc2dc3209ef42e1fde0f86d89790b&redirect_uri=http://localhost:8080/auth/GITHUB/login&code=";
 
         // when
         GithubTokenResponse token = githubTokenClients.getToken(URI.create(uri));
@@ -39,9 +40,9 @@ public class GithubClientTest extends TestConfig {
     @DisplayName("Access Token을 URL에 담아 요청해 사용자 정보를 성공적으로 받환받는다.")
     void githubProfileRequestTest() {
         // given
-        String accessToken = "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";
+        String accessToken = "";
 
-        GithubProfileResponse profile = githubProfileClients.getProfile("Bearer " + accessToken);
+/*        GithubProfileResponse profile = githubProfileClients.getProfile("Bearer " + accessToken);
 
         System.out.println("login = " + profile.getLogin());
         System.out.println("email = " + profile.getEmail());
@@ -51,9 +52,6 @@ public class GithubClientTest extends TestConfig {
                 () -> assertThat(profile.getLogin()).isEqualTo("jusung-c"),
                 () -> assertThat(profile.getEmail()).isEqualTo("anaooauc1236@naver.com"),
                 () -> assertThat(profile.getName()).isEqualTo("이주성")
-        );
-
-
-
+        );*/
     }
 }

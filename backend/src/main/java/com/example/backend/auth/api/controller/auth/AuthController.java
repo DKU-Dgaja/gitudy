@@ -30,13 +30,13 @@ public class AuthController {
     }
 
     @GetMapping("/{platformType}/login")
-    public JsonResult<AuthLoginResponse> login(
+    public JsonResult<String> login(
             @PathVariable("platformType") UserPlatformType platformType,
             @RequestParam("code") String code,
             @RequestParam("state") String loginState) {
 
-        AuthLoginResponse loginResponse = authService.login(platformType, code, loginState);
+        authService.login(platformType, code, loginState);
 
-        return JsonResult.successOf(loginResponse);
+        return JsonResult.successOf("로그인에 성공하였습니다.");
     }
 }

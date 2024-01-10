@@ -24,6 +24,7 @@ public class AuthService {
 
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
         OAuthResponse loginResponse = oAuthService.login(platformType, code, state);
+        log.info(">>>> {}님이 로그인하셨습니다.", loginResponse.getName());
 
 
         return null;
