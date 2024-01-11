@@ -1,19 +1,44 @@
 package com.example.backend.auth.api.service.oauth.builder.github;
 
 import com.example.backend.auth.api.service.oauth.builder.OAuthURLBuilder;
+import com.example.backend.auth.config.oauth.OAuthProperties;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.oauth.OAuthException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@Slf4j
 @Component
 public class GithubURLBuilder implements OAuthURLBuilder {
+    private static final String PLATFORM = "github";
+    private static final int PROPERTY_SIZE = 3;
+    private final String authorizationUri;
+    private final String clientId;
+    private final String redirectUri;
+    private final String tokenUri;
+    private final String clientSecret;
+    private final String profileUri;
 
-    @Value("${oauth2.client.github.client-id}") private String clientId;
-    @Value("${oauth2.client.github.client-secret}") private String clientSecret;
-    @Value("${oauth2.client.github.redirect-uri}") private String redirectUri;
+    // 속성에서 읽어온 객체를 주입
+    public GithubURLBuilder(OAuthProperties oAuthProperties) {
+        // 플랫폼(github)의 client, provider Map 획득
+        OAuthProperties.Client githubClient = oAuthProperties.getClient().get(PLATFORM);
+        OAuthProperties.Provider githubProvider = oAuthProperties.getProvider().get(PLATFORM);
 
-    @Value("${oauth2.provider.github.authorization-uri}") String authorizationUri;
-    @Value("${oauth2.provider.github.token-uri}") private String tokenUri;
-    @Value("${oauth2.provider.github.profile-uri}") private String profileUri;
+        // 속성값을 불러오지 못했을 경우 예외 발생
+        if (githubClient == null || githubProvider == null) {
+            log.error(">>>> {} <<<<", ExceptionMessage.OAUTH_CONFIG_NULL.getText());
+            throw new OAuthException(ExceptionMessage.OAUTH_CONFIG_NULL);
+        }
+
+        this.authorizationUri = githubProvider.getAuthorizationUri();
+        this.clientId = githubClient.getClientId();
+        this.redirectUri = githubClient.getRedirectUri();
+        this.tokenUri = githubProvider.getTokenUri();
+        this.clientSecret = githubClient.getClientSecret();
+        this.profileUri = githubProvider.getProfileUri();
+    }
 
     // "https://github.com/login/oauth/authorize?..."
     @Override

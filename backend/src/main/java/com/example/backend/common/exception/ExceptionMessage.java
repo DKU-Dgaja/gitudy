@@ -21,6 +21,7 @@ public enum ExceptionMessage {
     // OAuthException
     OAUTH_INVALID_TOKEN_URL("token URL이 올바르지 않습니다."),
     OAUTH_INVALID_ACCESS_TOKEN("access_token이 올바르지 않습니다."),
+    OAUTH_CONFIG_NULL("application.yml 파일에서 속성 값을 읽어오지 못했습니다.")
 
     ;
     private final String text;
