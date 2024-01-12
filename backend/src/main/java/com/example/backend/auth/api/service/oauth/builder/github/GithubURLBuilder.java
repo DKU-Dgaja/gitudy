@@ -20,22 +20,22 @@ public class GithubURLBuilder implements OAuthURLBuilder {
 
     // 속성에서 읽어온 객체를 주입
     public GithubURLBuilder(OAuthProperties oAuthProperties) {
-        // 플랫폼(github)의 client, provider Map 획득
-        OAuthProperties.Client githubClient = oAuthProperties.getClient().get(PLATFORM);
-        OAuthProperties.Provider githubProvider = oAuthProperties.getProvider().get(PLATFORM);
+        try {
+            // 플랫폼(github)의 client, provider Map 획득
+            OAuthProperties.Client githubClient = oAuthProperties.getClient().get(PLATFORM);
+            OAuthProperties.Provider githubProvider = oAuthProperties.getProvider().get(PLATFORM);
 
-        // 속성값을 불러오지 못했을 경우 예외 발생
-        if (githubClient == null || githubProvider == null) {
-            log.error(">>>> {} <<<<", ExceptionMessage.OAUTH_CONFIG_NULL.getText());
+            this.authorizationUri = githubProvider.authorizationUri();
+            this.clientId = githubClient.clientId();
+            this.redirectUri = githubClient.redirectUri();
+            this.tokenUri = githubProvider.tokenUri();
+            this.clientSecret = githubClient.clientSecret();
+            this.profileUri = githubProvider.profileUri();
+
+        } catch (NullPointerException e) {
+            log.error(">>>> OAuthProperties NullPointerException 발생: {}", ExceptionMessage.OAUTH_CONFIG_NULL);
             throw new OAuthException(ExceptionMessage.OAUTH_CONFIG_NULL);
         }
-
-        this.authorizationUri = githubProvider.getAuthorizationUri();
-        this.clientId = githubClient.getClientId();
-        this.redirectUri = githubClient.getRedirectUri();
-        this.tokenUri = githubProvider.getTokenUri();
-        this.clientSecret = githubClient.getClientSecret();
-        this.profileUri = githubProvider.getProfileUri();
     }
 
     // "https://github.com/login/oauth/authorize?..."
