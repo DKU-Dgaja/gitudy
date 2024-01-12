@@ -5,14 +5,12 @@ import com.example.backend.auth.config.oauth.OAuthProperties;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
 public class GithubURLBuilder implements OAuthURLBuilder {
     private static final String PLATFORM = "github";
-    private static final int PROPERTY_SIZE = 3;
     private final String authorizationUri;
     private final String clientId;
     private final String redirectUri;
