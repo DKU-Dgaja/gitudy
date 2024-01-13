@@ -33,7 +33,7 @@ public class GithubURLBuilder implements OAuthURLBuilder {
             this.profileUri = githubProvider.profileUri();
 
         } catch (NullPointerException e) {
-            log.error(">>>> OAuthProperties NullPointerException 발생: {}", ExceptionMessage.OAUTH_CONFIG_NULL);
+            log.error(">>>> [ OAuthProperties NullPointerException 발생: {} ] <<<<", ExceptionMessage.OAUTH_CONFIG_NULL);
             throw new OAuthException(ExceptionMessage.OAUTH_CONFIG_NULL);
         }
     }
