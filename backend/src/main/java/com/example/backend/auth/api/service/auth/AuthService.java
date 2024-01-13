@@ -62,8 +62,11 @@ public class AuthService {
         findUser.updateProfile(name, profileImageUrl);
 
         /*
-            TODO : 기존 사용자의 경우 OAuth 사용자 정보가 변경되었을 수 있으므로 변경 사항을 업데이트해주는 로직이 필요합니다.
+            DB에 저장된 사용자 정보를 기반으로 JWT 토큰을 발급
+            * JWT 토큰을 요청시에 담아 보내면 JWT 토큰 인증 필터에서 Security Context에 인증된 사용자로 등록
+            TODO : JWT 재발급을 위한 Refresh 토큰은 Redis에서 관리할 예정입니다.
          */
+        JwtToken jwtToken = generateJwtToken(findUser);
 
         // JWT 토큰과 권한 정보를 담아 반환
         return AuthLoginResponse.builder()
