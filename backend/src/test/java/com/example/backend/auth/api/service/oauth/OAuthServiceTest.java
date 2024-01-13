@@ -2,10 +2,14 @@ package com.example.backend.auth.api.service.oauth;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
+import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.adapter.github.GithubAdapter;
 import com.example.backend.auth.api.service.oauth.builder.github.GithubURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.oauth.OAuthException;
+import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.user.repository.UserRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,13 +54,7 @@ class OAuthServiceTest extends TestConfig {
         String code = "valid-code";
         String state = "valid-state";
 
-        OAuthResponse response = OAuthResponse.builder()
-                .platformId("1")
-                .platformType(GITHUB)
-                .email("32183520@dankook.ac.kr")
-                .name("jusung-c")
-                .profileImageUrl("http://www.naver.com")
-                .build();
+        OAuthResponse response = generateOauthResponse();
 
         // when
         // when 사용시 Mockito 패키지 사용
