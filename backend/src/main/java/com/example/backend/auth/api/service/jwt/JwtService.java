@@ -1,8 +1,5 @@
 package com.example.backend.auth.api.service.jwt;
 
-import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.jwt.JwtException;
-import com.example.backend.domain.define.user.constant.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,7 +10,6 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Base64;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Date;
 import java.util.function.Function;
@@ -79,19 +75,9 @@ public class JwtService {
     public boolean isTokenValid(String token, String username) {
         Claims claims = extractAllClaims(token);
 
-        try {
-            if (!claims.containsKey("role")) {
-                UserRole.valueOf(claims.get("role", String.class));
-                return false;
-            }
-
-            if (!claims.containsKey("name")) return false;
-
-            if (!claims.containsKey("profileImageUrl")) return false;
-
-        } catch (RuntimeException e) {
-            throw new JwtException(ExceptionMessage.JWT_ILLEGAL_ARGUMENT);
-        }
+        if (!claims.containsKey("role")) return false;
+        if (!claims.containsKey("name")) return false;
+        if (!claims.containsKey("profileImageUrl")) return false;
 
         String subject = claims.getSubject();
         return (subject.equals(username)) && !isTokenExpired(token);

@@ -71,6 +71,7 @@ class JwtServiceTest extends TestConfig {
         String role = savedUser.getRole().name();
         String name = savedUser.getName();
         String profileImageUrl = savedUser.getProfileImageUrl();
+        String email = savedUser.getEmail();
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
@@ -82,7 +83,7 @@ class JwtServiceTest extends TestConfig {
         String subject = jwtService.extractSubject(atk);
 
         // then
-        assertThat(subject).isEqualTo(name);
+        assertThat(subject).isEqualTo(email);
 
     }
 
@@ -126,7 +127,7 @@ class JwtServiceTest extends TestConfig {
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
         Claims claims = jwtService.extractAllClaims(atk);
-        boolean result = jwtService.isTokenValid(atk, name);
+        boolean result = jwtService.isTokenValid(atk, email);
 
         // then
         assertThat(result).isTrue();
@@ -139,27 +140,26 @@ class JwtServiceTest extends TestConfig {
     }
 
     @Test
-    @DisplayName("요청의 JWT 토큰이 올바르지 않은 형식일 경우 JWT_ILLEGAL_ARGUMENT 예외가 발생한다.")
+    @DisplayName("요청의 JWT 토큰이 올바르지 않은 형식일 경우 토큰 검증에 실패한다.")
     void isTokenIllegal() {
         // given
         User savedUser = userRepository.save(generateUser());
         String role = savedUser.getRole().name();
         String name = savedUser.getName();
         String profileImageUrl = savedUser.getProfileImageUrl();
+        String email = savedUser.getUsername();
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
-//        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("name", name);
+//        map.put("profileImageUrl", profileImageUrl);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
+        boolean result = jwtService.isTokenValid(atk, email);
 
         // then
-        JwtException exception = assertThrows(JwtException.class,
-                () -> jwtService.isTokenValid(atk, name));
-        assertThat(exception.getMessage()).isEqualTo(ExceptionMessage.JWT_ILLEGAL_ARGUMENT.getText());
-
+        assertThat(result).isFalse();
     }
 
     @Test
