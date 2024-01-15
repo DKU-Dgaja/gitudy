@@ -42,7 +42,7 @@ public class GoogleURLBuilder implements OAuthURLBuilder {
     }
 
     // "https://accounts.google.com/o/oauth2/v2/auth?..."
-    @Override
+    @Override   // Google OAuth 인증을 위한 URL 생성
     public String authorize(String state) {
         return authorizationUri
                 + "?response_type=code"             // OAuth 인증 코드 그랜트 유형: code로 고정
@@ -53,7 +53,7 @@ public class GoogleURLBuilder implements OAuthURLBuilder {
     }
 
     // "https://oauth2.googleapis.com/token?..."
-    @Override
+    @Override    // access token을 요청하는 URL 생성
     public String token(String code, String state) {
         return tokenUri
                 + "?grant_type=authorization_code"  // OAuth 인증 코드 그랜트 유형: code로 고정
@@ -67,7 +67,7 @@ public class GoogleURLBuilder implements OAuthURLBuilder {
 
 
     // "https://www.googleapis.com/oauth2/v3/userinfo"
-    @Override
+    @Override   // 사용자 프로필 정보 요청하는 URL반환
     public String profile() {
         return profileUri;
     }
