@@ -78,7 +78,6 @@ public class KakaoAdapterTest extends TestConfig {
         // then
         assertAll(
                 () -> assertThat(profile.getPlatformId()).isEqualTo("1"),
-                () -> assertThat(profile.getEmail()).isEqualTo("이메일 없음"),
                 () -> assertThat(profile.getProfileImageUrl()).isEqualTo("http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_640x640.jpg"),
                 () -> assertThat(profile.getName()).isEqualTo("구영민"),
                 () -> assertThat(profile.getPlatformType()).isEqualTo(KAKAO)
@@ -115,7 +114,6 @@ public class KakaoAdapterTest extends TestConfig {
         public KakaoProfileResponse getProfile(String header) {
             return new KakaoProfileResponse(1L,
                     "구영민",
-                    "이메일 없음",
                     new KakaoProfileResponse.Properties("구영민",
                             "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_640x640.jpg",
                             "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_110x110.jpg"))

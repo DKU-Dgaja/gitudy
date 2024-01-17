@@ -48,7 +48,6 @@ public class KakaoAdapter implements OAuthAdapter {
             return OAuthResponse.builder()
                     .platformId(profile.getId().toString())
                     .platformType(KAKAO)
-                    .email(profile.getEmail())
                     .name(profile.getProperties().getNickname())
                     .profileImageUrl(profile.getProperties().getProfile_image())
                     .build();

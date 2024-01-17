@@ -8,14 +8,12 @@ import lombok.NoArgsConstructor;
 public class KakaoProfileResponse {
     private Long id;
     private String name;
-    private String email;
 
     private Properties properties;
 
-    public KakaoProfileResponse(Long id, String name, String email, Properties properties) {
+    public KakaoProfileResponse(Long id, String name, Properties properties) {
         this.id = id;
         this.name = name;
-        this.email = email;
         this.properties = properties;
     }
 
