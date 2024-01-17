@@ -17,21 +17,24 @@ jobs:
         java-version: '17'
         distribution: 'adopt'
 
+    - name: backend 폴더로 이동
+      run: cd ./backend
+
     # application.yml 파일 설정
     - name: resources 폴더 생성
       run: |
-        mkdir -p ./backend/src/main/resources
+        mkdir -p ./src/main/resources
 
     - name: yml 파일 생성
       run: |
-        echo "${{ secrets.APPLICATION_DEFAULT }}" > ./backend/src/main/resources/application.yml
-        echo "${{ secrets.APPLICATION_LOCAL }}" > ./backend/src/main/resources/application-local.yml
-        echo "${{ secrets.APPLICATION_TEST }}" > ./backend/src/main/resources/application-test.yml
+        echo "${{ secrets.APPLICATION_DEFAULT }}" > ./src/main/resources/application.yml
+        echo "${{ secrets.APPLICATION_LOCAL }}" > ./src/main/resources/application-local.yml
+        echo "${{ secrets.APPLICATION_TEST }}" > ./src/main/resources/application-test.yml
 
     # gradlew를 실행시키기 위해 권한 부여
     - name: Gradlew에게 실행권한 부여
-      run: chmod +x ./backend/gradlew
+      run: chmod +x ./gradlew
 
     # 멀티모듈 빌드하기
     - name: 멀티모듈 전체 빌드
-      run: ./backend/gradlew clean build -x test
+      run: ./gradlew clean build -x test
