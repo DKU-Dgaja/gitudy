@@ -30,8 +30,8 @@ jobs:
 
     # gradlew를 실행시키기 위해 권한 부여
     - name: Gradlew에게 실행권한 부여
-      run: chmod +x gradlew
+      run: chmod +x ./backend/gradlew
 
     # 멀티모듈 빌드하기
     - name: 멀티모듈 전체 빌드
-      run: ./gradlew clean build -x test
+      run: ./backend/gradlew clean build -x test
