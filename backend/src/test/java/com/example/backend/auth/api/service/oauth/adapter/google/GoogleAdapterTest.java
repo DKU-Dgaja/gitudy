@@ -76,7 +76,6 @@ public class GoogleAdapterTest extends TestConfig {
         // then
         assertAll(
                 () -> assertThat(profile.getPlatformId()).isEqualTo("102514823309503386675"),  // google은 sub
-                () -> assertThat(profile.getEmail()).isEqualTo("xw21yog@dankook.ac.kr"),
                 () -> assertThat(profile.getProfileImageUrl()).isEqualTo("https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c"),
                 () -> assertThat(profile.getName()).isEqualTo("이정우"),
                 () -> assertThat(profile.getPlatformType()).isEqualTo(GOOGLE)
@@ -112,7 +111,6 @@ public class GoogleAdapterTest extends TestConfig {
         public GoogleProfileResponse getProfile(String header) {
             return new GoogleProfileResponse("102514823309503386675",
                     "이정우",
-                    "xw21yog@dankook.ac.kr",
                     "https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c");
         }
     }

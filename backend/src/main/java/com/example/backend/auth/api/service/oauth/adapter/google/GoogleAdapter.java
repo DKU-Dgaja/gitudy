@@ -48,7 +48,6 @@ public class GoogleAdapter implements OAuthAdapter {
             return OAuthResponse.builder()
                     .platformId(profile.getSub())
                     .platformType(GOOGLE)
-                    .email(profile.getEmail())
                     .name(profile.getName())
                     .profileImageUrl(profile.getPicture())
                     .build();
