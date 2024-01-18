@@ -30,6 +30,10 @@ public class GoogleAdapterTest extends TestConfig {
     @Autowired
     private GoogleURLBuilder googleURLBuilder;
 
+    public static String expectedPlatformId = "102514823309503386675"; // google은 sub
+    public static String expectedProfileImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c";
+    public static String expectedName = "이정우";
+
     @Test
     @DisplayName("google 토큰 요청 API에 정상적인 요청을 보내면, access_token이 발행된다.")
     void googleAdapterGetTokenSuccess() {
@@ -66,10 +70,6 @@ public class GoogleAdapterTest extends TestConfig {
     @DisplayName("google 프로필 요청 API에 정상적인 요청을 보내면, 사용자 프로필이 반환된다.")
     void googleAdapterGetProfileSuccess() {
         // given
-
-        String expectedPlatformId = "102514823309503386675"; // google은 sub
-        String expectedProfileImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c";
-        String expectedName = "이정우";
 
         GoogleAdapterTest.MockGoogleTokenClients mockGoogleTokenClients = new GoogleAdapterTest.MockGoogleTokenClients();
         GoogleAdapterTest.MockGoogleProfileClients mockGoogleProfileClients = new GoogleAdapterTest.MockGoogleProfileClients();
@@ -114,9 +114,9 @@ public class GoogleAdapterTest extends TestConfig {
 
         @Override
         public GoogleProfileResponse getProfile(String header) {
-            return new GoogleProfileResponse("102514823309503386675",
-                    "이정우",
-                    "https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c");
+            return new GoogleProfileResponse(GoogleAdapterTest.expectedPlatformId,
+                    GoogleAdapterTest.expectedName,
+                    GoogleAdapterTest.expectedProfileImageUrl);
         }
     }
 }
