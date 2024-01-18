@@ -68,8 +68,16 @@ public class KakaoAdapterTest extends TestConfig {
     @DisplayName("kakao 프로필 요청 API에 정상적인 요청을 보내면, 사용자 프로필이 반환된다.")
     void kakaoAdapterGetProfileSuccess() {
         // given
+        Long expetedId = 1L;
+        String expectedName = "구영민";
+        String expectedNickName = "구영민";
+        String expectedProfileImageUrl = "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_640x640.jpg";
+        String expectedThumbnailImage = "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_110x110.jpg";
+
         KakaoAdapterTest.MockKakaoTokenClients mockKakaoTokenClients = new KakaoAdapterTest.MockKakaoTokenClients();
-        KakaoAdapterTest.MockKakaoProfileClients mockKakaoProfileClients = new KakaoAdapterTest.MockKakaoProfileClients();
+        KakaoAdapterTest.MockKakaoProfileClients mockKakaoProfileClients = new KakaoAdapterTest.MockKakaoProfileClients(expetedId,
+                expectedName,
+                new KakaoProfileResponse.Properties(expectedNickName, expectedProfileImageUrl, expectedThumbnailImage));
         KakaoAdapter kakaoAdapter = new KakaoAdapter(mockKakaoTokenClients, mockKakaoProfileClients);
 
         // when
@@ -77,9 +85,9 @@ public class KakaoAdapterTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(profile.getPlatformId()).isEqualTo("1"),
-                () -> assertThat(profile.getProfileImageUrl()).isEqualTo("http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_640x640.jpg"),
-                () -> assertThat(profile.getName()).isEqualTo("구영민"),
+                () -> assertThat(profile.getPlatformId()).isEqualTo(expetedId.toString()),
+                () -> assertThat(profile.getProfileImageUrl()).isEqualTo(expectedProfileImageUrl),
+                () -> assertThat(profile.getName()).isEqualTo(expectedName),
                 () -> assertThat(profile.getPlatformType()).isEqualTo(KAKAO)
         );
     }
@@ -109,14 +117,33 @@ public class KakaoAdapterTest extends TestConfig {
         }
     }
     static class MockKakaoProfileClients implements KakaoProfileClients {
+        private Long id;
+        private String name;
+        private KakaoProfileResponse.Properties properties;
+        MockKakaoProfileClients(Long id, String name, KakaoProfileResponse.Properties properties){
+            this.id = id;
+            this.name = name;
+            this.properties = properties;
+        }
+        MockKakaoProfileClients(){};
+        public static class Properties {
+            private String nickname;
+            private String profile_image;
+            private String thumbnail_image;
 
+            public Properties(String nickname, String profile_image, String thumbnail_image) {
+                this.nickname = nickname;
+                this.profile_image = profile_image;
+                this.thumbnail_image = thumbnail_image;
+            }
+        }
         @Override
         public KakaoProfileResponse getProfile(String header) {
-            return new KakaoProfileResponse(1L,
-                    "구영민",
-                    new KakaoProfileResponse.Properties("구영민",
-                            "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_640x640.jpg",
-                            "http://k.kakaocdn.net/dn/1G9kp/btsAot8liOn/8CWudi3uy07rvFNUkk3ER0/img_110x110.jpg"))
+            return new KakaoProfileResponse(id,
+                    name,
+                    new KakaoProfileResponse.Properties(properties.getNickname(),
+                            properties.getProfile_image(),
+                            properties.getThumbnail_image()))
                     ;
         }
     }
