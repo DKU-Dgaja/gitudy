@@ -48,7 +48,6 @@ public class GithubAdapter implements OAuthAdapter {
             return OAuthResponse.builder()
                     .platformId(profile.getId().toString())
                     .platformType(GITHUB)
-                    .email(profile.getEmail())
                     .name(profile.getLogin())
                     .profileImageUrl(profile.getAvatar_url())
                     .build();

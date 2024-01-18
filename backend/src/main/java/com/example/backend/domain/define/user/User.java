@@ -41,9 +41,6 @@ public class User implements UserDetails {
     @Column(name = "NAME")
     private String name;                                        // 이름
 
-    @Column(name = "EMAIL", unique = true)
-    private String email;                                       // 이메일
-
     @Column(name = "PHONE_NUMBER", unique = true)
     private String phoneNumber;                                 // 전화번호
 
@@ -58,7 +55,6 @@ public class User implements UserDetails {
                  UserPlatformType platformType,
                  UserRole role,
                  String name,
-                 String email,
                  String phoneNumber,
                  String profileImageUrl,
                  boolean pushAlarmYn) {
@@ -66,7 +62,6 @@ public class User implements UserDetails {
         this.platformType = platformType;
         this.role = role;
         this.name = name;
-        this.email = email;
         this.phoneNumber = phoneNumber;
         this.profileImageUrl = profileImageUrl;
         this.pushAlarmYn = pushAlarmYn;

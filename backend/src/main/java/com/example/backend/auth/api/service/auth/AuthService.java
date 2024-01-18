@@ -50,7 +50,6 @@ public class AuthService {
                             .platformType(loginResponse.getPlatformType())
                             .role(UserRole.UNAUTH)
                             .name(name)
-                            .email(email)
                             .profileImageUrl(profileImageUrl)
                             .build();
 
