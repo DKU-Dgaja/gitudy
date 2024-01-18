@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.mysql.define.user.constant.UserPlatformType.GITHUB;
 
 @Slf4j
 @Component

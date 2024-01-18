@@ -12,11 +12,10 @@ import com.example.backend.external.clients.oauth.github.response.GithubTokenRes
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 
 import java.net.URI;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.mysql.define.user.constant.UserPlatformType.GITHUB;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 

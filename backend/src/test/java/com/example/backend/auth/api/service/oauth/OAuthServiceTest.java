@@ -13,7 +13,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.mysql.define.user.constant.UserPlatformType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

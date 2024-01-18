@@ -6,17 +6,16 @@ import com.example.backend.auth.api.service.oauth.adapter.github.GithubAdapter;
 import com.example.backend.auth.api.service.oauth.builder.OAuthURLBuilder;
 import com.example.backend.auth.api.service.oauth.builder.github.GithubURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.mysql.define.user.constant.UserPlatformType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.mysql.define.user.constant.UserPlatformType.GITHUB;
 
 @Slf4j
 @Service
