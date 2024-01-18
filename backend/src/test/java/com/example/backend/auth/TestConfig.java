@@ -16,12 +16,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 
+import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
 
 @SpringBootTest
 @ActiveProfiles("test")
@@ -39,6 +42,16 @@ public class TestConfig {
                 .phoneNumber("010-0000-0000")
                 .profileImageUrl("https://google.com")
                 .pushAlarmYn(true)
+                .build();
+    }
+
+    public static OAuthResponse generateOauthResponse() {
+        return OAuthResponse.builder()
+                .platformId("1")
+                .platformType(GITHUB)
+                .email("32183520@dankook.ac.kr")
+                .name("jusung-c")
+                .profileImageUrl("http://www.naver.com")
                 .build();
     }
 }

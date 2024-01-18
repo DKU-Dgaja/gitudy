@@ -72,6 +72,11 @@ public class User implements UserDetails {
         this.pushAlarmYn = pushAlarmYn;
     }
 
+    public void updateProfile(String name, String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+        this.name = name;
+    }
+
     // Spring Security UserDetails Area
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

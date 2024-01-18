@@ -63,7 +63,7 @@ public class OAuthService {
 
         OAuthURLBuilder urlBuilder = factory.getOAuthURLBuilder();
         OAuthAdapter adapter = factory.getOAuthAdapter();
-        log.info(">>>> {} Login Start", platformType);
+        log.info(">>>> [ {} Login Start ] <<<<", platformType);
 
         // code, state를 이용해 Access Token 요청 URL 생성
         String tokenUrl = urlBuilder.token(code, state);
@@ -73,7 +73,7 @@ public class OAuthService {
 
         // 사용자 프로필 조회
         OAuthResponse userInfo = adapter.getProfile(accessToken);
-        log.info(">>>> {} Login Success", platformType);
+        log.info(">>>> [ {} Login Success ] <<<<", platformType);
 
         return userInfo;
     }
