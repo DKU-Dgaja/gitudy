@@ -32,16 +32,21 @@ class GithubAdapterTest extends TestConfig {
     @DisplayName("github 토큰 요청 API에 정상적인 요청을 보내면, access_token이 발행된다.")
     void githubAdapterGetTokenSuccess() {
         // given
+        String expectedToken = "access-token";
+        Long platformId = 1L;
+        String profileImageUrl = "https://www.naver.com";
+        String name = "jusung-c";
+
         MockGithubTokenClients mockGithubTokenClients = new MockGithubTokenClients();
-        MockGithubProfileClients mockGithubProfileClients = new MockGithubProfileClients();
+        MockGithubProfileClients mockGithubProfileClients = new MockGithubProfileClients(platformId, profileImageUrl, name);
         GithubAdapter githubAdapter = new GithubAdapter(mockGithubTokenClients, mockGithubProfileClients);
 
         // when
         String accessToken = githubAdapter.getToken("tokenUrl");
 
         // then
-        System.out.println("accessToken = " + accessToken);
-        assertThat(accessToken).isEqualTo("access-token");
+//        System.out.println("accessToken = " + accessToken);
+        assertThat(accessToken).isEqualTo(expectedToken);
 
     }
 
@@ -64,8 +69,12 @@ class GithubAdapterTest extends TestConfig {
     @DisplayName("github 프로필 요청 API에 정상적인 요청을 보내면, 사용자 프로필이 반환된다.")
     void githubAdapterGetProfileSuccess() {
         // given
+        Long platformId = 1L;
+        String profileImageUrl = "https://www.naver.com";
+        String name = "jusung-c";
+
         MockGithubTokenClients mockGithubTokenClients = new MockGithubTokenClients();
-        MockGithubProfileClients mockGithubProfileClients = new MockGithubProfileClients();
+        MockGithubProfileClients mockGithubProfileClients = new MockGithubProfileClients(platformId, profileImageUrl, name);
         GithubAdapter githubAdapter = new GithubAdapter(mockGithubTokenClients, mockGithubProfileClients);
 
         // when
@@ -73,10 +82,9 @@ class GithubAdapterTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(profile.getPlatformId()).isEqualTo("1"),
-                () -> assertThat(profile.getEmail()).isEqualTo("32183520@dankook.ac.kr"),
-                () -> assertThat(profile.getProfileImageUrl()).isEqualTo("https://www.naver.com"),
-                () -> assertThat(profile.getName()).isEqualTo("jusung-c"),
+                () -> assertThat(profile.getPlatformId()).isEqualTo(platformId.toString()),
+                () -> assertThat(profile.getProfileImageUrl()).isEqualTo(profileImageUrl),
+                () -> assertThat(profile.getName()).isEqualTo(name),
                 () -> assertThat(profile.getPlatformType()).isEqualTo(GITHUB)
         );
     }
@@ -102,14 +110,23 @@ class GithubAdapterTest extends TestConfig {
     }
 
     static class MockGithubProfileClients implements GithubProfileClients {
+        Long platformId;
+        String profileImageUrl;
+        String name;
+
+        public MockGithubProfileClients(Long platformId, String profileImageUrl, String name) {
+            this.platformId = platformId;
+            this.profileImageUrl = profileImageUrl;
+            this.name = name;
+        }
 
         @Override
         public GithubProfileResponse getProfile(String header) {
-            return new GithubProfileResponse(1L,
-                    "jusung-c",
-                    "이주성",
+            return new GithubProfileResponse(platformId,
+                    name,
+                    name,
                     "32183520@dankook.ac.kr",
-                    "https://www.naver.com",
+                    profileImageUrl,
                     "https://github.com/jusung-c");
         }
     }

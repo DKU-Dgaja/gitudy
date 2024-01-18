@@ -19,16 +19,18 @@ class UserRepositoryTest extends TestConfig {
     }
 
     @Test
-    @DisplayName("email 정보를 이용해 해당 User를 조회할 수 있다.")
-    void findByEmailSuccess() {
+    @DisplayName("platformId와 platformType을 이용해 해당 User를 조회할 수 있다.")
+    void findByPlatformIdAndPlatformTypeTest() {
         // given
         User savedUser = userRepository.save(generateUser());
+        String subject = savedUser.getUsername();
 
         // when
-        String email = userRepository.findByEmail(savedUser.getEmail()).get().getEmail();
+        User findUser = userRepository.findByPlatformIdAndPlatformType(savedUser.getPlatformId(), savedUser.getPlatformType()).get();
 
         // then
-        assertThat(savedUser.getEmail()).isEqualTo(email);
+        assertThat(findUser).isNotNull();
+        assertThat(subject).isEqualTo(findUser.getUsername());
 
     }
 

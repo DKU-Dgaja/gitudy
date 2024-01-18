@@ -42,6 +42,11 @@ class OAuthServiceTest extends TestConfig {
     @MockBean
     private GoogleAdapter googleAdapter;
 
+    private static final String PLATFORM_ID = "platformId";
+    private static final String PLATFORM_TYPE = "platformType";
+    private static final String NAME = "name";
+    private static final String PROFILE_IMAGE_URL = "profileImageUrl";
+
     @Test
     @DisplayName("모든 플랫폼의 로그인 페이지를 성공적으로 반환한다.")
     void allUrlBuilderSuccess() {
@@ -76,19 +81,24 @@ class OAuthServiceTest extends TestConfig {
         // given
         String code = "valid-code";
         String state = "valid-state";
+        String accessToken = "access-token";
 
         OAuthResponse response = generateOauthResponse();
 
+        String expectedPlatformId = "1";
+        String expectedName = "jusung-c";
+        String expectedProfileImageUrl = "http://www.naver.com";
+
         // when
         // when 사용시 Mockito 패키지 사용
-        when(githubAdapter.getToken(any(String.class))).thenReturn("access-token");
+        when(githubAdapter.getToken(any(String.class))).thenReturn(accessToken);
         when(githubAdapter.getProfile(any(String.class))).thenReturn(response);
         OAuthResponse profile = oAuthService.login(GITHUB, code, state);
 
         // then
         assertThat(profile)
-                .extracting("platformId", "platformType", "email", "name", "profileImageUrl")
-                .contains("1", GITHUB, "32183520@dankook.ac.kr", "jusung-c", "http://www.naver.com");
+                .extracting(PLATFORM_ID, PLATFORM_TYPE, NAME, PROFILE_IMAGE_URL)
+                .contains(expectedPlatformId, GITHUB, expectedName, expectedProfileImageUrl);
 
 
     }
@@ -116,7 +126,6 @@ class OAuthServiceTest extends TestConfig {
         OAuthResponse response = OAuthResponse.builder()
                 .platformId("102514823309503386675")
                 .platformType(GOOGLE)
-                .email("xw21yog@dankook.ac.kr")
                 .name("이정우")
                 .profileImageUrl("https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c")
                 .build();
@@ -129,8 +138,8 @@ class OAuthServiceTest extends TestConfig {
 
         // then
         assertThat(profile)
-                .extracting("platformId", "platformType", "email", "name", "profileImageUrl")
-                .contains("102514823309503386675", GOOGLE, "xw21yog@dankook.ac.kr", "이정우", "https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c");
+                .extracting(PLATFORM_ID, PLATFORM_TYPE, NAME, PROFILE_IMAGE_URL)
+                .contains("102514823309503386675", GOOGLE, "이정우", "https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c");
 
 
     }

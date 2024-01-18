@@ -45,12 +45,10 @@ public class GithubClientTest extends TestConfig {
 /*        GithubProfileResponse profile = githubProfileClients.getProfile("Bearer " + accessToken);
 
         System.out.println("login = " + profile.getLogin());
-        System.out.println("email = " + profile.getEmail());
         System.out.println("name = " + profile.getName());
 
         assertAll(
                 () -> assertThat(profile.getLogin()).isEqualTo("jusung-c"),
-                () -> assertThat(profile.getEmail()).isEqualTo("anaooauc1236@naver.com"),
                 () -> assertThat(profile.getName()).isEqualTo("이주성")
         );*/
     }

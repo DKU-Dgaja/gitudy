@@ -45,16 +45,23 @@ class AuthServiceTest extends TestConfig {
     @DisplayName("신규 사용자의 경우 UNAUTH 권한으로 DB에 저장된다.")
     void registerUnauthUser() {
         // given
+        String code = "code";
+        String state = "state";
+
         OAuthResponse oAuthResponse = generateOauthResponse();
+        UserPlatformType platformType = oAuthResponse.getPlatformType();
+        String platformId = oAuthResponse.getPlatformId();
+
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
                 .thenReturn(oAuthResponse);
 
         // when
-        authService.login(GITHUB, "code", "state");
+        authService.login(GITHUB, code, state);
 
-        User user = userRepository.findByEmail(oAuthResponse.getEmail()).get();
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).get();
 
         // then
+        assertThat(user).isNotNull();
         assertThat(user.getRole().name()).isEqualTo(UserRole.UNAUTH.name());
     }
 
@@ -62,29 +69,38 @@ class AuthServiceTest extends TestConfig {
     @DisplayName("OAuth 사용자 정보 변경시 DB에 업데이트되어야 한다.")
     void loginUserProfileUpdate() {
         // given
+        String code = "code";
+        String state = "state";
+
         OAuthResponse oAuthResponse = generateOauthResponse();
+        UserPlatformType platformType = oAuthResponse.getPlatformType();
+
+        String platformId = oAuthResponse.getPlatformId();
+        String updateName = "test";
+        String updateProfileImageUrl = "www.test.com";
+
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
                 .thenReturn(oAuthResponse);
-        authService.login(GITHUB, "code", "state");
+        authService.login(GITHUB, code, state);
 
         oAuthResponse = OAuthResponse.builder()
-                .platformId("1")
+                .platformId(oAuthResponse.getPlatformId())
                 .platformType(GITHUB)
-                .email("32183520@dankook.ac.kr")
-                .name("testName")
-                .profileImageUrl("www.test.com")
+                .name(updateName)
+                .profileImageUrl(updateProfileImageUrl)
                 .build();
 
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
                 .thenReturn(oAuthResponse);
 
         // when
-        authService.login(GITHUB, "code", "state");
-        User findUser = userRepository.findByEmail(oAuthResponse.getEmail()).get();
+        authService.login(GITHUB, code, state);
+        User findUser = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).get();
 
         // then
-        assertThat(findUser.getName()).isEqualTo("testName");
-        assertThat(findUser.getProfileImageUrl()).isEqualTo("www.test.com");
+        assertThat(findUser).isNotNull();
+        assertThat(findUser.getName()).isEqualTo(updateName);
+        assertThat(findUser.getProfileImageUrl()).isEqualTo(updateProfileImageUrl);
 
 
     }
@@ -93,12 +109,15 @@ class AuthServiceTest extends TestConfig {
     @DisplayName("OAuth 로그인 인증 완료 후 JWT 토큰이 정상적으로 발급된다.")
     void loginJwtTokenGenerate() {
         // given
+        String code = "code";
+        String state = "state";
+
         OAuthResponse oAuthResponse = generateOauthResponse();
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
                 .thenReturn(oAuthResponse);
 
         // when
-        AuthLoginResponse loginResponse = authService.login(GITHUB, "code", "state");
+        AuthLoginResponse loginResponse = authService.login(GITHUB, code, state);
 //        System.out.println("Access Token: " + loginResponse.getAccessToken());
 //        System.out.println("Refresh Token: " + loginResponse.getRefreshToken());
 
@@ -112,24 +131,30 @@ class AuthServiceTest extends TestConfig {
     @DisplayName("OAuth 로그인 인증이 완료된 사용자의 JWT 토큰은 알맞은 Claims가 들어있어야 한다.")
     void loginJwtTokenValidClaims() {
         // given
+        String code = "code";
+        String state = "state";
+
         String role = "role";
         String name = "name";
         String profileImageUrl = "profileImageUrl";
+
+        String expectedName = "jusung-c";
+        String expectedProfileImageUrl = "http://www.naver.com";
 
         OAuthResponse oAuthResponse = generateOauthResponse();
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
                 .thenReturn(oAuthResponse);
 
         // when
-        AuthLoginResponse loginResponse = authService.login(GITHUB, "code", "state");
+        AuthLoginResponse loginResponse = authService.login(GITHUB, code, state);
         String atk = loginResponse.getAccessToken();
         Claims claims = jwtService.extractAllClaims(atk);
 
         // then
         assertAll(
-                () -> assertThat(claims.get(role)).isEqualTo("UNAUTH"),
-                () -> assertThat(claims.get(name)).isEqualTo("jusung-c"),
-                () -> assertThat(claims.get(profileImageUrl)).isEqualTo("http://www.naver.com")
+                () -> assertThat(claims.get(role)).isEqualTo(UserRole.UNAUTH.name()),
+                () -> assertThat(claims.get(name)).isEqualTo(expectedName),
+                () -> assertThat(claims.get(profileImageUrl)).isEqualTo(expectedProfileImageUrl)
         );
     }
 }

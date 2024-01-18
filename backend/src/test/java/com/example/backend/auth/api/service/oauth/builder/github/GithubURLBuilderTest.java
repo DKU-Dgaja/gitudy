@@ -31,7 +31,7 @@ class GithubURLBuilderTest extends TestConfig {
         String authorizeURL = urlBuilder.authorize(state);
 
         // then
-        System.out.println("authorize URL : " + authorizeURL);
+//        System.out.println("authorize URL : " + authorizeURL);
         assertThat(authorizeURL).isEqualTo(authorizationUri
                 + "?response_type=code"
                 + "&client_id=" + clientId
@@ -51,7 +51,7 @@ class GithubURLBuilderTest extends TestConfig {
         String tokenURL = urlBuilder.token(code, state);
 
         // then
-        System.out.println("tokenURL : " + tokenURL);
+//        System.out.println("tokenURL : " + tokenURL);
         assertThat(tokenURL).isEqualTo(tokenUri
                 + "?grant_type=authorization_code"
                 + "&client_id=" + clientId
@@ -69,7 +69,7 @@ class GithubURLBuilderTest extends TestConfig {
         String profileURL = urlBuilder.profile();
 
         // then
-        System.out.println("profileURL : " + profileURL);
+//        System.out.println("profileURL : " + profileURL);
         assertThat(profileURL).isEqualTo(profileUri);
 
     }
