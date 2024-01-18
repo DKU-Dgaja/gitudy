@@ -42,7 +42,7 @@ public class GoogleAdapterTest extends TestConfig {
         String accessToken = googleAdapter.getToken("tokenUrl");
 
         // then
-        System.out.println("accessToken = " + accessToken);
+        //System.out.println("accessToken = " + accessToken);
         assertThat(accessToken).isEqualTo("access-token");
 
     }
@@ -66,6 +66,11 @@ public class GoogleAdapterTest extends TestConfig {
     @DisplayName("google 프로필 요청 API에 정상적인 요청을 보내면, 사용자 프로필이 반환된다.")
     void googleAdapterGetProfileSuccess() {
         // given
+
+        String expectedPlatformId = "102514823309503386675"; // google은 sub
+        String expectedProfileImageUrl = "https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c";
+        String expectedName = "이정우";
+
         GoogleAdapterTest.MockGoogleTokenClients mockGoogleTokenClients = new GoogleAdapterTest.MockGoogleTokenClients();
         GoogleAdapterTest.MockGoogleProfileClients mockGoogleProfileClients = new GoogleAdapterTest.MockGoogleProfileClients();
         GoogleAdapter googleAdapter = new GoogleAdapter(mockGoogleTokenClients, mockGoogleProfileClients);
@@ -75,9 +80,9 @@ public class GoogleAdapterTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(profile.getPlatformId()).isEqualTo("102514823309503386675"),  // google은 sub
-                () -> assertThat(profile.getProfileImageUrl()).isEqualTo("https://lh3.googleusercontent.com/a/ACg8ocLrP_GLo-fUjSmnUZedPZbbL7ifImYTnelh108XkgOx=s96-c"),
-                () -> assertThat(profile.getName()).isEqualTo("이정우"),
+                () -> assertThat(profile.getPlatformId()).isEqualTo(expectedPlatformId),  // google은 sub
+                () -> assertThat(profile.getProfileImageUrl()).isEqualTo(expectedProfileImageUrl),
+                () -> assertThat(profile.getName()).isEqualTo(expectedName),
                 () -> assertThat(profile.getPlatformType()).isEqualTo(GOOGLE)
         );
     }
