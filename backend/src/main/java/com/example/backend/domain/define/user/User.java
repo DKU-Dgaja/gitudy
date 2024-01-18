@@ -18,6 +18,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)              // 외부에서 객체 생성 못하도록 제한
 @Entity(name = "USERS")                                         // "USER"는 예약어 출동 발생하므로 "USERS"로 설정
+@Table(name = "USERS", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "PLATFORM_ID_AND_PLATFORM_TYPE_UNIQUE",
+                columnNames = {"PLATFORM_ID", "PLATFORM_TYPE"}
+        )
+})
 public class User implements UserDetails {
 
     @Id
