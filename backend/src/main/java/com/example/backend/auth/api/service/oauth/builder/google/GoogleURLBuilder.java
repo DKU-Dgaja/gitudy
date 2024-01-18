@@ -1,16 +1,19 @@
-package com.example.backend.auth.api.service.oauth.builder.github;
+package com.example.backend.auth.api.service.oauth.builder.google;
 
 import com.example.backend.auth.api.service.oauth.builder.OAuthURLBuilder;
 import com.example.backend.auth.config.oauth.OAuthProperties;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import lombok.extern.slf4j.Slf4j;
+
 import org.springframework.stereotype.Component;
+
 
 @Slf4j
 @Component
-public class GithubURLBuilder implements OAuthURLBuilder {
-    private static final String PLATFORM = "github";
+public class GoogleURLBuilder implements OAuthURLBuilder {
+
+    private static final String PLATFORM = "google";
     private final String authorizationUri;
     private final String clientId;
     private final String redirectUri;
@@ -18,39 +21,39 @@ public class GithubURLBuilder implements OAuthURLBuilder {
     private final String clientSecret;
     private final String profileUri;
 
-    // 속성에서 읽어온 객체를 주입
-    public GithubURLBuilder(OAuthProperties oAuthProperties) {
-        try {
-            // 플랫폼(github)의 client, provider Map 획득
-            OAuthProperties.Client githubClient = oAuthProperties.getClient().get(PLATFORM);
-            OAuthProperties.Provider githubProvider = oAuthProperties.getProvider().get(PLATFORM);
 
-            this.authorizationUri = githubProvider.authorizationUri();
-            this.clientId = githubClient.clientId();
-            this.redirectUri = githubClient.redirectUri();
-            this.tokenUri = githubProvider.tokenUri();
-            this.clientSecret = githubClient.clientSecret();
-            this.profileUri = githubProvider.profileUri();
+    public GoogleURLBuilder(OAuthProperties oAuthProperties) {
+        try {
+            // 플랫폼(google)의 client, provider Map 획득
+            OAuthProperties.Client googleClient = oAuthProperties.getClient().get(PLATFORM);
+            OAuthProperties.Provider googleProvider = oAuthProperties.getProvider().get(PLATFORM);
+
+            this.authorizationUri = googleProvider.authorizationUri();
+            this.clientId = googleClient.clientId();
+            this.redirectUri = googleClient.redirectUri();
+            this.tokenUri = googleProvider.tokenUri();
+            this.clientSecret = googleClient.clientSecret();
+            this.profileUri = googleProvider.profileUri();
 
         } catch (NullPointerException e) {
-            log.error(">>>> [ OAuthProperties NullPointerException 발생: {} ] <<<<", ExceptionMessage.OAUTH_CONFIG_NULL);
+            log.error(">>>> OAuthProperties NullPointerException 발생: {}", ExceptionMessage.OAUTH_CONFIG_NULL);
             throw new OAuthException(ExceptionMessage.OAUTH_CONFIG_NULL);
         }
     }
 
-    // "https://github.com/login/oauth/authorize?..."
-    @Override
+    // "https://accounts.google.com/o/oauth2/v2/auth?..."
+    @Override   // Google OAuth 인증을 위한 URL 생성
     public String authorize(String state) {
         return authorizationUri
                 + "?response_type=code"             // OAuth 인증 코드 그랜트 유형: code로 고정
                 + "&client_id=" + clientId          // 클라이언트 ID
                 + "&redirect_uri=" + redirectUri    // 리다이렉트 URI
                 + "&state=" + state                 // CSRF 방지
-                + "&scope=openid";                  // 리소스 접근 범위: openid로 고정
+                + "&scope=email+profile";           // Google의 경우 openid가 아닌 email+profile로 추가해야함
     }
 
-    // "https://github.com/login/oauth/access_token?..."
-    @Override
+    // "https://oauth2.googleapis.com/token?..."
+    @Override    // access token을 요청하는 URL 생성
     public String token(String code, String state) {
         return tokenUri
                 + "?grant_type=authorization_code"  // OAuth 인증 코드 그랜트 유형: code로 고정
@@ -60,8 +63,11 @@ public class GithubURLBuilder implements OAuthURLBuilder {
                 + "&code=" + code;                  // authorize() 요청으로 얻은 인가 코드
     }
 
-    // "https://api.github.com/user"
-    @Override
+
+
+
+    // "https://www.googleapis.com/oauth2/v3/userinfo"
+    @Override   // 사용자 프로필 정보 요청하는 URL반환
     public String profile() {
         return profileUri;
     }
