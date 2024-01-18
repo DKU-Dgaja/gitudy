@@ -38,7 +38,6 @@ public class TestConfig {
                 .platformType(UserPlatformType.KAKAO)
                 .role(UserRole.USER)
                 .name("홍길동")
-                .phoneNumber("010-0000-0000")
                 .profileImageUrl("https://google.com")
                 .pushAlarmYn(true)
                 .build();
