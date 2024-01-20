@@ -24,7 +24,6 @@ jobs:
     - name: yml 파일 생성
       run: |
         echo "${{ secrets.APPLICATION_DEFAULT }}" > ./backend/src/main/resources/application.yml
-        echo "${{ secrets.APPLICATION_LOCAL }}" > ./backend/src/main/resources/application-local.yml
         echo "${{ secrets.APPLICATION_TEST }}" > ./backend/src/main/resources/application-test.yml
         echo "${{ secrets.APPLICATION_DEV }}" > ./backend/src/main/resources/application-dev.yml
         echo "${{ secrets.APPLICATION_DB }}" > ./backend/src/main/resources/database.yml
@@ -42,18 +41,11 @@ jobs:
   test:
     runs-on: self-hosted
     steps:
-    # 테스트 컨테이너 세팅
-    - name: 도커 테스트 데이터베이스 세팅
-      run: |
-        cd ${{ secrets.DOCKER_TEST_DIR }}
-        docker-compose up -d
-
     - name: Gradle 테스트
       run: |
         cd ./backend
         ./gradlew test
         
-    - name: 도커 테스트 데이터베이스 내리기
+    - name: yaml 파일 변경
       run: |
-        cd ${{ secrets.DOCKER_TEST_DIR }}
-        docker-compose down
+        echo "${{ secrets.APPLICATION_DEFAULT_DEV }}" > ./backend/src/main/resources/application.yml
