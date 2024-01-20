@@ -1,4 +1,4 @@
-package com.example.backend.domain.redis.define.test;
+package com.example.backend.domain.define.test;
 
 import lombok.Builder;
 import lombok.Getter;

@@ -1,6 +1,6 @@
 package com.example.backend.auth.api.controller.auth.response;
 
-import com.example.backend.domain.mysql.define.user.constant.UserRole;
+import com.example.backend.domain.define.user.constant.UserRole;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

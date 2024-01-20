@@ -2,9 +2,9 @@ package com.example.backend.auth.config.security;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.domain.mysql.define.user.User;
-import com.example.backend.domain.mysql.define.user.constant.UserRole;
-import com.example.backend.domain.mysql.define.user.repository.UserRepository;
+import com.example.backend.domain.define.user.User;
+import com.example.backend.domain.define.user.constant.UserRole;
+import com.example.backend.domain.define.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -16,9 +16,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 
-import com.example.backend.domain.mysql.define.user.User;
-import com.example.backend.domain.mysql.define.user.constant.UserPlatformType;
-import com.example.backend.domain.mysql.define.user.constant.UserRole;
+import com.example.backend.domain.define.user.User;
+import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.user.constant.UserRole;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;

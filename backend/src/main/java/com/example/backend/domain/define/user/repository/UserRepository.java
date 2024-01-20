@@ -1,6 +1,6 @@
-package com.example.backend.domain.mysql.define.user.repository;
+package com.example.backend.domain.define.user.repository;
 
-import com.example.backend.domain.mysql.define.user.User;
+import com.example.backend.domain.define.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

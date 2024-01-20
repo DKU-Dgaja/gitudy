@@ -1,7 +1,7 @@
-package com.example.backend.domain.mysql.define.user;
+package com.example.backend.domain.define.user;
 
-import com.example.backend.domain.mysql.define.user.constant.UserPlatformType;
-import com.example.backend.domain.mysql.define.user.constant.UserRole;
+import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.user.constant.UserRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

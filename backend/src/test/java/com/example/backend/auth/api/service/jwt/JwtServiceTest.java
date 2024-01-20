@@ -1,8 +1,8 @@
 package com.example.backend.auth.api.service.jwt;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.domain.mysql.define.user.User;
-import com.example.backend.domain.mysql.define.user.repository.UserRepository;
+import com.example.backend.domain.define.user.User;
+import com.example.backend.domain.define.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import org.junit.jupiter.api.AfterEach;

@@ -1,15 +1,14 @@
 package com.example.backend.domain.redis.define.test.repository;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.domain.redis.define.test.RedisTest;
+import com.example.backend.domain.define.test.RedisTest;
+import com.example.backend.domain.define.test.repository.RedisTestRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.assertj.core.api.Assertions.as;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 
 class RedisTestRepositoryTest extends TestConfig {

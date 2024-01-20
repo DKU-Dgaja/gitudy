@@ -4,7 +4,7 @@ import com.example.backend.auth.api.controller.auth.response.AuthLoginPageRespon
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.common.response.JsonResult;
-import com.example.backend.domain.mysql.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.user.constant.UserPlatformType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

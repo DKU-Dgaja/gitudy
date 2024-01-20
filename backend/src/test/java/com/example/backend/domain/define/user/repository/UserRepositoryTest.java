@@ -1,8 +1,7 @@
 package com.example.backend.domain.define.user.repository;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.domain.mysql.define.user.User;
-import com.example.backend.domain.mysql.define.user.repository.UserRepository;
+import com.example.backend.domain.define.user.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
