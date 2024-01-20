@@ -40,6 +40,7 @@ jobs:
 
   test:
     runs-on: self-hosted
+    needs: build
     steps:
     - name: Gradle 테스트
       run: |
@@ -52,6 +53,7 @@ jobs:
 
   coverage:
     runs-on: self-hosted
+    needs: test
     steps:
     - name: 테스트 커버리지를 PR에 코멘트로 등록합니다
       id: jacoco
