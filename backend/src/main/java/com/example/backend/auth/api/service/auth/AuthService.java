@@ -5,6 +5,8 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.auth.api.service.token.RefreshTokenService;
+import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
@@ -30,7 +32,7 @@ public class AuthService {
     private final UserRepository userRepository;
     private final OAuthService oAuthService;
     private final JwtService jwtService;
-
+    private final RefreshTokenService refreshTokenService;
     @Transactional
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
         OAuthResponse loginResponse = oAuthService.login(platformType, code, state);
@@ -86,15 +88,14 @@ public class AuthService {
 
         // Access Token 생성
         final String jwtAccessToken = jwtService.generateAccessToken(claims, user);
-        // 임시로 Refresh Token 생성
-        final String jwtRefreshToken = "jwt-refresh-token";
+
+        // Refresh Token 생성
+        final String jwtRefreshToken = jwtService.generateRefreshToken(claims, user);
         log.info(">>>> [ 사용자 {}님의 JWT 토큰이 발급되었습니다 ] <<<<", user.getName());
+        log.info(">>>> [ 사용자 {}님의 refresh 토큰이 발급되었습니다 ] <<<<", user.getName());
 
-        /*
-            TODO : Refresh Token 생성, 저장 로직이 필요합니다.
-                * Redis DB를 연동해 Refresh Token을 저장, 관리할 예정입니다.
-         */
-
+        // Refresh Token을 레디스에 저장
+        refreshTokenService.saveRefreshToken(new RefreshToken(jwtRefreshToken, user.getEmail()));
         return JwtToken.builder()
                 .accessToken(jwtAccessToken)
                 .refreshToken(jwtRefreshToken)
@@ -108,5 +109,6 @@ public class AuthService {
     /*
         TODO : JWT 토큰이 만료되었을 때 재발급을 위한 서비스 로직 필요합니다.
      */
+
 
 }
