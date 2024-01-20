@@ -69,6 +69,10 @@ tasks.named('test') {
     useJUnitPlatform()
 }
 
+test {
+    finalizedBy jacocoTestReport
+}
+
 jacoco {
     toolVersion = "0.8.11" // 버전 명시
 }
@@ -76,7 +80,7 @@ jacoco {
 jacocoTestReport {
     dependsOn test
     reports {
-        xml.required.set(false)
+        xml.required.set(true)
         csv.required.set(false)
         html.required.set(true)
     }
