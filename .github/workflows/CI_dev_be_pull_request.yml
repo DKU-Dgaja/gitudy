@@ -8,7 +8,6 @@ jobs:
   build:
     # 실행 환경 (Git Runners 개인 서버)
     runs-on: self-hosted
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 17
@@ -25,8 +24,9 @@ jobs:
     - name: yml 파일 생성
       run: |
         echo "${{ secrets.APPLICATION_DEFAULT }}" > ./backend/src/main/resources/application.yml
-        echo "${{ secrets.APPLICATION_LOCAL }}" > ./backend/src/main/resources/application-local.yml
         echo "${{ secrets.APPLICATION_TEST }}" > ./backend/src/main/resources/application-test.yml
+        echo "${{ secrets.APPLICATION_DEV }}" > ./backend/src/main/resources/application-dev.yml
+        echo "${{ secrets.APPLICATION_DB }}" > ./backend/src/main/resources/database.yml
 
     # gradlew를 실행시키기 위해 권한 부여
     - name: Gradlew에게 실행권한 부여
@@ -37,3 +37,15 @@ jobs:
       run: |
         cd ./backend
         ./gradlew clean build -x test
+
+  test:
+    runs-on: self-hosted
+    steps:
+    - name: Gradle 테스트
+      run: |
+        cd ./backend
+        ./gradlew test
+        
+    - name: yaml 파일 변경
+      run: |
+        echo "${{ secrets.APPLICATION_DEFAULT_DEV }}" > ./backend/src/main/resources/application.yml
