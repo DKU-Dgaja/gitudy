@@ -45,7 +45,7 @@ jobs:
     # 테스트 컨테이너 세팅
     - name: 도커 테스트 데이터베이스 세팅
       run: |
-        cd {{ secrets.DOCKER_TEST_DIR }}
+        cd ${{ secrets.DOCKER_TEST_DIR }}
         docker-compose up -d
 
     - name: Gradle 테스트
@@ -55,5 +55,5 @@ jobs:
         
     - name: 도커 테스트 데이터베이스 내리기
       run: |
-        cd {{ secrets.DOCKER_TEST_DIR }}
+        cd ${{ secrets.DOCKER_TEST_DIR }}
         docker-compose down
