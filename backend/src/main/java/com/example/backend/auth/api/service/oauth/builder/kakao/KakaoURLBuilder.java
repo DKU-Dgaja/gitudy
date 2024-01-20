@@ -1,4 +1,4 @@
-package com.example.backend.auth.api.service.oauth.builder.github;
+package com.example.backend.auth.api.service.oauth.builder.kakao;
 
 import com.example.backend.auth.api.service.oauth.builder.OAuthURLBuilder;
 import com.example.backend.auth.config.oauth.OAuthProperties;
@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 
 @Slf4j
 @Component
-public class GithubURLBuilder implements OAuthURLBuilder {
-    private static final String PLATFORM = "github";
+public class KakaoURLBuilder implements OAuthURLBuilder {
+    private static final String PLATFORM = "kakao";
     private final String authorizationUri;
     private final String clientId;
     private final String redirectUri;
@@ -18,27 +18,27 @@ public class GithubURLBuilder implements OAuthURLBuilder {
     private final String clientSecret;
     private final String profileUri;
 
-    // 속성에서 읽어온 객체를 주입
-    public GithubURLBuilder(OAuthProperties oAuthProperties) {
-        try {
-            // 플랫폼(github)의 client, provider Map 획득
-            OAuthProperties.Client githubClient = oAuthProperties.getClient().get(PLATFORM);
-            OAuthProperties.Provider githubProvider = oAuthProperties.getProvider().get(PLATFORM);
 
-            this.authorizationUri = githubProvider.authorizationUri();
-            this.clientId = githubClient.clientId();
-            this.redirectUri = githubClient.redirectUri();
-            this.tokenUri = githubProvider.tokenUri();
-            this.clientSecret = githubClient.clientSecret();
-            this.profileUri = githubProvider.profileUri();
+    // 속성에서 읽어온 객체를 주입
+    public KakaoURLBuilder(OAuthProperties oAuthProperties) {
+        try {
+            // 플랫폼(kakao)의 client, provider Map 획득
+            OAuthProperties.Client kakaoClient = oAuthProperties.getClient().get(PLATFORM);
+            OAuthProperties.Provider kakaoProvider = oAuthProperties.getProvider().get(PLATFORM);
+
+            this.authorizationUri = kakaoProvider.authorizationUri();
+            this.clientId = kakaoClient.clientId();
+            this.redirectUri = kakaoClient.redirectUri();
+            this.tokenUri = kakaoProvider.tokenUri();
+            this.clientSecret = kakaoClient.clientSecret();
+            this.profileUri = kakaoProvider.profileUri();
 
         } catch (NullPointerException e) {
-            log.error(">>>> [ OAuthProperties NullPointerException 발생: {} ] <<<<", ExceptionMessage.OAUTH_CONFIG_NULL);
+            log.error(">>>> OAuthProperties NullPointerException 발생: {}", ExceptionMessage.OAUTH_CONFIG_NULL);
             throw new OAuthException(ExceptionMessage.OAUTH_CONFIG_NULL);
         }
     }
-
-    // "https://github.com/login/oauth/authorize?..."
+    // "https://kauth.kakao.com/oauth/authorize?..."
     @Override
     public String authorize(String state) {
         return authorizationUri
@@ -49,7 +49,7 @@ public class GithubURLBuilder implements OAuthURLBuilder {
                 + "&scope=openid";                  // 리소스 접근 범위: openid로 고정
     }
 
-    // "https://github.com/login/oauth/access_token?..."
+    // "https://kauth.kakao.com/oauth/token?..."
     @Override
     public String token(String code, String state) {
         return tokenUri
@@ -58,11 +58,9 @@ public class GithubURLBuilder implements OAuthURLBuilder {
                 + "&client_secret=" + clientSecret  // 클라이언트 Secret
                 + "&redirect_uri=" + redirectUri    // 리다이렉트 URI
                 + "&code=" + code;                  // authorize() 요청으로 얻은 인가 코드
-    }
 
-    // "https://api.github.com/user"
-    @Override
-    public String profile() {
-        return profileUri;
     }
+    // "https://kapi.kakao.com/v2/user/me"
+    @Override
+    public String profile() { return profileUri; }
 }

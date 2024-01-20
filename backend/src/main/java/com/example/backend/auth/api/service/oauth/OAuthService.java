@@ -3,8 +3,15 @@ package com.example.backend.auth.api.service.oauth;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.service.oauth.adapter.OAuthAdapter;
 import com.example.backend.auth.api.service.oauth.adapter.github.GithubAdapter;
+
+import com.example.backend.auth.api.service.oauth.adapter.kakao.KakaoAdapter;
 import com.example.backend.auth.api.service.oauth.builder.OAuthURLBuilder;
 import com.example.backend.auth.api.service.oauth.builder.github.GithubURLBuilder;
+import com.example.backend.auth.api.service.oauth.builder.kakao.KakaoURLBuilder;
+
+import com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapter;
+import com.example.backend.auth.api.service.oauth.builder.google.GoogleURLBuilder;
+
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +23,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.define.user.constant.UserPlatformType.KAKAO;
+import static com.example.backend.domain.define.user.constant.UserPlatformType.GOOGLE;
 
 @Slf4j
 @Service
@@ -24,16 +33,30 @@ public class OAuthService {
     private Map<UserPlatformType, OAuthFactory> adapterMap;
 
     // 플랫폼별 Adapter, URLBuilder 등록
-    public OAuthService(GithubAdapter githubAdapter, GithubURLBuilder githubURLBuilder) {
+
+   
+    public OAuthService(GithubAdapter githubAdapter, GithubURLBuilder githubURLBuilder, GoogleAdapter googleAdapter, GoogleURLBuilder googleURLBuilder , KakaoAdapter kakaoAdapter, KakaoURLBuilder kakaoURLBuilder) {
         this.adapterMap = new HashMap<>() {{
             // 깃허브 플랫폼 추가
             put(GITHUB, OAuthFactory.builder()
                             .oAuthAdapter(githubAdapter)
                             .oAuthURLBuilder(githubURLBuilder)
                             .build());
+          
+            // 카카오 플랫폼 추가
+            put(KAKAO, OAuthFactory.builder()
+                    .oAuthAdapter(kakaoAdapter)
+                    .oAuthURLBuilder(kakaoURLBuilder)
+                    .build());
+          
+            // 구글 플랫폼 추가
+            put(GOOGLE, OAuthFactory.builder()
+                            .oAuthAdapter(googleAdapter)
+                            .oAuthURLBuilder(googleURLBuilder)
+                            .build());
+
         }};
     }
-
     // OAuth 2.0 로그인 페이지 생성
     public List<AuthLoginPageResponse> loginPage(String state) {
         // 지원하는 모든 플랫폼의 로그인 페이지를 생성해 반환한다.
@@ -62,17 +85,16 @@ public class OAuthService {
 
         OAuthURLBuilder urlBuilder = factory.getOAuthURLBuilder();
         OAuthAdapter adapter = factory.getOAuthAdapter();
-        log.info(">>>> {} Login Start", platformType);
+        log.info(">>>> [ {} Login Start ] <<<<", platformType);
 
         // code, state를 이용해 Access Token 요청 URL 생성
         String tokenUrl = urlBuilder.token(code, state);
 
         // Access Token 획득
         String accessToken = adapter.getToken(tokenUrl);
-
         // 사용자 프로필 조회
         OAuthResponse userInfo = adapter.getProfile(accessToken);
-        log.info(">>>> {} Login Success", platformType);
+        log.info(">>>> [ {} Login Success ] <<<<", platformType);
 
         return userInfo;
     }

@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
+import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.common.response.JsonResult;
@@ -33,7 +34,7 @@ public class AuthController {
     }
 
     @GetMapping("/{platformType}/login")
-    public JsonResult<String> login(
+    public JsonResult<AuthLoginResponse> login(
             @PathVariable("platformType") UserPlatformType platformType,
             @RequestParam("code") String code,
             @RequestParam("state") String loginState) {
@@ -41,13 +42,9 @@ public class AuthController {
             TODO : state 값이 유효한지 검증하는 로직이 필요합니다.
          */
 
-        /*
-            TODO : 로그인 API는 최종적으로 JWT 토큰이 담긴 AuthLoginResponse DTO를 반환해줘야 합니다.
-         */
+        AuthLoginResponse loginResponse = authService.login(platformType, code, loginState);
 
-        authService.login(platformType, code, loginState);
-
-        return JsonResult.successOf("로그인에 성공하였습니다.");
+        return JsonResult.successOf(loginResponse);
     }
 
     /*

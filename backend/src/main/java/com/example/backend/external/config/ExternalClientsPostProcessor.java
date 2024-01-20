@@ -57,7 +57,7 @@ public class ExternalClientsPostProcessor implements BeanFactoryPostProcessor , 
             Object externalClientsBean = factory.createClient(clazz);
             beanFactory.registerSingleton(clazz.getSimpleName(), externalClientsBean);
 
-            log.info(">>>> Success External Clients : {}, baseUrl : {}", clazz.getSimpleName(), baseUrl);
+            log.info(">>>> [ Success External Clients : {}, baseUrl : {} ] <<<<", clazz.getSimpleName(), baseUrl);
         }
     }
 
