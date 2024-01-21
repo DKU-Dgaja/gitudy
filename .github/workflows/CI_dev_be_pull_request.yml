@@ -55,12 +55,18 @@ jobs:
     runs-on: self-hosted
     needs: test
     steps:
+    - name: Upload Report
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: report.xml
+        path: ${{ github.workspace }}/backend/build/reports/jacoco/test/jacocoTestReport.xml
     - name: 테스트 커버리지를 PR에 코멘트로 등록합니다
       id: jacoco
-      uses: madrapps/jacoco-report@v1.2
+      uses: madrapps/jacoco-report@v1.6.1
       with:
         title: 📝 테스트 커버리지 리포트
         paths: ${{ github.workspace }}/backend/build/reports/jacoco/test/jacocoTestReport.xml
         token: ${{ secrets.GITHUB_TOKEN }}
         min-coverage-overall: 50
         min-coverage-changed-files: 50
+        update-comment: true

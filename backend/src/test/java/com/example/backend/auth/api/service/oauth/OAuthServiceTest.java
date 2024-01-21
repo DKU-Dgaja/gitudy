@@ -45,6 +45,7 @@ class OAuthServiceTest extends TestConfig {
     @MockBean
     private KakaoAdapter kakaoAdapter;
 
+    @Autowired
     private GoogleURLBuilder googleurlBuilder;
 
     @MockBean
@@ -68,7 +69,7 @@ class OAuthServiceTest extends TestConfig {
         // then
         //assertThat(loginPages.get(0).getUrl()).isEqualTo(authorizeURL);
 
-        assertThat(loginPages).hasSize(2); // 리스트 크기 확인
+        assertThat(loginPages).hasSize(3); // 리스트 크기 확인
 
         // 각 플랫폼별 URL인지 확인
         boolean containsGithub = loginPages.stream()
