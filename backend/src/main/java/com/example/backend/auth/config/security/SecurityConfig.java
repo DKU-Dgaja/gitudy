@@ -25,6 +25,8 @@ public class SecurityConfig {
                                 authorizeHttpRequest
                                         // UnAuth Area
                                         .requestMatchers("/auth/**").permitAll()
+                                        // Swagger 추가
+                                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                         // Others
                                         .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )

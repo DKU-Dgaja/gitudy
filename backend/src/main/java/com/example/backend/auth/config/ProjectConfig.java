@@ -2,6 +2,7 @@ package com.example.backend.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -11,6 +12,9 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class ProjectConfig implements WebMvcConfigurer {
+
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
 
     // 암호 인코더 정의 - bcrypt 해싱 알고리즘 사용
     @Bean
@@ -26,14 +30,24 @@ public class ProjectConfig implements WebMvcConfigurer {
                 // 객체의 속성 이름을 snake-case로 설정
                 .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
     }
-
-    // Cors 모두 오픈 (개발환경)
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        if (activeProfile.equals("prod")) {
+            prodProfileCorsMapping(registry);
+        } else {
+            devProfileCorsMapping(registry);
+        }
+    }
+    // Cors 모두 오픈 (개발환경)
+    public void devProfileCorsMapping(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
                 .allowedMethods("GET", "POST")
                 .allowedHeaders("*")
                 .allowCredentials(true);
+    }
+    // 프로덕션 환경에서는 Cors 설정을 Front 페이지와 허용할 서버만 등록
+    private void prodProfileCorsMapping(CorsRegistry registry) {
+
     }
 }
