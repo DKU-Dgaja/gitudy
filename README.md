@@ -1,7 +1,7 @@
 <img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
 
 
-# Dgaja
+# Gitudy
 
 
 ![image](https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/889/5433339629c90bc59e5d7598ecd454fc_res.jpeg)
