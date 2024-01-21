@@ -4,8 +4,12 @@ import com.example.backend.auth.api.controller.auth.response.AuthLoginPageRespon
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
+import com.example.backend.auth.api.service.state.LoginStateService;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
+import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -19,16 +23,16 @@ import java.util.List;
 public class AuthController {
     private final AuthService authService;
     private final OAuthService oAuthService;
+    private final LoginStateService loginStateService;
 
     @GetMapping("/loginPage")
     public JsonResult<List<AuthLoginPageResponse>> loginPage() {
-        /*
-            TODO : state 값을 생성해 Redis에 저장해두는 로직이 필요합니다.
-                * 이 state 값은 CSRF 보호를 위해 사용됩니다.
-         */
 
-        // 일단 임시로 state값을 넣어줬습니다.
-        List<AuthLoginPageResponse> loginPages = oAuthService.loginPage("randomState");
+        String loginState = loginStateService.generateLoginState();
+
+        // OAuth 사용하여 각 플랫폼의 로그인 페이지 URL을 가져와서 state 주입
+        List<AuthLoginPageResponse> loginPages = oAuthService.loginPage(loginState);
+
 
         return JsonResult.successOf(loginPages);
     }
@@ -38,9 +42,11 @@ public class AuthController {
             @PathVariable("platformType") UserPlatformType platformType,
             @RequestParam("code") String code,
             @RequestParam("state") String loginState) {
-        /*
-            TODO : state 값이 유효한지 검증하는 로직이 필요합니다.
-         */
+
+        // state 값이 유효한지 검증
+        if (!loginStateService.isValidLoginState(loginState)) {
+            throw new OAuthException(ExceptionMessage.LOGINSTATE_INVALID_VALUE);
+        }
 
         AuthLoginResponse loginResponse = authService.login(platformType, code, loginState);
 
