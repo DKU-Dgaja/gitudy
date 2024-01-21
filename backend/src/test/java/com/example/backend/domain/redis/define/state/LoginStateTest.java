@@ -33,11 +33,12 @@ class LoginStateTest {
                 .build());
 
         // when
-        Optional<LoginState> byId = loginStateRepository.findById(savedEntity.getState());
+        Optional<LoginState> byId = loginStateRepository.findById(UUID.fromString(savedEntity.getState()));
 
         // then
         assertThat(byId.get().isUse()).isTrue();
-        assertThat(byId.get().getState()).isInstanceOf(UUID.class);
+        UUID stateAsUUID = UUID.fromString(byId.get().getState());
+        assertThat(stateAsUUID).isInstanceOf(UUID.class);
     }
 
     @Test
@@ -48,10 +49,10 @@ class LoginStateTest {
                 .isUse(true)
                 .build());
 
-        loginStateRepository.deleteById(savedEntity.getState());
+        loginStateRepository.deleteById(UUID.fromString(savedEntity.getState()));
 
         // when
-        Optional<LoginState> findLoginState = loginStateRepository.findById(savedEntity.getState());
+        Optional<LoginState> findLoginState = loginStateRepository.findById(UUID.fromString(savedEntity.getState()));
 
         // then
         assertThat(findLoginState.isEmpty()).isTrue();
