@@ -1,4 +1,4 @@
-package com.example.frontend
+package com.takseha.frontend
 
 import org.junit.Test
 
