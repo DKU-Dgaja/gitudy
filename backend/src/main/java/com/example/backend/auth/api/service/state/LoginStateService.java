@@ -31,7 +31,7 @@ public class LoginStateService {
 
     // Login State 검증
     public boolean isValidLoginState(String loginState) {
-        UUID uuid = UUID.fromString(loginState);
+        UUID uuid;
 
         // UUID 형식이 아닐 경우 예외처리
         try {
@@ -47,6 +47,7 @@ public class LoginStateService {
                     log.warn(">>>> {} : {}", loginState, ExceptionMessage.LOGINSTATE_NOT_FOUND);
                     throw new LoginStateException(ExceptionMessage.LOGINSTATE_NOT_FOUND);
                 });
+
         // 로그인 상태가 더이상 유효하지 않은 경우 예외 처리
         if (!findLoginState.isUse()) {
             log.warn(">>>> {} : {}", loginState, ExceptionMessage.LOGINSTATE_IS_NOT_USE);

@@ -14,13 +14,11 @@ import java.util.UUID;
 public class LoginState {
 
     @Id
-    private UUID state;  // state 검증
-
+    private String state;  // state 검증
     private  boolean isUse; // 사용 가능 여부
 
     @Builder
     private LoginState(boolean isUse) {
-        this.state=UUID.randomUUID();
         this.isUse = isUse;
     }
 }
