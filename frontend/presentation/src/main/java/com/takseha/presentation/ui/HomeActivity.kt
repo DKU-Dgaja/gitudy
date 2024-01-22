@@ -1,8 +1,8 @@
-package com.takseha.presentation
+package com.takseha.presentation.ui
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import dagger.hilt.android.AndroidEntryPoint
+import com.takseha.presentation.R
 
 class HomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
