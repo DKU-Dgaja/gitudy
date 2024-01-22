@@ -9,7 +9,6 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
-import jakarta.persistence.Id;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;

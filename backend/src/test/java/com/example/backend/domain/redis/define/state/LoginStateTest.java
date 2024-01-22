@@ -29,14 +29,12 @@ class LoginStateTest {
     void redisLoginStateSave() {
         // given
         LoginState savedEntity = loginStateRepository.save(LoginState.builder()
-                .isUse(true)
                 .build());
 
         // when
         Optional<LoginState> byId = loginStateRepository.findById(UUID.fromString(savedEntity.getState()));
 
         // then
-        assertThat(byId.get().isUse()).isTrue();
         UUID stateAsUUID = UUID.fromString(byId.get().getState());
         assertThat(stateAsUUID).isInstanceOf(UUID.class);
     }
@@ -46,7 +44,6 @@ class LoginStateTest {
     void redisLoginStateDelete() {
         // given
         LoginState savedEntity = loginStateRepository.save(LoginState.builder()
-                .isUse(true)
                 .build());
 
         loginStateRepository.deleteById(UUID.fromString(savedEntity.getState()));

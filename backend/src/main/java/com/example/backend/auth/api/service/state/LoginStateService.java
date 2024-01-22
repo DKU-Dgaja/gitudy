@@ -21,7 +21,6 @@ public class LoginStateService {
     // Login State 생성
     public String generateLoginState() {
         LoginState loginState = LoginState.builder()
-                .isUse(true)
                 .build();
         LoginState savedLoginState = loginStateRepository.save(loginState);
         log.info(">>>> [ Login State 생성 ]  {}", savedLoginState);
@@ -47,12 +46,6 @@ public class LoginStateService {
                     log.warn(">>>> {} : {}", loginState, ExceptionMessage.LOGINSTATE_NOT_FOUND);
                     throw new LoginStateException(ExceptionMessage.LOGINSTATE_NOT_FOUND);
                 });
-
-        // 로그인 상태가 더이상 유효하지 않은 경우 예외 처리
-        if (!findLoginState.isUse()) {
-            log.warn(">>>> {} : {}", loginState, ExceptionMessage.LOGINSTATE_IS_NOT_USE);
-            throw new LoginStateException(ExceptionMessage.LOGINSTATE_IS_NOT_USE);
-        }
 
         // 사용한 LoginState는 삭제
         loginStateRepository.deleteById(uuid);
