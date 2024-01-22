@@ -45,11 +45,11 @@ public class JwtService {
      *   RefreshToken 생성
      */
     public String generateRefreshToken(UserDetails userDetails) {
-        return generateAccessToken(new HashMap<>(), userDetails, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7));
+        return generateAccessToken(new HashMap<>(), userDetails, new Date(System.currentTimeMillis() +  7 * DAY));
     }
 
     public String generateRefreshToken(Map<String, String> extraClaims, UserDetails userDetails) {
-        return generateRefreshToken(extraClaims, userDetails, new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 7));
+        return generateRefreshToken(extraClaims, userDetails, new Date(System.currentTimeMillis() + 7 * DAY));
     }
 
     public String generateRefreshToken(Map<String, String> extraClaims, UserDetails userDetails, Date expiredTime) {

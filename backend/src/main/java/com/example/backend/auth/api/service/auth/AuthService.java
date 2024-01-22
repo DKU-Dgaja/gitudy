@@ -95,7 +95,8 @@ public class AuthService {
         log.info(">>>> [ 사용자 {}님의 refresh 토큰이 발급되었습니다 ] <<<<", user.getName());
 
         // Refresh Token을 레디스에 저장
-        refreshTokenService.saveRefreshToken(new RefreshToken(jwtRefreshToken, user.getEmail()));
+        RefreshToken refreshToken= RefreshToken.builder().refreshToken(jwtRefreshToken).platformId(user.getPlatformId()).build();
+        refreshTokenService.saveRefreshToken(refreshToken);
         return JwtToken.builder()
                 .accessToken(jwtAccessToken)
                 .refreshToken(jwtRefreshToken)
