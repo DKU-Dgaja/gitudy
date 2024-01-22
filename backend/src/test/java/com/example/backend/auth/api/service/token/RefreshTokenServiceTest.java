@@ -31,18 +31,21 @@ class RefreshTokenServiceTest {
     @DisplayName("Refresh Token 저장 & 조회 테스트")
     void redisRefreshTokenGenerate() {
         // given
+        String testRefreshToken="testToken";
+        String testPlatformId = "KAKAO_1234";
+
         RefreshToken saveToken = RefreshToken.builder()
-                .refreshToken("TestToken")
-                .email("TestEmail@test.com")
+                .refreshToken(testRefreshToken)
+                .platformId(testPlatformId)
                 .build();
 
         refreshTokenService.saveRefreshToken(saveToken);
 
         // when
-        Optional<RefreshToken> testToken = refreshTokenRepository.findById("TestToken");
+        Optional<RefreshToken> testToken = refreshTokenRepository.findById(testRefreshToken);
 
         // then
-        assertThat(testToken.get().getRefreshToken()).isEqualTo("TestToken");
-        assertThat(testToken.get().getEmail()).isEqualTo("TestEmail@test.com");
+        assertThat(testToken.get().getRefreshToken()).isEqualTo(testRefreshToken);
+        assertThat(testToken.get().getPlatformId()).isEqualTo(testPlatformId);
     }
 }

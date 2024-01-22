@@ -11,14 +11,14 @@ import org.springframework.data.redis.core.RedisHash;
 @ToString
 @RedisHash(value = "refresh", timeToLive = 60*60*24*7) // 7일
 @NoArgsConstructor
+@Builder
 public class RefreshToken {
     @Id
     private String refreshToken;
-    private String email;
+    private String platformId;
 
-    @Builder
-    public RefreshToken(String refreshToken, String email) {
+    public RefreshToken(String refreshToken, String platformId) {
         this.refreshToken = refreshToken;
-        this.email = email;
+        this.platformId = platformId;
     }
 }

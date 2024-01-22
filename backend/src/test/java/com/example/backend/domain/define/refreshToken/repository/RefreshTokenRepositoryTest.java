@@ -22,13 +22,13 @@ class RefreshTokenRepositoryTest {
     @DisplayName("RefreshToken을 저장할 수 있다.")
     void redisLoginStateSave() {
         // given
-        RefreshToken saveToken = refreshTokenRepository.save(RefreshToken.builder().refreshToken("testToken").email("test@naver.com").build());
+        RefreshToken saveToken = refreshTokenRepository.save(RefreshToken.builder().refreshToken("testToken").platformId("KAKAO_1234").build());
 
         // when
         RefreshToken refreshToken = refreshTokenRepository.findById(saveToken.getRefreshToken()).get();
 
         // then
         assertThat(refreshToken.getRefreshToken()).isEqualTo(saveToken.getRefreshToken());
-        assertThat(refreshToken.getEmail()).isEqualTo(saveToken.getEmail());
+        assertThat(refreshToken.getPlatformId()).isEqualTo(saveToken.getPlatformId());
     }
 }
