@@ -6,7 +6,7 @@
             android:name=".SecActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.HomeActivity"
+            android:name=".ui.SplashActivity"
             android:exported="false" />
     </application>
 
