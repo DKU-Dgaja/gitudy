@@ -3,6 +3,7 @@ package com.example.backend.auth.config.security;
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.domain.define.user.User;
+import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
 import com.example.backend.domain.define.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -28,7 +29,7 @@ class SecurityConfigTest extends TestConfig {
 
     @AfterEach
     void tearDown() {
-        userRepository.deleteAllInBatch();
+//        userRepository.deleteAllInBatch();
     }
 
     @Test
@@ -69,7 +70,7 @@ class SecurityConfigTest extends TestConfig {
         User user = User.builder()
                 .name("김민수")
                 .role(UserRole.USER)
-                .email("kimminsu@dankook.ac.kr")
+                .platformType(UserPlatformType.GITHUB)
                 .profileImageUrl("https://google.com")
                 .build();
         User savedUser = userRepository.save(user);

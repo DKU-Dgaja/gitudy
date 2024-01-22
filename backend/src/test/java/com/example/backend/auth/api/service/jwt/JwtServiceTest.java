@@ -38,7 +38,8 @@ class JwtServiceTest extends TestConfig {
         String role = savedUser.getRole().name();
         String name = savedUser.getName();
         String profileImageUrl = savedUser.getProfileImageUrl();
-        String email = savedUser.getEmail();
+
+        String expectedSubject = savedUser.getPlatformId() + "_" + savedUser.getPlatformType();
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
@@ -51,7 +52,7 @@ class JwtServiceTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(claims.getSubject()).isEqualTo(email),
+                () -> assertThat(claims.getSubject()).isEqualTo(expectedSubject),
                 () -> assertThat(claims.get("role")).isEqualTo(role),
                 () -> assertThat(claims.get("name")).isEqualTo(name),
                 () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
@@ -66,7 +67,8 @@ class JwtServiceTest extends TestConfig {
         String role = savedUser.getRole().name();
         String name = savedUser.getName();
         String profileImageUrl = savedUser.getProfileImageUrl();
-        String email = savedUser.getEmail();
+
+        String expectedSubject = savedUser.getPlatformId() + "_" + savedUser.getPlatformType();
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
@@ -78,7 +80,7 @@ class JwtServiceTest extends TestConfig {
         String subject = jwtService.extractSubject(atk);
 
         // then
-        assertThat(subject).isEqualTo(email);
+        assertThat(subject).isEqualTo(expectedSubject);
 
     }
 
@@ -112,7 +114,8 @@ class JwtServiceTest extends TestConfig {
         String role = savedUser.getRole().name();
         String name = savedUser.getName();
         String profileImageUrl = savedUser.getProfileImageUrl();
-        String email = savedUser.getEmail();
+
+        String subject = savedUser.getUsername();
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
@@ -122,12 +125,12 @@ class JwtServiceTest extends TestConfig {
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
         Claims claims = jwtService.extractAllClaims(atk);
-        boolean result = jwtService.isTokenValid(atk, email);
+        boolean result = jwtService.isTokenValid(atk, subject);
 
         // then
         assertThat(result).isTrue();
         assertAll(
-                () -> assertThat(claims.getSubject()).isEqualTo(email),
+                () -> assertThat(claims.getSubject()).isEqualTo(subject),
                 () -> assertThat(claims.get("role")).isEqualTo(role),
                 () -> assertThat(claims.get("name")).isEqualTo(name),
                 () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
@@ -141,8 +144,7 @@ class JwtServiceTest extends TestConfig {
         User savedUser = userRepository.save(generateUser());
         String role = savedUser.getRole().name();
         String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
-        String email = savedUser.getUsername();
+        String subject = savedUser.getUsername();
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
@@ -151,7 +153,7 @@ class JwtServiceTest extends TestConfig {
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
-        boolean result = jwtService.isTokenValid(atk, email);
+        boolean result = jwtService.isTokenValid(atk, subject);
 
         // then
         assertThat(result).isFalse();

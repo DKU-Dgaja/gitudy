@@ -33,7 +33,7 @@ public class JwtService {
     public String generateAccessToken(Map<String, String> customClaims, UserDetails userDetails, Date expiredTime) {
         return Jwts.builder()
                 .setClaims(customClaims)
-                .setSubject(userDetails.getUsername())  // 메서드명만 Username으로 우리 프로젝트에선 식별자인 email에 해당
+                .setSubject(userDetails.getUsername())  // User의 식별자
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(expiredTime)
                 .signWith(getSignInkey(), SignatureAlgorithm.HS256)

@@ -18,6 +18,12 @@ import java.util.List;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)              // 외부에서 객체 생성 못하도록 제한
 @Entity(name = "USERS")                                         // "USER"는 예약어 출동 발생하므로 "USERS"로 설정
+@Table(name = "USERS", uniqueConstraints = {
+        @UniqueConstraint(
+                name = "PLATFORM_ID_AND_PLATFORM_TYPE_UNIQUE",
+                columnNames = {"PLATFORM_ID", "PLATFORM_TYPE"}
+        )
+})
 public class User implements UserDetails {
 
     @Id
@@ -41,12 +47,6 @@ public class User implements UserDetails {
     @Column(name = "NAME")
     private String name;                                        // 이름
 
-    @Column(name = "EMAIL", unique = true)
-    private String email;                                       // 이메일
-
-    @Column(name = "PHONE_NUMBER", unique = true)
-    private String phoneNumber;                                 // 전화번호
-
     @Column(name = "PROFILE_IMAGE_URL")
     private String profileImageUrl;                             // 프로필 사진
 
@@ -58,16 +58,12 @@ public class User implements UserDetails {
                  UserPlatformType platformType,
                  UserRole role,
                  String name,
-                 String email,
-                 String phoneNumber,
                  String profileImageUrl,
                  boolean pushAlarmYn) {
         this.platformId = platformId;
         this.platformType = platformType;
         this.role = role;
         this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
         this.profileImageUrl = profileImageUrl;
         this.pushAlarmYn = pushAlarmYn;
     }
@@ -90,7 +86,7 @@ public class User implements UserDetails {
 
     @Override
     public String getUsername() {
-        return email;
+        return platformId + "_" + platformType.name();
     }
 
     @Override

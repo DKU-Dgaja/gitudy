@@ -5,6 +5,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.user.User;
+import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
@@ -49,7 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // 헤더에서 JWT 토큰 추출
         String jwtToken = request.getHeader("Authorization");
-        String userEmail;
+        String subject;
 
         // JWT 토큰이 헤더에 없다면 사용자 인증이 되지 않은 상태이므로 다음 인증 필터로 이동
         if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
@@ -66,10 +67,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             if (tokens.size() == 2) {
                 // Access Token 추출
                 String accessToken = tokens.get(ACCESS_TOKEN_INDEX);
-                userEmail = jwtService.extractSubject(accessToken);
+                subject = jwtService.extractSubject(accessToken);
 
                 // JWT 토큰 인증 로직 (JWT 검증 후 인증된 Authentication을 SecurityContext에 등록
-                authenticateUserWithJwtToken(userEmail, accessToken, request);
+                authenticateUserWithJwtToken(subject, accessToken, request);
                 log.info(">>>> [ Jwt 토큰이 성공적으로 인증되었습니다. ] <<<<");
 
                 // JWT 토큰 인증을 마치면 다음 인증 필터로 이동
@@ -94,26 +95,37 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             jwtExceptionHandler(response, ExceptionMessage.JWT_ILLEGAL_ARGUMENT);
 
         } catch (JwtException e) {
-            jwtExceptionHandler(response, ExceptionMessage.JWT_EMAIL_IS_NULL);
+            jwtExceptionHandler(response, ExceptionMessage.JWT_SUBJECT_IS_NULL);
         }
     }
 
-    private void authenticateUserWithJwtToken(String userEmail, String accessToken, HttpServletRequest request) {
-        // userEamil이 null인 경우 예외 발생
-        if (userEmail == null) {
-            throw new JwtException(ExceptionMessage.JWT_EMAIL_IS_NULL);
+    private void authenticateUserWithJwtToken(String subject, String accessToken, HttpServletRequest request) {
+        // subject이 null인 경우 예외 발생
+        if (subject == null) {
+            throw new JwtException(ExceptionMessage.JWT_SUBJECT_IS_NULL);
         }
 
         // JWT 토큰 검증
-        if (jwtService.isTokenValid(accessToken, userEmail)) {
+        if (jwtService.isTokenValid(accessToken, subject)) {
             Claims claims = jwtService.extractAllClaims(accessToken);
+
+             /*
+                 subject에서 platformId와 platformType 추출
+                 * Security Context에 저장되는 Authentication은 딱히 platformId와 platformType 유의미해 보이진 않지만
+                 * getUsername() 메서드가 시큐리티의 다른 필터들에서도 계속 사용되어
+                 * 없으면 NullPointerException이 발생해서 로직을 추가했습니다.
+              */
+            String[] platformIdAndPlatformType = extractFromSubject(subject);
+            String platformId = platformIdAndPlatformType[0];
+            String platformType = platformIdAndPlatformType[1];
 
             // JWT 토큰의 Claim을 사용해 User 생성
             UserDetails userDetails = User.builder()
-                    .email(userEmail)
                     .role(UserRole.valueOf(claims.get("role", String.class)))
                     .name(claims.get("name", String.class))
                     .profileImageUrl(claims.get("profileImageUrl", String.class))
+                    .platformId(platformId)
+                    .platformType(UserPlatformType.valueOf(platformType))
                     .build();
 
             // UserDetails를 사용해 Authentication 생성
@@ -130,6 +142,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // Security Context에 Authentication 등록
             SecurityContextHolder.getContext().setAuthentication(authentication);
         }
+    }
+
+    private String[] extractFromSubject(String subject) {
+        // "_"로 문자열을 나누고 id와 type을 추출
+        // 이미 검증된 토큰이므로 따로 예외처리 필요 없음
+        return subject.split("_");
     }
 
     // 모든 JWT Exception을 처리하는 핸들러

@@ -24,12 +24,14 @@ class GlobalExceptionHandlerTest {
         BindException bindException = new BindException(new Object(), "objectName");
         bindException.addError(new FieldError("objectName", "fieldName", "rejectedValue", false, null, null, "error message"));
 
+        String expectedResponseMessage = "fieldName: error message";
+
         // when
         JsonResult result = globalExceptionHandler.bindException(bindException);
 
         // then
         assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getResMsg()).isEqualTo("fieldName: error message");
+        assertThat(result.getResMsg()).isEqualTo(expectedResponseMessage);
 
     }
 
@@ -41,12 +43,14 @@ class GlobalExceptionHandlerTest {
         bindingResult.addError(new FieldError("objectName", "fieldName", "rejectedValue", false, null, null, "error message"));
         MethodArgumentNotValidException error = new MethodArgumentNotValidException(null, bindingResult);
 
+        String expectedResponseMessage = "fieldName: error message";
+
         // when
         JsonResult result = globalExceptionHandler.handleMethodArgumentNotValid(error);
 
         // then
         assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getResMsg()).isEqualTo("fieldName: error message");
+        assertThat(result.getResMsg()).isEqualTo(expectedResponseMessage);
 
     }
 
@@ -61,6 +65,6 @@ class GlobalExceptionHandlerTest {
 
         // then
         assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getResMsg()).isEqualTo("올바른 JWT 토큰의 형태가 아닙니다.");
+        assertThat(result.getResMsg()).isEqualTo(ExceptionMessage.JWT_MALFORMED.getText());
     }
 }

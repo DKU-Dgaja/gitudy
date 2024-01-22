@@ -38,8 +38,6 @@ public class TestConfig {
                 .platformType(UserPlatformType.KAKAO)
                 .role(UserRole.USER)
                 .name("홍길동")
-                .email("hong@kakao.com")
-                .phoneNumber("010-0000-0000")
                 .profileImageUrl("https://google.com")
                 .pushAlarmYn(true)
                 .build();
@@ -49,7 +47,6 @@ public class TestConfig {
         return OAuthResponse.builder()
                 .platformId("1")
                 .platformType(GITHUB)
-                .email("32183520@dankook.ac.kr")
                 .name("jusung-c")
                 .profileImageUrl("http://www.naver.com")
                 .build();

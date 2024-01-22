@@ -36,7 +36,7 @@ public class AuthService {
         OAuthResponse loginResponse = oAuthService.login(platformType, code, state);
         String name = loginResponse.getName();
         String profileImageUrl = loginResponse.getProfileImageUrl();
-        String email = loginResponse.getEmail();
+        String platformId = loginResponse.getPlatformId();
 
         log.info(">>>> [ {}님이 로그인하셨습니다 ] <<<<", name);
 
@@ -44,14 +44,13 @@ public class AuthService {
          * OAuth 로그인 인증을 마쳤으니 우리 애플리케이션의 DB에도 존재하는 사용자인지 확인한다.
          * 회원이 아닐 경우, 즉 회원가입이 필요한 신규 사용자의 경우 OAuthResponse를 바탕으로 DB에 등록해준다.
          */
-        User findUser = userRepository.findByEmail(email)
+        User findUser = userRepository.findByPlatformIdAndPlatformType(platformId, platformType)
                 .orElseGet(() -> {
                     User saveUser = User.builder()
-                            .platformId(loginResponse.getPlatformId())
+                            .platformId(platformId)
                             .platformType(loginResponse.getPlatformType())
                             .role(UserRole.UNAUTH)
                             .name(name)
-                            .email(email)
                             .profileImageUrl(profileImageUrl)
                             .build();
 
