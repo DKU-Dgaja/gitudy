@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.user;
 
+import com.example.backend.domain.define.BaseEntity;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
 import jakarta.persistence.*;
@@ -24,7 +25,7 @@ import java.util.List;
                 columnNames = {"PLATFORM_ID", "PLATFORM_TYPE"}
         )
 })
-public class User implements UserDetails {
+public class User extends BaseEntity implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
