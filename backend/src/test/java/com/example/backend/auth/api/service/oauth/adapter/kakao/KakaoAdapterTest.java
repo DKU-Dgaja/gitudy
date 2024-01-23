@@ -45,7 +45,6 @@ public class KakaoAdapterTest extends TestConfig {
 
     }
 
-
     @Test
     @DisplayName("kakao 토큰 요청 중 예외가 발생하면, OAUTH_INVALID_TOKEN_URL 에외가 발생한다.")
     void kakaoAdapterGetTokenFail() {
@@ -60,9 +59,6 @@ public class KakaoAdapterTest extends TestConfig {
         assertThat(exception.getMessage()).isEqualTo(ExceptionMessage.OAUTH_INVALID_TOKEN_URL.getText());
 
     }
-
-
-
 
     @Test
     @DisplayName("kakao 프로필 요청 API에 정상적인 요청을 보내면, 사용자 프로필이 반환된다.")
@@ -92,7 +88,6 @@ public class KakaoAdapterTest extends TestConfig {
         );
     }
 
-
     @Test // X
     @DisplayName("kakao 프로필 요청 중 예외가 발생하면, OAUTH_INVALID_ACCESS_TOKEN 예외가 발생한다.")
     void kakaoAdapterGetProfileFail() {
@@ -105,10 +100,6 @@ public class KakaoAdapterTest extends TestConfig {
 
     }
 
-
-
-
-
     static class MockKakaoTokenClients implements KakaoTokenClients {
 
         @Override
@@ -116,6 +107,7 @@ public class KakaoAdapterTest extends TestConfig {
             return new KakaoTokenResponse("access-token");
         }
     }
+
     static class MockKakaoProfileClients implements KakaoProfileClients {
         private Long id;
         private String name;
