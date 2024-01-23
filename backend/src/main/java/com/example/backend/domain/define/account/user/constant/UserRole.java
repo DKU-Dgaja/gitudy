@@ -1,4 +1,4 @@
-package com.example.backend.domain.define.user.constant;
+package com.example.backend.domain.define.account.user.constant;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

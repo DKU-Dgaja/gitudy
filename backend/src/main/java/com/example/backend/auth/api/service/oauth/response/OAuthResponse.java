@@ -1,6 +1,6 @@
 package com.example.backend.auth.api.service.oauth.response;
 
-import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

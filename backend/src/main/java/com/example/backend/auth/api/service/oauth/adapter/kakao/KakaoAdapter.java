@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.KAKAO;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 
 @Slf4j
 @Component

@@ -1,18 +1,16 @@
 package com.example.backend.domain.define.user.repository;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.domain.define.user.User;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Optional;
-
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GOOGLE;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;

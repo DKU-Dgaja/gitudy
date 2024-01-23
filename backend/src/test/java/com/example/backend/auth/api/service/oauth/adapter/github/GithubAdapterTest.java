@@ -15,7 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.net.URI;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.*;
 

@@ -13,7 +13,7 @@ import com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapter;
 import com.example.backend.auth.api.service.oauth.builder.google.GoogleURLBuilder;
 
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -22,9 +22,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.user.constant.UserPlatformType.KAKAO;
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GOOGLE;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GOOGLE;
 
 @Slf4j
 @Service

@@ -1,8 +1,8 @@
-package com.example.backend.domain.define.user;
+package com.example.backend.domain.define.account.user;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
-import com.example.backend.domain.define.user.constant.UserRole;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.constant.UserRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,7 +1,7 @@
-package com.example.backend.domain.define.user.repository;
+package com.example.backend.domain.define.account.user.repository;
 
-import com.example.backend.domain.define.user.User;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
