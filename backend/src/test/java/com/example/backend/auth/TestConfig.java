@@ -47,7 +47,7 @@ public class TestConfig {
         return OAuthResponse.builder()
                 .platformId("1")
                 .platformType(GITHUB)
-                .name("jusung-c")
+                .name("jusung")
                 .profileImageUrl("http://www.naver.com")
                 .build();
     }

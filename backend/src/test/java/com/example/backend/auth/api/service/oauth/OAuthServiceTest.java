@@ -96,7 +96,7 @@ class OAuthServiceTest extends TestConfig {
         OAuthResponse response = generateOauthResponse();
 
         String expectedPlatformId = "1";
-        String expectedName = "jusung-c";
+        String expectedName = "jusung";
         String expectedProfileImageUrl = "http://www.naver.com";
 
         // when

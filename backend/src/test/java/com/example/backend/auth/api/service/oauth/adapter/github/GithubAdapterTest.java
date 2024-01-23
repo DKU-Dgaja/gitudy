@@ -34,7 +34,7 @@ class GithubAdapterTest extends TestConfig {
         String expectedToken = "access-token";
         Long platformId = 1L;
         String profileImageUrl = "https://www.naver.com";
-        String name = "jusung-c";
+        String name = "jusung";
 
         MockGithubTokenClients mockGithubTokenClients = new MockGithubTokenClients();
         MockGithubProfileClients mockGithubProfileClients = new MockGithubProfileClients(platformId, profileImageUrl, name);
@@ -70,7 +70,7 @@ class GithubAdapterTest extends TestConfig {
         // given
         Long platformId = 1L;
         String profileImageUrl = "https://www.naver.com";
-        String name = "jusung-c";
+        String name = "jusung";
 
         MockGithubTokenClients mockGithubTokenClients = new MockGithubTokenClients();
         MockGithubProfileClients mockGithubProfileClients = new MockGithubProfileClients(platformId, profileImageUrl, name);

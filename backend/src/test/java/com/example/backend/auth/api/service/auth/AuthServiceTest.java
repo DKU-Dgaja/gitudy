@@ -138,7 +138,7 @@ class AuthServiceTest extends TestConfig {
         String name = "name";
         String profileImageUrl = "profileImageUrl";
 
-        String expectedName = "jusung-c";
+        String expectedName = "jusung";
         String expectedProfileImageUrl = "http://www.naver.com";
 
         OAuthResponse oAuthResponse = generateOauthResponse();
