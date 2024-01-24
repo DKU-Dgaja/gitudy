@@ -138,6 +138,36 @@ class JwtServiceTest extends TestConfig {
     }
 
     @Test
+    @DisplayName("Claims를 지정해 refresh 토큰을 생성한다.")
+    void generateRefreshTokenTest() {
+        // given
+        User savedUser = userRepository.save(generateUser());
+        String role = savedUser.getRole().name();
+        String name = savedUser.getName();
+        String profileImageUrl = savedUser.getProfileImageUrl();
+        String email = savedUser.getEmail();
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("role", role);
+        map.put("name", name);
+        map.put("profileImageUrl", profileImageUrl);
+
+        // when
+        String atk = jwtService.generateRefreshToken(map, savedUser);
+        Claims claims = jwtService.extractAllClaims(atk);
+        boolean result = jwtService.isTokenValid(atk, email);
+
+        // then
+        assertThat(result).isTrue();
+        assertAll(
+                () -> assertThat(claims.getSubject()).isEqualTo(email),
+                () -> assertThat(claims.get("role")).isEqualTo(role),
+                () -> assertThat(claims.get("name")).isEqualTo(name),
+                () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
+        );
+    }
+
+    @Test
     @DisplayName("요청의 JWT 토큰이 올바르지 않은 형식일 경우 토큰 검증에 실패한다.")
     void isTokenIllegal() {
         // given

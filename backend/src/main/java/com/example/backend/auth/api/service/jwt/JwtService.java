@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.security.Key;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Date;
 import java.util.function.Function;
@@ -40,6 +41,26 @@ public class JwtService {
                 .compact();
     }
 
+    /*
+     *   RefreshToken 생성
+     */
+    public String generateRefreshToken(UserDetails userDetails) {
+        return generateAccessToken(new HashMap<>(), userDetails, new Date(System.currentTimeMillis() +  7 * DAY));
+    }
+
+    public String generateRefreshToken(Map<String, String> extraClaims, UserDetails userDetails) {
+        return generateRefreshToken(extraClaims, userDetails, new Date(System.currentTimeMillis() + 7 * DAY));
+    }
+
+    public String generateRefreshToken(Map<String, String> extraClaims, UserDetails userDetails, Date expiredTime) {
+        return Jwts.builder()
+                .setClaims(extraClaims)
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(expiredTime)
+                .signWith(getSignInkey(), SignatureAlgorithm.HS256)
+                .compact();
+    }
     /*
         JWT 토큰 정보 추출
     */
