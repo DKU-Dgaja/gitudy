@@ -10,7 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 
 import java.util.Optional;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -35,8 +34,9 @@ class LoginStateTest {
         Optional<LoginState> byId = loginStateRepository.findById(savedEntity.getState());
 
         // then
-        UUID stateAsUUID = UUID.fromString(byId.get().getState());
-        assertThat(stateAsUUID).isInstanceOf(UUID.class);
+        assertThat(byId).isPresent();
+        assertThat(byId.get().getState()).isEqualTo(savedEntity.getState());
+
     }
 
     @Test
