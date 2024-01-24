@@ -41,14 +41,14 @@ public class LoginStateService {
         }
 
         // 객체를 Redis에서 조회후 없는 경우 예외 처리
-        LoginState findLoginState = loginStateRepository.findById(uuid)
+        LoginState findLoginState = loginStateRepository.findById(toString())
                 .orElseThrow(() -> {
                     log.warn(">>>> {} : {}", loginState, ExceptionMessage.LOGINSTATE_NOT_FOUND);
                     throw new LoginStateException(ExceptionMessage.LOGINSTATE_NOT_FOUND);
                 });
 
         // 사용한 LoginState는 삭제
-        loginStateRepository.deleteById(uuid);
+        loginStateRepository.deleteById(toString());
 
         return true;
     }

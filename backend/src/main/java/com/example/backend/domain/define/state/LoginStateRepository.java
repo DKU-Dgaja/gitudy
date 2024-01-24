@@ -7,5 +7,5 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 
 import java.util.UUID;
 
-public interface LoginStateRepository extends CrudRepository<LoginState, UUID> {
+public interface LoginStateRepository extends CrudRepository<LoginState, String> {
 }

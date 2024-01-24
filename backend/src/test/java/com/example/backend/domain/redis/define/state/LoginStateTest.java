@@ -32,7 +32,7 @@ class LoginStateTest {
                 .build());
 
         // when
-        Optional<LoginState> byId = loginStateRepository.findById(UUID.fromString(savedEntity.getState()));
+        Optional<LoginState> byId = loginStateRepository.findById(savedEntity.getState());
 
         // then
         UUID stateAsUUID = UUID.fromString(byId.get().getState());
@@ -46,10 +46,10 @@ class LoginStateTest {
         LoginState savedEntity = loginStateRepository.save(LoginState.builder()
                 .build());
 
-        loginStateRepository.deleteById(UUID.fromString(savedEntity.getState()));
+        loginStateRepository.deleteById(savedEntity.getState());
 
         // when
-        Optional<LoginState> findLoginState = loginStateRepository.findById(UUID.fromString(savedEntity.getState()));
+        Optional<LoginState> findLoginState = loginStateRepository.findById(savedEntity.getState());
 
         // then
         assertThat(findLoginState.isEmpty()).isTrue();
