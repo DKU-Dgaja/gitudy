@@ -2,7 +2,7 @@ package com.example.backend.auth.api.service.token;
 
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
-import com.example.backend.domain.define.user.repository.UserRepository;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
