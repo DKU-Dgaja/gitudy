@@ -32,11 +32,11 @@ class RefreshTokenServiceTest {
     void redisRefreshTokenGenerate() {
         // given
         String testRefreshToken="testToken";
-        String testPlatformId = "KAKAO_1234";
+        String subject = "KAKAO_1234";
 
         RefreshToken saveToken = RefreshToken.builder()
                 .refreshToken(testRefreshToken)
-                .platformId(testPlatformId)
+                .subject(subject)
                 .build();
 
         refreshTokenService.saveRefreshToken(saveToken);
@@ -46,6 +46,6 @@ class RefreshTokenServiceTest {
 
         // then
         assertThat(testToken.get().getRefreshToken()).isEqualTo(testRefreshToken);
-        assertThat(testToken.get().getPlatformId()).isEqualTo(testPlatformId);
+        assertThat(testToken.get().getSubject()).isEqualTo(subject);
     }
 }

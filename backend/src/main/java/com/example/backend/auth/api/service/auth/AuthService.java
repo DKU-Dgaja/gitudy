@@ -18,7 +18,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashMap;
-import java.util.List;
 
 @Slf4j
 @Service
@@ -94,7 +93,7 @@ public class AuthService {
         log.info(">>>> [ 사용자 {}님의 refresh 토큰이 발급되었습니다 ] <<<<", user.getName());
 
         // Refresh Token을 레디스에 저장
-        RefreshToken refreshToken= RefreshToken.builder().refreshToken(jwtRefreshToken).platformId(user.getPlatformId()).build();
+        RefreshToken refreshToken= RefreshToken.builder().refreshToken(jwtRefreshToken).subject(user.getUsername()).build();
         refreshTokenService.saveRefreshToken(refreshToken);
         return JwtToken.builder()
                 .accessToken(jwtAccessToken)

@@ -15,10 +15,10 @@ import org.springframework.data.redis.core.RedisHash;
 public class RefreshToken {
     @Id
     private String refreshToken;
-    private String platformId;
+    private String subject;
 
-    public RefreshToken(String refreshToken, String platformId) {
+    public RefreshToken(String refreshToken, String subject) {
         this.refreshToken = refreshToken;
-        this.platformId = platformId;
+        this.subject = subject;
     }
 }
