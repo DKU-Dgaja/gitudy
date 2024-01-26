@@ -22,11 +22,12 @@
             android:id="@+id/idDetail"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="커밋을 기록하려면 깃허브 연동이 필요해요."
+            android:text="커밋을 기록하려면 깃허브 연동이 필요해요.\n@를 제외한 아이디를 입력해주세요."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idTitle"
-            android:layout_marginTop="19dp"
+            android:layout_marginTop="12dp"
+            android:gravity="center"
             style="@style/B5_2"
             android:textColor="@color/GS_500"/>
 
@@ -41,7 +42,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/idDetail"
-            android:layout_marginTop="70dp"
+            android:layout_marginTop="59dp"
             android:background="@null"/>
 
     <LinearLayout
