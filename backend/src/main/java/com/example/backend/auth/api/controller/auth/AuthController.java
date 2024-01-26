@@ -65,9 +65,7 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = ReissueAccessTokenResponse.class)))
     @PostMapping("/reissue")
     public JsonResult<?> reissueAccessToken(@RequestHeader(name = "Authorization") String token) {
-        System.out.println(token);
         List<String> tokens = Arrays.asList(token.split(" "));
-        System.out.println(tokens.size());
         if (tokens.size() == 3) {
             ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(tokens.get(2));
 
