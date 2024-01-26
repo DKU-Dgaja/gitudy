@@ -46,7 +46,7 @@ public class User extends BaseEntity implements UserDetails {
     @ColumnDefault(value = "'UNAUTH'")
     private UserRole role;                                      // 유저 상태 정보(역할)
 
-    @Column(name = "GITHUB_ID", nullable = false)
+    @Column(name = "GITHUB_ID")
     private String githubId;                                    // 깃허브 아이디
 
     @Column(name = "NAME")
