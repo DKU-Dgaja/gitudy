@@ -5,45 +5,46 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.login.InputIdActivity">
-        <TextView
-            android:id="@+id/idTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="138dp"
-            android:text="깃허브 아이디를 입력해주세요"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:fontFamily="@font/pretendard_semibold"
-            android:textSize="26dp"
-            android:textColor="@color/GS_800"/>
 
-        <TextView
-            android:id="@+id/idDetail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="커밋을 기록하려면 깃허브 연동이 필요해요.\n@를 제외한 아이디를 입력해주세요."
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idTitle"
-            android:layout_marginTop="12dp"
-            android:gravity="center"
-            style="@style/B5_2"
-            android:textColor="@color/GS_500"/>
+    <TextView
+        android:id="@+id/idTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="138dp"
+        android:fontFamily="@font/pretendard_semibold"
+        android:text="깃허브 아이디를 입력해주세요"
+        android:textColor="@color/GS_800"
+        android:textSize="26dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/idEditView"
-            style="@style/B2_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:hint="\@gittudy"
-            android:textColorHint="@color/GS_300"
-            android:textColor="@color/BLACK"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/idDetail"
-            android:layout_marginTop="59dp"
-            android:background="@null"/>
+    <TextView
+        android:id="@+id/idDetail"
+        style="@style/B5_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="커밋을 기록하려면 깃허브 연동이 필요해요.\n@를 제외한 아이디를 입력해주세요."
+        android:textColor="@color/GS_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idTitle" />
+
+    <EditText
+        android:id="@+id/idEditView"
+        style="@style/B2_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="59dp"
+        android:background="@null"
+        android:hint="\@gittudy"
+        android:textColor="@color/BLACK"
+        android:textColorHint="@color/GS_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/idDetail" />
 
     <LinearLayout
         android:id="@+id/confirmBtn"
