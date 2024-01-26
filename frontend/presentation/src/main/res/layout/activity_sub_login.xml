@@ -22,7 +22,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/button_green"
+        android:background="@drawable/box_non_stroke_green"
         android:backgroundTint="#F9E000"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/googleBtn"
@@ -34,7 +34,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:src="@drawable/kakao_logo" />
+            android:src="@drawable/logo_kakao" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -50,7 +50,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="74dp"
-        android:background="@drawable/button_green"
+        android:background="@drawable/box_non_stroke_green"
         android:backgroundTint="@color/WHITE"
         android:gravity="center"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -61,7 +61,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:src="@drawable/google_logo" />
+            android:src="@drawable/logo_google" />
 
         <TextView
             android:layout_width="wrap_content"

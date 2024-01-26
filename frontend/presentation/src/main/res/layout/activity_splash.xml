@@ -12,7 +12,7 @@
     <ImageView
         android:layout_width="230.18dp"
         android:layout_height="43.59dp"
-        android:src="@drawable/gitudy_logo"
+        android:src="@drawable/logo_gitudy"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

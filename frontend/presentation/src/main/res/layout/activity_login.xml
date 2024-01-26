@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="153dp"
             android:layout_height="29.6dp"
-            android:src="@drawable/gitudy_logo" />
+            android:src="@drawable/logo_gitudy" />
 
         <TextView
             style="@style/B1_1"
@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
-        android:background="@drawable/button_green"
+        android:background="@drawable/box_non_stroke_green"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/othersBtn"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,7 +45,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginRight="5dp"
-            android:src="@drawable/github_logo" />
+            android:src="@drawable/logo_github" />
 
         <TextView
             android:layout_width="wrap_content"

@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="153dp"
             android:layout_height="29.6dp"
-            android:src="@drawable/gitudy_logo" />
+            android:src="@drawable/logo_gitudy" />
 
         <TextView
             style="@style/B1_1"
