@@ -46,8 +46,10 @@ public class User extends BaseEntity implements UserDetails {
     @ColumnDefault(value = "'UNAUTH'")
     private UserRole role;                                      // 유저 상태 정보(역할)
 
-    @Size(min = 2, max = 6)                 // DB에 쿼리 날리기 전 검증
-    @Column(name = "NAME", length = 6)      // JPA ddl 생성 시 제약 추가
+    @Column(name = "GITHUB_ID", nullable = false)
+    private String githubId;                                    // 깃허브 아이디
+
+    @Column(name = "NAME")
     private String name;                                        // 이름
 
     @Column(name = "PROFILE_IMAGE_URL")
@@ -57,21 +59,22 @@ public class User extends BaseEntity implements UserDetails {
     private boolean pushAlarmYn = false;                        // 알림 수신 동의 여부
 
     @Column(name = "SCORE")
-    private int score = 0;                                          // 사용자 활동 점수
+    private int score = 0;                                      // 사용자 활동 점수
+
+    @Column(name = "POINT")
+    private int point = 0;                                      // 사용자 포인트
 
     @Builder
-    private User(String platformId,
-                 UserPlatformType platformType,
-                 UserRole role,
-                 String name,
-                 String profileImageUrl,
-                 boolean pushAlarmYn) {
+    public User(String platformId, UserPlatformType platformType, UserRole role, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, int score, int point) {
         this.platformId = platformId;
         this.platformType = platformType;
         this.role = role;
+        this.githubId = githubId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.pushAlarmYn = pushAlarmYn;
+        this.score = score;
+        this.point = point;
     }
 
     public void updateProfile(String name, String profileImageUrl) {

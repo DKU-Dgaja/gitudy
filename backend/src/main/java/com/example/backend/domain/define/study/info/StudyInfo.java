@@ -2,6 +2,7 @@ package com.example.backend.domain.define.study.info;
 
 import com.example.backend.domain.define.BaseEntity;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import jakarta.persistence.*;
@@ -47,11 +48,27 @@ public class StudyInfo extends BaseEntity {
     @Column(name = "JOIN_CODE")
     private String joinCode;                        // 스터디 참여 코드
 
-    @Column(name = "CAPACITY")
-    private int capacity;                           // 스터디 제한 인원
+    @Column(name = "MAXIMUM_MEMBER")
+    private int maximumMember;                      // 스터디 제한 인원
 
-    @Column(name = "REPOSITORY_URL")
-    private String repositoryUrl;                   // 연동할 깃허브 레포지토리 주소
+    @Column(name = "CURRENT_MEMBER")
+    private int currentMember;                      // 스터디 현재 인원
+
+    @Column(name = "IS_AVAILABLE")
+    private boolean isAvailable;                    // 스터디 남은 자리 여부
+
+    @Temporal(TemporalType.DATE)
+    @Column(name = "LAST_COMMIT_DAY")
+    private LocalDate lastCommitDay;                // 스터디 마지막 활동 시간
+
+    @Column(name = "PROFILE_IMAGE_URL")
+    private String profileImageUrl;                 // 스터디 프로필 사진
+
+    @Column(name = "NOTICE")
+    private String notice;                          // 스터디 공지
+
+    @Embedded
+    private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STUDY_PREIOD_TYPE")
@@ -59,7 +76,8 @@ public class StudyInfo extends BaseEntity {
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
     @Builder
-    public StudyInfo(User user, String topic, int score, LocalDate endDate, String info, StudyStatus status, String joinCode, int capacity, String repositoryUrl, StudyPeriodType periodType) {
+
+    public StudyInfo(User user, String topic, int score, LocalDate endDate, String info, StudyStatus status, String joinCode, int maximumMember, int currentMember, boolean isAvailable, LocalDate lastCommitDay, String profileImageUrl, String notice, RepositoryInfo repositoryInfo, StudyPeriodType periodType) {
         this.user = user;
         this.topic = topic;
         this.score = score;
@@ -67,8 +85,13 @@ public class StudyInfo extends BaseEntity {
         this.info = info;
         this.status = status;
         this.joinCode = joinCode;
-        this.capacity = capacity;
-        this.repositoryUrl = repositoryUrl;
+        this.maximumMember = maximumMember;
+        this.currentMember = currentMember;
+        this.isAvailable = isAvailable;
+        this.lastCommitDay = lastCommitDay;
+        this.profileImageUrl = profileImageUrl;
+        this.notice = notice;
+        this.repositoryInfo = repositoryInfo;
         this.periodType = periodType;
     }
 }

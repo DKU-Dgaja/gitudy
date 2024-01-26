@@ -39,7 +39,7 @@ public class StudyCommit extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "COMMIT_DATE", nullable = false)
-    private LocalDate commitDate;                     // 커밋 날짜
+    private LocalDate commitDate;               // 커밋 날짜
 
     @Enumerated(EnumType.STRING)
     @Column(name = "COMMIT_STATUS")
