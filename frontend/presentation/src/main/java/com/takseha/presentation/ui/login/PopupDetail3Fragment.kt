@@ -7,10 +7,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.takseha.presentation.R
 
-class Detail2Fragment : Fragment() {
+class PopupDetail3Fragment : Fragment() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -18,7 +18,7 @@ class Detail2Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail2, container, false)
+        return inflater.inflate(R.layout.fragment_popup_detail3, container, false)
     }
 
 }
