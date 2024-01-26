@@ -146,6 +146,7 @@ class JwtServiceTest extends TestConfig {
         String name = savedUser.getName();
         String profileImageUrl = savedUser.getProfileImageUrl();
         String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
@@ -155,12 +156,12 @@ class JwtServiceTest extends TestConfig {
         // when
         String atk = jwtService.generateRefreshToken(map, savedUser);
         Claims claims = jwtService.extractAllClaims(atk);
-        boolean result = jwtService.isTokenValid(atk, platformId);
+        boolean result = jwtService.isTokenValid(atk, platformId+"_"+platformType);
 
         // then
         assertThat(result).isTrue();
         assertAll(
-                () -> assertThat(claims.getSubject()).isEqualTo(platformId),
+                () -> assertThat(claims.getSubject()).isEqualTo(platformId+"_"+platformType),
                 () -> assertThat(claims.get("role")).isEqualTo(role),
                 () -> assertThat(claims.get("name")).isEqualTo(name),
                 () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
