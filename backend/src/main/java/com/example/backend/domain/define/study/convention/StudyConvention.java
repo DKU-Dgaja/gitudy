@@ -18,9 +18,8 @@ public class StudyConvention extends BaseEntity {
     @Column(name = "STUDY_CONVENTION_ID")
     private Long id;                            // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_INFO_ID", nullable = false)
-    private StudyInfo studyInfo;                // 속한 스터디 정보
+    @Column(name = "STUDY_INFO_ID", nullable = false)
+    private Long studyInfoId;                   // 스터디 ID
 
     @Column(name = "NAME", nullable = false)
     private String name;                        // 컨벤션 이름
@@ -35,8 +34,8 @@ public class StudyConvention extends BaseEntity {
     private boolean isActive = true;           // 컨벤션 적용 여부
 
     @Builder
-    public StudyConvention(StudyInfo studyInfo, String name, String description, String content, boolean isActive) {
-        this.studyInfo = studyInfo;
+    public StudyConvention(Long studyInfoId, String name, String description, String content, boolean isActive) {
+        this.studyInfoId = studyInfoId;
         this.name = name;
         this.description = description;
         this.content = content;

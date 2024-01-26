@@ -1,8 +1,6 @@
 package com.example.backend.domain.define.account.bookmark;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -18,18 +16,16 @@ public class StudyBookmark extends BaseEntity {
     @Column(name = "STUDY_BOOKMARK_ID")
     private Long id;                            // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_INFO_ID", nullable = false)
-    private StudyInfo studyInfo;                // 즐겨찾기한 스터디 정보
+    @Column(name = "STUDY_INFO_ID", nullable = false)
+    private Long studyInfoId;                   // 즐겨찾기한 스터디 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                          // 사용자 정보
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;                        // 사용자 ID
 
     @Builder
-    public StudyBookmark(StudyInfo studyInfo, User user) {
-        this.studyInfo = studyInfo;
-        this.user = user;
+    public StudyBookmark(Long studyInfoId, Long userId) {
+        this.studyInfoId = studyInfoId;
+        this.userId = userId;
     }
 }
 

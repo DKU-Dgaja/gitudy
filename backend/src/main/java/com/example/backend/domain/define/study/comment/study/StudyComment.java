@@ -19,21 +19,19 @@ public class StudyComment extends BaseEntity {
     @Column(name = "STUDY_COMMENT_ID")
     private Long id;                            // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_INFO_ID", nullable = false)
-    private StudyInfo studyInfo;                // 속한 스터디 정보
+    @Column(name = "STUDY_INFO_ID", nullable = false)
+    private Long studyInfoId;                   // 스터디 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                          // 작성자 정보
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;                        // 사용자 ID
 
     @Column(name = "CONTENT", nullable = false)
     private String content;                     // 댓글 내용
 
     @Builder
-    public StudyComment(StudyInfo studyInfo, User user, String content) {
-        this.studyInfo = studyInfo;
-        this.user = user;
+    public StudyComment(Long studyInfoId, Long userId, String content) {
+        this.studyInfoId = studyInfoId;
+        this.userId = userId;
         this.content = content;
     }
 }

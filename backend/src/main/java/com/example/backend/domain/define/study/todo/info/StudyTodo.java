@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.study.todo.info;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -20,9 +19,8 @@ public class StudyTodo extends BaseEntity {
     @Column(name = "STUDY_TODO_ID")
     private Long id;                            // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_INFO_ID", nullable = false)
-    private StudyInfo studyInfo;                // 스터디 정보
+    @Column(name = "STUDY_INFO_ID", nullable = false)
+    private Long studyInfoId;                   // 스터디 ID
 
     @Column(name = "TITLE", nullable = false)
     private String title;                       // To do 이름
@@ -32,11 +30,11 @@ public class StudyTodo extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "TODO_DATE", nullable = false)
-    private LocalDate todoDate;                     // To do 날짜
+    private LocalDate todoDate;                 // To do 날짜
 
     @Builder
-    public StudyTodo(StudyInfo studyInfo, String title, String detail, LocalDate todoDate) {
-        this.studyInfo = studyInfo;
+    public StudyTodo(Long studyInfoId, String title, String detail, LocalDate todoDate) {
+        this.studyInfoId = studyInfoId;
         this.title = title;
         this.detail = detail;
         this.todoDate = todoDate;

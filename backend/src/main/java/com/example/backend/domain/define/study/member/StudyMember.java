@@ -1,8 +1,6 @@
 package com.example.backend.domain.define.study.member;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import jakarta.persistence.*;
@@ -22,13 +20,11 @@ public class StudyMember extends BaseEntity {
     @Column(name = "STUDY_MEMBER_ID")
     private Long id;                            // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_INFO_ID", nullable = false)
-    private StudyInfo studyInfo;                // 속한 스터디 정보
+    @Column(name = "STUDY_INFO_ID", nullable = false)
+    private Long studyInfoId;                   // 스터디 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                          // 사용자 정보
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;                        // 사용자 ID
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STUDY_MEMBER_ROLE")
@@ -44,9 +40,9 @@ public class StudyMember extends BaseEntity {
     private int score = 0;                      // 기여도 (활동점수)
 
     @Builder
-    public StudyMember(StudyInfo studyInfo, User user, StudyMemberRole role, StudyMemberStatus status, int score) {
-        this.studyInfo = studyInfo;
-        this.user = user;
+    public StudyMember(Long studyInfoId, Long userId, StudyMemberRole role, StudyMemberStatus status, int score) {
+        this.studyInfoId = studyInfoId;
+        this.userId = userId;
         this.role = role;
         this.status = status;
         this.score = score;

@@ -16,11 +16,10 @@ public class SocialAccountLink extends BaseEntity {
     @Id
     @Column(name = "SOCIAL_ACCOUNT_LINK_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;                                     // 아이디
+    private Long id;                                    // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                                   // 사용자 정보 (외래키)
+    @Column(name = "USER_ID", nullable = false)
+    private Long userid;                                // 사용자 ID
 
     @Enumerated(EnumType.STRING)
     @Column(name = "SOCIAL_TYPE")
@@ -30,8 +29,8 @@ public class SocialAccountLink extends BaseEntity {
     private String link;                                // 소셜 링크 url
 
     @Builder
-    public SocialAccountLink(User user, SocialType socialType, String link) {
-        this.user = user;
+    public SocialAccountLink(Long userid, SocialType socialType, String link) {
+        this.userid = userid;
         this.socialType = socialType;
         this.link = link;
     }

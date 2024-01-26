@@ -20,21 +20,19 @@ public class CommitComment extends BaseEntity {
     @Column(name = "COMMIT_COMMENT_ID")
     private Long id;                            // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_COMMIT_ID", nullable = false)
-    private StudyCommit studyCommit;            // 커밋 정보
+    @Column(name = "STUDY_COMMIT_ID", nullable = false)
+    private Long studyCommitId;                 // 커밋 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                          // 작성자 정보
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;                        // 사용자 ID
 
     @Column(name = "CONTENT", nullable = false)
     private String content;                     // 댓글 내용
 
     @Builder
-    public CommitComment(StudyCommit studyCommit, User user, String content) {
-        this.studyCommit = studyCommit;
-        this.user = user;
+    public CommitComment(Long studyCommitId, Long userId, String content) {
+        this.studyCommitId = studyCommitId;
+        this.userId = userId;
         this.content = content;
     }
 }

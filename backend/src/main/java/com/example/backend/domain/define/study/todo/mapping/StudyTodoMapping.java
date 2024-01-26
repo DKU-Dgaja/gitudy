@@ -1,8 +1,6 @@
 package com.example.backend.domain.define.study.todo.mapping;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
@@ -21,13 +19,11 @@ public class StudyTodoMapping extends BaseEntity {
     @Column(name = "STUDY_TODO_MAPPING_ID")
     private Long id;                        // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_TODO_ID", nullable = false)
-    private StudyTodo todo;                 // To do 정보
+    @Column(name = "TODO_ID", nullable = false)
+    private Long todoId;                    // To do ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                      // To do 할당자
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;                    // 사용자 ID
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STUDY_TODO_STATUS")
@@ -35,9 +31,9 @@ public class StudyTodoMapping extends BaseEntity {
     private StudyTodoStatus status;         // To do 진행상황
 
     @Builder
-    public StudyTodoMapping(StudyTodo todo, User user, StudyTodoStatus status) {
-        this.todo = todo;
-        this.user = user;
+    public StudyTodoMapping(Long todoId, Long userId, StudyTodoStatus status) {
+        this.todoId = todoId;
+        this.userId = userId;
         this.status = status;
     }
 }

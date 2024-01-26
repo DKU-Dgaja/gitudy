@@ -23,13 +23,11 @@ public class StudyCommit extends BaseEntity {
     @Column(name = "STUDY_COMMIT_ID")
     private Long id;                            // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "STUDY_INFO_ID", nullable = false)
-    private StudyInfo studyInfo;                // 속한 스터디 정보
+    @Column(name = "STUDY_INFO_ID", nullable = false)
+    private Long studyInfoId;                   // 스터디 ID
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                          // 소유자 정보
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;                        // 사용자 정보
 
     @Column(name = "COMMIT_SHA", nullable = false, unique = true)
     private String commitSHA;                   // 커밋의 식별자 SHA 값
@@ -50,9 +48,9 @@ public class StudyCommit extends BaseEntity {
     private String rejectionReason;             // 커밋 거절 이유
 
     @Builder
-    public StudyCommit(StudyInfo studyInfo, User user, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason) {
-        this.studyInfo = studyInfo;
-        this.user = user;
+    public StudyCommit(Long studyInfoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason) {
+        this.studyInfoId = studyInfoId;
+        this.userId = userId;
         this.commitSHA = commitSHA;
         this.message = message;
         this.commitDate = commitDate;

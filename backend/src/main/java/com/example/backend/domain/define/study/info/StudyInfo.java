@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.study.info;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
@@ -23,9 +22,8 @@ public class StudyInfo extends BaseEntity {
     @Column(name = "STUDY_INFO_ID")
     private Long id;                                // 아이디
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "USER_ID", nullable = false)
-    private User user;                            // 스터디장 정보
+    @Column(name = "USER_ID", nullable = false)
+    private Long userId;                            // 스터디장 ID                         // 스터디장 정보
 
     @Column(name = "TOPIC", nullable = false)
     private String topic;                           // 스터디 이름
@@ -76,9 +74,8 @@ public class StudyInfo extends BaseEntity {
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
     @Builder
-
-    public StudyInfo(User user, String topic, int score, LocalDate endDate, String info, StudyStatus status, String joinCode, int maximumMember, int currentMember, boolean isAvailable, LocalDate lastCommitDay, String profileImageUrl, String notice, RepositoryInfo repositoryInfo, StudyPeriodType periodType) {
-        this.user = user;
+    public StudyInfo(Long userId, String topic, int score, LocalDate endDate, String info, StudyStatus status, String joinCode, int maximumMember, int currentMember, boolean isAvailable, LocalDate lastCommitDay, String profileImageUrl, String notice, RepositoryInfo repositoryInfo, StudyPeriodType periodType) {
+        this.userId = userId;
         this.topic = topic;
         this.score = score;
         this.endDate = endDate;
