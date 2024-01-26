@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">GITUDY</string>
+    <!-- Strings related to common -->
+    <string name="confirm">확인</string>
+
+
+    <!-- Strings related to login -->
+    <string name="detail1_body">서비스 이용 약관 내용</string>
+    <string name="detail2_body">개인정보 처리 방침 내용</string>
+    <string name="detail3_body">본인 인증 서비스 이용 약관 내용</string>
 </resources>

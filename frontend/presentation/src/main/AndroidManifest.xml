@@ -3,7 +3,19 @@
 
     <application>
         <activity
-            android:name=".SecActivity"
+            android:name=".ui.login.InputNameActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.InputIdActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.AgreementActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.SubLoginActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.login.LoginActivity"
             android:exported="false" />
         <activity
             android:name=".ui.SplashActivity"
