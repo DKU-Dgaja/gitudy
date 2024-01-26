@@ -62,6 +62,6 @@
             android:text="@string/confirm"
             android:fontFamily="@font/pretendard_semibold"
             android:textSize="16sp"
-            android:textColor="@color/WHITE"/>
+            android:textColor="@color/BLACK"/>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -42,9 +42,9 @@
         app:layout_constraintStart_toStartOf="parent">
 
         <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="5dp"
+            android:layout_width="15dp"
+            android:layout_height="15dp"
+            android:layout_marginRight="6dp"
             android:src="@drawable/logo_github" />
 
         <TextView
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:fontFamily="@font/pretendard_semibold"
             android:text="Github로 로그인"
-            android:textColor="@color/WHITE"
+            android:textColor="@color/GS_900"
             android:textSize="16dp" />
     </LinearLayout>
 
