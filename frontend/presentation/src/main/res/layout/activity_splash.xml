@@ -6,12 +6,14 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.SplashActivity">
+    tools:context=".ui.SplashActivity"
+    android:padding="22dp"
+    android:background="@color/WHITE">
 
     <ImageView
         android:layout_width="230.18dp"
         android:layout_height="43.59dp"
-        android:src="@drawable/gitudy_logo"
+        android:src="@drawable/logo_gitudy"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
