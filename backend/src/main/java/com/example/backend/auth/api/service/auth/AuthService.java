@@ -1,16 +1,20 @@
 package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
+import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.auth.api.service.token.RefreshTokenService;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
 import com.example.backend.domain.define.user.repository.UserRepository;
+import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -94,7 +98,7 @@ public class AuthService {
         log.info(">>>> [ 사용자 {}님의 refresh 토큰이 발급되었습니다 ] <<<<", user.getName());
 
         // Refresh Token을 레디스에 저장
-        RefreshToken refreshToken= RefreshToken.builder().refreshToken(jwtRefreshToken).platformId(user.getPlatformId()).build();
+        RefreshToken refreshToken= RefreshToken.builder().refreshToken(jwtRefreshToken).subject(user.getUsername()).build();
         refreshTokenService.saveRefreshToken(refreshToken);
         return JwtToken.builder()
                 .accessToken(jwtAccessToken)
@@ -106,9 +110,23 @@ public class AuthService {
         TODO : 로그아웃을 처리하는 서비스 로직 필요합니다.
      */
 
-    /*
-        TODO : JWT 토큰이 만료되었을 때 재발급을 위한 서비스 로직 필요합니다.
-     */
+    // JWT 토큰이 만료되었을 때 재발급을 위한 서비스 로직
+    public ReissueAccessTokenResponse reissueAccessToken(String refreshToken){
+        Claims claims = jwtService.extractAllClaims(refreshToken);
+        if (jwtService.isTokenValid(refreshToken, claims.getSubject())) {
+            // 리프레시 토큰을 이용해 새로운 엑세스 토큰 발급
+            String accessToken = refreshTokenService.reissue(claims, refreshToken);
+            log.info(">>>> {} reissue AccessToken.", claims.getSubject());
 
+            return ReissueAccessTokenResponse.builder()
+                    .accessToken(accessToken)
+                    .refreshToken(refreshToken)
+                    .build();
+
+        } else {
+            log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.JWT_INVALID_RTK.getText());
+            throw new JwtException(ExceptionMessage.JWT_INVALID_RTK);
+        }
+    }
 
 }

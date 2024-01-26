@@ -2,6 +2,7 @@ package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
+import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
@@ -9,10 +10,14 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -56,7 +61,20 @@ public class AuthController {
         TODO : 로그아웃을 처리하는 컨트롤러가 필요합니다.
      */
 
-    /*
-        TODO : JWT 토큰이 만료되었을 때 재발급을 처리할 컨트롤러가 필요합니다.
-     */
+    // JWT 토큰이 만료되었을 때 재발급을 처리할 컨트롤러
+    @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = ReissueAccessTokenResponse.class)))
+    @PostMapping("/reissue")
+    public JsonResult<?> reissueAccessToken(@RequestHeader(name = "Authorization") String token) {
+        System.out.println(token);
+        List<String> tokens = Arrays.asList(token.split(" "));
+        System.out.println(tokens.size());
+        if (tokens.size() == 3) {
+            ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(tokens.get(2));
+
+            return JsonResult.successOf(reissueResponse);
+        } else {
+            log.warn(">>>> Invalid Header Access : {}", ExceptionMessage.JWT_INVALID_HEADER.getText());
+            return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
+        }
+    }
 }
