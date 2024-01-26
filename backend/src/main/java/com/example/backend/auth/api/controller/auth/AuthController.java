@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -52,9 +53,20 @@ public class AuthController {
         return JsonResult.successOf(loginResponse);
     }
 
-    /*
-        TODO : 로그아웃을 처리하는 컨트롤러가 필요합니다.
-     */
+    @GetMapping("/logout")
+    public JsonResult<?> logout(@RequestHeader(name = "Authorization") String token) {
+        List<String> tokens = Arrays.asList(token.split(" "));
+
+        if (tokens.size() == 3) {
+            authService.logout(tokens.get(2));  // refresh token
+
+            return JsonResult.successOf("로그아웃 되었습니다.");
+        } else {
+            log.warn(">>>> Invalid Header Access : {}", ExceptionMessage.JWT_INVALID_HEADER.getText());
+            return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
+        }
+
+    }
 
     /*
         TODO : JWT 토큰이 만료되었을 때 재발급을 처리할 컨트롤러가 필요합니다.

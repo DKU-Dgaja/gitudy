@@ -101,9 +101,10 @@ public class AuthService {
                 .build();
     }
 
-    /*
-        TODO : 로그아웃을 처리하는 서비스 로직 필요합니다.
-     */
+    @Transactional
+    public void logout(String refreshToken) {
+        refreshTokenService.logout(refreshToken);
+    }
 
     /*
         TODO : JWT 토큰이 만료되었을 때 재발급을 위한 서비스 로직 필요합니다.
