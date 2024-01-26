@@ -7,7 +7,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.SplashActivity"
-    android:padding="22dp">
+    android:padding="22dp"
+    android:background="@color/WHITE">
 
     <ImageView
         android:layout_width="230.18dp"
