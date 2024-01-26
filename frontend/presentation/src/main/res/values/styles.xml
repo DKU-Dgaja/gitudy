@@ -85,6 +85,10 @@
         <item name="android:textSize">20sp</item>
     </style>
 
+    <style name="B4_0">
+        <item name="android:fontFamily">@font/pretendard_semibold</item>
+        <item name="android:textSize">16sp</item>
+    </style>
     <style name="B4_1">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">16sp</item>

@@ -6,14 +6,16 @@ import lombok.ToString;
 import org.springframework.data.redis.core.RedisHash;
 import org.springframework.data.annotation.Id;
 
-import java.util.UUID;
 
 @Getter
 @ToString
-@Builder
 @RedisHash(value = "state", timeToLive = 60 * 3) // 3분
 public class LoginState {
 
     @Id
     private String state;  // state 검증
+
+    @Builder
+    public LoginState() {
+    }
 }
