@@ -25,6 +25,7 @@ import java.util.List;
 @RequestMapping("/auth")
 @RestController
 public class AuthController {
+    private final static int ACCESS_TOKEN_INDEX = 2;
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
@@ -67,7 +68,7 @@ public class AuthController {
     public JsonResult<?> reissueAccessToken(@RequestHeader(name = "Authorization") String token) {
         List<String> tokens = Arrays.asList(token.split(" "));
         if (tokens.size() == 3) {
-            ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(tokens.get(2));
+            ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(tokens.get(ACCESS_TOKEN_INDEX));
 
             return JsonResult.successOf(reissueResponse);
         } else {
