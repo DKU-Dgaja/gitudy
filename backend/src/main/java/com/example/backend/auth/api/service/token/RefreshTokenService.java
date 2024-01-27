@@ -10,6 +10,7 @@ import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRep
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
+import com.example.backend.domain.define.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,6 +26,7 @@ import java.util.Map;
 public class RefreshTokenService {
     final RefreshTokenRepository refreshTokenRepository;
     final JwtService jwtService;
+    final UserRepository userRepository;
 
     // 리프레시 토큰 저장 메서드
     public void saveRefreshToken(RefreshToken refreshToken) {
@@ -44,12 +46,16 @@ public class RefreshTokenService {
         String platformId = platformIdAndPlatformType[0];
         String platformType = platformIdAndPlatformType[1];
 
+        // 변경될 수 있는 Name, ProfileImageUrl를 유저 데이터베이스에 접근해서 데이터베이스에 저장되어 있는 정보로 재발행
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId,
+                UserPlatformType.valueOf(platformType)).get();
+
         UserDetails userDetails = User.builder()
                 .platformId(platformId)
                 .platformType(UserPlatformType.valueOf(platformType))
                 .role(UserRole.valueOf(role))
-                .name(claims.get("name", String.class))
-                .profileImageUrl(claims.get("profileImageUrl", String.class))
+                .name(user.getName())
+                .profileImageUrl(user.getProfileImageUrl())
                 .build();
 
         Map<String, String> map = new HashMap<>();
