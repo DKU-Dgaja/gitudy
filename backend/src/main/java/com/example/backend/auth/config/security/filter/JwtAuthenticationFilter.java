@@ -1,9 +1,12 @@
 package com.example.backend.auth.config.security.filter;
 
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.response.JsonResult;
+import com.example.backend.domain.define.refreshToken.RefreshToken;
+import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
@@ -38,7 +41,8 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final static int ACCESS_TOKEN_INDEX = 1;
 
     private final JwtService jwtService;
@@ -60,11 +64,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            // Access Token 구성: "Bearer {Access_Token}"
+            // Token 구성: "Bearer {Access_Token} {Refresh_Token}"
             List<String> tokens = Arrays.asList(jwtToken.split(" "));
 
-            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"
-            if (tokens.size() == 2) {
+            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"와 "{Refresh_Token}"
+            if (tokens.size() == 3) {
                 // Access Token 추출
                 String accessToken = tokens.get(ACCESS_TOKEN_INDEX);
                 subject = jwtService.extractSubject(accessToken);
@@ -80,7 +84,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (ExpiredJwtException e) {
-            jwtExceptionHandler(response, ExceptionMessage.JWT_TOKEN_EXPIRED);
+            logger.error(ExceptionMessage.JWT_TOKEN_EXPIRED, e);
+
+            // 헤더에서 토큰 추출
+            List<String> tokens = Arrays.asList(jwtToken.split(" "));
+            // refreshToken이 존재하는지 확인 - TTL로 만료시간 자동 체크
+            RefreshToken refreshToken = refreshTokenRepository.findById(tokens.get(2)).orElseThrow(
+                    () -> new JwtException(ExceptionMessage.JWT_NOT_EXIST_RTK));
+            subject = jwtService.extractSubject(refreshToken.getRefreshToken());
+            // 엑세스 토큰 재발급
+            String reissueAccessToken = refreshTokenService.reissue(jwtService.extractAllClaims(refreshToken.getRefreshToken()), refreshToken.getRefreshToken());
+            System.out.println(reissueAccessToken);
+            // 재발급 받은 토큰 유효성 검증 후 시큐리티에 등록
+            authenticateUserWithJwtToken(subject, reissueAccessToken, request);
+            filterChain.doFilter(request, response);
 
         } catch (UnsupportedJwtException e) {
             jwtExceptionHandler(response, ExceptionMessage.JWT_UNSUPPORTED);
