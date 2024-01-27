@@ -46,11 +46,13 @@ class RefreshTokenServiceTest {
     void redisRefreshTokenGenerate() {
         // given
         String testRefreshToken="testToken";
+
         String testSubject = "KAKAO_1234";
 
         RefreshToken saveToken = RefreshToken.builder()
                 .refreshToken(testRefreshToken)
                 .subject(testSubject)
+
                 .build();
 
         refreshTokenService.saveRefreshToken(saveToken);
@@ -60,6 +62,7 @@ class RefreshTokenServiceTest {
 
         // then
         assertThat(testToken.get().getRefreshToken()).isEqualTo(testRefreshToken);
+
         assertThat(testToken.get().getSubject()).isEqualTo(testSubject);
     }
     @Test
@@ -96,5 +99,6 @@ class RefreshTokenServiceTest {
 
         // then
         assertThat(exception.getMessage()).isEqualTo(ExceptionMessage.JWT_NOT_EXIST_RTK.getText());
+
     }
 }

@@ -145,8 +145,10 @@ class JwtServiceTest extends TestConfig {
         String role = savedUser.getRole().name();
         String name = savedUser.getName();
         String profileImageUrl = savedUser.getProfileImageUrl();
+
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
+
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
@@ -162,6 +164,7 @@ class JwtServiceTest extends TestConfig {
         assertThat(result).isTrue();
         assertAll(
                 () -> assertThat(claims.getSubject()).isEqualTo(platformId+"_"+platformType),
+
                 () -> assertThat(claims.get("role")).isEqualTo(role),
                 () -> assertThat(claims.get("name")).isEqualTo(name),
                 () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
