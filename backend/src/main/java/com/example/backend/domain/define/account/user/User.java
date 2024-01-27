@@ -4,12 +4,12 @@ import com.example.backend.domain.define.BaseEntity;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,6 +18,7 @@ import java.util.Collection;
 import java.util.List;
 
 @Getter
+@DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)              // 외부에서 객체 생성 못하도록 제한
 @Entity(name = "USERS")                                         // "USER"는 예약어 출동 발생하므로 "USERS"로 설정
 @Table(name = "USERS", uniqueConstraints = {
@@ -38,7 +39,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "PLATFORM_TYPE")
-    @ColumnDefault(value = "'KAKAO'")
+    @ColumnDefault(value = "'GITHUB'")
     private UserPlatformType platformType;                      // 플랫폼 타입
 
     @Enumerated(EnumType.STRING)
