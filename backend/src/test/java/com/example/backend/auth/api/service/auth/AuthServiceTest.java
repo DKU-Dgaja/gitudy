@@ -134,12 +134,12 @@ class AuthServiceTest extends TestConfig {
         String code = "code";
         String state = "state";
 
-        String role = "role";
-        String name = "name";
-        String profileImageUrl = "profileImageUrl";
+        String platformId = "platformId";
+        String platformType = "platformType";
 
-        String expectedName = "jusung-c";
-        String expectedProfileImageUrl = "http://www.naver.com";
+
+        String expectedPlatformId = "1";
+        String expectedPlatformType = "GITHUB";
 
         OAuthResponse oAuthResponse = generateOauthResponse();
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
@@ -152,9 +152,8 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(claims.get(role)).isEqualTo(UserRole.UNAUTH.name()),
-                () -> assertThat(claims.get(name)).isEqualTo(expectedName),
-                () -> assertThat(claims.get(profileImageUrl)).isEqualTo(expectedProfileImageUrl)
+                () -> assertThat(claims.get(platformId)).isEqualTo(expectedPlatformId),
+                () -> assertThat(claims.get(platformType)).isEqualTo(expectedPlatformType)
         );
     }
 }

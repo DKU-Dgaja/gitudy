@@ -35,16 +35,15 @@ class JwtServiceTest extends TestConfig {
     void extractAllClaimsTest() {
         // given
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
+        String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
 
         String expectedSubject = savedUser.getPlatformId() + "_" + savedUser.getPlatformType();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        map.put("platformType", platformType);
+
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -53,9 +52,9 @@ class JwtServiceTest extends TestConfig {
         // then
         assertAll(
                 () -> assertThat(claims.getSubject()).isEqualTo(expectedSubject),
-                () -> assertThat(claims.get("role")).isEqualTo(role),
-                () -> assertThat(claims.get("name")).isEqualTo(name),
-                () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
+                () -> assertThat(claims.get("platformId")).isEqualTo(platformId),
+                () -> assertThat(claims.get("platformType")).isEqualTo(platformType)
+
         );
     }
 
@@ -64,16 +63,16 @@ class JwtServiceTest extends TestConfig {
     void extractSubjectTest() {
         // given
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
+        String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
+
 
         String expectedSubject = savedUser.getPlatformId() + "_" + savedUser.getPlatformType();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        map.put("platformType", platformType);
+
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -89,14 +88,12 @@ class JwtServiceTest extends TestConfig {
     void extractExpirationTest() {
         // given
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
+        String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        map.put("platformType", platformType);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -111,16 +108,14 @@ class JwtServiceTest extends TestConfig {
     void generateAccessTokenTest() {
         // given
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
+        String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
 
         String subject = savedUser.getUsername();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        map.put("platformType", platformType);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -131,9 +126,8 @@ class JwtServiceTest extends TestConfig {
         assertThat(result).isTrue();
         assertAll(
                 () -> assertThat(claims.getSubject()).isEqualTo(subject),
-                () -> assertThat(claims.get("role")).isEqualTo(role),
-                () -> assertThat(claims.get("name")).isEqualTo(name),
-                () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
+                () -> assertThat(claims.get("platformId")).isEqualTo(platformId),
+                () -> assertThat(claims.get("platformType")).isEqualTo(platformType)
         );
     }
 
@@ -142,18 +136,13 @@ class JwtServiceTest extends TestConfig {
     void generateRefreshTokenTest() {
         // given
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
-
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
 
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        map.put("platformType", platformType);
 
         // when
         String atk = jwtService.generateRefreshToken(map, savedUser);
@@ -165,9 +154,8 @@ class JwtServiceTest extends TestConfig {
         assertAll(
                 () -> assertThat(claims.getSubject()).isEqualTo(platformId+"_"+platformType),
 
-                () -> assertThat(claims.get("role")).isEqualTo(role),
-                () -> assertThat(claims.get("name")).isEqualTo(name),
-                () -> assertThat(claims.get("profileImageUrl")).isEqualTo(profileImageUrl)
+                () -> assertThat(claims.get("platformId")).isEqualTo(platformId),
+                () -> assertThat(claims.get("platformType")).isEqualTo(platformType)
         );
     }
 
@@ -176,14 +164,14 @@ class JwtServiceTest extends TestConfig {
     void isTokenIllegal() {
         // given
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
+        String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
         String subject = savedUser.getUsername();
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-//        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        // map.put("platformType", platformType);
+
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -200,14 +188,12 @@ class JwtServiceTest extends TestConfig {
         String s = "Another Requestor";
 
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
+        String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        map.put("platformType", platformType);
 
         // when
         String atk = jwtService.generateAccessToken(map, savedUser);
@@ -222,14 +208,13 @@ class JwtServiceTest extends TestConfig {
     void isTokenExpired() {
         // given
         User savedUser = userRepository.save(generateUser());
-        String role = savedUser.getRole().name();
-        String name = savedUser.getName();
-        String profileImageUrl = savedUser.getProfileImageUrl();
+        String platformId = savedUser.getPlatformId();
+        String platformType = String.valueOf(savedUser.getPlatformType());
+
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", role);
-        map.put("name", name);
-        map.put("profileImageUrl", profileImageUrl);
+        map.put("platformId", platformId);
+        map.put("platformType", platformType);
 
         // when
         // 만료된 시간으로 설정된 JWT 토큰 생성
@@ -237,6 +222,6 @@ class JwtServiceTest extends TestConfig {
 
         // then
         assertThrows(ExpiredJwtException.class,
-                () -> jwtService.isTokenValid(expiredToken, name));
+                () -> jwtService.isTokenValid(expiredToken, platformId+"_"+platformType));
     }
 }

@@ -79,9 +79,9 @@ class RefreshTokenServiceTest {
         User savedUser = userRepository.save(user);
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("platformId", savedUser.getPlatformId());
+        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
+
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         refreshTokenService.saveRefreshToken(RefreshToken.builder()
@@ -90,14 +90,12 @@ class RefreshTokenServiceTest {
                 .build());
 
         Claims claims = jwtService.extractAllClaims(refreshToken);
-        // refresh 토큰 삭제
+        // when : refresh 토큰 삭제
         refreshTokenRepository.deleteById(refreshToken);
 
-        // when
+        // then
         JwtException exception = assertThrows(JwtException.class,
                 () -> refreshTokenService.reissue(claims, refreshToken));
-
-        // then
         assertThat(exception.getMessage()).isEqualTo(ExceptionMessage.JWT_NOT_EXIST_RTK.getText());
 
     }
