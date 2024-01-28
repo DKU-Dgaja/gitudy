@@ -25,7 +25,7 @@ public class StudyInfo extends BaseEntity {
     private Long id;                                // 아이디
 
     @Column(name = "USER_ID", nullable = false)
-    private Long userId;                            // 스터디장 ID                         // 스터디장 정보
+    private Long userId;                            // 스터디장 ID
 
     @Column(name = "TOPIC", nullable = false)
     private String topic;                           // 스터디 이름
@@ -54,9 +54,6 @@ public class StudyInfo extends BaseEntity {
     @Column(name = "CURRENT_MEMBER")
     private int currentMember;                      // 스터디 현재 인원
 
-    @Column(name = "IS_AVAILABLE")
-    private boolean isAvailable;                    // 스터디 남은 자리 여부
-
     @Temporal(TemporalType.DATE)
     @Column(name = "LAST_COMMIT_DAY")
     private LocalDate lastCommitDay;                // 스터디 마지막 활동 시간
@@ -76,7 +73,7 @@ public class StudyInfo extends BaseEntity {
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
     @Builder
-    public StudyInfo(Long userId, String topic, int score, LocalDate endDate, String info, StudyStatus status, String joinCode, int maximumMember, int currentMember, boolean isAvailable, LocalDate lastCommitDay, String profileImageUrl, String notice, RepositoryInfo repositoryInfo, StudyPeriodType periodType) {
+    public StudyInfo(Long userId, String topic, int score, LocalDate endDate, String info, StudyStatus status, String joinCode, int maximumMember, int currentMember, LocalDate lastCommitDay, String profileImageUrl, String notice, RepositoryInfo repositoryInfo, StudyPeriodType periodType) {
         this.userId = userId;
         this.topic = topic;
         this.score = score;
@@ -86,7 +83,6 @@ public class StudyInfo extends BaseEntity {
         this.joinCode = joinCode;
         this.maximumMember = maximumMember;
         this.currentMember = currentMember;
-        this.isAvailable = isAvailable;
         this.lastCommitDay = lastCommitDay;
         this.profileImageUrl = profileImageUrl;
         this.notice = notice;
