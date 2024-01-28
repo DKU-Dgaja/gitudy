@@ -5,28 +5,22 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
-import com.example.backend.domain.define.user.User;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
-import com.example.backend.domain.define.user.constant.UserRole;
-import com.example.backend.domain.define.user.repository.UserRepository;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserRole;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import com.example.backend.auth.TestConfig;
-import com.example.backend.domain.define.refreshToken.RefreshToken;
-import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
-import com.example.backend.domain.define.account.user.repository.UserRepository;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.HashMap;
 import java.util.Optional;
 
-import static com.example.backend.auth.TestConfig.generateUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class RefreshTokenServiceTest extends TestConfig {

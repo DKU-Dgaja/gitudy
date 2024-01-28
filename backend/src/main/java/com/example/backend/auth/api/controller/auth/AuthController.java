@@ -9,8 +9,8 @@ import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 
-import com.example.backend.domain.define.user.constant.UserPlatformType;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -31,7 +31,6 @@ public class AuthController {
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
-    private final static int REFRESH_TOKEN_INDEX = 2;
 
     @GetMapping("/loginPage")
     public JsonResult<List<AuthLoginPageResponse>> loginPage() {
