@@ -24,6 +24,7 @@ public class AuthController {
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
+    private final static int REFRESH_TOKEN_INDEX = 2;
 
     @GetMapping("/loginPage")
     public JsonResult<List<AuthLoginPageResponse>> loginPage() {
@@ -57,8 +58,9 @@ public class AuthController {
     public JsonResult<?> logout(@RequestHeader(name = "Authorization") String token) {
         List<String> tokens = Arrays.asList(token.split(" "));
 
+
         if (tokens.size() == 3) {
-            authService.logout(tokens.get(2));  // refresh token
+            authService.logout(tokens.get(REFRESH_TOKEN_INDEX));
 
             return JsonResult.successOf("로그아웃 되었습니다.");
         } else {
