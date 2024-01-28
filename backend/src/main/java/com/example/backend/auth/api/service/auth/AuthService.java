@@ -15,10 +15,6 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 
-import com.example.backend.domain.define.user.User;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
-import com.example.backend.domain.define.user.constant.UserRole;
-import com.example.backend.domain.define.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 
 import lombok.RequiredArgsConstructor;

@@ -8,9 +8,6 @@ import com.example.backend.common.response.JsonResult;
 
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
-import com.example.backend.domain.define.user.User;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
-import com.example.backend.domain.define.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -54,7 +51,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final RefreshTokenService refreshTokenService;
     private final static int ACCESS_TOKEN_INDEX = 1;
     private final static String[] EXCLUDE_PATH = {"/auth/reissue"};
-    private final static int ACCESS_TOKEN_INDEX = 1;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
