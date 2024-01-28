@@ -44,9 +44,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private final RefreshTokenRepository refreshTokenRepository;
     private final RefreshTokenService refreshTokenService;
     private final static int ACCESS_TOKEN_INDEX = 1;
-
+    private final static String[] EXCLUDE_PATH = {"/auth/reissue"};
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return Arrays.stream(EXCLUDE_PATH).anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -57,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String subject;
 
         // JWT 토큰이 헤더에 없다면 사용자 인증이 되지 않은 상태이므로 다음 인증 필터로 이동
-        if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
+        if (jwtToken == null || !jwtToken.startsWith("Bearer ") || shouldNotFilter(request)) {
             log.info(">>>> [ Jwt 토큰이 헤더에 없으므로 다음 필터로 이동합니다 ] <<<<");
             filterChain.doFilter(request, response);
             return;
@@ -66,13 +72,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // Token 구성: "Bearer {Access_Token} {Refresh_Token}"
             List<String> tokens = Arrays.asList(jwtToken.split(" "));
-
             // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"와 "{Refresh_Token}"
             if (tokens.size() == 3) {
                 // Access Token 추출
                 String accessToken = tokens.get(ACCESS_TOKEN_INDEX);
                 subject = jwtService.extractSubject(accessToken);
-
                 // JWT 토큰 인증 로직 (JWT 검증 후 인증된 Authentication을 SecurityContext에 등록
                 authenticateUserWithJwtToken(subject, accessToken, request);
                 log.info(">>>> [ Jwt 토큰이 성공적으로 인증되었습니다. ] <<<<");
@@ -84,20 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (ExpiredJwtException e) {
-            logger.error(ExceptionMessage.JWT_TOKEN_EXPIRED, e);
-
-            // 헤더에서 토큰 추출
-            List<String> tokens = Arrays.asList(jwtToken.split(" "));
-            // refreshToken이 존재하는지 확인 - TTL로 만료시간 자동 체크
-            RefreshToken refreshToken = refreshTokenRepository.findById(tokens.get(2)).orElseThrow(
-                    () -> new JwtException(ExceptionMessage.JWT_NOT_EXIST_RTK));
-            subject = jwtService.extractSubject(refreshToken.getRefreshToken());
-            // 엑세스 토큰 재발급
-            String reissueAccessToken = refreshTokenService.reissue(jwtService.extractAllClaims(refreshToken.getRefreshToken()), refreshToken.getRefreshToken());
-            System.out.println(reissueAccessToken);
-            // 재발급 받은 토큰 유효성 검증 후 시큐리티에 등록
-            authenticateUserWithJwtToken(subject, reissueAccessToken, request);
-            filterChain.doFilter(request, response);
+            jwtExceptionHandler(response, ExceptionMessage.JWT_TOKEN_EXPIRED);
 
         } catch (UnsupportedJwtException e) {
             jwtExceptionHandler(response, ExceptionMessage.JWT_UNSUPPORTED);
