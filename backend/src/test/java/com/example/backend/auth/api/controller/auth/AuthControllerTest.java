@@ -13,8 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -26,8 +24,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AutoConfigureMockMvc
-@SpringBootTest
+
 class AuthControllerTest extends TestConfig {
 
     @Autowired
@@ -60,12 +57,13 @@ class AuthControllerTest extends TestConfig {
         // when
         mockMvc.perform(
                         get("/auth/logout")
-                                .header("Authorization", "Bearer " + accessToken + refreshToken))
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400));
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
     @Test
@@ -93,7 +91,7 @@ class AuthControllerTest extends TestConfig {
         // when
         mockMvc.perform(get("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer" + " " + accessToken + " " + refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -106,7 +104,7 @@ class AuthControllerTest extends TestConfig {
     void logoutWhenInvalidHeader() throws Exception {
         mockMvc.perform(get("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "INVALID HEADER"))
+                        .header(AUTHORIZATION, "INVALID HEADER"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
