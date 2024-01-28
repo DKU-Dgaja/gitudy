@@ -30,7 +30,7 @@ import java.util.HashMap;
 public class AuthService {
     private static final String PLATFORM_ID_CLAIM = "platformId";
     private static final String PLATFORM_TYPE_CLAIM = "platformType";
-
+    private static final String ROLE_CLAIM = "role";
     private final UserRepository userRepository;
     private final OAuthService oAuthService;
     private final JwtService jwtService;
@@ -83,6 +83,7 @@ public class AuthService {
     private JwtToken generateJwtToken(User user) {
         // JWT 토큰 생성을 위한 claims 생성
         HashMap<String, String> claims = new HashMap<>();
+        claims.put(ROLE_CLAIM, user.getRole().name());
         claims.put(PLATFORM_ID_CLAIM, user.getPlatformId());
         claims.put(PLATFORM_TYPE_CLAIM, String.valueOf(user.getPlatformType()));
 

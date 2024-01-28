@@ -79,6 +79,7 @@ class RefreshTokenServiceTest {
         User savedUser = userRepository.save(user);
 
         HashMap<String, String> map = new HashMap<>();
+        map.put("role", savedUser.getRole().name());
         map.put("platformId", savedUser.getPlatformId());
         map.put("platformType", String.valueOf(savedUser.getPlatformType()));
 

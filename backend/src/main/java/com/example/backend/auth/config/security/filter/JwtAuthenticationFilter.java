@@ -129,6 +129,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             // JWT 토큰의 Claim을 사용해 User 생성
             UserDetails userDetails = User.builder()
+                    .role(UserRole.valueOf(claims.get("role", String.class)))
                     .platformId(platformId)
                     .platformType(UserPlatformType.valueOf(platformType))
                     .build();
@@ -137,7 +138,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails,
                     null,
-                    null // claim에서 name, role, profileURL -> platformId, platformType으로 바뀌니 role이 없어지면서 nullPointerException이 터지길래 null로 설정해줬습니다
+                    userDetails.getAuthorities()
             );
 
             // Authentication에 현재 요청 정보를 저장

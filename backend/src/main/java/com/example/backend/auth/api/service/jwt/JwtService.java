@@ -96,6 +96,7 @@ public class JwtService {
     public boolean isTokenValid(String token, String username) {
         Claims claims = extractAllClaims(token);
 
+        if (!claims.containsKey("role")) return false;
         if (!claims.containsKey("platformId")) return false;
         if (!claims.containsKey("platformType")) return false;
 
