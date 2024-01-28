@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.refreshToken.repository;
 
+import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -9,8 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
-class RefreshTokenRepositoryTest {
+class RefreshTokenRepositoryTest extends TestConfig {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
