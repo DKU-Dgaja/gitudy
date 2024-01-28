@@ -8,7 +8,10 @@ import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -38,9 +41,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
     private final static int ACCESS_TOKEN_INDEX = 1;
-
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
@@ -60,15 +61,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            // Access Token 구성: "Bearer {Access_Token}"
+            // Token 구성: "Bearer {Access_Token} {Refresh_Token}"
             List<String> tokens = Arrays.asList(jwtToken.split(" "));
-
-            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"
-            if (tokens.size() == 2) {
+            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"와 "{Refresh_Token}"
+            if (tokens.size() == 3) {
                 // Access Token 추출
                 String accessToken = tokens.get(ACCESS_TOKEN_INDEX);
                 subject = jwtService.extractSubject(accessToken);
-
                 // JWT 토큰 인증 로직 (JWT 검증 후 인증된 Authentication을 SecurityContext에 등록
                 authenticateUserWithJwtToken(subject, accessToken, request);
                 log.info(">>>> [ Jwt 토큰이 성공적으로 인증되었습니다. ] <<<<");
@@ -80,6 +79,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (ExpiredJwtException e) {
+            log.error(">>>> {}: {} <<<< ", e, ExceptionMessage.JWT_TOKEN_EXPIRED.getText());
             jwtExceptionHandler(response, ExceptionMessage.JWT_TOKEN_EXPIRED);
 
         } catch (UnsupportedJwtException e) {

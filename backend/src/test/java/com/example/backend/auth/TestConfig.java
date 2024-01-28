@@ -31,6 +31,9 @@ import static com.example.backend.domain.define.user.constant.UserPlatformType.G
 @AutoConfigureMockMvc
 public class TestConfig {
 
+    public static final String AUTHORIZATION = "Authorization";
+    public static final String BEARER = "Bearer";
+
     public static User generateUser() {
 
         return User.builder()
@@ -51,5 +54,10 @@ public class TestConfig {
                 .profileImageUrl("http://www.naver.com")
                 .build();
     }
+
+    public static String createAuthorizationHeader(String accessToken, String refreshToken) {
+        return BEARER + " " + accessToken + " " + refreshToken;
+    }
+
 }
 
