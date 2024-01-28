@@ -87,19 +87,18 @@ class AuthControllerTest extends TestConfig {
         map.put("profileImageUrl", savedUser.getProfileImageUrl());
 
         String accessToken = jwtService.generateAccessToken(map, user);
-
+        String refreshToken = jwtService.generateRefreshToken(map, user);
 
 
         // when
         mockMvc.perform(get("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken))
+                        .header("Authorization", "Bearer" + " " + accessToken + " " + refreshToken))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_obj").value("Logout successfully."));
+                .andExpect(jsonPath("$.res_obj").value("로그아웃 되었습니다."));
     }
-
 
 
     @Test

@@ -1,9 +1,12 @@
 package com.example.backend.auth.config.security.filter;
 
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.response.JsonResult;
+import com.example.backend.domain.define.refreshToken.RefreshToken;
+import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
@@ -38,11 +41,18 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
     private final static int ACCESS_TOKEN_INDEX = 1;
-
+    private final static String[] EXCLUDE_PATH = {"/auth/reissue"};
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return Arrays.stream(EXCLUDE_PATH).anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -53,22 +63,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String subject;
 
         // JWT 토큰이 헤더에 없다면 사용자 인증이 되지 않은 상태이므로 다음 인증 필터로 이동
-        if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
+        if (jwtToken == null || !jwtToken.startsWith("Bearer ") || shouldNotFilter(request)) {
             log.info(">>>> [ Jwt 토큰이 헤더에 없으므로 다음 필터로 이동합니다 ] <<<<");
             filterChain.doFilter(request, response);
             return;
         }
 
         try {
-            // Access Token 구성: "Bearer {Access_Token}"
+            // Token 구성: "Bearer {Access_Token} {Refresh_Token}"
             List<String> tokens = Arrays.asList(jwtToken.split(" "));
-
-            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"
-            if (tokens.size() == 2) {
+            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"와 "{Refresh_Token}"
+            if (tokens.size() == 3) {
                 // Access Token 추출
                 String accessToken = tokens.get(ACCESS_TOKEN_INDEX);
                 subject = jwtService.extractSubject(accessToken);
-
                 // JWT 토큰 인증 로직 (JWT 검증 후 인증된 Authentication을 SecurityContext에 등록
                 authenticateUserWithJwtToken(subject, accessToken, request);
                 log.info(">>>> [ Jwt 토큰이 성공적으로 인증되었습니다. ] <<<<");
@@ -80,6 +88,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (ExpiredJwtException e) {
+            log.error(">>>> {}: {} <<<< ", e, ExceptionMessage.JWT_TOKEN_EXPIRED.getText());
             jwtExceptionHandler(response, ExceptionMessage.JWT_TOKEN_EXPIRED);
 
         } catch (UnsupportedJwtException e) {
