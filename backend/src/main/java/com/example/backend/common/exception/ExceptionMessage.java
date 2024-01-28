@@ -14,6 +14,8 @@ public enum ExceptionMessage {
     JWT_ILLEGAL_ARGUMENT("JWT 토큰의 구성 요소가 올바르지 않습니다."),
     JWT_SUBJECT_IS_NULL("해당 JWT 토큰의 식별자가 null입니다."),
     JWT_INVALID_HEADER("Header의 형식이 올바르지 않습니다."),
+    JWT_NOT_EXIST_RTK("Refresh Token이 존재하지 않습니다."),
+    JWT_INVALID_RTK("Refresh Token의 형식이 올바르지 않습니다."),
 
     // Refreshtoken
     REFRESHTOKEN_NOT_EXIST("Refresh Token이 존재하지 않습니다."),
@@ -29,6 +31,7 @@ public enum ExceptionMessage {
     LOGINSTATE_IS_NOT_USE("해당 LoginState를 사용할 수 없습니다."),
     LOGINSTATE_INVALID_VALUE("LoginState 정보가 잘못되었습니다."),
     LOGINSTATE_NOT_FOUND("LoginState를 찾을 수 없습니다.")
+
 
     ;
     private final String text;

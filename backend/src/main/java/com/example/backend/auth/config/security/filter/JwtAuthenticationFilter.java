@@ -1,12 +1,20 @@
 package com.example.backend.auth.config.security.filter;
 
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.response.JsonResult;
+
+import com.example.backend.domain.define.refreshToken.RefreshToken;
+import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
+import com.example.backend.domain.define.user.User;
+import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -41,9 +49,20 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
+    private final RefreshTokenRepository refreshTokenRepository;
+    private final RefreshTokenService refreshTokenService;
+    private final static int ACCESS_TOKEN_INDEX = 1;
+    private final static String[] EXCLUDE_PATH = {"/auth/reissue"};
     private final static int ACCESS_TOKEN_INDEX = 1;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
+        String path = request.getRequestURI();
+        return Arrays.stream(EXCLUDE_PATH).anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -54,7 +73,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         String subject;
 
         // JWT 토큰이 헤더에 없다면 사용자 인증이 되지 않은 상태이므로 다음 인증 필터로 이동
-        if (jwtToken == null || !jwtToken.startsWith("Bearer ")) {
+        if (jwtToken == null || !jwtToken.startsWith("Bearer ") || shouldNotFilter(request)) {
             log.info(">>>> [ Jwt 토큰이 헤더에 없으므로 다음 필터로 이동합니다 ] <<<<");
             filterChain.doFilter(request, response);
             return;
@@ -122,8 +141,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             // JWT 토큰의 Claim을 사용해 User 생성
             UserDetails userDetails = User.builder()
                     .role(UserRole.valueOf(claims.get("role", String.class)))
-                    .name(claims.get("name", String.class))
-                    .profileImageUrl(claims.get("profileImageUrl", String.class))
                     .platformId(platformId)
                     .platformType(UserPlatformType.valueOf(platformType))
                     .build();

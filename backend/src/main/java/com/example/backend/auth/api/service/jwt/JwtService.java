@@ -97,8 +97,8 @@ public class JwtService {
         Claims claims = extractAllClaims(token);
 
         if (!claims.containsKey("role")) return false;
-        if (!claims.containsKey("name")) return false;
-        if (!claims.containsKey("profileImageUrl")) return false;
+        if (!claims.containsKey("platformId")) return false;
+        if (!claims.containsKey("platformType")) return false;
 
         String subject = claims.getSubject();
         return (subject.equals(username)) && !isTokenExpired(token);
