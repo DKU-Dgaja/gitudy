@@ -7,12 +7,16 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
+
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
 import com.example.backend.domain.define.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
+import lombok.Getter;
+
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -33,6 +37,7 @@ public class RefreshTokenService {
         RefreshToken savedToken = refreshTokenRepository.save(refreshToken);
         log.info(">>>> Refresh Token register : {}", savedToken.getRefreshToken());
     }
+
     public String reissue(Claims claims, String refreshToken) {
 
         refreshTokenRepository.findById(refreshToken).orElseThrow(() -> {
@@ -64,6 +69,28 @@ public class RefreshTokenService {
         // "_"로 문자열을 나누고 id와 type을 추출
         // 이미 검증된 토큰이므로 따로 예외처리 필요 없음
         return subject.split("_");
+    }
+
+
+
+    // Logout 시 Redis에 저장된 RefreshToken 삭제
+    public void logout(String refreshToken) {
+
+        String sub = jwtService.extractAllClaims(refreshToken).getSubject();
+
+        RefreshToken rtk = refreshTokenRepository.findById(refreshToken).orElseThrow(() -> {
+            log.warn(">>>> Token Not Exist : {}", ExceptionMessage.REFRESHTOKEN_NOT_EXIST.getText());
+            throw new JwtException(ExceptionMessage.REFRESHTOKEN_NOT_EXIST);
+        });
+
+        // refreshToken 유효성 검사
+        if (!jwtService.isTokenValid(refreshToken, rtk.getRefreshToken())) {
+            log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.REFRESHTOKEN_INVALID.getText());
+            throw new JwtException(ExceptionMessage.REFRESHTOKEN_INVALID);
+        }
+
+        refreshTokenRepository.delete(rtk);
+        log.info(">>>> {}'s RefreshToken id deleted.", sub);
     }
 
 }

@@ -5,13 +5,21 @@ import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.response.JsonResult;
+
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.example.backend.domain.define.user.User;
 import com.example.backend.domain.define.user.constant.UserPlatformType;
 import com.example.backend.domain.define.user.constant.UserRole;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.constant.UserRole;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -41,10 +49,12 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
+
     private final RefreshTokenRepository refreshTokenRepository;
     private final RefreshTokenService refreshTokenService;
     private final static int ACCESS_TOKEN_INDEX = 1;
     private final static String[] EXCLUDE_PATH = {"/auth/reissue"};
+    private final static int ACCESS_TOKEN_INDEX = 1;
     private final JwtService jwtService;
     private final ObjectMapper objectMapper;
 
@@ -88,6 +98,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
 
         } catch (ExpiredJwtException e) {
+            log.error(">>>> {}: {} <<<< ", e, ExceptionMessage.JWT_TOKEN_EXPIRED.getText());
             jwtExceptionHandler(response, ExceptionMessage.JWT_TOKEN_EXPIRED);
 
         } catch (UnsupportedJwtException e) {

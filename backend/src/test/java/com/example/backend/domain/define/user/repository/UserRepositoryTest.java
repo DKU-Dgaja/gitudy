@@ -1,18 +1,18 @@
 package com.example.backend.domain.define.user.repository;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.domain.define.user.User;
-import com.example.backend.domain.define.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.constant.UserRole;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
-import java.util.Optional;
-
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.user.constant.UserPlatformType.GOOGLE;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.define.account.user.constant.UserRole.UNAUTH;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -82,6 +82,23 @@ class UserRepositoryTest extends TestConfig {
         assertThat(findA.getPlatformId()).isEqualTo(findB.getPlatformId());
         assertThat(findA.getPlatformType()).isNotEqualTo(findB.getPlatformType());
         assertThat(findA.getId()).isNotEqualTo(findB.getId());
+    }
+
+    @Test
+    @DisplayName("@ColumnDefault insert 적용 테스트")
+    void columnDefaultTest() {
+        // given
+        User savedUser = userRepository.save(User.builder()
+                .name("name")
+                .githubId("github")
+                .build());
+
+        // when
+        User findUser = userRepository.findById(savedUser.getId()).get();
+
+        // then
+        assertThat(findUser.getPlatformType()).isEqualTo(GITHUB);
+        assertThat(findUser.getRole()).isEqualTo(UNAUTH);
     }
 
 }

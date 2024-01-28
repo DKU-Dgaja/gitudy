@@ -10,6 +10,7 @@ import com.example.backend.auth.api.service.oauth.builder.google.GoogleURLBuilde
 import com.example.backend.auth.api.service.oauth.builder.kakao.KakaoURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.oauth.OAuthException;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +18,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
-import static com.example.backend.domain.define.user.constant.UserPlatformType.*;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GOOGLE;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -93,7 +96,7 @@ class OAuthServiceTest extends TestConfig {
         OAuthResponse response = generateOauthResponse();
 
         String expectedPlatformId = "1";
-        String expectedName = "jusung-c";
+        String expectedName = "jusung";
         String expectedProfileImageUrl = "http://www.naver.com";
 
         // when

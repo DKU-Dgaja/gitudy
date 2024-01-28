@@ -17,6 +17,11 @@ public enum ExceptionMessage {
     JWT_NOT_EXIST_RTK("Refresh Token이 존재하지 않습니다."),
     JWT_INVALID_RTK("Refresh Token의 형식이 올바르지 않습니다."),
 
+    // Refreshtoken
+    REFRESHTOKEN_NOT_EXIST("Refresh Token이 존재하지 않습니다."),
+    REFRESHTOKEN_INVALID("유효하지 않은 Refresh Token 입니다."),
+
+
     // OAuthException
     OAUTH_INVALID_TOKEN_URL("token URL이 올바르지 않습니다."),
     OAUTH_INVALID_ACCESS_TOKEN("access_token이 올바르지 않습니다."),

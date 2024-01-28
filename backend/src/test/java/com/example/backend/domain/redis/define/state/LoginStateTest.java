@@ -1,5 +1,6 @@
 package com.example.backend.domain.redis.define.state;
 
+import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.state.LoginState;
 import com.example.backend.domain.define.state.LoginStateRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -13,8 +14,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.*;
 
-@SpringBootTest
-class LoginStateTest {
+class LoginStateTest extends TestConfig {
     @Autowired
     private LoginStateRepository loginStateRepository;
 
