@@ -7,7 +7,7 @@
     tools:context=".ui.login.InputIdActivity">
 
     <TextView
-        android:id="@+id/nameTitle"
+        android:id="@+id/inputNicknameDescription1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="138dp"
@@ -20,7 +20,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/nameDetail"
+        android:id="@+id/inputNicknameDescription2"
         style="@style/B3_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -29,10 +29,10 @@
         android:textColor="@color/GS_700"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/inputNicknameDescription1" />
 
     <EditText
-        android:id="@+id/nameEditView"
+        android:id="@+id/inputNicknameEditText"
         style="@style/B2_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -43,11 +43,11 @@
         android:textColorHint="@color/GS_300"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameDetail" />
+        app:layout_constraintTop_toBottomOf="@+id/inputNicknameDescription2" />
 
     <TextView
-        android:id="@+id/nameCheckView"
-        style="@style/B4_1"
+        android:id="@+id/inputNicknameDescription3"
+        style="@style/B5_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -55,7 +55,7 @@
         android:textColor="@color/GS_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/nameEditView" />
+        app:layout_constraintTop_toBottomOf="@+id/inputNicknameEditText" />
 
     <LinearLayout
         android:id="@+id/confirmBtn"
@@ -66,7 +66,8 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            style="@style/B4_0"
+            android:id="@+id/confirmBtnText"
+            style="@style/B5_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/confirm"

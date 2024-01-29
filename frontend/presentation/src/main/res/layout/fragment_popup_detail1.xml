@@ -50,6 +50,7 @@
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/confirmBtn"
         android:layout_width="match_parent"
         android:layout_height="97dp"
         android:background="@color/BASIC_GREEN"
@@ -57,11 +58,11 @@
         app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
+            android:id="@+id/confirmBtnText"
+            style="@style/B5_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/pretendard_semibold"
             android:text="@string/confirm"
-            android:textColor="@color/BLACK"
-            android:textSize="16sp" />
+            android:textColor="@color/BLACK" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

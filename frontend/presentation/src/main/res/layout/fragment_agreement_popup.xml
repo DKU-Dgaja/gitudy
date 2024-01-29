@@ -10,7 +10,7 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="590dp"
+        android:layout_height="match_parent"
         app:cardCornerRadius="16dp">
 
         <LinearLayout
@@ -80,7 +80,7 @@
                 android:gravity="center_vertical">
 
                 <TextView
-                    style="@style/B4_1"
+                    style="@style/B5_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="[필수] 만 14세 이상입니다"
@@ -109,7 +109,7 @@
 
                 <TextView
                     android:id="@+id/detailTitle1"
-                    style="@style/B4_1"
+                    style="@style/B5_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="[필수] 개인정보 처리방침 동의"
@@ -148,7 +148,7 @@
 
                 <TextView
                     android:id="@+id/detailTitle2"
-                    style="@style/B4_1"
+                    style="@style/B5_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="[필수] 서비스 이용 약관 동의"
@@ -186,7 +186,7 @@
 
                 <TextView
                     android:id="@+id/detailTitle3"
-                    style="@style/B4_1"
+                    style="@style/B5_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="[필수] 본인 인증 서비스 이용 약관 동의"
@@ -226,6 +226,7 @@
                 android:gravity="center">
 
                 <TextView
+                    android:id="@+id/confirmBtnText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pretendard_semibold"

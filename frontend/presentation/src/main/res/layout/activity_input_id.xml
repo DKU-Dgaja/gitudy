@@ -7,7 +7,7 @@
     tools:context=".ui.login.InputIdActivity">
 
     <TextView
-        android:id="@+id/idTitle"
+        android:id="@+id/inputIdDescription1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="138dp"
@@ -20,8 +20,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/idDetail"
-        style="@style/B5_2"
+        android:id="@+id/inputIdDescription2"
+        style="@style/B6_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
@@ -30,10 +30,10 @@
         android:textColor="@color/GS_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/idTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/inputIdDescription1" />
 
     <EditText
-        android:id="@+id/idEditView"
+        android:id="@+id/inputIdEditText"
         style="@style/B2_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -44,7 +44,7 @@
         android:textColorHint="@color/GS_300"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/idDetail" />
+        app:layout_constraintTop_toBottomOf="@+id/inputIdDescription2" />
 
     <LinearLayout
         android:id="@+id/confirmBtn"
@@ -52,11 +52,11 @@
         android:layout_height="63dp"
         android:background="@color/GS_200"
         android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="22dp">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <TextView
-            style="@style/B4_0"
+            android:id="@+id/confirmBtnText"
+            style="@style/B5_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/confirm"

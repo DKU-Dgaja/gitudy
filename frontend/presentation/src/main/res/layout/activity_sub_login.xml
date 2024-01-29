@@ -12,20 +12,20 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="깃허브 계정도 필요합니다!"
-        app:layout_constraintBottom_toTopOf="@+id/kakaoBtn"
+        app:layout_constraintBottom_toTopOf="@+id/kakaoLoginBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
-        android:id="@+id/kakaoBtn"
+        android:id="@+id/kakaoLoginBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
         android:background="@drawable/box_non_stroke_green"
         android:backgroundTint="#F9E000"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/googleBtn"
+        app:layout_constraintBottom_toTopOf="@+id/googleLoginBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
@@ -46,7 +46,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/googleBtn"
+        android:id="@+id/googleLoginBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="74dp"
