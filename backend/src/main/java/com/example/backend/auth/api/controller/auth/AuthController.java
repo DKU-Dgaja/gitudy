@@ -1,9 +1,12 @@
 package com.example.backend.auth.api.controller.auth;
 
+import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -15,6 +18,8 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+import jakarta.security.auth.message.AuthException;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -90,4 +95,14 @@ public class AuthController {
             return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
         }
     }
+    @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthServiceLoginResponse.class)))
+    @PostMapping("/register")
+    public JsonResult<?> register(
+            @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
+
+        AuthServiceLoginResponse registerResponse = authService.register(AuthServiceRegisterRequest.of(request));
+
+        return JsonResult.successOf(registerResponse);
+    }
+
 }

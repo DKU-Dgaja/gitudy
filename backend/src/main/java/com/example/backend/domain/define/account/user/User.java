@@ -83,6 +83,12 @@ public class User extends BaseEntity implements UserDetails {
         this.name = name;
     }
 
+    public void updateRegister(UserRole role, String platformId, UserPlatformType platformType) {
+        this.role = role;
+        this.platformId = platformId;
+        this.platformType = platformType;
+    }
+
     // Spring Security UserDetails Area
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
