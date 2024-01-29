@@ -1,7 +1,9 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -9,6 +11,8 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,6 +25,7 @@ import java.util.HashMap;
 
 import static com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapterTest.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -108,5 +113,50 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
+    }
+    @Test
+    @DisplayName("회원가입 성공 테스트")
+    void registerSuccessTest() throws Exception {
+        // given
+        // 유효성 검사 통과하는 request
+        AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
+                .role(UserRole.USER)
+                .platformId("1234")
+                .platformType(UserPlatformType.KAKAO)
+                .githubEmail("test@1234")
+                .build();
+
+        mockMvc.perform(
+                        post("/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(JsonMapper.builder().build().writeValueAsString(request)))
+                .andDo(result -> {
+                    System.out.println(result.getResponse().getContentAsString());
+                })
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"));
+    }
+
+    @Test
+    @DisplayName("잘못된 형식의 깃허브 이메일이면 회원가입 실패")
+    void registerFailTest() throws Exception {
+        // given
+        // 유효성 검사 실패하는 request
+        AuthRegisterRequest request = AuthRegisterRequest.builder()
+                .role(UserRole.USER) // userRole null
+                .platformId("1234")
+                .platformType(UserPlatformType.KAKAO)
+                .githubEmail("test1234") // 잘못된 형식의 email
+                .build();
+
+        mockMvc.perform(
+                        post("/auth/register")
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .content(JsonMapper.builder().build().writeValueAsString(request)))
+                // .andExpect(status().isBadRequest());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value("githubEmail: must be a well-formed email address"));
     }
 }
