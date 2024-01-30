@@ -88,7 +88,9 @@ public class User extends BaseEntity implements UserDetails {
         this.platformId = platformId;
         this.platformType = platformType;
     }
-
+    public void deleteUser() {
+        this.role = UserRole.WITHDRAW;
+    }
     // Spring Security UserDetails Area
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

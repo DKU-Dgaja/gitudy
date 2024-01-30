@@ -12,6 +12,7 @@ import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,6 +23,7 @@ import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -105,4 +107,10 @@ public class AuthController {
         return JsonResult.successOf(registerResponse);
     }
 
+    @PostMapping("/delete")
+    public JsonResult<?> userDelete(@AuthenticationPrincipal User user) {
+        authService.userDelete(user.getUsername());
+
+        return JsonResult.successOf();
+    }
 }

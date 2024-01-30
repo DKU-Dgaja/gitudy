@@ -188,4 +188,26 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+    @Transactional
+    public void userDelete(String userName) {
+        String[] platformIdAndPlatformType = extractFromSubject(userName);
+        String platformId = platformIdAndPlatformType[0];
+        String platformType = platformIdAndPlatformType[1];
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId, UserPlatformType.KAKAO.valueOf(platformType)).orElseThrow(() -> {
+            log.warn(">>>> User Delete Fail : {}", ExceptionMessage.AUTH_NOT_FOUND.getText());
+            throw new AuthException(ExceptionMessage.AUTH_NOT_FOUND);
+        });
+
+        try {
+            user.deleteUser();
+            log.info(">>>> {} Info is Deleted.", user.getName());
+        } catch (IllegalArgumentException e) {
+            log.error(">>>> ID = {} : 계정 삭제에 실패했습니다.", user.getId());
+            throw new AuthException(ExceptionMessage.AUTH_DELETE_FAIL);
+        }
+    }
+    private String[] extractFromSubject(String subject) {
+        // "_"로 문자열을 나누고 id와 type을 추출
+        return subject.split("_");
+    }
 }
