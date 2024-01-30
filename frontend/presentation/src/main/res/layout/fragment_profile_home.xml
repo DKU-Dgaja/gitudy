@@ -300,7 +300,7 @@
                             style="@style/B5_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="커밋 기록"
+                            android:text="마이 커밋"
                             android:textColor="@color/GS_900" />
                     </LinearLayout>
 

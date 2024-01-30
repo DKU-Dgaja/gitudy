@@ -31,7 +31,7 @@
             style="@style/B3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="내 정보 수정하기"
+            android:text="프로필 수정하기"
             android:textColor="@color/BLACK"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
