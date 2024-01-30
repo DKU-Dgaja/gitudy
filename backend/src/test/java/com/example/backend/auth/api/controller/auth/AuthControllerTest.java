@@ -4,6 +4,7 @@ import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -24,6 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 
 import static com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapterTest.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -158,5 +160,36 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value("githubEmail: must be a well-formed email address"));
+    }
+    @Test
+    @DisplayName("올바른 사용자의 토큰으로 사용자 계정 탈퇴 요청을 하면, 계정이 삭제된다.")
+    void One() throws Exception {
+        // given
+        User user = User.builder()
+                .platformId("12345")
+                .platformType(UserPlatformType.KAKAO)
+                .name("구영민")
+                .profileImageUrl("google.co.kr")
+                .role(UserRole.UNAUTH)
+                .build();
+        userRepository.saveAndFlush(user);
+
+        AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
+                .role(UserRole.USER)
+                .platformId(user.getPlatformId())
+                .platformType(user.getPlatformType())
+                .githubEmail("1234@github.com")
+                .build();
+        AuthServiceLoginResponse response = authService.register(request);
+        String accessToken = response.getAccessToken();
+        String refreshToken = response.getRefreshToken();
+        // when
+        mockMvc.perform(post("/auth/delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header("Authorization", "Bearer " + accessToken+" "+refreshToken))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200));
+
     }
 }
