@@ -3,6 +3,9 @@
 
     <application>
         <activity
+            android:name=".ui.profile.MoreCommitActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.profile.ProfileEditActivity"
             android:exported="false" />
         <activity
