@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/BACKGROUND"
     tools:context=".ui.profile.MoreCommitActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -81,11 +82,11 @@
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="470dp"
-        android:layout_marginBottom="-10dp"
+        android:layout_height="480dp"
+        android:layout_marginBottom="-20dp"
+        android:visibility="gone"
         app:cardCornerRadius="16dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:visibility="gone">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
