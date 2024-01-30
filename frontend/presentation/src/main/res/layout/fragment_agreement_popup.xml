@@ -53,7 +53,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="16dp"
-                android:background="@drawable/box_stroke"
+                android:background="@drawable/box_stroke_200_r8"
                 android:gravity="center_vertical"
                 android:padding="20dp">
 
@@ -61,7 +61,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="8dp"
-                    android:src="@drawable/ic_check_grey_r" />
+                    android:src="@drawable/ic_check_grey_c" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -221,7 +221,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
                 android:layout_marginBottom="48dp"
-                android:background="@drawable/box_non_stroke_green"
+                android:background="@drawable/box_non_stroke_r6_green"
                 android:backgroundTint="@color/GS_200"
                 android:gravity="center">
 

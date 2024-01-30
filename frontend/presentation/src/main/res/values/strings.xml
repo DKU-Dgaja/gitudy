@@ -1,7 +1,9 @@
 <resources>
     <string name="app_name">GITUDY</string>
+
     <!-- Strings related to common -->
     <string name="confirm">확인</string>
+    <string name="save">저장하기</string>
 
 
     <!-- Strings related to login -->

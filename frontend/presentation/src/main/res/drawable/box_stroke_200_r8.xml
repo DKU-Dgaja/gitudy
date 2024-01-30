@@ -5,7 +5,7 @@
         android:width="1dp"
         android:color="@color/GS_200"/>
     <solid
-        android:color="#F9F9FA"/>
+        android:color="@color/BACKGROUND"/>
     <size
         android:width="346dp"
         android:height="64dp" />

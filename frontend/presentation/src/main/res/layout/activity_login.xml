@@ -34,7 +34,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
-        android:background="@drawable/box_non_stroke_green"
+        android:background="@drawable/box_non_stroke_r6_green"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/otherLoginBtn"
         app:layout_constraintEnd_toEndOf="parent"
