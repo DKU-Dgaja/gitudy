@@ -7,166 +7,126 @@
     android:background="@color/BACKGROUND"
     tools:context=".ui.home.MainHomeActivity">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/homeProfileLayout"
+    <FrameLayout
+        android:id="@+id/mainFrameLayout"
         android:layout_width="match_parent"
-        android:layout_height="570dp"
-        android:layout_marginTop="-20dp"
-        android:backgroundTint="#1B1B25"
+        android:layout_height="match_parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/menu_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginBottom="-20dp"
+        android:background="@color/WHITE"
         app:cardCornerRadius="20dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="22dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="22dp"
-            android:layout_marginBottom="35dp">
+            android:layout_height="120dp"
+            android:gravity="center"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp">
 
             <LinearLayout
-                android:id="@+id/attendanceBtn"
+                android:id="@+id/mainHomeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="37dp"
+                android:layout_marginRight="50dp"
                 android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                android:orientation="vertical">
 
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_attendance" />
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_navi_home_active" />
 
                 <TextView
                     style="@style/B7_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="출석하기"
-                    android:textColor="@color/WHITE" />
+                    android:text="홈"
+                    android:textColor="@color/GS_800" />
+
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/todoBtn"
+                android:id="@+id/myStudyHomeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="37dp"
+                android:layout_marginRight="50dp"
                 android:gravity="center"
                 android:orientation="vertical"
-                app:layout_constraintStart_toEndOf="@+id/attendanceBtn"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout2"
+                app:layout_constraintStart_toEndOf="@+id/linearLayout3"
                 app:layout_constraintTop_toTopOf="parent">
 
-
                 <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_todo" />
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_navi_mystudy" />
 
                 <TextView
                     style="@style/B7_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="TO-DO"
-                    android:textColor="@color/WHITE" />
+                    android:text="마이스터디"
+                    android:textColor="@color/GS_500" />
+
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/alarmBtn"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginTop="37dp"
-                android:src="@drawable/ic_alarm_white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ProgressBar
-                android:id="@+id/profileProgressBar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="200dp"
-                android:layout_height="200dp"
-                android:layout_marginTop="65dp"
-                android:progress="70"
-                android:layout_centerInParent="true"
-                android:progressDrawable="@drawable/progress_bar"
-                app:layout_constraintEnd_toEndOf="parent"
+            <LinearLayout
+                android:id="@+id/feedHomeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="50dp"
+                android:gravity="center"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/linearLayout"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/characterImg" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <ImageView
-                android:id="@+id/characterImg"
-                android:layout_width="270dp"
-                android:layout_height="270dp"
-                android:src="@drawable/character_bebe_lv1"
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_navi_feed" />
+
+                <TextView
+                    style="@style/B7_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="전체피드"
+                    android:textColor="@color/GS_500" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/profileHomeBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
 
-            <TextView
-                android:id="@+id/nickname"
-                style="@style/B2_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                android:text="@string/nickname"
-                android:textColor="@color/WHITE"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileProgressBar" />
-
-            <ImageView
-                android:id="@+id/editBtn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/ic_pencil"
-                app:layout_constraintStart_toEndOf="@+id/nickname"
-                app:layout_constraintTop_toBottomOf="@+id/characterImg" />
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/box_stroke_200_r21"
-                android:gravity="center"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nickname">
+                <ImageView
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:src="@drawable/ic_navi_profile" />
 
                 <TextView
-                    android:id="@+id/scoreAndRank"
-                    style="@style/B6_2"
+                    style="@style/B7_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/score_with_ranking"
-                    android:textColor="@color/GS_200" />
+                    android:text="프로필"
+                    android:textColor="@color/GS_500" />
 
             </LinearLayout>
-
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
-
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="22dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginRight="22dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
-
 
 </androidx.constraintlayout.widget.ConstraintLayout>

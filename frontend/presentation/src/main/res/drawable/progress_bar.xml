@@ -6,6 +6,7 @@
             <stroke
                 android:width="2dp"
                 android:color="#33505D5F"/>
+
         </shape>
     </item>
     <item android:id="@android:id/progress">
