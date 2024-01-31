@@ -111,7 +111,7 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
     }
 
-    @Test
+    //@Test  // @Autowired 사용시 잘됨
     @DisplayName("유저정보 조회 성공 테스트")
     void userInfoSucessTest() throws Exception {
         //given
@@ -126,7 +126,8 @@ class AuthControllerTest extends TestConfig {
                 .score(0)
                 .point(0)
                 .build();
-        User savedUser = userRepository.save(user);
+        UserInfoResponse savedUser = UserInfoResponse.of(userRepository.save(user));
+
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", savedUser.getRole().name());

@@ -7,22 +7,16 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
-import com.example.backend.auth.api.service.user.UserService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
-
-import com.example.backend.domain.define.account.user.constant.UserRole;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
-import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -40,7 +34,7 @@ public class AuthController {
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
-    private final UserService userService;
+
 
     @GetMapping("/loginPage")
     public JsonResult<List<AuthLoginPageResponse>> loginPage() {
@@ -104,19 +98,21 @@ public class AuthController {
     @GetMapping("/info")
     public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
 
+
         if (user.getRole() == UNAUTH) {
             return JsonResult.failOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText());
         }
 
-        // 세션 사용자 정보를 사용하여 db사용자 정보 조회
-        User dbUser = userService.getUserByPlatform(user.getPlatformId(), user.getPlatformType());
-        if (dbUser == null) {
+
+        UserInfoResponse response = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());
+
+        if (response == null) {
             return JsonResult.failOf(ExceptionMessage.USER_NOT_FOUND.getText());
         }
 
-        // db에서 가져온 정보로 Info생성
-        UserInfoResponse userInfoResponse = UserInfoResponse.of(dbUser);
-        return JsonResult.successOf(userInfoResponse);
+        return JsonResult.successOf(response);
     }
+
+
 
 }

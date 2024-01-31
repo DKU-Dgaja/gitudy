@@ -2,6 +2,7 @@ package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -129,6 +131,14 @@ public class AuthService {
             log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.JWT_INVALID_RTK.getText());
             throw new JwtException(ExceptionMessage.JWT_INVALID_RTK);
         }
+    }
+
+    public UserInfoResponse getUserByInfo(String platformId, UserPlatformType platformType) {
+
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).orElse(null);
+
+        return UserInfoResponse.of(user);
+
     }
 
 }
