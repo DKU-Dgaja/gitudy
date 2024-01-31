@@ -3,20 +3,25 @@ package com.example.backend.auth.api.controller.auth;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 
+import com.example.backend.domain.define.account.user.constant.UserRole;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
@@ -90,4 +95,14 @@ public class AuthController {
             return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
         }
     }
+
+    @GetMapping("/info")
+    public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) throws AuthException {
+        if (user.getRole() == UserRole.UNAUTH) {
+            throw new AuthException(String.valueOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+        }
+
+        return JsonResult.successOf(UserInfoResponse.of(user));
+    }
+
 }
