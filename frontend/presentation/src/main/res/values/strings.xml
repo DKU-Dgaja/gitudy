@@ -1,13 +1,21 @@
 <resources>
     <string name="app_name">GITUDY</string>
+
     <!-- Strings related to common -->
     <string name="confirm">확인</string>
+    <string name="cancel">취소</string>
+    <string name="save">저장하기</string>
+    <string name="nickname">대머리깃터디</string>
+    <string name="github_id">\@boldgitudy</string>
+    <string name="post">등록</string>
 
 
     <!-- Strings related to login -->
     <string name="detail1_body">서비스 이용 약관 내용</string>
     <string name="detail2_body">개인정보 처리 방침 내용</string>
     <string name="detail3_body">본인 인증 서비스 이용 약관 내용</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Strings related to profile -->
+    <string name="comment_hint">%s님에게 응원과 격려의 메세지를 남겨주세요!</string>
+
 </resources>

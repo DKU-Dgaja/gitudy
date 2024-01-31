@@ -6,7 +6,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.takseha.presentation.R
-class PopupFragment : Fragment() {
+
+class PopupDetail3Fragment : Fragment() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
@@ -15,9 +17,8 @@ class PopupFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_agreement_popup, container, false)
-
-
-        return view
+        // Inflate the layout for this fragment
+        return inflater.inflate(R.layout.fragment_popup_detail3, container, false)
     }
+
 }

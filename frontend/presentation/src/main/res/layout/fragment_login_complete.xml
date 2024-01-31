@@ -4,51 +4,79 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.LoginCompleteFragment"
-    android:background="#15141b">
+    android:background="#15141b"
+    tools:context=".ui.login.LoginCompleteFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/completeText"
+            android:id="@+id/loginCompleteDescription1"
             style="@style/B2_3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="158dp"
             android:text="회원가입 완료"
             android:textColor="@color/GS_200"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_marginTop="158dp"/>
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/loginCompleteDescription2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/loginCompleteDescription1">
+
+            <TextView
+                android:id="@+id/nickname"
+                style="@style/H3_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/nickname"
+                android:textColor="@color/WHITE" />
+
+            <TextView
+                android:id="@+id/nicknameAddText1"
+                style="@style/H3_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="님,"
+                android:textColor="@color/WHITE" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/nameView"
+            android:id="@+id/nicknameAddText2"
             style="@style/H3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="16dp"
-            android:gravity="center"
-            android:text="대머리깃터디님,\n환영해요!"
+            android:text="환영해요!"
             android:textColor="@color/WHITE"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/completeText" />
+            app:layout_constraintTop_toBottomOf="@+id/loginCompleteDescription2" />
 
         <LinearLayout
+            android:id="@+id/characterLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
             android:gravity="center"
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nameView"
-            android:layout_marginTop="2dp">
+            app:layout_constraintTop_toBottomOf="@+id/nicknameAddText2">
 
             <ImageView
+                android:id="@+id/characterImg"
                 android:layout_width="180dp"
                 android:layout_height="200dp"
                 android:src="@drawable/character_bebe_lv1" />
@@ -56,7 +84,7 @@
             <ImageView
                 android:layout_width="180dp"
                 android:layout_height="41dp"
-                android:src="@drawable/character_shadow"/>
+                android:src="@drawable/character_shadow" />
         </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
@@ -64,8 +92,8 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="300dp"
+        android:src="@drawable/gradient"
         app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="140dp"
-        android:src="@drawable/gradient"/>
+        tools:layout_editor_absoluteX="140dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

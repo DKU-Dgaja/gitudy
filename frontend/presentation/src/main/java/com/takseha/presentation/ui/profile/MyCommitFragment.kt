@@ -1,4 +1,4 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.profile
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -7,7 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import com.takseha.presentation.R
 
-class Detail2Fragment : Fragment() {
+class MyCommitFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -18,7 +18,7 @@ class Detail2Fragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_detail2, container, false)
+        return inflater.inflate(R.layout.fragment_my_commit_detail, container, false)
     }
 
 }
