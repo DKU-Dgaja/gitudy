@@ -14,6 +14,11 @@
     <!-- Strings related to home -->
     <string name="score_with_ranking">활동점수 %d점  |  랭킹 %d위</string>
 
+    <!-- Strings related to mystudy -->
+    <string name="mystudy_cnt">마이스터디  %d</string>
+
+    <!-- Strings related to feed -->
+    <string name="feed_cnt">전체스터디  %d</string>
 
     <!-- Strings related to login -->
     <string name="detail1_body">서비스 이용 약관 내용</string>
