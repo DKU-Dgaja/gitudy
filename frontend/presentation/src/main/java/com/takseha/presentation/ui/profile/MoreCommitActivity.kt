@@ -7,6 +7,6 @@ import com.takseha.presentation.R
 class MoreCommitActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_more_commit)
+        setContentView(R.layout.activity_my_commit)
     }
 }

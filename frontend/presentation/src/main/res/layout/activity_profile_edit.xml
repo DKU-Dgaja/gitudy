@@ -100,7 +100,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="3dp"
                     android:layout_marginTop="8dp"
-                    android:text="대머리깃터디"
+                    android:text="@string/nickname"
                     android:textColor="@color/BLACK"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
