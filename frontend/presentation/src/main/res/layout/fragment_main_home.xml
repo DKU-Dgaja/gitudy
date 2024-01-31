@@ -102,7 +102,7 @@
                 android:layout_width="250dp"
                 android:layout_height="250dp"
                 android:padding="-30dp"
-                android:src="@drawable/character_bebe_lv1"
+                android:src="@drawable/character_bebe_to_15"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.495"
