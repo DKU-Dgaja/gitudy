@@ -33,7 +33,9 @@ public enum ExceptionMessage {
     LOGINSTATE_NOT_FOUND("LoginState를 찾을 수 없습니다."),
 
     // AuthException
-    UNAUTHORIZED_AUTHORITY("잘못된 권한 입니다.")
+    UNAUTHORIZED_AUTHORITY("잘못된 권한 입니다."),
+
+    USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다.")
 
     ;
     private final String text;

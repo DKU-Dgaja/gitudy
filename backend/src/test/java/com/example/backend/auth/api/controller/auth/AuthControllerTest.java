@@ -145,13 +145,13 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj.role").value(String.valueOf(UserRole.USER)))
                 .andExpect(jsonPath("$.res_obj.name").value(expectedName))
-                .andExpect(jsonPath("$.res_obj.profileImageUrl").value(expectedProfileImageUrl))
-                .andExpect(jsonPath("$.res_obj.githubId").value("j-ra1n"))
-                .andExpect(jsonPath("$.res_obj.platformId").value(expectedPlatformId))
-                .andExpect(jsonPath("$.res_obj.platformType").value(UserPlatformType.GOOGLE))
-                .andExpect(jsonPath("$.res_obj.pushAlarmYn").value(true))
-                .andExpect(jsonPath("$.res_obj.score").value(100))
-                .andExpect(jsonPath("$.res_obj.point").value(20));
+                .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedProfileImageUrl))
+                .andExpect(jsonPath("$.res_obj.github_id").value("j-ra1n"))
+                .andExpect(jsonPath("$.res_obj.platform_id").value(expectedPlatformId))
+                .andExpect(jsonPath("$.res_obj.platform_type").value(String.valueOf(UserPlatformType.GOOGLE)))
+                .andExpect(jsonPath("$.res_obj.push_alarm_yn").value(true))
+                .andExpect(jsonPath("$.res_obj.score").value(0))
+                .andExpect(jsonPath("$.res_obj.point").value(0));
 
     }
 
