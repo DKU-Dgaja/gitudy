@@ -8,6 +8,11 @@
     <string name="nickname">대머리깃터디</string>
     <string name="github_id">\@boldgitudy</string>
     <string name="post">등록</string>
+    <string name="text_length">%d/6</string>
+
+
+    <!-- Strings related to home -->
+    <string name="score_with_ranking">활동점수 %d점  |  랭킹 %d위</string>
 
 
     <!-- Strings related to login -->
@@ -17,5 +22,6 @@
 
     <!-- Strings related to profile -->
     <string name="comment_hint">%s님에게 응원과 격려의 메세지를 남겨주세요!</string>
+
 
 </resources>
