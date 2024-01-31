@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
@@ -129,8 +130,8 @@ class AuthControllerTest extends TestConfig {
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("platformId", savedUser.getPlatformId());
+        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
 
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
@@ -142,15 +143,15 @@ class AuthControllerTest extends TestConfig {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_obj.role").value(UserRole.USER))
+                .andExpect(jsonPath("$.res_obj.role").value(String.valueOf(UserRole.USER)))
                 .andExpect(jsonPath("$.res_obj.name").value(expectedName))
                 .andExpect(jsonPath("$.res_obj.profileImageUrl").value(expectedProfileImageUrl))
                 .andExpect(jsonPath("$.res_obj.githubId").value("j-ra1n"))
                 .andExpect(jsonPath("$.res_obj.platformId").value(expectedPlatformId))
                 .andExpect(jsonPath("$.res_obj.platformType").value(UserPlatformType.GOOGLE))
                 .andExpect(jsonPath("$.res_obj.pushAlarmYn").value(true))
-                .andExpect(jsonPath("$.res_obj.score").value(0))
-                .andExpect(jsonPath("$.res_obj.point").value(0));
+                .andExpect(jsonPath("$.res_obj.score").value(100))
+                .andExpect(jsonPath("$.res_obj.point").value(20));
 
     }
 
@@ -177,7 +178,7 @@ class AuthControllerTest extends TestConfig {
     void userInfoWhenInvalidAuthority() throws Exception {
         User user = User.builder()
                 .name(expectedName)
-                .role(UserRole.USER)
+                .role(UserRole.UNAUTH)       // 잘못된 권한(미인증)
                 .platformId(expectedPlatformId)
                 .platformType(UserPlatformType.GOOGLE)
                 .githubId("j-ra1n")
@@ -190,8 +191,8 @@ class AuthControllerTest extends TestConfig {
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("platformId", savedUser.getPlatformId());
+        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
 
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
@@ -202,8 +203,7 @@ class AuthControllerTest extends TestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_obj.role").value(UserRole.UNAUTH));
+                .andExpect(jsonPath("$.res_code").value(400));
 
     }
 
