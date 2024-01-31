@@ -114,14 +114,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="5dp"
+            android:gravity="center"
             app:layout_constraintBottom_toTopOf="@+id/divider2"
             app:layout_constraintStart_toStartOf="parent">
 
-            <TextView
-                style="@style/B7_2"
+            <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:text="👍" />
+                android:src="@drawable/ic_thumbs_up" />
 
             <TextView
                 style="@style/B7_2"
