@@ -88,8 +88,8 @@ class AuthControllerTest extends TestConfig {
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", savedUser.getRole().name());
-        map.put("name", savedUser.getName());
-        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+        map.put("platformId", savedUser.getPlatformId());
+        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
 
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
@@ -161,9 +161,8 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value("githubEmail: must be a well-formed email address"));
     }
-    @Test
     @DisplayName("올바른 사용자의 토큰으로 사용자 계정 탈퇴 요청을 하면, 계정이 삭제된다.")
-    void One() throws Exception {
+    void validUserTokenRequestWithDrawThenUserDelete() throws Exception {
         // given
         User user = User.builder()
                 .platformId("12345")
