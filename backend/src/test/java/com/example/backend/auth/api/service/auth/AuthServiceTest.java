@@ -14,13 +14,10 @@ import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.MockMvc;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
@@ -28,10 +25,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class AuthServiceTest extends TestConfig {
 
@@ -272,40 +265,5 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertThat(deletedUser.getRole()).isEqualTo(UserRole.WITHDRAW);
-    }
-
-    @Autowired
-    private MockMvc mockMvc;
-    @Test
-    @DisplayName("22222222222")
-    void Two() throws Exception {
-        // given
-        User user = User.builder()
-                .platformId("12345")
-                .platformType(UserPlatformType.KAKAO)
-                .name("구영민")
-                .profileImageUrl("google.co.kr")
-                .role(UserRole.UNAUTH)
-                .build();
-        userRepository.saveAndFlush(user);
-
-        AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(UserRole.USER)
-                .platformId(user.getPlatformId())
-                .platformType(user.getPlatformType())
-                .githubEmail("1234@github.com")
-                .build();
-
-        AuthServiceLoginResponse response = authService.register(request);
-        String accessToken = response.getAccessToken();
-        String refreshToken = response.getRefreshToken();
-        // when
-        mockMvc.perform(post("/auth/delete")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken+" "+refreshToken))
-                // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200));
-
     }
 }
