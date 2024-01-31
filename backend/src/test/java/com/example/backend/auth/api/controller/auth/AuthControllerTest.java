@@ -109,4 +109,103 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
     }
+
+    @Test
+    @DisplayName("유저정보 조회 성공 테스트")
+    void userInfoSucessTest() throws Exception {
+        //given
+        User user = User.builder()
+                .name(expectedName)
+                .role(UserRole.USER)
+                .platformId(expectedPlatformId)
+                .platformType(UserPlatformType.GOOGLE)
+                .githubId("j-ra1n")
+                .profileImageUrl(expectedProfileImageUrl)
+                .pushAlarmYn(true)
+                .score(0)
+                .point(0)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("role", savedUser.getRole().name());
+        map.put("name", savedUser.getName());
+        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        // when
+        mockMvc.perform(get("/auth/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_obj.role").value(UserRole.USER))
+                .andExpect(jsonPath("$.res_obj.name").value(expectedName))
+                .andExpect(jsonPath("$.res_obj.profileImageUrl").value(expectedProfileImageUrl))
+                .andExpect(jsonPath("$.res_obj.githubId").value("j-ra1n"))
+                .andExpect(jsonPath("$.res_obj.platformId").value(expectedPlatformId))
+                .andExpect(jsonPath("$.res_obj.platformType").value(UserPlatformType.GOOGLE))
+                .andExpect(jsonPath("$.res_obj.pushAlarmYn").value(true))
+                .andExpect(jsonPath("$.res_obj.score").value(0))
+                .andExpect(jsonPath("$.res_obj.point").value(0));
+
+    }
+
+
+    @Test
+    @DisplayName("유저정보 조회 실패 테스트 - 잘못된 Token")
+    void userInfoWhenInvalidToken() throws Exception {
+        // given
+        String accessToken = "strangeToken";
+        String refreshToken = "strangeToken";
+
+        // when
+        mockMvc.perform(get("/auth/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
+    }
+
+    @Test
+    @DisplayName("유저정보 조회 실패 테스트 - 잘못된 권한")
+    void userInfoWhenInvalidAuthority() throws Exception {
+        User user = User.builder()
+                .name(expectedName)
+                .role(UserRole.USER)
+                .platformId(expectedPlatformId)
+                .platformType(UserPlatformType.GOOGLE)
+                .githubId("j-ra1n")
+                .profileImageUrl(expectedProfileImageUrl)
+                .pushAlarmYn(true)
+                .score(0)
+                .point(0)
+                .build();
+        User savedUser = userRepository.save(user);
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("role", savedUser.getRole().name());
+        map.put("name", savedUser.getName());
+        map.put("profileImageUrl", savedUser.getProfileImageUrl());
+
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        // when
+        mockMvc.perform(get("/auth/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_obj.role").value(UserRole.UNAUTH));
+
+    }
+
+
 }

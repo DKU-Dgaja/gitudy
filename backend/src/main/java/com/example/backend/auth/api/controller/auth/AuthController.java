@@ -21,11 +21,14 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.security.auth.message.AuthException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.security.SecurityProperties;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static com.example.backend.domain.define.account.user.constant.UserRole.UNAUTH;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -97,9 +100,10 @@ public class AuthController {
     }
 
     @GetMapping("/info")
-    public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) throws AuthException {
-        if (user.getRole() == UserRole.UNAUTH) {
-            throw new AuthException(String.valueOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+    public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user)  {
+
+        if (user.getRole() == UNAUTH) {
+           return JsonResult.failOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText());
         }
 
         return JsonResult.successOf(UserInfoResponse.of(user));
