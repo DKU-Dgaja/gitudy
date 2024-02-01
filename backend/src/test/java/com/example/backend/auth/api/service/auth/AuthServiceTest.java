@@ -170,7 +170,7 @@ class AuthServiceTest extends TestConfig {
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
-        String githubEmail = "test@github.com";
+        String githubId = "test@github.com";
         // UNAUTH 사용자 저장
         User unauthUser = User.builder()
                 .role(UserRole.UNAUTH)
@@ -187,7 +187,8 @@ class AuthServiceTest extends TestConfig {
                 .role(UserRole.USER)
                 .platformId(platformId)
                 .platformType(platformType)
-                .githubEmail(githubEmail)
+                .githubId(githubId)
+                .name(name)
                 .build();
 
         // when
@@ -209,7 +210,7 @@ class AuthServiceTest extends TestConfig {
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
-        String githubEmail = "test@github.com";
+        String githubId = "test@github.com";
 
         User user = User.builder()
                 .platformId(platformId)
@@ -226,7 +227,8 @@ class AuthServiceTest extends TestConfig {
                 .role(UserRole.USER)
                 .platformId(platformId)
                 .platformType(platformType)
-                .githubEmail(githubEmail)
+                .name(name)
+                .githubId(githubId)
                 .build();
 
         // then

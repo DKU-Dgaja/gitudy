@@ -32,8 +32,12 @@ public class AuthRegisterRequest {
     private UserPlatformType platformType;
 
     @NotNull
+    @JsonProperty("name")
+    private String name;
+
+    @NotNull
     @Email
-    @JsonProperty("githubEmail")
-    private String githubEmail;
+    @JsonProperty("githubId")
+    private String githubId;
 
 }

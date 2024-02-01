@@ -83,10 +83,10 @@ public class User extends BaseEntity implements UserDetails {
         this.name = name;
     }
 
-    public void updateRegister(UserRole role, String platformId, UserPlatformType platformType) {
+    public void updateRegister(UserRole role, String name, String githubId) {
         this.role = role;
-        this.platformId = platformId;
-        this.platformType = platformType;
+        this.name = name;
+        this.githubId = githubId;
     }
     public void deleteUser() {
         this.role = UserRole.WITHDRAW;

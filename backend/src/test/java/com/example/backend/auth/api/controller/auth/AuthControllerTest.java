@@ -126,7 +126,8 @@ class AuthControllerTest extends TestConfig {
                 .role(UserRole.USER)
                 .platformId("1234")
                 .platformType(UserPlatformType.KAKAO)
-                .githubEmail("test@1234")
+                .name("구영민")
+                .githubId("test@1234")
                 .build();
 
         mockMvc.perform(
@@ -150,7 +151,8 @@ class AuthControllerTest extends TestConfig {
                 .role(UserRole.USER) // userRole null
                 .platformId("1234")
                 .platformType(UserPlatformType.KAKAO)
-                .githubEmail("test1234") // 잘못된 형식의 email
+                .name("구영민")
+                .githubId("test1234") // 잘못된 형식의 email
                 .build();
 
         mockMvc.perform(
@@ -160,7 +162,7 @@ class AuthControllerTest extends TestConfig {
                 // .andExpect(status().isBadRequest());
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value("githubEmail: must be a well-formed email address"));
+                .andExpect(jsonPath("$.res_msg").value("githubId: must be a well-formed email address"));
     }
     @Test
     @DisplayName("올바른 사용자의 토큰으로 사용자 계정 탈퇴 요청을 하면, 계정이 삭제된다.")
@@ -170,7 +172,7 @@ class AuthControllerTest extends TestConfig {
         UserPlatformType userPlatformType=UserPlatformType.KAKAO;
         String name = "구영민";
         String profileImageURL = "google.co.kr";
-        String githubEmail="1234@github.com";
+        String githubId="1234@github.com";
 
         // given
         User user = User.builder()
@@ -190,7 +192,7 @@ class AuthControllerTest extends TestConfig {
                 .role(UserRole.USER)
                 .platformId(user.getPlatformId())
                 .platformType(user.getPlatformType())
-                .githubEmail(githubEmail)
+                .githubId(githubId)
                 .build();
 
         String accessToken = jwtService.generateAccessToken(map, savedUser);

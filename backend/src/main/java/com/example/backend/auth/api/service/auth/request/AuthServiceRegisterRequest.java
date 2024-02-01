@@ -17,13 +17,15 @@ public class AuthServiceRegisterRequest {
     private UserRole role;
     private String platformId;
     private UserPlatformType platformType;
-    private String githubEmail;
+    private String name;
+    private String githubId;
     public static AuthServiceRegisterRequest of(AuthRegisterRequest request) {
         return AuthServiceRegisterRequest.builder()
                 .role(request.getRole())
                 .platformId(request.getPlatformId())
                 .platformType(request.getPlatformType())
-                .githubEmail(request.getGithubEmail())
+                .name(request.getName())
+                .githubId(request.getGithubId())
                 .build();
     }
 }
