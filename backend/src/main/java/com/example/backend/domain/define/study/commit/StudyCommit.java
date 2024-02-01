@@ -1,9 +1,8 @@
 package com.example.backend.domain.define.study.commit;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
-import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.commit.constant.LikeCount;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -49,6 +48,9 @@ public class StudyCommit extends BaseEntity {
     @Column(name = "REJECTION_REASON")
     private String rejectionReason;             // 커밋 거절 이유
 
+    @Embedded
+    private LikeCount likeCount;                // 커밋 좋아요
+
     @Builder
     public StudyCommit(Long studyInfoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason) {
         this.studyInfoId = studyInfoId;
@@ -58,5 +60,6 @@ public class StudyCommit extends BaseEntity {
         this.commitDate = commitDate;
         this.status = status;
         this.rejectionReason = rejectionReason;
+        likeCount = LikeCount.createDefault();
     }
 }
