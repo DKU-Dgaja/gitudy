@@ -1,4 +1,4 @@
-package com.takseha.presentation.ui.home
+package com.takseha.presentation.ui.mystudy
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

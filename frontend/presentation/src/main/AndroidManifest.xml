@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <application>
         <activity
-            android:name=".ui.home.ToDoActivity"
+            android:name=".ui.mystudy.CommentActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ui.mystudy.ToDoActivity"
             android:exported="false" />
         <activity
             android:name=".ui.mystudy.MyStudyMainActivity"
