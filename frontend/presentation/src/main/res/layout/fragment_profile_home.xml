@@ -134,7 +134,9 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_marginRight="8dp"
-                                android:src="@drawable/logo_github" />
+                                android:src="@drawable/logo_github"
+                                android:tint="@color/GS_700"
+                                tools:ignore="UseAppTint" />
 
                             <TextView
                                 style="@style/B7_2"
@@ -181,7 +183,7 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_marginRight="8dp"
-                                android:src="@drawable/logo_blog" />
+                                android:src="@drawable/logo_blog_700" />
 
                             <TextView
                                 style="@style/B7_2"
@@ -228,7 +230,9 @@
                                 android:layout_width="24dp"
                                 android:layout_height="24dp"
                                 android:layout_marginRight="8dp"
-                                android:src="@drawable/logo_linkedin" />
+                                android:src="@drawable/logo_linkedin"
+                                android:tint="@color/GS_700"
+                                tools:ignore="UseAppTint" />
 
                             <TextView
                                 style="@style/B7_2"
