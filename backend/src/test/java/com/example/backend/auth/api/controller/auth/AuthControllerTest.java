@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 
 import static com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapterTest.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -111,7 +112,7 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
     }
 
-    //@Test  // @Autowired 사용시 잘됨
+    @Test
     @DisplayName("유저정보 조회 성공 테스트")
     void userInfoSucessTest() throws Exception {
         //given
@@ -128,6 +129,7 @@ class AuthControllerTest extends TestConfig {
                 .build();
         UserInfoResponse savedUser = UserInfoResponse.of(userRepository.save(user));
 
+        when(authService.getUserByInfo(expectedPlatformId, UserPlatformType.GOOGLE)).thenReturn(savedUser);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", savedUser.getRole().name());

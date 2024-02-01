@@ -2,6 +2,7 @@ package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
@@ -15,6 +16,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+
+import java.util.Optional;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -160,4 +163,29 @@ class AuthServiceTest extends TestConfig {
                 () -> assertThat(claims.get(platformType)).isEqualTo(expectedPlatformType)
         );
     }
+
+    @Test
+    @DisplayName("유저 정보가 가져와지는지 확인")
+    void getUserByInfoTest() {
+
+        // given
+        String expectedPlatformId = "102514823309503386675";
+        UserPlatformType expectedPlatformType = UserPlatformType.GOOGLE;
+
+        User user = User.builder()
+                .platformId(expectedPlatformId)
+                .platformType(expectedPlatformType)
+                .build();
+        userRepository.save(user);
+
+        // when
+        UserInfoResponse expectedUser = authService.getUserByInfo(expectedPlatformId, expectedPlatformType);
+
+        // then
+        assertThat(expectedUser).isNotNull();
+        assertEquals(user.getPlatformId(), expectedUser.getPlatformId());
+        assertEquals(user.getPlatformType(), expectedPlatformType);
+
+    }
+
 }
