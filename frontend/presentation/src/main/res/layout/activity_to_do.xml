@@ -111,20 +111,16 @@
                 android:text="커밋 URL 복사"
                 android:textColor="@color/GS_600" />
 
-            <LinearLayout
+            <Button
+                android:id="@+id/cancelBtn"
+                style="@style/B5_1"
                 android:layout_width="match_parent"
                 android:layout_height="60dp"
-                android:background="@drawable/box_non_stroke_r6_green"
+                android:background="@drawable/box_non_stroke_r6"
                 android:backgroundTint="@color/GS_800"
-                android:gravity="center">
+                android:text="@string/cancel"
+                android:textColor="@color/WHITE" />
 
-                <TextView
-                    style="@style/B5_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/cancel"
-                    android:textColor="@color/WHITE" />
-            </LinearLayout>
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>

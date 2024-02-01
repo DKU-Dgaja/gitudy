@@ -16,5 +16,8 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         val b = findViewById<LinearLayout>(R.id.githubLoginBtn)
+        b.setOnClickListener {
+            startActivity(Intent(this, CommentActivity::class.java))
+        }
     }
 }

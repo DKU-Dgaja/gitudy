@@ -4,7 +4,7 @@
     <solid
         android:color="@color/GS_200"/>
     <size
-        android:width="346dp"
-        android:height="38dp" />
-    <corners android:radius="8dp" />
+        android:width="370dp"
+        android:height="59dp" />
+    <corners android:radius="6dp" />
 </shape>

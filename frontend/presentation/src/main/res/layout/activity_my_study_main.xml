@@ -170,6 +170,7 @@
                 android:layout_marginTop="30dp"
                 android:background="@drawable/box_non_stroke_r8"
                 android:gravity="center_vertical"
+                android:backgroundTint="#EFF8FF"
                 android:paddingLeft="20dp"
                 android:paddingTop="14dp"
                 android:paddingRight="20dp"
@@ -500,7 +501,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="6dp"
                     android:background="@drawable/box_non_stroke_r8"
-                    android:backgroundTint="@color/GS_200"
+                    android:backgroundTint="#F3F5F7"
                     android:gravity="center_horizontal"
                     android:paddingLeft="16dp"
                     android:paddingTop="10dp"
@@ -525,21 +526,16 @@
 
                 </LinearLayout>
 
-                <LinearLayout
+                <Button
+                    android:enabled="false"
                     android:id="@+id/postBtn"
+                    style="@style/B6_2"
                     android:layout_width="69dp"
                     android:layout_height="38dp"
-                    android:background="@drawable/box_non_stroke_r8"
-                    android:backgroundTint="@color/GS_200"
-                    android:gravity="center">
-
-                    <TextView
-                        style="@style/B6_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/post"
-                        android:textColor="@color/GS_400" />
-                </LinearLayout>
+                    android:layout_marginBottom="1dp"
+                    android:background="@drawable/selector_btn_r8_enable"
+                    android:text="@string/post"
+                    android:textColor="@drawable/selector_text_color_enable" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

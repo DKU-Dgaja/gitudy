@@ -49,20 +49,13 @@
 
     </LinearLayout>
 
-    <LinearLayout
+    <Button
         android:id="@+id/confirmBtn"
+        style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="97dp"
-        android:background="@color/BASIC_GREEN"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent">
-
-        <TextView
-            android:id="@+id/confirmBtnText"
-            style="@style/B5_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/confirm"
-            android:textColor="@color/BLACK" />
-    </LinearLayout>
+        android:background="@drawable/selector_btn_r0_enable"
+        android:text="@string/confirm"
+        android:textColor="@drawable/selector_text_color_enable"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

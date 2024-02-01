@@ -411,21 +411,16 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
+    <Button
+        android:enabled="false"
+        style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
-        android:background="@drawable/box_non_stroke_r12"
-        android:gravity="center"
-        app:layout_constraintBottom_toBottomOf="parent"
-        tools:layout_editor_absoluteX="22dp">
+        android:background="@drawable/selector_btn_r12_enable"
+        android:text="@string/save"
+        android:textColor="@drawable/selector_text_color_enable"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
-        <TextView
-            style="@style/B5_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/save"
-            android:textColor="@color/GS_400" />
-    </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -92,7 +92,7 @@
     <ImageView
         android:layout_width="match_parent"
         android:layout_height="300dp"
-        android:src="@drawable/gradient"
+        android:src="@drawable/gradient_background"
         app:layout_constraintBottom_toBottomOf="parent"
         tools:layout_editor_absoluteX="140dp" />
 
