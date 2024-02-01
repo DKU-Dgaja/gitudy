@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
-    tools:context=".ui.profile.MoreCommitActivity">
+    tools:context=".ui.profile.MyCommitActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

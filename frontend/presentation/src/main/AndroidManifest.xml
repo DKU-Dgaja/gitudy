@@ -4,27 +4,35 @@
     <application>
         <activity
             android:name=".ui.mystudy.CommentActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.mystudy.ToDoActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.mystudy.MyStudyMainActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.home.MainHomeActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
-            android:name=".ui.profile.MoreCommitActivity"
+            android:name=".ui.profile.MyCommitActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.profile.ProfileEditActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.login.InputNicknameActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.login.InputIdActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.login.AgreementActivity"
