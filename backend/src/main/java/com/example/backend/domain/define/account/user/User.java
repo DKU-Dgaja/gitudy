@@ -83,6 +83,14 @@ public class User extends BaseEntity implements UserDetails {
         this.name = name;
     }
 
+    public void updateRegister(UserRole role, String name, String githubId) {
+        this.role = role;
+        this.name = name;
+        this.githubId = githubId;
+    }
+    public void deleteUser() {
+        this.role = UserRole.WITHDRAW;
+    }
     // Spring Security UserDetails Area
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

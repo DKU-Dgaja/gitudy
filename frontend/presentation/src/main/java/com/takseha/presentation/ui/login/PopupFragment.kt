@@ -15,7 +15,7 @@ class PopupFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_popup, container, false)
+        val view = inflater.inflate(R.layout.fragment_agreement_popup, container, false)
 
 
         return view

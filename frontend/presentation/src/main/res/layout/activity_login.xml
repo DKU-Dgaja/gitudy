@@ -30,13 +30,13 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/githubBtn"
+        android:id="@+id/githubLoginBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="18dp"
-        android:background="@drawable/box_non_stroke_green"
+        android:background="@drawable/box_non_stroke_r6_green"
         android:gravity="center"
-        app:layout_constraintBottom_toTopOf="@+id/othersBtn"
+        app:layout_constraintBottom_toTopOf="@+id/otherLoginBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent">
@@ -57,8 +57,8 @@
     </LinearLayout>
 
     <TextView
-        android:id="@+id/othersBtn"
-        style="@style/B5_2"
+        android:id="@+id/otherLoginBtn"
+        style="@style/B6_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
