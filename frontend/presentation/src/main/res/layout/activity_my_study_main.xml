@@ -75,7 +75,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/studyName" />
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/tags"
+                android:id="@+id/tagList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
@@ -92,7 +92,7 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tags" />
+                app:layout_constraintTop_toBottomOf="@+id/tagList" />
 
             <LinearLayout
                 android:id="@+id/IsStudyOpen"
@@ -164,7 +164,7 @@
             </LinearLayout>
 
             <LinearLayout
-                android:id="@+id/todoBox"
+                android:id="@+id/notiBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
@@ -200,7 +200,7 @@
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/todoBox" />
+                app:layout_constraintTop_toBottomOf="@+id/notiBox" />
 
             <TextView
                 android:id="@+id/todoTitle"
