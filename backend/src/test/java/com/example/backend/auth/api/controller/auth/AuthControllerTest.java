@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -25,12 +26,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 
 import static com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapterTest.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
+import static org.mockito.Mockito.when;
 
 class AuthControllerTest extends TestConfig {
 
@@ -161,31 +162,52 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value("githubEmail: must be a well-formed email address"));
     }
+    @Test
     @DisplayName("올바른 사용자의 토큰으로 사용자 계정 탈퇴 요청을 하면, 계정이 삭제된다.")
     void validUserTokenRequestWithDrawThenUserDelete() throws Exception {
+        String platformId="12345";
+        UserRole role = UserRole.UNAUTH;
+        UserPlatformType userPlatformType=UserPlatformType.KAKAO;
+        String name = "구영민";
+        String profileImageURL = "google.co.kr";
+        String githubEmail="1234@github.com";
+
         // given
         User user = User.builder()
-                .platformId("12345")
+                .platformId(platformId)
                 .platformType(UserPlatformType.KAKAO)
-                .name("구영민")
-                .profileImageUrl("google.co.kr")
-                .role(UserRole.UNAUTH)
+                .name(name)
+                .profileImageUrl(profileImageURL)
+                .role(role)
                 .build();
-        userRepository.saveAndFlush(user);
+        User savedUser = userRepository.saveAndFlush(user);
+        HashMap<String, String> map = new HashMap<>();
 
+        map.put("role", String.valueOf(role));
+        map.put("platformId", platformId);
+        map.put("platformType", String.valueOf(userPlatformType));
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
                 .role(UserRole.USER)
                 .platformId(user.getPlatformId())
                 .platformType(user.getPlatformType())
-                .githubEmail("1234@github.com")
+                .githubEmail(githubEmail)
                 .build();
-        AuthServiceLoginResponse response = authService.register(request);
-        String accessToken = response.getAccessToken();
-        String refreshToken = response.getRefreshToken();
+
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        when(authService.register(request)).thenReturn(AuthServiceLoginResponse.builder()
+                .accessToken(accessToken )
+                .refreshToken(refreshToken)
+                .role(UserRole.USER)
+                .build()
+        );
+
+        Mockito.doNothing().when(authService).userDelete(any(String.class));
         // when
         mockMvc.perform(post("/auth/delete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header("Authorization", "Bearer " + accessToken+" "+refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken,refreshToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200));
