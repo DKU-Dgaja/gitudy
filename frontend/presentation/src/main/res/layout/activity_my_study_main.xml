@@ -385,7 +385,7 @@
 
                     <LinearLayout
                         android:id="@+id/teamMemberAdminBtn"
-                        android:layout_width="106dp"
+                        android:layout_width="110dp"
                         android:layout_height="46dp"
                         android:layout_marginRight="14dp"
                         android:background="@drawable/box_non_stroke_r12"
@@ -407,13 +407,13 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="팀원 관리"
-                            android:textColor="600" />
+                            android:textColor="@color/GS_600" />
 
                     </LinearLayout>
 
                     <LinearLayout
                         android:id="@+id/todoAdditionBtn"
-                        android:layout_width="106dp"
+                        android:layout_width="110dp"
                         android:layout_height="46dp"
                         android:background="@drawable/box_non_stroke_r12"
                         android:backgroundTint="#F8F8FB"
@@ -434,7 +434,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="TO DO 추가"
-                            android:textColor="600" />
+                            android:textColor="@color/GS_600" />
 
                     </LinearLayout>
 
