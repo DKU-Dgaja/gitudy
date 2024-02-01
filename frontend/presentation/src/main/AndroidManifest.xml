@@ -4,15 +4,15 @@
     <application>
         <activity
             android:name=".ui.mystudy.CommentActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.mystudy.ToDoActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.mystudy.MyStudyMainActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.home.MainHomeActivity"
@@ -20,11 +20,11 @@
             android:exported="false" />
         <activity
             android:name=".ui.profile.MyCommitActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.profile.ProfileEditActivity"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="adjustPan"
             android:exported="false" />
         <activity
             android:name=".ui.login.InputNicknameActivity"
@@ -36,15 +36,19 @@
             android:exported="false" />
         <activity
             android:name=".ui.login.AgreementActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.login.SubLoginActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.login.LoginActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
         <activity
             android:name=".ui.SplashActivity"
+            android:windowSoftInputMode="adjustResize"
             android:exported="false" />
     </application>
 
