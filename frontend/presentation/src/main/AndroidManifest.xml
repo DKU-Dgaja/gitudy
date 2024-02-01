@@ -3,6 +3,9 @@
 
     <application>
         <activity
+            android:name=".ui.home.ToDoActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.mystudy.MyStudyMainActivity"
             android:exported="false" />
         <activity
