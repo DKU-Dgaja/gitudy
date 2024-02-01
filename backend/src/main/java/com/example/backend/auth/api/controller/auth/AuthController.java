@@ -4,6 +4,7 @@ import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
@@ -14,11 +15,9 @@ import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
-
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-
 import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +25,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+
 import java.util.Arrays;
 import java.util.List;
+
+import static com.example.backend.domain.define.account.user.constant.UserRole.UNAUTH;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,6 +40,7 @@ public class AuthController {
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
+
 
     @GetMapping("/loginPage")
     public JsonResult<List<AuthLoginPageResponse>> loginPage() {
@@ -97,6 +100,23 @@ public class AuthController {
             return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
         }
     }
+  
+    @GetMapping("/info")
+    public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
+
+        if (user.getRole() == UNAUTH) {
+            return JsonResult.failOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText());
+        }
+
+        UserInfoResponse userInfoResponse = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());
+
+        return JsonResult.successOf(userInfoResponse);
+    }
+
+
+
+}
+
     @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthServiceLoginResponse.class)))
     @PostMapping("/register")
     public JsonResult<?> register(
@@ -113,4 +133,6 @@ public class AuthController {
 
         return JsonResult.successOf();
     }
+  
 }
+

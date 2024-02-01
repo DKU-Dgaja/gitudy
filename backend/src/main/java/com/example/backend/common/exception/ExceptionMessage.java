@@ -31,6 +31,11 @@ public enum ExceptionMessage {
     LOGINSTATE_IS_NOT_USE("해당 LoginState를 사용할 수 없습니다."),
     LOGINSTATE_INVALID_VALUE("LoginState 정보가 잘못되었습니다."),
     LOGINSTATE_NOT_FOUND("LoginState를 찾을 수 없습니다."),
+  
+    // AuthException
+    UNAUTHORIZED_AUTHORITY("잘못된 권한 입니다."),
+
+    USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다.")
 
     // AuthException
     AUTH_INVALID_REGISTER("잘못된 회원가입 요청입니다."),

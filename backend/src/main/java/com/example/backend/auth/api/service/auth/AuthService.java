@@ -2,12 +2,15 @@ package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.common.exception.state.LoginStateException;
+import com.example.backend.common.exception.user.UserException;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
@@ -27,6 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -132,6 +136,19 @@ public class AuthService {
             log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.JWT_INVALID_RTK.getText());
             throw new JwtException(ExceptionMessage.JWT_INVALID_RTK);
         }
+    }
+
+    public UserInfoResponse getUserByInfo(String platformId, UserPlatformType platformType) {
+
+        User userInfoResponse = userRepository.findByPlatformIdAndPlatformType(platformId, platformType)
+                .orElseThrow(() -> {
+                    log.warn(">>>> User not found with platformId: {} platformType: {}", platformId, platformType);
+                     throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
+
+
+        return UserInfoResponse.of(userInfoResponse);
+
     }
 
     @Transactional
