@@ -5,8 +5,6 @@
     <string name="confirm">확인</string>
     <string name="cancel">취소</string>
     <string name="save">저장하기</string>
-    <string name="nickname">대머리깃터디</string>
-    <string name="github_id">\@boldgitudy</string>
     <string name="post">등록</string>
     <string name="text_length">%d/6</string>
     <string name="comment_hint">%s님에게 응원과 격려의 메세지를 남겨주세요!</string>
@@ -14,10 +12,11 @@
 
 
     <!-- Strings related to home -->
-    <string name="score_with_ranking">활동점수 %d점  |  랭킹 %d위</string>
+    <string name="home_my_rank">활동점수 %d점  |  랭킹 %d위</string>
 
     <!-- Strings related to study -->
-    <string name="mystudy_cnt">마이스터디  %d</string>
+    <string name="study_my_cnt">마이스터디  %d</string>
+    <string name="study_all_cnt">전체스터디  %d</string>
     <string name="study_name">단국알고깃터디</string>
     <string name="study_commit_rule">월/수/금 커밋 필수</string>
     <string name="study_lock">스터디 공개</string>
@@ -38,8 +37,14 @@
     <string name="detail1_body">서비스 이용 약관 내용</string>
     <string name="detail2_body">개인정보 처리 방침 내용</string>
     <string name="detail3_body">본인 인증 서비스 이용 약관 내용</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
     <!-- Strings related to profile -->
-
+    <string name="nickname">대머리깃터디</string>
+    <string name="github_id">\@boldgitudy</string>
+    <string name="profile_github_link">www.github.com</string>
+    <string name="profile_blog_link">www.naver.com</string>
+    <string name="profile_linkedin_link">www.linkedin.com</string>
 
 </resources>
