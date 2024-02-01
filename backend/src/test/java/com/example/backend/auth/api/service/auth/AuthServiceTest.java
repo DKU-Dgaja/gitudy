@@ -2,9 +2,12 @@ package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
+import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -17,6 +20,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -141,8 +145,7 @@ class AuthServiceTest extends TestConfig {
 
         String expectedPlatformId = "1";
         String expectedPlatformType = "GITHUB";
-        String expectedName = "jusung";
-        String expectedProfileImageUrl = "http://www.naver.com";
+
 
 
         OAuthResponse oAuthResponse = generateOauthResponse();
@@ -159,5 +162,110 @@ class AuthServiceTest extends TestConfig {
                 () -> assertThat(claims.get(platformId)).isEqualTo(expectedPlatformId),
                 () -> assertThat(claims.get(platformType)).isEqualTo(expectedPlatformType)
         );
+    }
+    @Test
+    @DisplayName("UNAUTH 미가입자 회원가입 성공 테스트")
+    public void registerUnauthUserSuccessTest() {
+        UserPlatformType platformType = KAKAO;
+        String platformId = "1234";
+        String name = "testUser";
+        String profileImageUrl = "https://example.com/profile.jpg";
+        String githubId = "test@github.com";
+        // UNAUTH 사용자 저장
+        User unauthUser = User.builder()
+                .role(UserRole.UNAUTH)
+                .platformId(platformId)
+                .platformType(platformType)
+                .name(name)
+                .profileImageUrl(profileImageUrl)
+                .build();
+
+        User findUser = userRepository.save(unauthUser);
+
+        // 회원가입 요청 생성 (CENTER)
+        AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
+                .role(UserRole.USER)
+                .platformId(platformId)
+                .platformType(platformType)
+                .githubId(githubId)
+                .name(name)
+                .build();
+
+        // when
+        AuthServiceLoginResponse response = authService.register(request);
+
+        User savedUser = userRepository.findByPlatformIdAndPlatformType(request.getPlatformId(), request.getPlatformType()).orElse(null);
+        boolean tokenValid = jwtService.isTokenValid(response.getAccessToken(), savedUser.getUsername());   // 발행한 토큰 검증
+
+
+        // then
+        assertEquals(UserRole.USER, response.getRole());
+        assertThat(tokenValid).isTrue();
+    }
+
+    @Test
+    @DisplayName("UNAUTH 미가입자 회원가입 실패 테스트")
+    public void registerUnauthUserFailTest() {
+        UserPlatformType platformType = KAKAO;
+        String platformId = "1234";
+        String name = "testUser";
+        String profileImageUrl = "https://example.com/profile.jpg";
+        String githubId = "test@github.com";
+
+        User user = User.builder()
+                .platformId(platformId)
+                .platformType(platformType)
+                .role(UserRole.USER)
+                .name(name)
+                .profileImageUrl(profileImageUrl)
+                .build();
+
+        userRepository.save(user);
+
+        // 회원가입 요청 생성
+        AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
+                .role(UserRole.USER)
+                .platformId(platformId)
+                .platformType(platformType)
+                .name(name)
+                .githubId(githubId)
+                .build();
+
+        // then
+        assertThrows(RuntimeException.class, () -> {
+            authService.register(request);
+        });
+    }
+    @Test
+    @DisplayName("존재하지 않는 userName으로 계정삭제를 진행할 수 없다.")
+    void isNotProcessingWhenUserNameIsNotExist() {
+        // given
+        String invalidUserName = "1234_KAKAO";
+
+        // when
+        assertThrows(AuthException.class,
+                () -> authService.userDelete(invalidUserName));
+    }
+    @Test
+    @DisplayName("존재하는 계정의 userName으로 계정삭제를 진행할 수 있다.")
+    void successProcessingWhenUserNameIsExistInDB() {
+        String platformId="1234";
+        String platformType="KAKAO";
+        // given
+        User user = User.builder()
+                .platformId(platformId)
+                .platformType(UserPlatformType.valueOf(platformType))
+                .name("김민수")
+                .profileImageUrl("google.co.kr")
+                .role(UserRole.USER)
+                .build();
+        userRepository.save(user);
+
+        // when
+        authService.userDelete(platformId+"_"+platformType);
+        User deletedUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElse(null);
+
+        // then
+        assertThat(deletedUser.getRole()).isEqualTo(UserRole.WITHDRAW);
     }
 }

@@ -2,10 +2,13 @@ package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
+import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -131,4 +134,80 @@ public class AuthService {
         }
     }
 
+    @Transactional
+    public AuthServiceLoginResponse register(AuthServiceRegisterRequest request) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(request.getPlatformId(),request.getPlatformType()).orElseThrow(() -> {
+            // UNAUTH인 토큰을 받고 회원 탈퇴 후 그 토큰으로 회원가입 요청시 예외 처리
+            log.warn(">>>> User Not Exist : {}", ExceptionMessage.AUTH_INVALID_REGISTER.getText());
+            throw new AuthException(ExceptionMessage.AUTH_INVALID_REGISTER);
+        });
+
+        // UNAUTH 토큰으로 회원가입을 요청했지만 이미 update되어 UNAUTH가 아닌 사용자 예외 처리
+        if (findUser.getRole() != UserRole.UNAUTH) {
+            log.warn(">>>> Not UNAUTH User : {}", ExceptionMessage.AUTH_DUPLICATE_UNAUTH_REGISTER.getText());
+            throw new AuthException(ExceptionMessage.AUTH_DUPLICATE_UNAUTH_REGISTER);
+        }
+
+        // 회원가입 정보 DB 반영
+        findUser.updateRegister(request.getRole(), request.getName(), request.getGithubId());
+
+        // JWT Access Token, Refresh Token 재발급
+        JwtToken tokens = createJwtToken(findUser);
+
+        return AuthServiceLoginResponse.builder()
+                .accessToken(tokens.getAccessToken())
+                .refreshToken(tokens.getRefreshToken())
+                .role(findUser.getRole())
+                .build();
+    }
+
+    private JwtToken createJwtToken(User user) {
+        // JWT 토큰 생성을 위한 claims 생성
+        HashMap<String, String> claims = new HashMap<>();
+        claims.put(ROLE_CLAIM, user.getRole().name());
+        claims.put(PLATFORM_ID_CLAIM, user.getPlatformId());
+        claims.put(PLATFORM_TYPE_CLAIM, String.valueOf(user.getPlatformType()));
+
+        // Access Token 생성
+        final String accessToken = jwtService.generateAccessToken(claims, user);
+        // Refresh Token 생성
+        final String refreshToken = jwtService.generateRefreshToken(claims, user);
+
+        log.info(">>>> {} generate Tokens", user.getName());
+
+        // Refresh Token 저장 - REDIS
+        RefreshToken rt = RefreshToken.builder()
+                .refreshToken(refreshToken)
+                .subject(user.getUsername())
+                .build();
+        refreshTokenService.saveRefreshToken(rt);
+
+
+        return JwtToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+    @Transactional
+    public void userDelete(String userName) {
+        String[] platformIdAndPlatformType = extractFromSubject(userName);
+        String platformId = platformIdAndPlatformType[0];
+        String platformType = platformIdAndPlatformType[1];
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId, UserPlatformType.KAKAO.valueOf(platformType)).orElseThrow(() -> {
+            log.warn(">>>> User Delete Fail : {}", ExceptionMessage.AUTH_NOT_FOUND.getText());
+            throw new AuthException(ExceptionMessage.AUTH_NOT_FOUND);
+        });
+
+        try {
+            user.deleteUser();
+            log.info(">>>> {} Info is Deleted.", user.getName());
+        } catch (IllegalArgumentException e) {
+            log.error(">>>> ID = {} : 계정 삭제에 실패했습니다.", user.getId());
+            throw new AuthException(ExceptionMessage.AUTH_DELETE_FAIL);
+        }
+    }
+    private String[] extractFromSubject(String subject) {
+        // "_"로 문자열을 나누고 id와 type을 추출
+        return subject.split("_");
+    }
 }
