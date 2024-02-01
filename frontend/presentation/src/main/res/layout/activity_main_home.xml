@@ -19,6 +19,7 @@
         android:layout_marginBottom="-20dp"
         android:background="@color/WHITE"
         app:cardCornerRadius="20dp"
+        android:elevation="60dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout

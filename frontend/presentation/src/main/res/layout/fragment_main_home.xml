@@ -13,6 +13,7 @@
         android:layout_height="570dp"
         android:layout_marginTop="-20dp"
         android:backgroundTint="#1B1B25"
+        android:elevation="15dp"
         app:cardCornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -26,53 +27,6 @@
             android:layout_marginRight="22dp"
             android:layout_marginBottom="35dp">
 
-            <LinearLayout
-                android:id="@+id/attendanceBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="37dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_attendance" />
-
-                <TextView
-                    style="@style/B7_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="출석하기"
-                    android:textColor="@color/WHITE" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/todoBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="25dp"
-                android:layout_marginTop="37dp"
-                android:gravity="center"
-                android:orientation="vertical"
-                app:layout_constraintStart_toEndOf="@+id/attendanceBtn"
-                app:layout_constraintTop_toTopOf="parent">
-
-
-                <ImageView
-                    android:layout_width="36dp"
-                    android:layout_height="36dp"
-                    android:src="@drawable/ic_todo" />
-
-                <TextView
-                    style="@style/B7_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="TO-DO"
-                    android:textColor="@color/WHITE" />
-            </LinearLayout>
 
             <ImageView
                 android:id="@+id/alarmBtn"

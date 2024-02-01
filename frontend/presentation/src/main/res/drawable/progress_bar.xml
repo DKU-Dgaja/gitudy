@@ -14,9 +14,9 @@
             android:fromDegrees="270"
             android:toDegrees="270" >
             <shape
-                android:innerRadiusRatio="2.1"
+                android:innerRadiusRatio="2.15"
                 android:shape="ring"
-                android:thickness="8dp" >
+                android:thickness="13dp" >
                 <gradient
                     android:endColor="@color/BASIC_BLUE"
                     android:startColor="@color/BASIC_GREEN"
