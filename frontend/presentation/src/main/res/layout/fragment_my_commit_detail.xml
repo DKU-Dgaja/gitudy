@@ -36,13 +36,14 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/commitTitle"
             style="@style/B3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="100dp"
             android:gravity="center"
             android:paddingRight="10dp"
-            android:text="[FE] feat(#72): 커밋 상세 페이지 UI 구현"
+            android:text="@string/commit_title"
             android:textColor="@color/GS_800"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -73,6 +74,15 @@
                 android:text="대머리깃터디"
                 android:textColor="@color/GS_800" />
         </LinearLayout>
+
+        <ImageView
+            android:id="@+id/moreFuncBtn"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="44dp"
+            android:src="@drawable/ic_more"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
 
         <LinearLayout
             android:id="@+id/divider1"
@@ -157,32 +167,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
         </ScrollView>
-
-        <LinearLayout
-            android:id="@+id/newCommentBox"
-            android:layout_width="match_parent"
-            android:layout_height="130dp"
-            android:layout_marginBottom="80dp"
-            android:background="@drawable/box_non_stroke_r12"
-            android:backgroundTint="@color/GS_200"
-            android:paddingLeft="16dp"
-            android:paddingTop="19dp"
-            android:paddingRight="16dp"
-            android:paddingBottom="19dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            tools:layout_editor_absoluteX="22dp">
-
-            <EditText
-                style="@style/B7_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/comment_hint"
-                android:textColor="@color/GS_600"
-                android:textColorHint="@color/GS_500" />
-
-
-        </LinearLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>
