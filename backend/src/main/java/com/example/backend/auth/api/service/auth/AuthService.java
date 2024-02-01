@@ -7,6 +7,8 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.common.exception.state.LoginStateException;
+import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -135,9 +137,14 @@ public class AuthService {
 
     public UserInfoResponse getUserByInfo(String platformId, UserPlatformType platformType) {
 
-        User user = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).orElse(null);
+        User userInfoResponse = userRepository.findByPlatformIdAndPlatformType(platformId, platformType)
+                .orElseThrow(() -> {
+                    log.warn(">>>> User not found with platformId: {} platformType: {}", platformId, platformType);
+                     throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
 
-        return UserInfoResponse.of(user);
+
+        return UserInfoResponse.of(userInfoResponse);
 
     }
 

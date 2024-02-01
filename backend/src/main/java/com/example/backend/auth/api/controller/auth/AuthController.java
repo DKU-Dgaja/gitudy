@@ -98,19 +98,13 @@ public class AuthController {
     @GetMapping("/info")
     public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
 
-
         if (user.getRole() == UNAUTH) {
             return JsonResult.failOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText());
         }
 
+        UserInfoResponse userInfoResponse = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());
 
-        UserInfoResponse response = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());
-
-        if (response == null) {
-            return JsonResult.failOf(ExceptionMessage.USER_NOT_FOUND.getText());
-        }
-
-        return JsonResult.successOf(response);
+        return JsonResult.successOf(userInfoResponse);
     }
 
 
