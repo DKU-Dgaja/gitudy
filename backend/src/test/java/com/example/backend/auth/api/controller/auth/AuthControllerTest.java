@@ -7,7 +7,6 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
@@ -38,9 +37,6 @@ class AuthControllerTest extends TestConfig {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private OAuthService oAuthService;
 
     @MockBean
     private AuthService authService;

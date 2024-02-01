@@ -28,15 +28,19 @@ public class StudyTodo extends BaseEntity {
     @Column(name = "DETAIL")
     private String detail;                      // To do 설명
 
+    @Column(name = "TODO_LINK")
+    private String todoLink;                    // To do 링크
+
     @Temporal(TemporalType.DATE)
     @Column(name = "TODO_DATE", nullable = false)
     private LocalDate todoDate;                 // To do 날짜
 
     @Builder
-    public StudyTodo(Long studyInfoId, String title, String detail, LocalDate todoDate) {
+    public StudyTodo(Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
         this.studyInfoId = studyInfoId;
         this.title = title;
         this.detail = detail;
+        this.todoLink = todoLink;
         this.todoDate = todoDate;
     }
 }
