@@ -35,7 +35,7 @@ public enum ExceptionMessage {
     // AuthException
     UNAUTHORIZED_AUTHORITY("잘못된 권한 입니다."),
 
-    USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다.")
+    USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
 
     // AuthException
     AUTH_INVALID_REGISTER("잘못된 회원가입 요청입니다."),

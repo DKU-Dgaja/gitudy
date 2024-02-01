@@ -20,8 +20,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import java.util.Optional;
-
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -166,7 +164,6 @@ class AuthServiceTest extends TestConfig {
                 () -> assertThat(claims.get(platformType)).isEqualTo(expectedPlatformType)
         );
     }
-
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 성공 테스트")
     public void registerUnauthUserSuccessTest() {
@@ -266,15 +263,6 @@ class AuthServiceTest extends TestConfig {
         userRepository.save(user);
 
         // when
-        UserInfoResponse expectedUser = authService.getUserByInfo(expectedPlatformId, expectedPlatformType);
-
-        // then
-        assertThat(expectedUser).isNotNull();
-        assertEquals(user.getPlatformId(), expectedUser.getPlatformId());
-        assertEquals(user.getPlatformType(), expectedPlatformType);
-
-    }
-
         authService.userDelete(platformId+"_"+platformType);
         User deletedUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElse(null);
 
@@ -282,7 +270,7 @@ class AuthServiceTest extends TestConfig {
         assertThat(deletedUser.getRole()).isEqualTo(UserRole.WITHDRAW);
     }
 
-@Test
+    @Test
     @DisplayName("유저 정보가 가져와지는지 확인")
     void getUserByInfoTest() {
 
@@ -305,7 +293,9 @@ class AuthServiceTest extends TestConfig {
         assertEquals(user.getPlatformType(), expectedPlatformType);
 
     }
-  
-  
-  
+
+
+
+
+
 }
