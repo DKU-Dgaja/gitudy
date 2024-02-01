@@ -45,7 +45,9 @@
             android:layout_width="15dp"
             android:layout_height="15dp"
             android:layout_marginRight="6dp"
-            android:src="@drawable/logo_github" />
+            android:src="@drawable/logo_github"
+            android:tint="@color/GS_900"
+            tools:ignore="UseAppTint" />
 
         <TextView
             android:layout_width="wrap_content"
