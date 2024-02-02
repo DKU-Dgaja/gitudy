@@ -47,6 +47,9 @@ public class User extends BaseEntity implements UserDetails {
     @ColumnDefault(value = "'UNAUTH'")
     private UserRole role;                                      // 유저 상태 정보(역할)
 
+    @Embedded
+    private SocialInfo socialInfo;                              // 소셜 정보
+
     @Column(name = "GITHUB_ID")
     private String githubId;                                    // 깃허브 아이디
 
@@ -69,10 +72,11 @@ public class User extends BaseEntity implements UserDetails {
     private int point = 0;                                      // 사용자 포인트
 
     @Builder
-    public User(String platformId, UserPlatformType platformType, UserRole role, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, boolean profilePublicYn, int score, int point) {
+    public User(String platformId, UserPlatformType platformType, UserRole role, SocialInfo socialInfo, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, boolean profilePublicYn, int score, int point) {
         this.platformId = platformId;
         this.platformType = platformType;
         this.role = role;
+        this.socialInfo = socialInfo;
         this.githubId = githubId;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
@@ -80,11 +84,6 @@ public class User extends BaseEntity implements UserDetails {
         this.profilePublicYn = profilePublicYn;
         this.score = score;
         this.point = point;
-    }
-
-    public void updateProfile(String name, String profileImageUrl) {
-        this.profileImageUrl = profileImageUrl;
-        this.name = name;
     }
 
     public void updateRegister(UserRole role, String name, String githubId) {
