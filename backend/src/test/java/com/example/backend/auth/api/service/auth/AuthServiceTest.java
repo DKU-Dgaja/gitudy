@@ -20,11 +20,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static com.example.backend.auth.config.fixture.UserFixture.generateOauthResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -74,46 +73,6 @@ class AuthServiceTest extends TestConfig {
     }
 
     @Test
-    @DisplayName("OAuth 사용자 정보 변경시 DB에 업데이트되어야 한다.")
-    void loginUserProfileUpdate() {
-        // given
-        String code = "code";
-        String state = "state";
-
-        OAuthResponse oAuthResponse = generateOauthResponse();
-        UserPlatformType platformType = oAuthResponse.getPlatformType();
-
-        String platformId = oAuthResponse.getPlatformId();
-        String updateName = "test";
-        String updateProfileImageUrl = "www.test.com";
-
-        when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
-                .thenReturn(oAuthResponse);
-        authService.login(GITHUB, code, state);
-
-        oAuthResponse = OAuthResponse.builder()
-                .platformId(oAuthResponse.getPlatformId())
-                .platformType(GITHUB)
-                .name(updateName)
-                .profileImageUrl(updateProfileImageUrl)
-                .build();
-
-        when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
-                .thenReturn(oAuthResponse);
-
-        // when
-        authService.login(GITHUB, code, state);
-        User findUser = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).get();
-
-        // then
-        assertThat(findUser).isNotNull();
-        assertThat(findUser.getName()).isEqualTo(updateName);
-        assertThat(findUser.getProfileImageUrl()).isEqualTo(updateProfileImageUrl);
-
-
-    }
-
-    @Test
     @DisplayName("OAuth 로그인 인증 완료 후 JWT 토큰이 정상적으로 발급된다.")
     void loginJwtTokenGenerate() {
         // given
@@ -141,16 +100,8 @@ class AuthServiceTest extends TestConfig {
         // given
         String code = "code";
         String state = "state";
-
         String platformId = "platformId";
         String platformType = "platformType";
-
-
-
-        String expectedPlatformId = "1";
-        String expectedPlatformType = "GITHUB";
-
-
 
         OAuthResponse oAuthResponse = generateOauthResponse();
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
@@ -163,9 +114,10 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(claims.get(platformId)).isEqualTo(expectedPlatformId),
-                () -> assertThat(claims.get(platformType)).isEqualTo(expectedPlatformType)
+                () -> assertThat(claims.get(platformId)).isEqualTo(expectedUserPlatformId),
+                () -> assertThat(claims.get(platformType)).isEqualTo(GITHUB.name())
         );
+
     }
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 성공 테스트")
@@ -277,9 +229,6 @@ class AuthServiceTest extends TestConfig {
     @DisplayName("유저 정보가 가져와지는지 확인")
     void getUserByInfoTest() {
         // given
-        String expectedProfileUrl = "프로필이미지";
-        String expectedGithubId = "깃허브아이디";
-
         User savedUser = userRepository.save(generateAuthUser());
         System.out.println("savedUser = " + savedUser.getPlatformId());
         System.out.println("savedUser = " + savedUser.getPlatformType());
@@ -290,8 +239,8 @@ class AuthServiceTest extends TestConfig {
         // then
         assertThat(expectedUser).isNotNull();
         assertEquals(expectedUser.getRole(), USER);
-        assertEquals(expectedUser.getProfileImageUrl(), expectedProfileUrl);
-        assertEquals(expectedUser.getGithubId(), expectedGithubId);
+        assertEquals(expectedUser.getProfileImageUrl(), expectedUserProfileImageUrl);
+        assertEquals(expectedUser.getGithubId(), expectedUserGithubId);
 
     }
 

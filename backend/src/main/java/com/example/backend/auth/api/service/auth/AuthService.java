@@ -71,9 +71,6 @@ public class AuthService {
                     return userRepository.save(saveUser);
                 });
 
-        // 기존 사용자의 경우 OAuth 사용자 정보(이름, 사진)가 변경되었으면 업데이트해준다.
-        findUser.updateProfile(name, profileImageUrl);
-
         /*
             DB에 저장된 사용자 정보를 기반으로 JWT 토큰을 발급
             * JWT 토큰을 요청시에 담아 보내면 JWT 토큰 인증 필터에서 Security Context에 인증된 사용자로 등록
