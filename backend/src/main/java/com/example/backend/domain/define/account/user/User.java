@@ -59,6 +59,9 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "PUSH_ALARM_YN")
     private boolean pushAlarmYn = false;                        // 알림 수신 동의 여부
 
+    @Column(name = "PROFILE_PUBLIC_YN")
+    private boolean profilePublicYn = true;                     // 프로필 공개 여부
+
     @Column(name = "SCORE")
     private int score = 0;                                      // 사용자 활동 점수
 
@@ -66,7 +69,7 @@ public class User extends BaseEntity implements UserDetails {
     private int point = 0;                                      // 사용자 포인트
 
     @Builder
-    public User(String platformId, UserPlatformType platformType, UserRole role, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, int score, int point) {
+    public User(String platformId, UserPlatformType platformType, UserRole role, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, boolean profilePublicYn, int score, int point) {
         this.platformId = platformId;
         this.platformType = platformType;
         this.role = role;
@@ -74,6 +77,7 @@ public class User extends BaseEntity implements UserDetails {
         this.name = name;
         this.profileImageUrl = profileImageUrl;
         this.pushAlarmYn = pushAlarmYn;
+        this.profilePublicYn = profilePublicYn;
         this.score = score;
         this.point = point;
     }
@@ -88,9 +92,11 @@ public class User extends BaseEntity implements UserDetails {
         this.name = name;
         this.githubId = githubId;
     }
+
     public void deleteUser() {
         this.role = UserRole.WITHDRAW;
     }
+
     // Spring Security UserDetails Area
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

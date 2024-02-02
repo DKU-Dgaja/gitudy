@@ -22,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
+import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -185,7 +186,7 @@ class AuthServiceTest extends TestConfig {
 
         // 회원가입 요청 생성 (CENTER)
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(UserRole.USER)
+                .role(USER)
                 .platformId(platformId)
                 .platformType(platformType)
                 .githubId(githubId)
@@ -200,7 +201,7 @@ class AuthServiceTest extends TestConfig {
 
 
         // then
-        assertEquals(UserRole.USER, response.getRole());
+        assertEquals(USER, response.getRole());
         assertThat(tokenValid).isTrue();
     }
 
@@ -216,7 +217,7 @@ class AuthServiceTest extends TestConfig {
         User user = User.builder()
                 .platformId(platformId)
                 .platformType(platformType)
-                .role(UserRole.USER)
+                .role(USER)
                 .name(name)
                 .profileImageUrl(profileImageUrl)
                 .build();
@@ -225,7 +226,7 @@ class AuthServiceTest extends TestConfig {
 
         // 회원가입 요청 생성
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(UserRole.USER)
+                .role(USER)
                 .platformId(platformId)
                 .platformType(platformType)
                 .name(name)
@@ -258,7 +259,7 @@ class AuthServiceTest extends TestConfig {
                 .platformType(UserPlatformType.valueOf(platformType))
                 .name("김민수")
                 .profileImageUrl("google.co.kr")
-                .role(UserRole.USER)
+                .role(USER)
                 .build();
         userRepository.save(user);
 
@@ -273,29 +274,21 @@ class AuthServiceTest extends TestConfig {
     @Test
     @DisplayName("유저 정보가 가져와지는지 확인")
     void getUserByInfoTest() {
-
         // given
-        String expectedPlatformId = "102514823309503386675";
-        UserPlatformType expectedPlatformType = UserPlatformType.GOOGLE;
+        String expectedProfileUrl = "https://google.com";
+        String expectedGithubId = "jusung-c";
 
-        User user = User.builder()
-                .platformId(expectedPlatformId)
-                .platformType(expectedPlatformType)
-                .build();
-        userRepository.save(user);
+        User savedUser = userRepository.save(generateUser());
 
         // when
-        UserInfoResponse expectedUser = authService.getUserByInfo(expectedPlatformId, expectedPlatformType);
+        UserInfoResponse expectedUser = authService.getUserByInfo(savedUser.getPlatformId(), savedUser.getPlatformType());
 
         // then
         assertThat(expectedUser).isNotNull();
-        assertEquals(user.getPlatformId(), expectedUser.getPlatformId());
-        assertEquals(user.getPlatformType(), expectedPlatformType);
+        assertEquals(expectedUser.getRole(), USER);
+        assertEquals(expectedUser.getProfileImageUrl(), expectedProfileUrl);
+        assertEquals(expectedUser.getGithubId(), expectedGithubId);
 
     }
-
-
-
-
 
 }

@@ -20,12 +20,15 @@ import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
+import org.junit.jupiter.api.DisplayNameGeneration;
+import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 
+@DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
@@ -41,8 +44,10 @@ public class TestConfig {
                 .platformType(UserPlatformType.KAKAO)
                 .role(UserRole.USER)
                 .name("홍길동")
+                .githubId("jusung-c")
                 .profileImageUrl("https://google.com")
                 .pushAlarmYn(true)
+                .profilePublicYn(true)
                 .build();
     }
 

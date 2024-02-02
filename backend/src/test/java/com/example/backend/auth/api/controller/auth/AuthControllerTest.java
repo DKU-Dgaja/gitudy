@@ -7,7 +7,6 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
@@ -38,9 +37,6 @@ class AuthControllerTest extends TestConfig {
 
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private OAuthService oAuthService;
 
     @MockBean
     private AuthService authService;
@@ -218,7 +214,7 @@ class AuthControllerTest extends TestConfig {
     }
     @Test
     @DisplayName("유저정보 조회 성공 테스트")
-    void userInfoSucessTest() throws Exception {
+    void userInfoSuccessTest() throws Exception {
         //given
         User user = User.builder()
                 .name(expectedName)
@@ -236,9 +232,9 @@ class AuthControllerTest extends TestConfig {
         when(authService.getUserByInfo(expectedPlatformId, UserPlatformType.GOOGLE)).thenReturn(savedUser);
 
         HashMap<String, String> map = new HashMap<>();
-        map.put("role", savedUser.getRole().name());
-        map.put("platformId", savedUser.getPlatformId());
-        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
+        map.put("role", user.getRole().name());
+        map.put("platformId", user.getPlatformId());
+        map.put("platformType", String.valueOf(user.getPlatformType()));
 
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
@@ -254,8 +250,6 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj.name").value(expectedName))
                 .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedProfileImageUrl))
                 .andExpect(jsonPath("$.res_obj.github_id").value("j-ra1n"))
-                .andExpect(jsonPath("$.res_obj.platform_id").value(expectedPlatformId))
-                .andExpect(jsonPath("$.res_obj.platform_type").value(String.valueOf(UserPlatformType.GOOGLE)))
                 .andExpect(jsonPath("$.res_obj.push_alarm_yn").value(true))
                 .andExpect(jsonPath("$.res_obj.score").value(0))
                 .andExpect(jsonPath("$.res_obj.point").value(0));
