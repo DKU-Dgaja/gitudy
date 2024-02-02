@@ -5,6 +5,7 @@ import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenR
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
+import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.Optional;
 
 @Slf4j
@@ -220,8 +222,34 @@ public class AuthService {
             throw new AuthException(ExceptionMessage.AUTH_DELETE_FAIL);
         }
     }
+
     private String[] extractFromSubject(String subject) {
         // "_"로 문자열을 나누고 id와 type을 추출
         return subject.split("_");
+    }
+
+    public UserInfoResponse authenticate(Long userId, User user) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType())
+                .orElseThrow(() -> {
+                    log.error(">>>> User not found for platformId {} and platformType {} <<<<", user.getPlatformId(), user.getPlatformType());
+                    throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
+
+        // 로그인된 사용자의 ID와 수정을 요청한 회원 정보의 ID와 비교
+        if (!Objects.equals(findUser.getId(), userId)) {
+            log.error(">>>> User ID {} does not match the requested user ID {} <<<<", findUser.getId(), userId);
+            throw new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY);
+        }
+
+        return UserInfoResponse.of(findUser);
+    }
+
+    public UserUpdatePageResponse updateUserPage(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_FOUND.getText());
+            throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
+        return UserUpdatePageResponse.of(user);
     }
 }

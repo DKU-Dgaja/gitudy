@@ -6,8 +6,11 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
+import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.util.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -24,6 +27,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.auth.config.fixture.UserFixture.*;
@@ -109,6 +113,7 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
     }
+
     @Test
     @DisplayName("회원가입 성공 테스트")
     void registerSuccessTest() throws Exception {
@@ -156,15 +161,16 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value("githubId: must be a well-formed email address"));
     }
+
     @Test
     @DisplayName("올바른 사용자의 토큰으로 사용자 계정 탈퇴 요청을 하면, 계정이 삭제된다.")
     void validUserTokenRequestWithDrawThenUserDelete() throws Exception {
-        String platformId="12345";
+        String platformId = "12345";
         UserRole role = UserRole.UNAUTH;
-        UserPlatformType userPlatformType=UserPlatformType.KAKAO;
+        UserPlatformType userPlatformType = UserPlatformType.KAKAO;
         String name = "구영민";
         String profileImageURL = "google.co.kr";
-        String githubId="1234@github.com";
+        String githubId = "1234@github.com";
 
         // given
         User user = User.builder()
@@ -191,7 +197,7 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         when(authService.register(request)).thenReturn(AuthServiceLoginResponse.builder()
-                .accessToken(accessToken )
+                .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .role(UserRole.USER)
                 .build()
@@ -201,12 +207,13 @@ class AuthControllerTest extends TestConfig {
         // when
         mockMvc.perform(post("/auth/delete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken,refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200));
 
     }
+
     @Test
     @DisplayName("유저정보 조회 성공 테스트")
     void userInfoSuccessTest() throws Exception {
@@ -281,4 +288,56 @@ class AuthControllerTest extends TestConfig {
 
     }
 
+    @Test
+    void 사용자_정보_수정_페이지_성공_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        // when
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(authService.updateUserPage(any(Long.class))).thenReturn(UserUpdatePageResponse.builder()
+                .name(expectedUserName)
+                .profileImageUrl(expectedUserProfileImageUrl)
+                .build());
+
+        // then
+        mockMvc.perform(get("/auth/update/" + "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_obj.name").value(expectedUserName))
+                .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedUserProfileImageUrl))
+                .andDo(print());
+
+    }
+
+    @Test
+    void 사용자_정보_수정_페이지_실패_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        // when
+        when(authService.authenticate(any(Long.class), any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+
+        // then
+        mockMvc.perform(get("/auth/update/" + "1")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
+
+    }
 }

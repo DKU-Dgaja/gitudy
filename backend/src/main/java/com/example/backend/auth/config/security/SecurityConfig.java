@@ -27,6 +27,10 @@ public class SecurityConfig {
                                         .requestMatchers("/auth/**").permitAll()
                                         // Swagger 추가
                                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                                        // register
+                                        .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
+                                        // update
+                                        .requestMatchers("/auth/update").hasAnyAuthority("AUTH")
                                         // Others
                                         .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )

@@ -11,6 +11,7 @@ import com.example.backend.auth.api.service.auth.response.AuthServiceLoginRespon
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -100,11 +101,12 @@ public class AuthController {
             return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
         }
     }
-  
+
     @GetMapping("/info")
     public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
 
         if (user.getRole() == UNAUTH) {
+            log.error(">>>> {} <<<<", ExceptionMessage.UNAUTHORIZED_AUTHORITY);
             return JsonResult.failOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText());
         }
 
@@ -129,6 +131,16 @@ public class AuthController {
 
         return JsonResult.successOf();
     }
-  
+
+    @GetMapping("/update/{userId}")
+    public JsonResult<?> updateUser(@AuthenticationPrincipal User user,
+                                    @PathVariable(name = "userId") Long userId) {
+
+        // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
+        authService.authenticate(userId, user);
+
+        // 수정 페이지에 필요한 정보를 조회해 반환
+        return JsonResult.successOf(authService.updateUserPage(userId));
+    }
 }
 

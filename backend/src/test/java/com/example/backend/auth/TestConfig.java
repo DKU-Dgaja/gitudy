@@ -17,6 +17,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -26,7 +27,13 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static com.example.backend.auth.config.fixture.UserFixture.expectedUserPlatformId;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
+import static java.util.Map.entry;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest

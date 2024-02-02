@@ -9,6 +9,7 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -19,6 +20,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
@@ -242,6 +244,36 @@ class AuthServiceTest extends TestConfig {
         assertEquals(expectedUser.getProfileImageUrl(), expectedUserProfileImageUrl);
         assertEquals(expectedUser.getGithubId(), expectedUserGithubId);
 
+    }
+
+    @Test
+    void 로그인한_사용자가_권한이_있는지_확인_성공_테스트() {
+        User user = userRepository.save(generateAuthUser());
+
+        User loginUser = User.builder()
+                .role(user.getRole())
+                .platformId(user.getPlatformId())
+                .platformType(user.getPlatformType())
+                .build();
+
+        assertDoesNotThrow(() -> authService.authenticate(user.getId(), loginUser));
+    }
+
+    @Test
+    void 로그인한_사용자가_권한이_있는지_확인_실패_테스트() {
+        Long userId = -1L;
+
+        User user = userRepository.save(generateAuthUser());
+
+        User loginUser = User.builder()
+                .role(user.getRole())
+                .platformId(user.getPlatformId())
+                .platformType(user.getPlatformType())
+                .build();
+
+        assertThrows(AuthException.class, () -> {
+            authService.authenticate(userId, loginUser);
+        });
     }
 
 }
