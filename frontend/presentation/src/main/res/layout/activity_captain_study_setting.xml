@@ -194,7 +194,7 @@
         android:layout_marginRight="12dp"
         android:background="@drawable/box_non_stroke_r8"
         android:backgroundTint="@color/BLACK"
-        android:text="알림보내기"
+        android:text="@string/send_message"
         android:textColor="@color/WHITE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/kickMemberBtn" />
