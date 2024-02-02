@@ -32,9 +32,9 @@
 
             <ImageView
                 android:id="@+id/navHome"
-                android:layout_width="28dp"
+                android:layout_width="52dp"
                 android:layout_height="48dp"
-                android:layout_marginRight="46dp"
+                android:layout_marginRight="40dp"
                 android:src="@drawable/selector_nav_home" />
 
             <ImageView
@@ -47,14 +47,14 @@
 
             <ImageView
                 android:id="@+id/navFeed"
-                android:layout_width="48dp"
+                android:layout_width="52dp"
                 android:layout_height="48dp"
-                android:layout_marginRight="46dp"
-                android:src="@drawable/selector_nav_home" />
+                android:layout_marginRight="40dp"
+                android:src="@drawable/selector_nav_feed" />
 
             <ImageView
                 android:id="@+id/navProfile"
-                android:layout_width="32dp"
+                android:layout_width="52dp"
                 android:layout_height="48dp"
                 android:src="@drawable/selector_nav_profile" />
 
