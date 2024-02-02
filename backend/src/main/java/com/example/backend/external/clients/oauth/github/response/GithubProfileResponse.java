@@ -1,5 +1,6 @@
 package com.example.backend.external.clients.oauth.github.response;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ public class GithubProfileResponse {
     private String avatar_url;              // 썸네일 이미지
     private String html_url;                // 사용자 깃허브 주소
 
+    @Builder
     public GithubProfileResponse(Long id, String login, String name, String email, String avatar_url, String html_url) {
         this.id = id;
         this.login = login;

@@ -9,8 +9,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class DslTestRepositoryTest extends TestConfig {
     @Autowired
@@ -29,7 +29,7 @@ class DslTestRepositoryTest extends TestConfig {
     @DisplayName("userId를 이용해 DslTest를 조회하고 User 정보까지 함께 가져온다.")
     void dslTest() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         DslTest savedDsl = dslTestRepository.save(DslTest.builder()
                 .description("test")
                 .userId(savedUser.getId()).build());

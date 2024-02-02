@@ -37,29 +37,6 @@ public class TestConfig {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer";
 
-    public static User generateUser() {
-
-        return User.builder()
-                .platformId("1234")
-                .platformType(UserPlatformType.KAKAO)
-                .role(UserRole.USER)
-                .name("홍길동")
-                .githubId("jusung-c")
-                .profileImageUrl("https://google.com")
-                .pushAlarmYn(true)
-                .profilePublicYn(true)
-                .build();
-    }
-
-    public static OAuthResponse generateOauthResponse() {
-        return OAuthResponse.builder()
-                .platformId("1")
-                .platformType(GITHUB)
-                .name("jusung")
-                .profileImageUrl("http://www.naver.com")
-                .build();
-    }
-
     public static String createAuthorizationHeader(String accessToken, String refreshToken) {
         return BEARER + " " + accessToken + " " + refreshToken;
     }

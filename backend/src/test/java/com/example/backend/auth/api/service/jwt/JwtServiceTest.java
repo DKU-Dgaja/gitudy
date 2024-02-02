@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Date;
 import java.util.HashMap;
 
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -34,7 +35,7 @@ class JwtServiceTest extends TestConfig {
     @DisplayName("JWT Access 토큰에서 모든 Claims를 추출한다.")
     void extractAllClaimsTest() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String role = savedUser.getRole().name();
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
@@ -65,7 +66,7 @@ class JwtServiceTest extends TestConfig {
     @DisplayName("JWT Access 토큰에서 Subject(식별자)를 추출한다.")
     void extractSubjectTest() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
         String role = savedUser.getRole().name();
@@ -91,7 +92,7 @@ class JwtServiceTest extends TestConfig {
     @DisplayName("JWT Access 토큰에서 만료 일자를 추출한다.")
     void extractExpirationTest() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String role = savedUser.getRole().name();
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
@@ -113,7 +114,7 @@ class JwtServiceTest extends TestConfig {
     @DisplayName("Claims를 지정해 JWT Access 토큰을 생성한다.")
     void generateAccessTokenTest() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String role = savedUser.getRole().name();
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
@@ -144,7 +145,7 @@ class JwtServiceTest extends TestConfig {
     @DisplayName("Claims를 지정해 refresh 토큰을 생성한다.")
     void generateRefreshTokenTest() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String role = savedUser.getRole().name();
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
@@ -174,7 +175,7 @@ class JwtServiceTest extends TestConfig {
     @DisplayName("요청의 JWT 토큰이 올바르지 않은 형식일 경우 토큰 검증에 실패한다.")
     void isTokenIllegal() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String role = savedUser.getRole().name();
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
@@ -200,7 +201,7 @@ class JwtServiceTest extends TestConfig {
         // given
         String s = "Another Requestor";
 
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String role = savedUser.getRole().name();
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
@@ -222,7 +223,7 @@ class JwtServiceTest extends TestConfig {
     @DisplayName("요청의 JWT 토큰이 만료되었을 경우 토큰 검증에 실패한다.")
     void isTokenExpired() {
         // given
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
         String role = savedUser.getRole().name();
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());

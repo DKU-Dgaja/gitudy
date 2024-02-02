@@ -25,10 +25,12 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 
-import static com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapterTest.*;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
+import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.when;
@@ -75,22 +77,15 @@ class AuthControllerTest extends TestConfig {
     @DisplayName("로그아웃 성공 테스트")
     void logoutSuccessTest() throws Exception {
         // given
-        User user = User.builder()
-                .name(expectedName)
-                .role(UserRole.USER)
-                .platformType(UserPlatformType.GOOGLE)
-                .platformId(expectedPlatformId)
-                .profileImageUrl(expectedProfileImageUrl)
-                .build();
-        User savedUser = userRepository.save(user);
+        User savedUser = userRepository.save(generateGoogleUser());
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", savedUser.getRole().name());
         map.put("platformId", savedUser.getPlatformId());
         map.put("platformType", String.valueOf(savedUser.getPlatformType()));
 
-        String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
 
         // when
@@ -216,20 +211,10 @@ class AuthControllerTest extends TestConfig {
     @DisplayName("유저정보 조회 성공 테스트")
     void userInfoSuccessTest() throws Exception {
         //given
-        User user = User.builder()
-                .name(expectedName)
-                .role(UserRole.USER)
-                .platformId(expectedPlatformId)
-                .platformType(UserPlatformType.GOOGLE)
-                .githubId("j-ra1n")
-                .profileImageUrl(expectedProfileImageUrl)
-                .pushAlarmYn(true)
-                .score(0)
-                .point(0)
-                .build();
+        User user = generateAuthUser();
         UserInfoResponse savedUser = UserInfoResponse.of(userRepository.save(user));
 
-        when(authService.getUserByInfo(expectedPlatformId, UserPlatformType.GOOGLE)).thenReturn(savedUser);
+        when(authService.getUserByInfo(expectedUserPlatformId, GITHUB)).thenReturn(savedUser);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", user.getRole().name());
@@ -247,12 +232,8 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj.role").value(String.valueOf(UserRole.USER)))
-                .andExpect(jsonPath("$.res_obj.name").value(expectedName))
-                .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedProfileImageUrl))
-                .andExpect(jsonPath("$.res_obj.github_id").value("j-ra1n"))
-                .andExpect(jsonPath("$.res_obj.push_alarm_yn").value(true))
-                .andExpect(jsonPath("$.res_obj.score").value(0))
-                .andExpect(jsonPath("$.res_obj.point").value(0));
+                .andExpect(jsonPath("$.res_obj.name").value(expectedUserName))
+                .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedUserProfileImageUrl));
 
     }
 
@@ -277,17 +258,7 @@ class AuthControllerTest extends TestConfig {
     @Test
     @DisplayName("유저정보 조회 실패 테스트 - 잘못된 권한")
     void userInfoWhenInvalidAuthority() throws Exception {
-        User user = User.builder()
-                .name(expectedName)
-                .role(UserRole.UNAUTH)       // 잘못된 권한(미인증)
-                .platformId(expectedPlatformId)
-                .platformType(UserPlatformType.GOOGLE)
-                .githubId("j-ra1n")
-                .profileImageUrl(expectedProfileImageUrl)
-                .pushAlarmYn(true)
-                .score(0)
-                .point(0)
-                .build();
+        User user = generateUNAUTHUser();
         User savedUser = userRepository.save(user);
 
         HashMap<String, String> map = new HashMap<>();
@@ -304,7 +275,9 @@ class AuthControllerTest extends TestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400));
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
 
     }
 

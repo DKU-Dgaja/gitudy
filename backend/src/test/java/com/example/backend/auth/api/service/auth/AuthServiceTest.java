@@ -23,6 +23,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static com.example.backend.auth.config.fixture.UserFixture.generateOauthResponse;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -275,10 +277,12 @@ class AuthServiceTest extends TestConfig {
     @DisplayName("유저 정보가 가져와지는지 확인")
     void getUserByInfoTest() {
         // given
-        String expectedProfileUrl = "https://google.com";
-        String expectedGithubId = "jusung-c";
+        String expectedProfileUrl = "프로필이미지";
+        String expectedGithubId = "깃허브아이디";
 
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
+        System.out.println("savedUser = " + savedUser.getPlatformId());
+        System.out.println("savedUser = " + savedUser.getPlatformType());
 
         // when
         UserInfoResponse expectedUser = authService.getUserByInfo(savedUser.getPlatformId(), savedUser.getPlatformType());
