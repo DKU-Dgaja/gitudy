@@ -1,12 +1,11 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
-import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
-import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
-import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
-import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
+import com.example.backend.auth.api.controller.auth.response.*;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
@@ -142,5 +141,17 @@ public class AuthController {
         // 수정 페이지에 필요한 정보를 조회해 반환
         return JsonResult.successOf(authService.updateUserPage(userId));
     }
-}
 
+    @PostMapping("/update/{userId}")
+    public JsonResult<?> updateUser(@AuthenticationPrincipal User user,
+                                    @PathVariable(name = "userId") Long userId,
+                                    @Valid @RequestBody UserUpdateRequest request) {
+
+        // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
+        authService.authenticate(userId, user);
+        authService.updateUser(UserUpdateServiceRequest.of(userId, request));
+
+        return JsonResult.successOf("User Update Success.");
+    }
+
+}

@@ -4,13 +4,13 @@ import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
-import com.example.backend.common.exception.state.LoginStateException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.domain.define.account.user.User;
@@ -32,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Optional;
 
 @Slf4j
 @Service
@@ -251,5 +250,20 @@ public class AuthService {
         });
 
         return UserUpdatePageResponse.of(user);
+    }
+
+    @Transactional
+    public void updateUser(UserUpdateServiceRequest request) {
+        Long userId = request.getUserId();
+
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_FOUND.getText());
+            throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
+        user.updateUser(request.getName(),
+                request.getProfileImageUrl(),
+                request.isProfilePublicYn(),
+                request.getSocialInfo());
     }
 }

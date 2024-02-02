@@ -4,12 +4,14 @@ import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.common.exception.user.UserException;
+import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -274,6 +276,59 @@ class AuthServiceTest extends TestConfig {
         assertThrows(AuthException.class, () -> {
             authService.authenticate(userId, loginUser);
         });
+    }
+
+    @Test
+    void 회원_정보_수정_성공_테스트() {
+        // given
+        String updateName = "updateName";
+        String updateProfileImageUrl = "updateProfileImageUrl";
+        boolean updateProfilePublicYn = false;
+        SocialInfo updateSocialInfo = SocialInfo.builder().blogLink("test@naver.com").build();
+
+        User user = userRepository.save(generateAuthUser());
+        UserUpdateServiceRequest request = UserUpdateServiceRequest.builder()
+                .userId(user.getId())
+                .name(updateName)
+                .profilePublicYn(updateProfilePublicYn)
+                .profileImageUrl(updateProfileImageUrl)
+                .socialInfo(updateSocialInfo)
+                .build();
+
+        // when
+        authService.updateUser(request);
+        User updateUser = userRepository.findById(request.getUserId()).get();
+
+        // then
+        assertAll(
+                () -> assertThat(updateUser.getName()).isEqualTo(updateName),
+                () -> assertThat(updateUser.getProfileImageUrl()).isEqualTo(updateProfileImageUrl),
+                () -> assertThat(updateUser.isProfilePublicYn()).isEqualTo(updateProfilePublicYn),
+                () -> assertThat(updateUser.getSocialInfo().getBlogLink()).isEqualTo(updateSocialInfo.getBlogLink()));
+    }
+
+    @Test
+    void 회원_정보_수정_실패_테스트() {
+        // given
+        String updateName = "updateName";
+        String updateProfileImageUrl = "updateProfileImageUrl";
+        boolean updateProfilePublicYn = false;
+        SocialInfo updateSocialInfo = SocialInfo.builder().blogLink("test@naver.com").build();
+
+//        User user = userRepository.save(generateAuthUser());
+        UserUpdateServiceRequest request = UserUpdateServiceRequest.builder()
+                .userId(1L)
+                .name(updateName)
+                .profilePublicYn(updateProfilePublicYn)
+                .profileImageUrl(updateProfileImageUrl)
+                .socialInfo(updateSocialInfo)
+                .build();
+
+        // when
+        assertThrows(UserException.class, () -> {
+            authService.updateUser(request);
+        });
+
     }
 
 }

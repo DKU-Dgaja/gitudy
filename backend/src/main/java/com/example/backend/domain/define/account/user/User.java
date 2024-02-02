@@ -92,6 +92,14 @@ public class User extends BaseEntity implements UserDetails {
         this.githubId = githubId;
     }
 
+    // 회원 정보 수정 메서드
+    public void updateUser(String name, String profileImageUrl, boolean profilePublicYn, SocialInfo socialInfo) {
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
+        this.profilePublicYn = profilePublicYn;
+        this.socialInfo = socialInfo;
+    }
+
     public void deleteUser() {
         this.role = UserRole.WITHDRAW;
     }

@@ -2,25 +2,29 @@ package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
+import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.user.UserException;
 import com.example.backend.common.util.TokenUtil;
+import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
@@ -32,13 +36,14 @@ import java.util.Map;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.when;
 
+@SuppressWarnings("NonAsciiCharacters")
 class AuthControllerTest extends TestConfig {
 
     @Autowired
@@ -53,11 +58,13 @@ class AuthControllerTest extends TestConfig {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
     }
-
 
     @Test
     @DisplayName("로그아웃 실패 테스트 - 잘못된 토큰으로 요청시 예외 발생")
@@ -101,7 +108,6 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("로그아웃 되었습니다."));
     }
-
 
     @Test
     @DisplayName("로그아웃 실패 테스트 - 잘못된 Header로 요청시 에러 발생")
@@ -203,7 +209,7 @@ class AuthControllerTest extends TestConfig {
                 .build()
         );
 
-        Mockito.doNothing().when(authService).userDelete(any(String.class));
+        doNothing().when(authService).userDelete(any(String.class));
         // when
         mockMvc.perform(post("/auth/delete")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -243,7 +249,6 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedUserProfileImageUrl));
 
     }
-
 
     @Test
     @DisplayName("유저정보 조회 실패 테스트 - 잘못된 Token")
@@ -305,7 +310,7 @@ class AuthControllerTest extends TestConfig {
                 .build());
 
         // then
-        mockMvc.perform(get("/auth/update/" + "1")
+        mockMvc.perform(get("/auth/update/" + savedUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
@@ -330,7 +335,7 @@ class AuthControllerTest extends TestConfig {
         when(authService.authenticate(any(Long.class), any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // then
-        mockMvc.perform(get("/auth/update/" + "1")
+        mockMvc.perform(get("/auth/update/" + savedUser.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
@@ -339,5 +344,74 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
 
+    }
+
+    @Test
+    void 사용자_정보_수정_성공_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        UserUpdateRequest updateRequest = UserUpdateRequest.builder()
+                .name(expectedUserName)
+                .profileImageUrl(expectedUserProfileImageUrl)
+                .profilePublicYn(false)
+                .socialInfo(SocialInfo.builder()
+                        .blogLink("test@naver.com").build())
+                .build();
+
+        // when
+        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
+
+        // then
+        mockMvc.perform(post("/auth/update/" + savedUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("User Update Success."))
+                .andDo(print());
+    }
+
+    @Test
+    void 사용자_정보_수정_실패_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        UserUpdateRequest updateRequest = UserUpdateRequest.builder()
+                .name(expectedUserName)
+                .profileImageUrl(expectedUserProfileImageUrl)
+                .profilePublicYn(false)
+                .socialInfo(SocialInfo.builder()
+                        .blogLink("test").build())
+                .build();
+
+        // when
+        doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
+                .when(authService)
+                .updateUser(any(UserUpdateServiceRequest.class));
+
+        // then
+        mockMvc.perform(post("/auth/update/" + savedUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
     }
 }
