@@ -60,7 +60,7 @@
                 android:layout_height="65dp"
                 android:background="@drawable/circle_non_stroke"
                 android:padding="7dp"
-                android:src="@drawable/ic_navi_profile_active"
+                android:src="@drawable/character_bebe_over_130"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -181,7 +181,7 @@
             android:id="@+id/githubLinkEditLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/box_stroke_300_r12"
+            android:background="@drawable/selector_btn_stroke_r12_clicked"
             android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingTop="18dp"
@@ -243,7 +243,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@drawable/box_stroke_300_r12"
+            android:background="@drawable/selector_btn_stroke_r12_clicked"
             android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingTop="18dp"
@@ -303,7 +303,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="20dp"
-            android:background="@drawable/box_stroke_300_r12"
+            android:background="@drawable/selector_btn_stroke_r12_clicked"
             android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingTop="18dp"
@@ -412,12 +412,12 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:enabled="false"
         style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="50dp"
         android:background="@drawable/selector_btn_r12_enable"
+        android:enabled="false"
         android:text="@string/save"
         android:textColor="@drawable/selector_text_color_enable"
         app:layout_constraintBottom_toBottomOf="parent" />
