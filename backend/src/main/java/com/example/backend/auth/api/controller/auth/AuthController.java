@@ -1,16 +1,17 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
-import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
-import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
-import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
-import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
+import com.example.backend.auth.api.controller.auth.response.*;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
+import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -100,11 +101,12 @@ public class AuthController {
             return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
         }
     }
-  
+
     @GetMapping("/info")
     public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
 
         if (user.getRole() == UNAUTH) {
+            log.error(">>>> {} <<<<", ExceptionMessage.UNAUTHORIZED_AUTHORITY);
             return JsonResult.failOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText());
         }
 
@@ -112,10 +114,6 @@ public class AuthController {
 
         return JsonResult.successOf(userInfoResponse);
     }
-
-
-
-
 
     @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthServiceLoginResponse.class)))
     @PostMapping("/register")
@@ -133,6 +131,47 @@ public class AuthController {
 
         return JsonResult.successOf();
     }
-  
-}
 
+    @ApiResponse(responseCode = "200", description = "회원정보 수정 페이지 요청 성공", content = @Content(schema = @Schema(implementation = UserUpdatePageResponse.class)))
+    @GetMapping("/update/{userId}")
+    public JsonResult<?> updateUser(@AuthenticationPrincipal User user,
+                                    @PathVariable(name = "userId") Long userId) {
+
+        // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
+        authService.authenticate(userId, user);
+
+        // 수정 페이지에 필요한 정보를 조회해 반환
+        return JsonResult.successOf(authService.updateUserPage(userId));
+    }
+
+    @ApiResponse(responseCode = "200", description = "회원정보 수정 요청 성공")
+    @PostMapping("/update/{userId}")
+    public JsonResult<?> updateUser(@AuthenticationPrincipal User user,
+                                    @PathVariable(name = "userId") Long userId,
+                                    @Valid @RequestBody UserUpdateRequest request) {
+
+        // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
+        authService.authenticate(userId, user);
+
+        // 회원 정보 수정
+        authService.updateUser(UserUpdateServiceRequest.of(userId, request));
+
+        return JsonResult.successOf("User Update Success.");
+    }
+
+    @ApiResponse(responseCode = "200", description = "푸시 알림 여부 수정 요청 성공")
+    @GetMapping("/update/pushAlarmYn/{userId}/{pushAlarmEnable}")
+    public JsonResult<?> updatePushAlarmYn(@AuthenticationPrincipal User user,
+                                    @PathVariable(name = "userId") Long userId,
+                                    @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
+
+        // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
+        authService.authenticate(userId, user);
+
+        // 푸시 알람 여부 수정
+        authService.updatePushAlarmYn(userId, pushAlarmEnable);
+
+        return JsonResult.successOf("PushAlarmYn Update Success.");
+    }
+
+}

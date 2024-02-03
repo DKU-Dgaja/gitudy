@@ -8,6 +8,7 @@ import lombok.Getter;
 
 @Getter
 public class UserInfoResponse {
+    private Long userId;
     private UserRole role;
     private String githubId;
     private String name;
@@ -18,7 +19,8 @@ public class UserInfoResponse {
     private int point;
 
     @Builder
-    public UserInfoResponse(UserRole role, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, boolean profilePublicYn, int score, int point) {
+    public UserInfoResponse(Long userId, UserRole role, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, boolean profilePublicYn, int score, int point) {
+        this.userId = userId;
         this.role = role;
         this.githubId = githubId;
         this.name = name;
@@ -31,6 +33,7 @@ public class UserInfoResponse {
 
     public static UserInfoResponse of(User user){
         return UserInfoResponse.builder()
+                .userId(user.getId())
                 .role(user.getRole())
                 .githubId(user.getGithubId())
                 .name(user.getName())

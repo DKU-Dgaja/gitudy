@@ -4,11 +4,14 @@ import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
+import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.user.UserException;
+import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -19,7 +22,9 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetails;
 
+import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
@@ -72,46 +77,6 @@ class AuthServiceTest extends TestConfig {
     }
 
     @Test
-    @DisplayName("OAuth 사용자 정보 변경시 DB에 업데이트되어야 한다.")
-    void loginUserProfileUpdate() {
-        // given
-        String code = "code";
-        String state = "state";
-
-        OAuthResponse oAuthResponse = generateOauthResponse();
-        UserPlatformType platformType = oAuthResponse.getPlatformType();
-
-        String platformId = oAuthResponse.getPlatformId();
-        String updateName = "test";
-        String updateProfileImageUrl = "www.test.com";
-
-        when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
-                .thenReturn(oAuthResponse);
-        authService.login(GITHUB, code, state);
-
-        oAuthResponse = OAuthResponse.builder()
-                .platformId(oAuthResponse.getPlatformId())
-                .platformType(GITHUB)
-                .name(updateName)
-                .profileImageUrl(updateProfileImageUrl)
-                .build();
-
-        when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
-                .thenReturn(oAuthResponse);
-
-        // when
-        authService.login(GITHUB, code, state);
-        User findUser = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).get();
-
-        // then
-        assertThat(findUser).isNotNull();
-        assertThat(findUser.getName()).isEqualTo(updateName);
-        assertThat(findUser.getProfileImageUrl()).isEqualTo(updateProfileImageUrl);
-
-
-    }
-
-    @Test
     @DisplayName("OAuth 로그인 인증 완료 후 JWT 토큰이 정상적으로 발급된다.")
     void loginJwtTokenGenerate() {
         // given
@@ -139,16 +104,8 @@ class AuthServiceTest extends TestConfig {
         // given
         String code = "code";
         String state = "state";
-
         String platformId = "platformId";
         String platformType = "platformType";
-
-
-
-        String expectedPlatformId = "1";
-        String expectedPlatformType = "GITHUB";
-
-
 
         OAuthResponse oAuthResponse = generateOauthResponse();
         when(oAuthService.login(any(UserPlatformType.class), any(String.class), any(String.class)))
@@ -161,9 +118,10 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(claims.get(platformId)).isEqualTo(expectedPlatformId),
-                () -> assertThat(claims.get(platformType)).isEqualTo(expectedPlatformType)
+                () -> assertThat(claims.get(platformId)).isEqualTo(expectedUserPlatformId),
+                () -> assertThat(claims.get(platformType)).isEqualTo(GITHUB.name())
         );
+
     }
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 성공 테스트")
@@ -275,10 +233,9 @@ class AuthServiceTest extends TestConfig {
     @DisplayName("유저 정보가 가져와지는지 확인")
     void getUserByInfoTest() {
         // given
-        String expectedProfileUrl = "https://google.com";
-        String expectedGithubId = "jusung-c";
-
-        User savedUser = userRepository.save(generateUser());
+        User savedUser = userRepository.save(generateAuthUser());
+        System.out.println("savedUser = " + savedUser.getPlatformId());
+        System.out.println("savedUser = " + savedUser.getPlatformType());
 
         // when
         UserInfoResponse expectedUser = authService.getUserByInfo(savedUser.getPlatformId(), savedUser.getPlatformType());
@@ -286,9 +243,112 @@ class AuthServiceTest extends TestConfig {
         // then
         assertThat(expectedUser).isNotNull();
         assertEquals(expectedUser.getRole(), USER);
-        assertEquals(expectedUser.getProfileImageUrl(), expectedProfileUrl);
-        assertEquals(expectedUser.getGithubId(), expectedGithubId);
+        assertEquals(expectedUser.getProfileImageUrl(), expectedUserProfileImageUrl);
+        assertEquals(expectedUser.getGithubId(), expectedUserGithubId);
 
+    }
+
+    @Test
+    void 로그인한_사용자가_권한이_있는지_확인_성공_테스트() {
+        User user = userRepository.save(generateAuthUser());
+
+        User loginUser = User.builder()
+                .role(user.getRole())
+                .platformId(user.getPlatformId())
+                .platformType(user.getPlatformType())
+                .build();
+
+        assertDoesNotThrow(() -> authService.authenticate(user.getId(), loginUser));
+    }
+
+    @Test
+    void 로그인한_사용자가_권한이_있는지_확인_실패_테스트() {
+        Long userId = -1L;
+
+        User user = userRepository.save(generateAuthUser());
+
+        User loginUser = User.builder()
+                .role(user.getRole())
+                .platformId(user.getPlatformId())
+                .platformType(user.getPlatformType())
+                .build();
+
+        assertThrows(AuthException.class, () -> {
+            authService.authenticate(userId, loginUser);
+        });
+    }
+
+    @Test
+    void 회원_정보_수정_성공_테스트() {
+        // given
+        String updateName = "updateName";
+        String updateProfileImageUrl = "updateProfileImageUrl";
+        boolean updateProfilePublicYn = false;
+        SocialInfo updateSocialInfo = SocialInfo.builder().blogLink("test@naver.com").build();
+
+        User user = userRepository.save(generateAuthUser());
+        UserUpdateServiceRequest request = UserUpdateServiceRequest.builder()
+                .userId(user.getId())
+                .name(updateName)
+                .profilePublicYn(updateProfilePublicYn)
+                .profileImageUrl(updateProfileImageUrl)
+                .socialInfo(updateSocialInfo)
+                .build();
+
+        // when
+        authService.updateUser(request);
+        User updateUser = userRepository.findById(request.getUserId()).get();
+
+        // then
+        assertAll(
+                () -> assertThat(updateUser.getName()).isEqualTo(updateName),
+                () -> assertThat(updateUser.getProfileImageUrl()).isEqualTo(updateProfileImageUrl),
+                () -> assertThat(updateUser.isProfilePublicYn()).isEqualTo(updateProfilePublicYn),
+                () -> assertThat(updateUser.getSocialInfo().getBlogLink()).isEqualTo(updateSocialInfo.getBlogLink()));
+    }
+
+    @Test
+    void 회원_정보_수정_실패_테스트() {
+        // given
+        String updateName = "updateName";
+        String updateProfileImageUrl = "updateProfileImageUrl";
+        boolean updateProfilePublicYn = false;
+        SocialInfo updateSocialInfo = SocialInfo.builder().blogLink("test@naver.com").build();
+
+//        User user = userRepository.save(generateAuthUser());
+        UserUpdateServiceRequest request = UserUpdateServiceRequest.builder()
+                .userId(1L)
+                .name(updateName)
+                .profilePublicYn(updateProfilePublicYn)
+                .profileImageUrl(updateProfileImageUrl)
+                .socialInfo(updateSocialInfo)
+                .build();
+
+        // when
+        assertThrows(UserException.class, () -> {
+            authService.updateUser(request);
+        });
+
+    }
+
+    @Test
+    void 사용자_푸시_알림_여부_수정_테스트() {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        // when
+        authService.updatePushAlarmYn(user.getId(), true);
+        User updateUser = userRepository.findById(user.getId()).get();
+
+        // then
+        assertTrue(updateUser.isPushAlarmYn());
+
+        // when
+        authService.updatePushAlarmYn(user.getId(), false);
+        User updateUser2 = userRepository.findById(user.getId()).get();
+
+        // then
+        assertFalse(updateUser2.isPushAlarmYn());
     }
 
 }
