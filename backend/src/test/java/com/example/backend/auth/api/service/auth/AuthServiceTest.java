@@ -331,4 +331,24 @@ class AuthServiceTest extends TestConfig {
 
     }
 
+    @Test
+    void 사용자_푸시_알림_여부_수정_테스트() {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        // when
+        authService.updatePushAlarmYn(user.getId(), true);
+        User updateUser = userRepository.findById(user.getId()).get();
+
+        // then
+        assertTrue(updateUser.isPushAlarmYn());
+
+        // when
+        authService.updatePushAlarmYn(user.getId(), false);
+        User updateUser2 = userRepository.findById(user.getId()).get();
+
+        // then
+        assertFalse(updateUser2.isPushAlarmYn());
+    }
+
 }

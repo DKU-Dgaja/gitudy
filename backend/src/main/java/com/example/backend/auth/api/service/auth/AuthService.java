@@ -266,4 +266,14 @@ public class AuthService {
                 request.isProfilePublicYn(),
                 request.getSocialInfo());
     }
+
+    @Transactional
+    public void updatePushAlarmYn(Long userId, boolean pushAlarmEnable) {
+        User user = userRepository.findById(userId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_FOUND.getText());
+            throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
+        user.updatePushAlarmYn(pushAlarmEnable);
+    }
 }

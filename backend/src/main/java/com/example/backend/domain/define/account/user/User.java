@@ -100,6 +100,11 @@ public class User extends BaseEntity implements UserDetails {
         this.socialInfo = socialInfo;
     }
 
+    // 푸시 알람 여부 수정 메서드
+    public void updatePushAlarmYn(boolean pushAlarmEnable) {
+        this.pushAlarmYn = pushAlarmEnable;
+    }
+
     public void deleteUser() {
         this.role = UserRole.WITHDRAW;
     }

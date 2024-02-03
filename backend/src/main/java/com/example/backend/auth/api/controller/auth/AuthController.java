@@ -149,9 +149,25 @@ public class AuthController {
 
         // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
         authService.authenticate(userId, user);
+
+        // 회원 정보 수정
         authService.updateUser(UserUpdateServiceRequest.of(userId, request));
 
         return JsonResult.successOf("User Update Success.");
+    }
+
+    @GetMapping("/update/pushAlarmYn/{userId}/{pushAlarmEnable}")
+    public JsonResult<?> updatePushAlarmYn(@AuthenticationPrincipal User user,
+                                    @PathVariable(name = "userId") Long userId,
+                                    @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
+
+        // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
+        authService.authenticate(userId, user);
+
+        // 푸시 알람 여부 수정
+        authService.updatePushAlarmYn(userId, pushAlarmEnable);
+
+        return JsonResult.successOf("PushAlarmYn Update Success.");
     }
 
 }

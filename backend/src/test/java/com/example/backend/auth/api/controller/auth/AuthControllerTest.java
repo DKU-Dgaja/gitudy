@@ -449,4 +449,53 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
+
+    @Test
+    void 푸시_알림_여부_수정_성공_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        // when
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(authService).updatePushAlarmYn(any(Long.class), any(boolean.class));
+
+        // then
+        mockMvc.perform(get("/auth/update/pushAlarmYn/" + savedUser.getId() + "/" + true)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("PushAlarmYn Update Success."))
+                .andDo(print());
+    }
+
+    @Test
+    void 푸시_알림_여부_수정_실패_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        // when
+        when(authService.authenticate(any(Long.class), any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+        // then
+        mockMvc.perform(get("/auth/update/pushAlarmYn/" + savedUser.getId() + "/" + true)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
+    }
 }
