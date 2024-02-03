@@ -7,6 +7,7 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
+import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -131,6 +132,7 @@ public class AuthController {
         return JsonResult.successOf();
     }
 
+    @ApiResponse(responseCode = "200", description = "회원정보 수정 페이지 요청 성공", content = @Content(schema = @Schema(implementation = UserUpdatePageResponse.class)))
     @GetMapping("/update/{userId}")
     public JsonResult<?> updateUser(@AuthenticationPrincipal User user,
                                     @PathVariable(name = "userId") Long userId) {
@@ -142,6 +144,7 @@ public class AuthController {
         return JsonResult.successOf(authService.updateUserPage(userId));
     }
 
+    @ApiResponse(responseCode = "200", description = "회원정보 수정 요청 성공")
     @PostMapping("/update/{userId}")
     public JsonResult<?> updateUser(@AuthenticationPrincipal User user,
                                     @PathVariable(name = "userId") Long userId,
@@ -156,6 +159,7 @@ public class AuthController {
         return JsonResult.successOf("User Update Success.");
     }
 
+    @ApiResponse(responseCode = "200", description = "푸시 알림 여부 수정 요청 성공")
     @GetMapping("/update/pushAlarmYn/{userId}/{pushAlarmEnable}")
     public JsonResult<?> updatePushAlarmYn(@AuthenticationPrincipal User user,
                                     @PathVariable(name = "userId") Long userId,
