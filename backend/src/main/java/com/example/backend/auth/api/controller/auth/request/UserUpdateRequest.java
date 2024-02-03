@@ -1,5 +1,6 @@
 package com.example.backend.auth.api.controller.auth.request;
 
+import com.example.backend.common.validation.ValidSocialInfo;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
@@ -24,6 +25,7 @@ public class UserUpdateRequest {
     private boolean profilePublicYn;                            // 프로필 공개 여부
 
     @Nullable
+    @ValidSocialInfo
     private SocialInfo socialInfo;                              // 소셜 정보
 
 }

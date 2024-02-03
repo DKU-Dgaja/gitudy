@@ -394,7 +394,7 @@ class AuthControllerTest extends TestConfig {
                 .profileImageUrl(expectedUserProfileImageUrl)
                 .profilePublicYn(false)
                 .socialInfo(SocialInfo.builder()
-                        .blogLink("test").build())
+                        .blogLink("test@naver.com").build())
                 .build();
 
         // when
@@ -412,6 +412,41 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
+    }
+
+    @Test
+    void 사용자_정보_수정_유효성_검사_실패_테스트() throws Exception {
+        // given
+        String expectedError = "socialInfo: Invalid social link";
+
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        UserUpdateRequest updateRequest = UserUpdateRequest.builder()
+                .name(expectedUserName)
+                .profileImageUrl(expectedUserProfileImageUrl)
+                .profilePublicYn(false)
+                .socialInfo(SocialInfo.builder()
+                        .blogLink("Invalid Link").build())
+                .build();
+
+        // when
+        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
+
+        // then
+        mockMvc.perform(post("/auth/update/" + savedUser.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
 }
