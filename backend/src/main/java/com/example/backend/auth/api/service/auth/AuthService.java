@@ -235,7 +235,7 @@ public class AuthService {
                 });
 
         // 로그인된 사용자의 ID와 수정을 요청한 회원 정보의 ID와 비교
-        if (!Objects.equals(findUser.getId(), userId)) {
+        if (findUser.getId() != userId) {
             log.error(">>>> User ID {} does not match the requested user ID {} <<<<", findUser.getId(), userId);
             throw new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY);
         }

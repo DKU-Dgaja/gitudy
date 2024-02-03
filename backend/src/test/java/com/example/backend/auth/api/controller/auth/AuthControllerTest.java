@@ -12,8 +12,7 @@ import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
-import com.example.backend.common.exception.user.UserException;
-import com.example.backend.common.util.TokenUtil;
+import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;

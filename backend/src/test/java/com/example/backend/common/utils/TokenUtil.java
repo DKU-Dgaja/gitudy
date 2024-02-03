@@ -1,4 +1,4 @@
-package com.example.backend.common.util;
+package com.example.backend.common.utils;
 
 import com.example.backend.domain.define.account.user.User;
 
