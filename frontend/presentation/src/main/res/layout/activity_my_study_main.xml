@@ -9,7 +9,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:paddingBottom="70dp">
+        android:paddingBottom="60dp">
 
         <ImageView
             android:id="@+id/studyBackgroundImg"
@@ -170,6 +170,7 @@
                 android:layout_marginTop="30dp"
                 android:background="@drawable/box_non_stroke_r8"
                 android:gravity="center_vertical"
+                android:backgroundTint="#EFF8FF"
                 android:paddingLeft="20dp"
                 android:paddingTop="14dp"
                 android:paddingRight="20dp"
@@ -306,8 +307,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
                     android:layout_marginBottom="30dp"
-                    android:background="@drawable/box_stroke_300_r12"
-                    android:backgroundTint="@color/WHITE"
+                    android:background="@drawable/box_stroke_200_r12"
                     android:gravity="center_vertical"
                     android:padding="18dp"
                     android:visibility="visible">
@@ -482,31 +482,60 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
                 app:layout_constraintTop_toBottomOf="@+id/commentListTitle" />
 
             <LinearLayout
-                android:id="@+id/newCommentBox"
                 android:layout_width="match_parent"
-                android:layout_height="130dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/box_non_stroke_r12"
-                android:backgroundTint="@color/GS_200"
-                android:paddingLeft="16dp"
-                android:paddingTop="19dp"
-                android:paddingRight="16dp"
-                android:paddingBottom="19dp"
+                android:layout_height="56dp"
+                android:layout_marginBottom="10dp"
+                android:gravity="bottom"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/commentList">
 
-                <EditText
-                    style="@style/B7_3"
-                    android:layout_width="wrap_content"
+                <LinearLayout
+                    android:id="@+id/newCommentBox"
+                    android:layout_width="290dp"
                     android:layout_height="wrap_content"
-                    android:background="@null"
-                    android:hint="팀원들에게 응원과 격려의 메세지를 남겨주세요!"
-                    android:textColor="@color/GS_600"
-                    android:textColorHint="@color/GS_500" />
+                    android:layout_marginRight="6dp"
+                    android:background="@drawable/box_non_stroke_r8"
+                    android:backgroundTint="#F3F5F7"
+                    android:gravity="center_horizontal"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="10dp"
+                    android:paddingRight="16dp"
+                    app:layout_constraintBottom_toBottomOf="parent">
 
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
+                        <EditText
+                            android:id="@+id/newCommentBody"
+                            style="@style/B6_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="메세지 남기기"
+                            android:paddingBottom="10dp"
+                            android:textColor="@color/GS_900"
+                            android:textColorHint="@color/GS_500" />
+                    </ScrollView>
+
+                </LinearLayout>
+
+                <Button
+                    android:enabled="false"
+                    android:id="@+id/postBtn"
+                    style="@style/B6_2"
+                    android:layout_width="69dp"
+                    android:layout_height="38dp"
+                    android:layout_marginBottom="1dp"
+                    android:background="@drawable/selector_btn_r8_enable"
+                    android:text="@string/post"
+                    android:textColor="@drawable/selector_text_color_enable" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
 

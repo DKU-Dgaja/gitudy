@@ -5,7 +5,7 @@
         android:width="1dp"
         android:color="@color/GS_300"/>
     <solid
-        android:color="@color/BACKGROUND"/>
+        android:color="@color/TRANSPARENT"/>
     <size
         android:width="346dp"
         android:height="64dp" />

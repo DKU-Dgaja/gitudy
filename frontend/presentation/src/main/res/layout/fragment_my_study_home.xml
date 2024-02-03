@@ -50,7 +50,7 @@
             style="@style/B1_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/mystudy_cnt"
+            android:text="@string/study_my_cnt"
             android:textColor="@color/GS_900"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
