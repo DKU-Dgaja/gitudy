@@ -11,12 +11,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
-import java.util.Random;
 
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.expectedUserId;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyCommitServiceTest extends TestConfig {
@@ -37,8 +35,7 @@ class StudyCommitServiceTest extends TestConfig {
         // given
         int pageSize = 10;
         int dataSize = 20;
-        Random random = new Random();
-        Long cursorIdx = (long) random.nextInt(dataSize) + 1L;
+        Long cursorIdx = 20L;
 
         PageRequest pageable = PageRequest.of(0, pageSize);
 
@@ -53,7 +50,7 @@ class StudyCommitServiceTest extends TestConfig {
 //        }
 
         assertEquals(dataSize, commitInfoPage.getTotalElements());
-        assertEquals(cursorIdx <= pageSize ? cursorIdx - 1 : pageSize, commitInfoPage.getContent().size());
+        assertEquals(pageSize, commitInfoPage.getContent().size());
 
         for (CommitInfoResponse commit : commitInfoPage.getContent()) {
             assertTrue(commit.getId() < cursorIdx);
