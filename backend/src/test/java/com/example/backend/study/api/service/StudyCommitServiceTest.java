@@ -43,7 +43,7 @@ class StudyCommitServiceTest extends TestConfig {
         studyCommitRepository.saveAll(commitList);
 
         // when
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, cursorIdx);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, cursorIdx, LIMIT);
         for (CommitInfoResponse commit : commitInfoList) {
             System.out.println("commit.getId() = " + commit.getId());
         }
@@ -61,7 +61,7 @@ class StudyCommitServiceTest extends TestConfig {
         studyCommitRepository.saveAll(commitList);
 
         // when
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, null);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, null, LIMIT);
 //        List<CommitInfoResponse> content = commitInfoPage.getContent();
 //        for (CommitInfoResponse c : content) {
 //            System.out.println("c.getId() = " + c.getId());

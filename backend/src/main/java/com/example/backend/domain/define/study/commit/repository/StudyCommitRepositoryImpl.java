@@ -16,7 +16,6 @@ import static com.example.backend.domain.define.study.commit.QStudyCommit.studyC
 public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-
     @Override
     public List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long cursorIdx, Long limit) {
 

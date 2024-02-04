@@ -14,12 +14,14 @@ import java.util.List;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StudyCommitService {
-    private final static Long SELECT_COMMIT_LIST_LIMIT = 10L;
+    private final static Long MAX_LIMIT = 50L;
 
     private final StudyCommitRepository studyCommitRepository;
 
-    public List<CommitInfoResponse> selectUserCommitList(Long userId, Long cursorIdx) {
+    public List<CommitInfoResponse> selectUserCommitList(Long userId, Long cursorIdx, Long limit) {
 
-        return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, cursorIdx, SELECT_COMMIT_LIST_LIMIT);
+        limit = Math.min(limit, MAX_LIMIT);
+
+        return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, cursorIdx, limit);
     }
 }

@@ -58,14 +58,15 @@ class StudyCommitControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class)))
+        when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when
         mockMvc.perform(post("/commits/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("cursorIdx", "1"))
+                        .param("cursorIdx", "1")
+                        .param("limit", "20"))
 
                 // then
                 .andExpect(status().isOk())
@@ -93,7 +94,8 @@ class StudyCommitControllerTest extends TestConfig {
         mockMvc.perform(post("/commits/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("cursorIdx", "1"))
+                        .param("cursorIdx", "1")
+                        .param("limit", "20"))
 
                 // then
                 .andExpect(status().isOk())
@@ -108,7 +110,6 @@ class StudyCommitControllerTest extends TestConfig {
         // given
         User user = generateAuthUser();
         Long userId = 1L;
-        Long negativeIdx = -1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
@@ -121,7 +122,8 @@ class StudyCommitControllerTest extends TestConfig {
         mockMvc.perform(post("/commits/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("cursorIdx", "-1"))
+                        .param("cursorIdx", "-1")
+                        .param("limit", "0"))
 
                 // then
                 .andExpect(status().isOk())

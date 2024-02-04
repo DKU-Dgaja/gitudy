@@ -10,6 +10,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,14 +32,15 @@ public class StudyCommitController {
     @PostMapping("/user/{userId}")
     public JsonResult<?> userCommitList(@AuthenticationPrincipal User user,
                                         @PathVariable(name = "userId") Long userId,
-                                        @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx) {
+                                        @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                        @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "20") Long limit) {
 
         authService.authenticate(userId, user);
 
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, cursorIdx);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, cursorIdx, limit);
 
         // 다음 cursorIdx
-        Long nextCursorIdx = null;
+        Long nextCursorIdx = 0L;
         if (!commitInfoList.isEmpty()) {
             nextCursorIdx = commitInfoList.get(commitInfoList.size() - 1).getId();
         }
