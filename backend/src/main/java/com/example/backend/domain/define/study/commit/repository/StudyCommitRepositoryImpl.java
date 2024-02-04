@@ -23,29 +23,9 @@ import static com.example.backend.domain.define.study.info.QStudyInfo.studyInfo;
 public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
-    @Override
-    public Page<StudyCommit> findStudyCommitListByUserId_OffsetPaging(Pageable pageable, Long userId) {
-        // 마이 커밋 리스트를 내림차순 정렬 후 오프셋 기반 페이지 조회
-        List<StudyCommit> content = queryFactory
-                .selectFrom(studyCommit)
-                .where(studyCommit.userId.eq(userId))
-                .orderBy(studyCommit.id.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-
-        // 마이 커밋 총 개수
-        Long total = queryFactory
-                .select(studyCommit.count())
-                .from(studyCommit)
-                .where(studyCommit.userId.eq(userId))
-                .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
-    }
 
     @Override
-    public Page<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Pageable pageable, Long userId, Long cursorIdx) {
+    public List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long cursorIdx, Long limit) {
 
         JPAQuery<CommitInfoResponse> query = queryFactory
                 .select(Projections.constructor(CommitInfoResponse.class,
@@ -67,18 +47,9 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
             query = query.where(studyCommit.id.lt(cursorIdx));
         }
 
-        // pageSize만큼 가져오기
-        List<CommitInfoResponse> content = query
-                .limit(pageable.getPageSize())
+        // 커서 다음부터 limit만큼 가져오기
+        return query
+                .limit(limit)
                 .fetch();
-
-        // 마이 커밋 총 개수
-        Long total = queryFactory
-                .select(studyCommit.count())
-                .from(studyCommit)
-                .where(studyCommit.userId.eq(userId))
-                .fetchOne();
-
-        return new PageImpl<>(content, pageable, total);
     }
 }

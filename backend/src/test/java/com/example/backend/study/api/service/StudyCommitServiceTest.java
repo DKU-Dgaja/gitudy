@@ -11,6 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 
 import java.util.List;
+import java.util.Random;
 
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.expectedUserId;
@@ -18,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyCommitServiceTest extends TestConfig {
+    private final static int DATA_SIZE = 10;
+    private final static Long LIMIT = 10L;
 
     @Autowired
     private StudyCommitService studyCommitService;
@@ -33,50 +36,38 @@ class StudyCommitServiceTest extends TestConfig {
     @Test
     void 커서가_null이_아닌_경우_마이_커밋_조회_테스트() {
         // given
-        int pageSize = 10;
-        int dataSize = 20;
-        Long cursorIdx = 20L;
+        Random random = new Random();
+        Long cursorIdx = random.nextLong(LIMIT) + 1L;
 
-        PageRequest pageable = PageRequest.of(0, pageSize);
-
-        List<StudyCommit> commitList = createDefaultStudyCommitList(dataSize);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE);
         studyCommitRepository.saveAll(commitList);
 
         // when
-        Page<CommitInfoResponse> commitInfoPage = studyCommitService.selectUserCommitList(expectedUserId, pageable, cursorIdx);
-//        List<CommitInfoResponse> content = commitInfoPage.getContent();
-//        for (CommitInfoResponse c : content) {
-//            System.out.println("c.getId() = " + c.getId());
-//        }
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, cursorIdx);
+        for (CommitInfoResponse commit : commitInfoList) {
+            System.out.println("commit.getId() = " + commit.getId());
+        }
 
-        assertEquals(dataSize, commitInfoPage.getTotalElements());
-        assertEquals(pageSize, commitInfoPage.getContent().size());
-
-        for (CommitInfoResponse commit : commitInfoPage.getContent()) {
+        assertEquals(cursorIdx <= LIMIT ? cursorIdx-1 : LIMIT, commitInfoList.size());
+        for (CommitInfoResponse commit : commitInfoList) {
             assertTrue(commit.getId() < cursorIdx);
-            assertEquals(expectedUserId, commit.getUserId());
         }
     }
 
     @Test
     void 커서가_null인_경우_마이_커밋_조회_테스트() {
         // given
-        int pageSize = 10;
-        int dataSize = 20;
-        PageRequest pageable = PageRequest.of(0, pageSize);
-
-        List<StudyCommit> commitList = createDefaultStudyCommitList(dataSize);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE);
         studyCommitRepository.saveAll(commitList);
 
         // when
-        Page<CommitInfoResponse> commitInfoPage = studyCommitService.selectUserCommitList(expectedUserId, pageable, null);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, null);
 //        List<CommitInfoResponse> content = commitInfoPage.getContent();
 //        for (CommitInfoResponse c : content) {
 //            System.out.println("c.getId() = " + c.getId());
 //        }
 
-        assertEquals(dataSize, commitInfoPage.getTotalElements());
-        assertEquals(pageSize, commitInfoPage.getContent().size());
+        assertEquals(LIMIT, commitInfoList.size());
     }
 
 }
