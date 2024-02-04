@@ -1,12 +1,16 @@
 package com.example.backend.study.api.controller.commit;
 
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.commit.request.CommitInfoPageRequest;
 import com.example.backend.study.api.controller.commit.request.UserCommitInfoRequest;
 import com.example.backend.study.api.service.StudyCommitService;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +28,9 @@ public class StudyCommitController {
     private final StudyCommitService studyCommitService;
     private final AuthService authService;
 
+    @ApiResponse(responseCode = "200",
+            description = "마이 커밋 조회 성공",
+            content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @PostMapping("/user/{userId}")
     public JsonResult<?> userCommitList(@AuthenticationPrincipal User user,
                                         @PathVariable(name = "userId") Long userId,
