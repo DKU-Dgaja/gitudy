@@ -242,6 +242,14 @@ public class AuthService {
 
         return UserInfoResponse.of(findUser);
     }
+    public UserInfoResponse authenticate(User user) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType())
+                .orElseThrow(() -> {
+                    log.error(">>>> User not found for platformId {} and platformType {} <<<<", user.getPlatformId(), user.getPlatformType());
+                    throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
+        return UserInfoResponse.of(findUser);
+    }
 
     public UserUpdatePageResponse updateUserPage(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> {
