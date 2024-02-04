@@ -15,3 +15,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "frontend"
 include(":app")
+include(":core")
+include(":domain")
+include(":presentation")
+include(":data")

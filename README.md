@@ -13,9 +13,9 @@
 ### Designer
 
 
-|                                           ???                                            |
+|                                           Noni Kim                                            |
 |:----------------------------------------------------------------------------------------:|
-| <img src="https://cdn-icons-png.flaticon.com/512/4123/4123763.png" width=100 height=100> |
+| <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/86196342/b18c5c47-db9c-4a03-988f-7ada9be17222" width=100 height=100> |
 
 
 ### Android

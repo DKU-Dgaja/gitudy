@@ -1,0 +1,72 @@
+name: Spring Boot & Gradle CI Jobs (With. dev branches pull_request)
+
+on:
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+    # 실행 환경 (Git Runners 개인 서버)
+    runs-on: self-hosted
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up JDK 17
+      uses: actions/setup-java@v3
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    # application.yml 파일 설정
+    - name: resources 폴더 생성
+      run: |
+        mkdir -p ./backend/src/main/resources
+
+    - name: yml 파일 생성
+      run: |
+        echo "${{ secrets.APPLICATION_DEFAULT }}" > ./backend/src/main/resources/application.yml
+        echo "${{ secrets.APPLICATION_TEST }}" > ./backend/src/main/resources/application-test.yml
+        echo "${{ secrets.APPLICATION_DEV }}" > ./backend/src/main/resources/application-dev.yml
+        echo "${{ secrets.APPLICATION_DB }}" > ./backend/src/main/resources/database.yml
+
+    # gradlew를 실행시키기 위해 권한 부여
+    - name: Gradlew에게 실행권한 부여
+      run: chmod +x ./backend/gradlew
+
+    # 멀티모듈 빌드하기
+    - name: 멀티모듈 전체 빌드
+      run: |
+        cd ./backend
+        ./gradlew clean build -x test
+
+  test:
+    runs-on: self-hosted
+    needs: build
+    steps:
+    - name: Gradle 테스트
+      run: |
+        cd ./backend
+        ./gradlew test
+        
+    - name: yaml 파일 변경
+      run: |
+        echo "${{ secrets.APPLICATION_DEFAULT_DEV }}" > ./backend/src/main/resources/application.yml
+
+  coverage:
+    runs-on: self-hosted
+    needs: test
+    steps:
+    - name: Upload Report
+      uses: 'actions/upload-artifact@v2'
+      with:
+        name: report.xml
+        path: ${{ github.workspace }}/backend/build/reports/jacoco/test/jacocoTestReport.xml
+    - name: 테스트 커버리지를 PR에 코멘트로 등록합니다
+      id: jacoco
+      uses: madrapps/jacoco-report@v1.6.1
+      with:
+        title: 📝 테스트 커버리지 리포트
+        paths: ${{ github.workspace }}/backend/build/reports/jacoco/test/jacocoTestReport.xml
+        token: ${{ secrets.GITHUB_TOKEN }}
+        min-coverage-overall: 50
+        min-coverage-changed-files: 50
+        update-comment: true

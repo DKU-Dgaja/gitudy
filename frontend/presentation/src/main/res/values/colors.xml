@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="BACKGROUND">#F9F9FA</color>
+    <color name="TRANSPARENT">@android:color/transparent</color>
+    <color name="BLACK">#000000</color>
+    <color name="WHITE">#FFFFFF</color>
+    <color name="GS_900">#191A1C</color>
+    <color name="GS_800">#212225</color>
+    <color name="GS_700">#35383F</color>
+    <color name="GS_600">#4B5059</color>
+    <color name="GS_500">#787C82</color>
+    <color name="GS_400">#A5A7AC</color>
+    <color name="GS_300">#D2D3D5</color>
+    <color name="GS_200">#E8E9EA</color>
+    <color name="BASIC_BLUE">#459BFF</color>
+    <color name="BASIC_RED">#FF4646</color>
+    <color name="BASIC_YELLOW">#FFD84F</color>
+    <color name="BASIC_GREEN">#31DA7E</color>
+</resources>
