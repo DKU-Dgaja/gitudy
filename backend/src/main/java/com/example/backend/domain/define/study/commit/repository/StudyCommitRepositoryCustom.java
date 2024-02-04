@@ -1,9 +1,6 @@
 package com.example.backend.domain.define.study.commit.repository;
 
-import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 

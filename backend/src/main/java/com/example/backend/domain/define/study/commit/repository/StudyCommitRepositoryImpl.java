@@ -1,22 +1,15 @@
 package com.example.backend.domain.define.study.commit.repository;
 
-import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
-import com.querydsl.core.QueryResults;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-import static com.example.backend.domain.define.account.user.QUser.user;
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
-import static com.example.backend.domain.define.study.info.QStudyInfo.studyInfo;
 
 @Component
 @RequiredArgsConstructor
