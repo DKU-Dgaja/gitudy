@@ -36,7 +36,8 @@ public enum ExceptionMessage {
     UNAUTHORIZED_AUTHORITY("현재 요청한 작업을 수행할 권한이 없습니다."),
     // UserException
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
-
+    // StudyInfoException
+    STUDYINFO_NOT_FOUND("데이터베이스에서 스터디정보를 찾을 수 없습니다."),
     // AuthException
     AUTH_INVALID_REGISTER("잘못된 회원가입 요청입니다."),
     AUTH_DUPLICATE_UNAUTH_REGISTER("중복된 회원가입 요청입니다."),
