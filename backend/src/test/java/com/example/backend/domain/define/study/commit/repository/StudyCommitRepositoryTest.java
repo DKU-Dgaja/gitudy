@@ -2,7 +2,6 @@ package com.example.backend.domain.define.study.commit.repository;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.study.commit.StudyCommit;
-import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -59,8 +58,7 @@ class StudyCommitRepositoryTest extends TestConfig {
         // given
         int pageSize = 10;
         int dataSize = 20;
-        Random random = new Random();
-        Long cursorIdx = (long) random.nextInt(dataSize) + 1L;
+        Long cursorIdx = 6L;
 
         PageRequest pageable = PageRequest.of(any(Integer.class), pageSize);
 
@@ -69,10 +67,10 @@ class StudyCommitRepositoryTest extends TestConfig {
 
         // when
         Page<CommitInfoResponse> commitInfoPage = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(pageable, expectedUserId, cursorIdx);
-//        List<CommitInfoResponse> content = commitInfoPage.getContent();
-//        for (CommitInfoResponse c : content) {
-//            System.out.println("c.getId() = " + c.getId());
-//        }
+        List<CommitInfoResponse> content = commitInfoPage.getContent();
+        for (CommitInfoResponse c : content) {
+            System.out.println("c.getId() = " + c.getId());
+        }
 
         // then
         assertEquals(dataSize, commitInfoPage.getTotalElements());
@@ -82,6 +80,29 @@ class StudyCommitRepositoryTest extends TestConfig {
             assertTrue(commit.getId() < cursorIdx);
             assertEquals(expectedUserId, commit.getUserId());
         }
+    }
+
+    @Test
+    void 커서가_null일_경우_마이_커밋_페이지_조회_테스트() {
+        // given
+        int pageSize = 10;
+        int dataSize = 20;
+
+        PageRequest pageable = PageRequest.of(any(Integer.class), pageSize);
+
+        List<StudyCommit> commitList = createDefaultStudyCommitList(dataSize);
+        studyCommitRepository.saveAll(commitList);
+
+        // when
+        Page<CommitInfoResponse> commitInfoPage = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(pageable, expectedUserId, null);
+//        List<CommitInfoResponse> content = commitInfoPage.getContent();
+//        for (CommitInfoResponse c : content) {
+//            System.out.println("c.getId() = " + c.getId());
+//        }
+
+        // then
+        assertEquals(dataSize, commitInfoPage.getTotalElements());
+        assertEquals(pageSize, commitInfoPage.getContent().size());
     }
 
 }
