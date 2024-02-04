@@ -1,7 +1,9 @@
 package com.example.backend.domain.define.study.commit.repository;
 
 import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.querydsl.core.QueryResults;
+import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -42,16 +44,25 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
     }
 
     @Override
-    public Page<StudyCommit> findStudyCommitListByUserId_CursorPaging(Pageable pageable, Long userId, Long cursorIdx) {
-        // 마이 커밋 리스트를 내림차순 정렬 후 커서 기반 페이지 조회
-        List<StudyCommit> content = queryFactory
-                .selectFrom(studyCommit)
+    public Page<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Pageable pageable, Long userId, Long cursorIdx) {
+
+        List<CommitInfoResponse> content = queryFactory
+                .select(Projections.constructor(CommitInfoResponse.class,
+                        studyCommit.id,
+                        studyCommit.studyInfoId,
+                        studyCommit.userId,
+                        studyCommit.commitSHA,
+                        studyCommit.message,
+                        studyCommit.commitDate,
+                        studyCommit.status,
+                        studyCommit.rejectionReason,
+                        studyCommit.likeCount))
+                .from(studyCommit)
                 .where(studyCommit.userId.eq(userId)
                         .and(studyCommit.id.lt(cursorIdx)))
                 .orderBy(studyCommit.id.desc())
                 .limit(pageable.getPageSize())
                 .fetch();
-
 
         // 마이 커밋 총 개수
         Long total = queryFactory

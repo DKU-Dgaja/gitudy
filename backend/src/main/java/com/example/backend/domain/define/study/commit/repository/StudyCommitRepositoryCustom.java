@@ -1,6 +1,7 @@
 package com.example.backend.domain.define.study.commit.repository;
 
 import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -9,5 +10,5 @@ public interface StudyCommitRepositoryCustom {
     Page<StudyCommit> findStudyCommitListByUserId_OffsetPaging(Pageable pageable, Long userId);
 
     // 커서 기반 마이 커밋 페이지네이션
-    Page<StudyCommit> findStudyCommitListByUserId_CursorPaging(Pageable pageable, Long userId, Long idx);
+    Page<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Pageable pageable, Long userId, Long idx);
 }

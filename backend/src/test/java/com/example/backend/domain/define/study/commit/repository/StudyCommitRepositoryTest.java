@@ -3,6 +3,7 @@ package com.example.backend.domain.define.study.commit.repository;
 import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
+import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,7 +43,7 @@ class StudyCommitRepositoryTest extends TestConfig {
 
         // when
         Page<StudyCommit> resultPage = studyCommitRepository.findStudyCommitListByUserId_OffsetPaging(pageable, expectedUserId);
-        List<StudyCommit> content = resultPage.getContent();
+//        List<StudyCommit> content = resultPage.getContent();
 //        for (StudyCommit sc : content) {
 //            System.out.println("sc.getCommitSHA() = " + sc.getCommitSHA());
 //        }
@@ -67,17 +68,17 @@ class StudyCommitRepositoryTest extends TestConfig {
         studyCommitRepository.saveAll(commitList);
 
         // when
-        Page<StudyCommit> resultPage = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(pageable, expectedUserId, cursorIdx);
-        List<StudyCommit> content = resultPage.getContent();
-//        for (StudyCommit sc : content) {
-//            System.out.println("sc.getId() = " + sc.getId());
+        Page<CommitInfoResponse> commitInfoPage = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(pageable, expectedUserId, cursorIdx);
+//        List<CommitInfoResponse> content = commitInfoPage.getContent();
+//        for (CommitInfoResponse c : content) {
+//            System.out.println("c.getId() = " + c.getId());
 //        }
 
         // then
-        assertEquals(dataSize, resultPage.getTotalElements());
-        assertEquals(cursorIdx <= pageSize ? cursorIdx - 1 : pageSize, resultPage.getContent().size());
+        assertEquals(dataSize, commitInfoPage.getTotalElements());
+        assertEquals(cursorIdx <= pageSize ? cursorIdx - 1 : pageSize, commitInfoPage.getContent().size());
 
-        for (StudyCommit commit : resultPage.getContent()) {
+        for (CommitInfoResponse commit : commitInfoPage.getContent()) {
             assertTrue(commit.getId() < cursorIdx);
             assertEquals(expectedUserId, commit.getUserId());
         }
