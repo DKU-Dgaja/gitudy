@@ -25,6 +25,7 @@
     <string name="study_github_link">https://github.com/DKU-Dgaja/gitudy</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>
     <string name="study_to_do">백준의 1253번 문제 풀기</string>
+    <string name="study_to_do_body">본문내용이 그렇게 많으려나?? 글자 수 제한해서 2줄 이상 안넘게 막으면 접고 펼치는거 없앨 수 있어. 그럼 더 간결해보이긴 해</string>
     <string name="to_do_time_check">남은 시간 </string>
     <string name="to_do_time">24:00:00</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
