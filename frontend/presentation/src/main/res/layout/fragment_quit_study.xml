@@ -4,12 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingLeft="22dp"
     android:paddingRight="22dp"
-    tools:context=".ui.mystudy.MemberStudySettingActivity">
+    android:paddingLeft="22dp"
+    android:paddingBottom="47dp"
+    tools:context=".ui.mystudy.QuitStudyFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/memberSettingTitle"
+        android:id="@+id/quitStudyTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="75dp"
@@ -28,51 +29,45 @@
             style="@style/B3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="설정"
+            android:text="스터디 탈되"
             android:textColor="@color/BLACK"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <TextView
+        android:id="@+id/quitReason"
+        style="@style/B2_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dp"
-        android:fontFamily="@font/pretendard_bold"
-        android:text="스터디 관리"
+        android:layout_marginTop="20dp"
+        android:text="탈퇴하려는 이유가 궁금해요"
         android:textColor="@color/BLACK"
-        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/memberSettingTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/quitStudyTitle" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/quitStudyBtn"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/quitReasonList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="109dp"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="45dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/memberSettingTitle">
+        app:layout_constraintTop_toBottomOf="@+id/quitReason" />
 
-        <TextView
-            style="@style/B4_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="스터디 탈퇴"
-            android:textColor="@color/GS_900"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
+    <Button
+        android:id="@+id/sendMessageBtn"
+        style="@style/B5_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/selector_btn_r8_enable"
+        android:enabled="false"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
+        android:text="@string/quit_study"
+        android:textColor="@drawable/selector_text_color_enable"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
