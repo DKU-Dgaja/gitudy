@@ -22,7 +22,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
@@ -118,7 +117,7 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertAll(
-                () -> assertThat(claims.get(platformId)).isEqualTo(expectedUserPlatformId),
+                () -> assertThat(claims.get(platformId)).isEqualTo(oAuthResponse.getPlatformId()),
                 () -> assertThat(claims.get(platformType)).isEqualTo(GITHUB.name())
         );
 
@@ -243,8 +242,8 @@ class AuthServiceTest extends TestConfig {
         // then
         assertThat(expectedUser).isNotNull();
         assertEquals(expectedUser.getRole(), USER);
-        assertEquals(expectedUser.getProfileImageUrl(), expectedUserProfileImageUrl);
-        assertEquals(expectedUser.getGithubId(), expectedUserGithubId);
+        assertEquals(expectedUser.getProfileImageUrl(), savedUser.getProfileImageUrl());
+        assertEquals(expectedUser.getGithubId(), savedUser.getGithubId());
 
     }
 
