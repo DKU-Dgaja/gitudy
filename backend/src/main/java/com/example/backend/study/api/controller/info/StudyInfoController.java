@@ -1,6 +1,10 @@
 package com.example.backend.study.api.controller.info;
 
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
+import com.example.backend.study.api.controller.info.response.AllStudyInfoResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -24,11 +28,11 @@ public class StudyInfoController {
     private final AuthService authService;
 
     // 스터디 등록
-    @PostMapping("/register")
+    @PostMapping("/")
     public JsonResult<?> registerStudy(@AuthenticationPrincipal User user,
-                                       @Valid @RequestBody StudyInfo studyInfoRequest) {
+                                       @Valid @RequestBody StudyInfoRegisterRequest studyInfoRequest) {
         authService.authenticate(user);
-        StudyInfo registeredStudy = studyInfoService.registerStudy(studyInfoRequest);
+        StudyInfoRegisterResponse response = studyInfoService.registerStudy(studyInfoRequest);
         return JsonResult.successOf("Study Register Success.");
     }
 
@@ -37,7 +41,7 @@ public class StudyInfoController {
     public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
                                       @PathVariable(name = "studyInfoId") Long studyInfoId) {
         authService.authenticate(user);
-        Optional<StudyInfo> studyInfo = studyInfoService.selectStudyInfo(studyInfoId);
+        Optional<StudyInfoResponse> studyInfo = studyInfoService.selectStudyInfo(studyInfoId);
         return JsonResult.successOf(studyInfo);
     }
 
@@ -45,8 +49,8 @@ public class StudyInfoController {
     @GetMapping("/all")
     public JsonResult<?> getAllStudyInfo(@AuthenticationPrincipal User user) {
         authService.authenticate(user);
-        List<StudyInfo> studyInfoList=studyInfoService.selectStudyInfoList();
-        return JsonResult.successOf(studyInfoList);
+        List<AllStudyInfoResponse> responses =studyInfoService.selectStudyInfoList();
+        return JsonResult.successOf(responses);
     }
 
     // 스터디 삭제

@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.info.constant;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.AllArgsConstructor;
@@ -19,6 +20,7 @@ public class RepositoryInfo {
     @Column(name = "REPOSITORY_NAME")
     private String name;
 
+    @JsonProperty("branchName")
     @Column(name = "BRANCH_NAME")
     private String branchName;
 }

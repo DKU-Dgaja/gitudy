@@ -38,6 +38,8 @@ public enum ExceptionMessage {
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
     // StudyInfoException
     STUDYINFO_NOT_FOUND("데이터베이스에서 스터디정보를 찾을 수 없습니다."),
+    MAXIMUM_10_ERROR("깃터디 최대인원 수는 10명입니다."),
+    MINIMUM_1_ERROR("깃터디 최소인원 수는 1명입니다."),
     // AuthException
     AUTH_INVALID_REGISTER("잘못된 회원가입 요청입니다."),
     AUTH_DUPLICATE_UNAUTH_REGISTER("중복된 회원가입 요청입니다."),
