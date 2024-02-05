@@ -3,55 +3,49 @@ package com.example.backend.auth.config.fixture;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.account.user.User;
 
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GOOGLE;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.*;
 import static com.example.backend.domain.define.account.user.constant.UserRole.*;
 
 public class UserFixture {
-    public final static String expectedUserPlatformId = "1";
-    public final static String expectedUserName = "이름";
-    public final static String expectedUserGithubId = "깃허브아이디";
-    public final static String expectedUserProfileImageUrl = "프로필이미지";
-
     public static User generateAuthUser() {
         return User.builder()
-                .platformId(expectedUserPlatformId)
+                .platformId("1")
                 .platformType(GITHUB)
                 .role(USER)
-                .name(expectedUserName)
-                .githubId(expectedUserGithubId)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
                 .build();
     }
 
     public static User generateUNAUTHUser() {
         return User.builder()
-                .platformId(expectedUserPlatformId)
+                .platformId("1")
                 .platformType(GITHUB)
                 .role(UNAUTH)
-                .name(expectedUserName)
-                .githubId(expectedUserGithubId)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
                 .build();
     }
 
     public static User generateGoogleUser() {
         return User.builder()
-                .platformId(expectedUserPlatformId)
+                .platformId("1")
                 .platformType(GOOGLE)
-                .role(USER)
-                .name(expectedUserName)
-                .githubId(expectedUserGithubId)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .role(UNAUTH)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
                 .build();
     }
 
     public static OAuthResponse generateOauthResponse() {
         return OAuthResponse.builder()
-                .platformId(expectedUserPlatformId)
+                .platformId("1")
                 .platformType(GITHUB)
-                .name(expectedUserName)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .name("이름")
+                .profileImageUrl("프로필이미지")
                 .build();
     }
 }
