@@ -104,7 +104,7 @@ class OAuthServiceTest extends TestConfig {
         // then
         assertThat(profile)
                 .extracting(PLATFORM_ID, PLATFORM_TYPE, NAME, PROFILE_IMAGE_URL)
-                .contains(expectedUserPlatformId, GITHUB, expectedUserName, expectedUserProfileImageUrl);
+                .contains(response.getPlatformId(), GITHUB, response.getName(), response.getProfileImageUrl());
 
     }
 
