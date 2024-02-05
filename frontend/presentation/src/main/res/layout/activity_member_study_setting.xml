@@ -6,11 +6,10 @@
     android:layout_height="match_parent"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
-    android:paddingBottom="48dp"
-    tools:context=".ui.mystudy.SendMessageFragment">
+    tools:context=".ui.mystudy.MemberStudySettingActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/alarmMessageTitle"
+        android:id="@+id/memberSettingTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="75dp"
@@ -29,46 +28,51 @@
             style="@style/B3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="알림메시지 선택"
+            android:text="설정"
             android:textColor="@color/BLACK"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
     <TextView
-        android:id="@+id/messageNoti"
-        style="@style/B2_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/message_select_noti"
+        android:layout_marginTop="40dp"
+        android:fontFamily="@font/pretendard_bold"
+        android:text="스터디 관리"
         android:textColor="@color/BLACK"
+        android:textSize="20sp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarmMessageTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/memberSettingTitle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messageList"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/quitStudyBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageNoti" />
-
-    <Button
-        android:id="@+id/sendMessageBtn"
-        style="@style/B5_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_btn_r8_enable"
-        android:enabled="false"
-        android:paddingTop="18dp"
-        android:paddingBottom="18dp"
-        android:text="@string/confirm"
-        android:textColor="@drawable/selector_text_color_enable"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="109dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/memberSettingTitle">
+
+        <TextView
+            style="@style/B4_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="스터디 탈퇴"
+            android:textColor="@color/GS_900"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

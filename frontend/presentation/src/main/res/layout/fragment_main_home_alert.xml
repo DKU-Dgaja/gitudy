@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
-    android:paddingBottom="48dp"
-    tools:context=".ui.mystudy.SendMessageFragment">
+    android:paddingBottom="47dp"
+    tools:context=".ui.home.MainHomeAlertFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/alarmMessageTitle"
+        android:id="@+id/alertTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="75dp"
@@ -29,7 +29,7 @@
             style="@style/B3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="알림메시지 선택"
+            android:text="알림"
             android:textColor="@color/BLACK"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -37,38 +37,12 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <TextView
-        android:id="@+id/messageNoti"
-        style="@style/B2_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:text="@string/message_select_noti"
-        android:textColor="@color/BLACK"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarmMessageTitle" />
-
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messageList"
+        android:id="@+id/alertList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageNoti" />
-
-    <Button
-        android:id="@+id/sendMessageBtn"
-        style="@style/B5_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_btn_r8_enable"
-        android:enabled="false"
-        android:paddingTop="18dp"
-        android:paddingBottom="18dp"
-        android:text="@string/confirm"
-        android:textColor="@drawable/selector_text_color_enable"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
+        android:layout_marginTop="23dp"
+        app:layout_constraintTop_toBottomOf="@+id/alertTitle"
+        tools:layout_editor_absoluteX="22dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -78,6 +78,7 @@
                 android:id="@+id/tagList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
                 android:orientation="horizontal"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintStart_toStartOf="parent"
@@ -87,7 +88,7 @@
                 android:id="@+id/divider1"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:layout_marginTop="24dp"
+                android:layout_marginTop="30dp"
                 android:background="#F8F8F8"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -98,7 +99,7 @@
                 android:id="@+id/IsStudyOpen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="33dp"
                 android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider1">
@@ -167,10 +168,10 @@
                 android:id="@+id/notiBox"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="36dp"
                 android:background="@drawable/box_non_stroke_r8"
-                android:gravity="center_vertical"
                 android:backgroundTint="#EFF8FF"
+                android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:paddingTop="14dp"
                 android:paddingRight="20dp"
@@ -196,7 +197,7 @@
                 android:id="@+id/divider2"
                 android:layout_width="match_parent"
                 android:layout_height="2dp"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="36dp"
                 android:background="#F8F8F8"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -232,8 +233,8 @@
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@+id/todoTitle">
 
-                <LinearLayout
-                    android:id="@+id/todoBtn"
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/todoBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="28dp"
@@ -243,18 +244,25 @@
                     android:paddingLeft="17dp"
                     android:paddingTop="23dp"
                     android:paddingRight="17dp"
-                    android:paddingBottom="23dp">
+                    android:paddingBottom="23dp"
+                    android:layout_marginBottom="20dp">
 
                     <ImageView
+                        android:id="@+id/todoImg"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        android:layout_marginRight="11dp"
-                        android:src="@drawable/ic_todo_git" />
+                        android:src="@drawable/ic_todo_git"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <LinearLayout
+                        android:id="@+id/todoDetailLayout"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical">
+                        android:layout_marginLeft="14dp"
+                        android:orientation="vertical"
+                        app:layout_constraintStart_toEndOf="@+id/todoImg"
+                        app:layout_constraintTop_toTopOf="parent">
 
                         <LinearLayout
                             android:layout_width="wrap_content"
@@ -263,6 +271,7 @@
                             android:gravity="center">
 
                             <TextView
+                                android:id="@+id/todoDetailTitle"
                                 style="@style/B6_1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -291,6 +300,7 @@
                                 android:textColor="@color/GS_500" />
 
                             <TextView
+                                android:id="@+id/todoTime"
                                 style="@style/B7_2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -299,14 +309,31 @@
                                 android:textColor="@color/GS_600" />
                         </LinearLayout>
                     </LinearLayout>
-                </LinearLayout>
+
+                    <LinearLayout
+                        android:id="@+id/todoDetailBody"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="25dp"
+                        android:visibility="visible"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/todoDetailLayout">
+
+                        <TextView
+                            style="@style/B7_2"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="@string/study_to_do_body"
+                            android:textColor="@color/GS_500" />
+                    </LinearLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/conventionLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="30dp"
+                    android:layout_marginBottom="20dp"
                     android:background="@drawable/box_stroke_200_r12"
                     android:gravity="center_vertical"
                     android:padding="18dp"
@@ -337,16 +364,19 @@
                             android:layout_height="wrap_content"
                             android:layout_marginRight="4dp"
                             android:text="커밋 컨벤션을 꼭 지켜주세요!"
-                            android:textColor="@color/GS_800" />
+                            android:textColor="@color/GS_600"
+                            android:textSize="13sp" />
 
 
                         <TextView
+                            android:id="@+id/commitConvention"
                             style="@style/B6_1"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginRight="4dp"
                             android:text="@string/commit_convention"
-                            android:textColor="@color/BASIC_BLUE" />
+                            android:textColor="@color/BASIC_BLUE"
+                            android:textSize="13sp" />
 
 
                     </LinearLayout>
@@ -363,18 +393,27 @@
                         app:layout_constraintTop_toTopOf="parent" />
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
-                <ImageView
-                    android:id="@+id/fullConventionBtn"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:layout_gravity="end"
-                    android:src="@drawable/ic_study_commit"
-                    android:visibility="gone" />
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/rankingListInTeam"
+                <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content">
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/rankingListInTeam"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="10dp"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/fullConventionBtn"
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/ic_study_commit"
+                        android:visibility="gone"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -527,13 +566,13 @@
                 </LinearLayout>
 
                 <Button
-                    android:enabled="false"
                     android:id="@+id/postBtn"
                     style="@style/B6_2"
                     android:layout_width="69dp"
                     android:layout_height="38dp"
                     android:layout_marginBottom="1dp"
                     android:background="@drawable/selector_btn_r8_enable"
+                    android:enabled="false"
                     android:text="@string/post"
                     android:textColor="@drawable/selector_text_color_enable" />
             </LinearLayout>

@@ -185,7 +185,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingTop="18dp"
-            android:paddingRight="12dp"
+            android:paddingRight="16dp"
             android:paddingBottom="18dp">
 
             <ImageView
@@ -201,41 +201,32 @@
                 style="@style/B5_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@null"
                 android:hint="깃허브 링크 추가"
                 android:textColor="@color/BLACK"
                 android:textColorHint="@color/GS_400"
                 android:visibility="visible" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+            <TextView
+                android:id="@+id/savedGithubLink"
+                style="@style/B5_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="10dp"
+                android:text="@string/profile_github_link"
+                android:textColor="@color/BLACK"
+                android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/savedGithubLink"
-                    style="@style/B5_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="10dp"
-                    android:text="www.github.com"
-                    android:textColor="@color/BLACK"
-                    android:textColorHint="@color/GS_400"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/githubLinkDeleteBtn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/ic_clear_600_c"
+                android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/githubLinkDeleteBtn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_clear_600_c"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -247,7 +238,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingTop="18dp"
-            android:paddingRight="12dp"
+            android:paddingRight="16dp"
             android:paddingBottom="18dp">
 
             <ImageView
@@ -261,41 +252,32 @@
                 style="@style/B5_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@null"
                 android:hint="블로그 링크 추가"
                 android:textColor="@color/BLACK"
                 android:textColorHint="@color/GS_400"
                 android:visibility="visible" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+            <TextView
+                android:id="@+id/savedBlogLink"
+                style="@style/B5_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="10dp"
+                android:text="www.naver.com"
+                android:textColor="@color/BLACK"
+                android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/savedBlogLink"
-                    style="@style/B5_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="10dp"
-                    android:text="www.naver.com"
-                    android:textColor="@color/BLACK"
-                    android:textColorHint="@color/GS_400"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/blogLinkDeleteBtn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/ic_clear_600_c"
+                android:visibility="gone" />
 
-                <ImageView
-                    android:id="@+id/blogLinkDeleteBtn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_clear_600_c"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 
         <LinearLayout
@@ -307,7 +289,7 @@
             android:gravity="center_vertical"
             android:paddingLeft="12dp"
             android:paddingTop="18dp"
-            android:paddingRight="12dp"
+            android:paddingRight="16dp"
             android:paddingBottom="18dp">
 
             <ImageView
@@ -323,41 +305,31 @@
                 style="@style/B5_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_weight="1"
                 android:background="@null"
                 android:hint="링크드인 링크 추가"
                 android:textColor="@color/BLACK"
                 android:textColorHint="@color/GS_400"
                 android:visibility="visible" />
 
-            <androidx.constraintlayout.widget.ConstraintLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:visibility="gone">
+            <TextView
+                android:id="@+id/savedlinkedinLink"
+                style="@style/B5_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:paddingRight="10dp"
+                android:text="www.linkedin.com"
+                android:textColor="@color/BLACK"
+                android:visibility="gone" />
 
-                <TextView
-                    android:id="@+id/savedlinkedinLink"
-                    style="@style/B5_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:paddingRight="10dp"
-                    android:text="www.linkedin.com"
-                    android:textColor="@color/BLACK"
-                    android:textColorHint="@color/GS_400"
-                    android:visibility="visible"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/linkedinLinkDeleteBtn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_clear_600_c"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-            </androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/linkedinLinkDeleteBtn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="5dp"
+                android:src="@drawable/ic_clear_600_c"
+                android:visibility="gone" />
         </LinearLayout>
 
     </LinearLayout>

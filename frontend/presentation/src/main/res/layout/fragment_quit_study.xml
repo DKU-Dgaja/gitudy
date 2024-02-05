@@ -6,11 +6,11 @@
     android:layout_height="match_parent"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
-    android:paddingBottom="48dp"
-    tools:context=".ui.mystudy.SendMessageFragment">
+    android:paddingBottom="47dp"
+    tools:context=".ui.mystudy.QuitStudyFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/alarmMessageTitle"
+        android:id="@+id/quitStudyTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="75dp"
@@ -29,7 +29,7 @@
             style="@style/B3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="알림메시지 선택"
+            android:text="스터디 탈되"
             android:textColor="@color/BLACK"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
@@ -38,26 +38,48 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/messageNoti"
+        android:id="@+id/quitReason"
         style="@style/B2_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:text="@string/message_select_noti"
+        android:text="탈퇴하려는 이유가 궁금해요"
         android:textColor="@color/BLACK"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/alarmMessageTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/quitStudyTitle" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/messageList"
+        android:id="@+id/quitReasonList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="45dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/messageNoti" />
+        app:layout_constraintTop_toBottomOf="@+id/quitReason" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@+id/quitReasonList">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/selector_radio_clicked" />
+
+        <EditText
+            style="@style/B4_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="기타 이유를 적어주세요"
+            android:textColor="@color/GS_700"
+            android:textColorHint="@color/GS_300" />
+    </LinearLayout>
 
     <Button
-        android:id="@+id/sendMessageBtn"
+        android:id="@+id/quitStudyBtn"
         style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -65,10 +87,11 @@
         android:enabled="false"
         android:paddingTop="18dp"
         android:paddingBottom="18dp"
-        android:text="@string/confirm"
+        android:text="@string/quit_study"
         android:textColor="@drawable/selector_text_color_enable"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
