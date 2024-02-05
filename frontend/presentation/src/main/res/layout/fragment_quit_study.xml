@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingRight="22dp"
     android:paddingLeft="22dp"
+    android:paddingRight="22dp"
     android:paddingBottom="47dp"
     tools:context=".ui.mystudy.QuitStudyFragment">
 
@@ -56,8 +56,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quitReason" />
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:gravity="center_vertical"
+        app:layout_constraintTop_toBottomOf="@+id/quitReasonList">
+
+        <ImageView
+            android:layout_width="28dp"
+            android:layout_height="28dp"
+            android:layout_marginRight="10dp"
+            android:src="@drawable/selector_radio_clicked" />
+
+        <EditText
+            style="@style/B4_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="기타 이유를 적어주세요"
+            android:textColor="@color/GS_700"
+            android:textColorHint="@color/GS_300" />
+    </LinearLayout>
+
     <Button
-        android:id="@+id/sendMessageBtn"
+        android:id="@+id/quitStudyBtn"
         style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -70,4 +92,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+
 </androidx.constraintlayout.widget.ConstraintLayout>
