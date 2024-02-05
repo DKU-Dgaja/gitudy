@@ -6,8 +6,9 @@
     <string name="cancel">취소</string>
     <string name="save">저장하기</string>
     <string name="post">등록</string>
-    <string name="input">입력하기</string>
+    <string name="input">입력하</string>
     <string name="text_length">%d/%d</string>
+    <string name="text_length_alert">%d자 이내</string>
     <string name="comment_hint">%s님에게 응원과 격려의 메시지를 남겨주세요!</string>
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
 
@@ -34,6 +35,7 @@
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
+    <string name="to_do_close_time">%s %d:%d</string>
 
 
     <!-- Strings related to feed -->
