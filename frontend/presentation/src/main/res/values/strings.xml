@@ -18,7 +18,6 @@
 
     <!-- Strings related to study -->
     <string name="study_my_cnt">마이스터디  %d</string>
-    <string name="study_all_cnt">전체스터디  %d</string>
     <string name="study_name">단국알고깃터디</string>
     <string name="study_commit_rule">월/수/금 커밋 필수</string>
     <string name="study_lock">스터디 공개</string>
@@ -39,7 +38,7 @@
 
 
     <!-- Strings related to feed -->
-    <string name="feed_cnt">전체스터디  %d</string>
+    <string name="feed_cnt">전체  %d</string>
 
     <!-- Strings related to login -->
     <string name="detail1_body">서비스 이용 약관 내용</string>
