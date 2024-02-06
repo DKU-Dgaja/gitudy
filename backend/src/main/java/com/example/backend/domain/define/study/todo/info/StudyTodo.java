@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -33,14 +35,23 @@ public class StudyTodo extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "TODO_DATE", nullable = false)
-    private LocalDate todoDate;                 // To do 날짜
+    private LocalDate endTime;                 // To do 날짜
 
     @Builder
-    public StudyTodo(Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
+    public StudyTodo(Long id, Long studyInfoId, String title, String detail, String todoLink, LocalDate endTime) {
+        this.id = id;
         this.studyInfoId = studyInfoId;
         this.title = title;
         this.detail = detail;
         this.todoLink = todoLink;
-        this.todoDate = todoDate;
+        this.endTime = endTime;
+    }
+
+
+    public void updateStudyTodo(String title, String detail, String todoLink, LocalDate endTime) {
+        this.title = title;
+        this.detail = detail;
+        this.todoLink = todoLink;
+        this.endTime = endTime;
     }
 }
