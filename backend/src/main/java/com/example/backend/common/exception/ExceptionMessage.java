@@ -42,6 +42,11 @@ public enum ExceptionMessage {
     AUTH_DUPLICATE_UNAUTH_REGISTER("중복된 회원가입 요청입니다."),
     AUTH_NOT_FOUND("계정 정보를 찾을 수 없습니다."),
     AUTH_DELETE_FAIL("계정 삭제에 실패했습니다."),
+
+    // TodoExcetpion
+    TODO_NOT_FOUND("TODO를 찾을 수 없습니다."),
+    TODO_NOT_ALLOCATOR("해당 TODO 할당자가 아닙니다."),
+    STUDY_NOT_FOUND("해당 스터디ID를 찾을 수 없습니다.")
     ;
     private final String text;
 }
