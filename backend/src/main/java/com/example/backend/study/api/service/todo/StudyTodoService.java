@@ -50,7 +50,7 @@ public class StudyTodoService {
         });
 
         // 수정하려는 Todo 아이디로 TodoMapping을 조회
-        StudyTodoMapping studyTodoMapping = studyTodoMappingRepository.findById(todoId).orElseThrow(() -> {
+        StudyTodoMapping studyTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(todoId, userId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.STUDY_NOT_FOUND.getText());
             return new TodoException(ExceptionMessage.STUDY_NOT_FOUND);
         });
