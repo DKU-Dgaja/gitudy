@@ -131,7 +131,7 @@ class StudyBookmarkServiceTest extends TestConfig {
         System.out.println("bookInfoList.size() = " + bookInfoList.size());
         for (BookmarkInfoResponse bookmark : bookInfoList) {
             System.out.println("bookmark.getId() = " + bookmark.getId());
-            System.out.println("bookmark.getStudyInfoResponse() = " + bookmark.getStudyInfoResponse());
+            System.out.println("bookmark.getStudyInfoResponse() = " + bookmark.getStudyInfoWithIdResponse());
             System.out.println("bookmark.getUserInfoResponse() = " + bookmark.getUserInfoResponse());
         }
 

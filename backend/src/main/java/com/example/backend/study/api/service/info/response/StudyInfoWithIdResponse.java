@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Getter
 @ToString
-public class StudyInfoResponse {
+public class StudyInfoWithIdResponse {
     private Long id;                                // 아이디
     private String topic;                           // 스터디 이름
     private int score;                              // 스터디 활동점수
@@ -25,7 +25,7 @@ public class StudyInfoResponse {
     private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
 
     @Builder
-    public StudyInfoResponse(Long id, String topic, int score, LocalDate endDate, String info, StudyStatus status, int maximumMember, int currentMember, LocalDate lastCommitDay, String profileImageUrl, String notice, RepositoryInfo repositoryInfo) {
+    public StudyInfoWithIdResponse(Long id, String topic, int score, LocalDate endDate, String info, StudyStatus status, int maximumMember, int currentMember, LocalDate lastCommitDay, String profileImageUrl, String notice, RepositoryInfo repositoryInfo) {
         this.id = id;
         this.topic = topic;
         this.score = score;

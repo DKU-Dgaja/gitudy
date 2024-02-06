@@ -62,8 +62,8 @@ class StudyBookmarkRepositoryTest extends TestConfig {
         // then
         for (BookmarkInfoResponse b : bookmarkInfoList) {
             assertTrue(b.getId() < cursorIdx);
-            assertEquals(study.getId(), b.getStudyInfoResponse().getId());
-            assertEquals(study.getTopic(), b.getStudyInfoResponse().getTopic());
+            assertEquals(study.getId(), b.getStudyInfoWithIdResponse().getId());
+            assertEquals(study.getTopic(), b.getStudyInfoWithIdResponse().getTopic());
             assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
             assertEquals(user.getGithubId(), b.getUserInfoResponse().getGithubId());
         }
@@ -89,8 +89,8 @@ class StudyBookmarkRepositoryTest extends TestConfig {
         // then
         assertEquals(LIMIT, bookmarkInfoList.size());
         for (BookmarkInfoResponse b : bookmarkInfoList) {
-            assertEquals(study.getId(), b.getStudyInfoResponse().getId());
-            assertEquals(study.getTopic(), b.getStudyInfoResponse().getTopic());
+            assertEquals(study.getId(), b.getStudyInfoWithIdResponse().getId());
+            assertEquals(study.getTopic(), b.getStudyInfoWithIdResponse().getTopic());
             assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
             assertEquals(user.getGithubId(), b.getUserInfoResponse().getGithubId());
         }

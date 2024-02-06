@@ -2,7 +2,7 @@ package com.example.backend.domain.define.account.bookmark.repository;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.study.api.service.bookmark.response.BookmarkInfoResponse;
-import com.example.backend.study.api.service.info.response.StudyInfoResponse;
+import com.example.backend.study.api.service.info.response.StudyInfoWithIdResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -29,7 +29,7 @@ public class StudyBookmarkRepositoryImpl implements StudyBookmarkRepositoryCusto
                         studyBookmark.studyInfoId,
                         studyBookmark.userId,
                         Projections.constructor(
-                                StudyInfoResponse.class,
+                                StudyInfoWithIdResponse.class,
                                 studyInfo.id,
                                 studyInfo.topic,
                                 studyInfo.score,
