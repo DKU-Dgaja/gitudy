@@ -9,6 +9,15 @@
     tools:context=".ui.feed.FeedHomeFragment">
 
     <ImageView
+        android:id="@+id/gitImg"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="55dp"
+        android:src="@drawable/logo_git"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
         android:id="@+id/searchBtn"
         android:layout_width="36dp"
         android:layout_height="36dp"
