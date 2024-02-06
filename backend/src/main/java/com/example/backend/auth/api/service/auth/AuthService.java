@@ -11,6 +11,7 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.domain.define.account.user.User;
@@ -22,6 +23,8 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import io.jsonwebtoken.Claims;
 
 import lombok.RequiredArgsConstructor;
@@ -45,6 +48,7 @@ public class AuthService {
     private final OAuthService oAuthService;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final StudyTodoRepository studyTodoRepository;
     @Transactional
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
         OAuthResponse loginResponse = oAuthService.login(platformType, code, state);
@@ -276,4 +280,15 @@ public class AuthService {
 
         user.updatePushAlarmYn(pushAlarmEnable);
     }
+
+    public UserInfoResponse authenticate(User user) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType())
+                .orElseThrow(() -> {
+                    log.error(">>>> User not found for platformId {} and platformType {} <<<<", user.getPlatformId(), user.getPlatformType());
+                    throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
+        return UserInfoResponse.of(findUser);
+    }
+
+
 }
