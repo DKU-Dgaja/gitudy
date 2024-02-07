@@ -24,8 +24,8 @@ class CommitCommentRepositoryTest extends TestConfig {
 
     @AfterEach
     void tearDown() {
-//        commitCommentRepository.deleteAllInBatch();
-//        userRepository.deleteAllInBatch();
+        commitCommentRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @Test
