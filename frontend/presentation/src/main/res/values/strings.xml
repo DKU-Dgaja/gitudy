@@ -39,6 +39,10 @@
 
     <!-- Strings related to feed -->
     <string name="feed_cnt">전체  %d</string>
+    <string name="feed_explanation">"야금야금, 하지만 확실하게"\n이 스터디는 코딩 테스트를 준비하시는 분들이 각자 알고리즘 문제를 풀고, 서로 학습한 내용을 공유하며 동기부여 형성을 하도록 하는 스터디입니다.</string>
+    <string name="feed_rule">주 %d일 제출 • %s %d시 마감</string>
+    <string name="feed_member_number">%d/%d 명</string>
+
 
     <!-- Strings related to login -->
     <string name="detail1_body">서비스 이용 약관 내용</string>
