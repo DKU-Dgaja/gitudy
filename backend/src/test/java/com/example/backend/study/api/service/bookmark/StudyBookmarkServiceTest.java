@@ -137,4 +137,36 @@ class StudyBookmarkServiceTest extends TestConfig {
 
         assertEquals(LIMIT, bookInfoList.size());
     }
+
+    @Test
+    void 북마크가_이미_등록된_경우_삭제_성공_테스트() {
+        // given
+        Long userId = 1L;
+        Long studyInfoId = 1L;
+
+        studyBookmarkRepository.save(StudyBookmarkFixture.createDefaultStudyBookmark(userId, studyInfoId));
+
+        // when
+        studyBookmarkService.handleBookmark(userId, studyInfoId);
+        StudyBookmark bookmark = studyBookmarkRepository.findStudyBookmarkByUserIdAndStudyInfoId(userId, studyInfoId).orElse(null);
+
+        // then
+        assertNull(bookmark);
+    }
+
+    @Test
+    void 북마크가_미등록_상태인_경우_등록_성공_테스트() {
+        // given
+        Long userId = 1L;
+        Long studyInfoId = 1L;
+
+        // when
+        studyBookmarkService.handleBookmark(userId, studyInfoId);
+        StudyBookmark bookmark = studyBookmarkRepository.findStudyBookmarkByUserIdAndStudyInfoId(userId, studyInfoId).orElse(null);
+
+        // then
+        assertNotNull(bookmark);
+        assertEquals(bookmark.getUserId(), userId);
+        assertEquals(bookmark.getStudyInfoId(), studyInfoId);
+    }
 }

@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.bookmark;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -49,5 +50,17 @@ public class StudyBookmarkController {
                 .build());
     }
 
+    @ApiResponse(responseCode = "200", description = "북마크 등록/삭제 성공")
+    @GetMapping("study/{studyInfoId}")
+    public JsonResult<?> handleBookmark(@AuthenticationPrincipal User user,
+                                     @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
+        // 시큐리티 컨텍스트의 user와 일치하는 DB user 정보 조회
+        UserInfoResponse userInfo = authService.findUserInfo(user);
+
+        // 북마크 등록 or 삭제
+        studyBookmarkService.handleBookmark(userInfo.getUserId(), studyInfoId);
+
+        return JsonResult.successOf("북마크 등록/삭제에 성공하였습니다.");
+    }
 }

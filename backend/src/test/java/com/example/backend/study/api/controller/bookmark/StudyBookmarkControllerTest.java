@@ -20,6 +20,7 @@ import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -122,4 +123,55 @@ class StudyBookmarkControllerTest extends TestConfig {
                 .andDo(print());
     }
 
+    @Test
+    void 북마크_등록_삭제_요청_성공_테스트() throws Exception {
+        // given
+        User user = generateAuthUser();
+        Long studyInfoId = 1L;
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        // when
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(studyBookmarkService).handleBookmark(any(Long.class), any(Long.class));
+
+        // when
+        mockMvc.perform(get("/bookmarks/study/" + studyInfoId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("북마크 등록/삭제에 성공하였습니다."))
+                .andDo(print());
+    }
+
+    @Test
+    void 북마크_등록_삭제_요청_실패_테스트() throws Exception {
+        // given
+        User user = generateAuthUser();
+        Long studyInfoId = 1L;
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        // when
+        when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
+
+        // when
+        mockMvc.perform(get("/bookmarks/study/" + studyInfoId)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value("계정 정보를 찾을 수 없습니다."))
+                .andDo(print());
+    }
 }
