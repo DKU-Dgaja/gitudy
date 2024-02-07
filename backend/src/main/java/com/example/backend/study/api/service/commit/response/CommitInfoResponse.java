@@ -32,4 +32,18 @@ public class CommitInfoResponse {
         this.rejectionReason = rejectionReason;
         this.likeCount = likeCount;
     }
+
+    public static CommitInfoResponse of(StudyCommit commit) {
+        return CommitInfoResponse.builder()
+                .id(commit.getId())
+                .studyInfoId(commit.getStudyInfoId())
+                .userId(commit.getUserId())
+                .commitSHA(commit.getCommitSHA())
+                .message(commit.getMessage())
+                .commitDate(commit.getCommitDate())
+                .status(commit.getStatus())
+                .rejectionReason(commit.getRejectionReason())
+                .likeCount(commit.getLikeCount())
+                .build();
+    }
 }

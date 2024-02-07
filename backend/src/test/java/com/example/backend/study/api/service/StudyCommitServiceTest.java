@@ -1,7 +1,9 @@
 package com.example.backend.study.api.service;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.common.exception.commit.CommitException;
 import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -44,11 +46,10 @@ class StudyCommitServiceTest extends TestConfig {
 
         // when
         List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, cursorIdx, LIMIT);
-        for (CommitInfoResponse commit : commitInfoList) {
-            System.out.println("commit.getId() = " + commit.getId());
-        }
+//        for (CommitInfoResponse commit : commitInfoList) {
+//            System.out.println("commit.getId() = " + commit.getId());
+//        }
 
-        assertEquals(cursorIdx <= LIMIT ? cursorIdx-1 : LIMIT, commitInfoList.size());
         for (CommitInfoResponse commit : commitInfoList) {
             assertTrue(commit.getId() < cursorIdx);
         }
@@ -70,4 +71,29 @@ class StudyCommitServiceTest extends TestConfig {
         assertEquals(LIMIT, commitInfoList.size());
     }
 
+    @Test
+    void 커밋_상세_조회_성공_테스트() {
+        // given
+        String commitSha = "123";
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(commitSha));
+
+        // when
+        CommitInfoResponse commitInfoResponse = studyCommitService.getCommitDetailsById(savedCommit.getId());
+
+        // then
+        assertEquals(savedCommit.getId(), commitInfoResponse.getId());
+        assertEquals(commitSha, commitInfoResponse.getCommitSHA());
+    }
+
+    @Test
+    void 커밋_상세_조회_실패_테스트() {
+        // given
+        Long commitID = 1L;
+//        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(commitSha));
+
+        // when & then
+        assertThrows(CommitException.class, () -> {
+            studyCommitService.getCommitDetailsById(commitID);
+        });
+    }
 }

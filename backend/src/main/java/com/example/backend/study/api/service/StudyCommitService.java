@@ -1,5 +1,8 @@
 package com.example.backend.study.api.service;
 
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.commit.CommitException;
+import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import lombok.RequiredArgsConstructor;
@@ -23,5 +26,14 @@ public class StudyCommitService {
         limit = Math.min(limit, MAX_LIMIT);
 
         return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, cursorIdx, limit);
+    }
+
+    public CommitInfoResponse getCommitDetailsById(Long commitId) {
+        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
+            throw new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
+        });
+
+        return CommitInfoResponse.of(commit);
     }
 }
