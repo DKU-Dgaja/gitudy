@@ -7,6 +7,7 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -15,6 +16,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -46,10 +48,13 @@ public class StudyTodoController {
     public JsonResult<?> readStudyTodo(@AuthenticationPrincipal User user,
                                        @PathVariable(name = "studyInfoId") Long studyInfoId) {
         authService.authenticate(user);
-        List<StudyTodo> userStudyTodoList = studyTodoService.readStudyTodo(studyInfoId);
+        List<StudyTodo> studyTodoList = studyTodoService.readStudyTodo(studyInfoId);
 
+        List<StudyTodoResponse> studyTodoResponses = studyTodoList.stream()
+                .map(StudyTodoResponse::of)
+                .toList();
 
-        return JsonResult.successOf(userStudyTodoList);
+        return JsonResult.successOf(studyTodoResponses);
     }
 
     // Todo 수정
