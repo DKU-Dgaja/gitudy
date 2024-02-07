@@ -207,6 +207,12 @@ public class StudyTodoServiceTest extends TestConfig {
     public void updateTodo() {
 
         // given
+        StudyInfo studyInfo = StudyInfo.builder()
+                .userId(expectedLeaderId)
+                .topic("깃터디1")
+                .build();
+        studyInfoRepository.save(studyInfo);
+
         StudyTodo studyTodo = StudyTodo.builder()
                 .studyInfoId(1L)
                 .title("백준 1234번 풀기")
@@ -237,7 +243,7 @@ public class StudyTodoServiceTest extends TestConfig {
         request.setStatus(updateStatus);
 
         // when
-        studyTodoService.updateStudyTodo(studyTodo.getId(), request, expectedUserId);
+        studyTodoService.updateStudyTodo(studyTodo.getId(), request, expectedLeaderId);
 
         // then
         StudyTodo updatedTodo = studyTodoRepository.findById(studyTodo.getId()).orElseThrow();
