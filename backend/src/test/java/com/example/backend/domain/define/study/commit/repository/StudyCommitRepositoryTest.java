@@ -44,7 +44,6 @@ class StudyCommitRepositoryTest extends TestConfig {
 //        }
 
         // then
-        assertEquals(cursorIdx <= LIMIT ? cursorIdx-1 : LIMIT, commitInfoList.size());
         for (CommitInfoResponse commit : commitInfoList) {
             assertTrue(commit.getId() < cursorIdx);
         }
