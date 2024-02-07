@@ -29,18 +29,6 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="UseAppTint" />
 
-    <ImageView
-        android:id="@+id/settingBtn"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginRight="22dp"
-        android:src="@drawable/ic_setting"
-        android:tint="@color/WHITE"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="UseAppTint" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout3"
         android:layout_width="match_parent"
