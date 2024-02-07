@@ -3,6 +3,8 @@ package com.example.backend.study.api.service.todo;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -24,10 +27,23 @@ public class StudyTodoService {
 
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
+    private final StudyInfoRepository studyInfoRepository;
 
     // Todo 등록
     @Transactional
-    public void registerStudyTodo(StudyTodo studyTodo, StudyTodoMapping studyTodoMapping) {
+    public void registerStudyTodo(StudyTodo studyTodo, StudyTodoMapping studyTodoMapping, Long userId) {
+
+        // 스터디 정보 조회
+        StudyInfo studyInfo = studyInfoRepository.findByUserId(userId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_NOT_MEMBER.getText());
+            return new TodoException(ExceptionMessage.STUDY_NOT_MEMBER);
+        });
+
+        // 스터디장인지 확인 (#어차피 studyInfoRepository에서 userId는 팀장만 저장되니 필요없나요?)
+        if (!studyInfo.getUserId().equals(userId)) {
+            throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
+        }
+
         studyTodoRepository.save(studyTodo);
         studyTodoMappingRepository.save(studyTodoMapping);
     }
@@ -43,8 +59,14 @@ public class StudyTodoService {
     @Transactional
     public void updateStudyTodo(Long todoId, StudyTodoUpdateRequest request, Long userId) {
 
+        // 스터디 정보 조회
+        StudyInfo studyInfo = studyInfoRepository.findByUserId(userId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_NOT_MEMBER.getText());
+            return new TodoException(ExceptionMessage.STUDY_NOT_MEMBER);
+        });
+
         // Todo 조회 (todoId = studyTodo.getId())
-        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(()->{
+        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND.getText());
             return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
@@ -58,10 +80,11 @@ public class StudyTodoService {
 
         // Todo 할당자 정보
         Long todoUserId = studyTodoMapping.getUserId();
+        Long studyLeader = studyInfo.getUserId();
 
-        // 현재 로그인한 유저가 해당 Todo 할당자인지 확인
-        if (!userId.equals(todoUserId)) {
-            throw new TodoException(ExceptionMessage.TODO_NOT_ALLOCATOR);
+        // 현재 유저가 해당 Todo 할당자, 팀장인지 확인
+        if (!todoUserId.equals(userId) || !studyLeader.equals(userId) ) {
+            throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
         }
 
         // Todo 정보 업데이트
@@ -81,7 +104,20 @@ public class StudyTodoService {
 
     // Todo 삭제
     @Transactional
-    public void deleteStudyTodo(Long todoId) {
+    public void deleteStudyTodo(Long todoId, Long userId) {
+
+        // 스터디 정보 조회
+        StudyInfo studyInfo = studyInfoRepository.findByUserId(userId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_NOT_MEMBER.getText());
+            return new TodoException(ExceptionMessage.STUDY_NOT_MEMBER);
+        });
+
+
+        // 스터디장인지 확인 (#어차피 studyInfoRepository에서 userId는 팀장만 저장되니 필요없나요?)
+        if (!studyInfo.getUserId().equals(userId)) {
+            throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
+        }
+
 
         // StudyTodoMapping 테이블에서 todoId로 연결된 레코드 삭제
         List<StudyTodoMapping> todoMapping = studyTodoMappingRepository.findByTodoId(todoId);
