@@ -2,6 +2,9 @@ package com.example.backend.study.api.service.todo;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
@@ -30,6 +33,9 @@ public class StudyTodoServiceTest extends TestConfig {
     private StudyTodoMappingRepository studyTodoMappingRepository;
 
     @Autowired
+    private StudyInfoRepository studyInfoRepository;
+
+    @Autowired
     private StudyTodoService studyTodoService;
 
     public final static Long expectedStudyInfoId = 1L;
@@ -40,23 +46,32 @@ public class StudyTodoServiceTest extends TestConfig {
     public final static Long expectedTodoId = 2L;
     public final static Long expectedUserId = 3L;
     public final static StudyTodoStatus expectedStatus = TODO_INCOMPLETE;
+    public final static Long expectedLeaderId = 3L;
 
     @AfterEach
     void tearDown() {
         studyTodoMappingRepository.deleteAllInBatch();
         studyTodoRepository.deleteAllInBatch();
+        studyInfoRepository.deleteAllInBatch();
     }
 
     @BeforeEach
     void setUp() {
         studyTodoRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
+        studyInfoRepository.deleteAllInBatch();
     }
 
     @Test
     @DisplayName("Todo 등록 테스트")
     public void registerTodo() {
         //given
+        StudyInfo studyInfo = StudyInfo.builder()
+                .userId(expectedLeaderId)
+                .topic("깃터디1")
+                .build();
+        studyInfoRepository.save(studyInfo);
+
         StudyTodo studyTodo = StudyTodo.builder()
                 .studyInfoId(expectedStudyInfoId)
                 .title(expectedTitle)
@@ -74,7 +89,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoMappingRepository.save(studyTodoMappings);
 
         //when
-        studyTodoService.registerStudyTodo(studyTodo, studyTodoMappings);
+        studyTodoService.registerStudyTodo(studyTodo, studyTodoMappings, expectedLeaderId);
 
         //then
         // StudyTodo
@@ -236,7 +251,6 @@ public class StudyTodoServiceTest extends TestConfig {
     }
 
 
-
     @Test
     @DisplayName("Todo 수정 권한 없는 경우")
     void updateTodo_NotAllowedUser_ThrowsException() {
@@ -253,6 +267,12 @@ public class StudyTodoServiceTest extends TestConfig {
     @DisplayName("Todo 삭제 테스트")
     void deleteTodo_Success() {
         // given
+        StudyInfo studyInfo = StudyInfo.builder()
+                .userId(expectedLeaderId)
+                .topic("깃터디1")
+                .build();
+        studyInfoRepository.save(studyInfo);
+
         StudyTodo studyTodo = StudyTodo.builder()
                 .studyInfoId(expectedStudyInfoId)
                 .title(expectedTitle)
@@ -270,7 +290,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoMappingRepository.save(studyTodoMapping);
 
         // when
-        studyTodoService.deleteStudyTodo(expectedTodoId);
+        studyTodoService.deleteStudyTodo(expectedTodoId, expectedLeaderId);
 
         // then
         assertFalse(studyTodoRepository.existsById(studyTodoMapping.getTodoId()));

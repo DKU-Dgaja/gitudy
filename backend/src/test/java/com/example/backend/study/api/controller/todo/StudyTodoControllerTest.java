@@ -102,7 +102,7 @@ public class StudyTodoControllerTest extends TestConfig {
 
 
         //when
-        mockMvc.perform(post("/studytodo/register")
+        mockMvc.perform(post("/study/todo/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(mapper.writeValueAsString(studyTodoRequest)))
@@ -154,7 +154,7 @@ public class StudyTodoControllerTest extends TestConfig {
         when(studyTodoService.readStudyTodo(expectedStudyInfoId)).thenReturn(expectedTodos);
 
 
-        mockMvc.perform(get("/studytodo/" + expectedStudyInfoId)
+        mockMvc.perform(get("/study/todo/" + expectedStudyInfoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
@@ -197,7 +197,7 @@ public class StudyTodoControllerTest extends TestConfig {
         doNothing().when(studyTodoService).updateStudyTodo(expectedTodoId, updateRequest, savedUser.getId());
 
         //then
-        mockMvc.perform(put("/studytodo/update/" + expectedTodoId)
+        mockMvc.perform(put("/study/todo/update/" + expectedTodoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(mapper.writeValueAsString(updateRequest)))
@@ -214,6 +214,7 @@ public class StudyTodoControllerTest extends TestConfig {
         //given
 
 
+        Long userId = 1L;
         User savedUser = User.builder()
                 .platformId(expectedUserPlatformId)
                 .platformType(GITHUB)
@@ -228,11 +229,11 @@ public class StudyTodoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         //when
-        doNothing().when(studyTodoService).deleteStudyTodo(expectedTodoId);
+        doNothing().when(studyTodoService).deleteStudyTodo(expectedTodoId, userId);
 
 
         //then
-        mockMvc.perform(delete("/studytodo/delete/" + expectedTodoId)
+        mockMvc.perform(delete("/study/todo/delete/" + expectedTodoId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 .andExpect(status().isOk())

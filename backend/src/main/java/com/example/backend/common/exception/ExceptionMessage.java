@@ -46,7 +46,9 @@ public enum ExceptionMessage {
     // TodoExcetpion
     TODO_NOT_FOUND("TODO를 찾을 수 없습니다."),
     TODO_NOT_ALLOCATOR("해당 TODO 할당자가 아닙니다."),
-    STUDY_NOT_FOUND("해당 스터디ID를 찾을 수 없습니다.")
+    STUDY_NOT_FOUND("해당 스터디ID를 찾을 수 없습니다."),
+    STUDY_NOT_MEMBER("해당 스터디의 멤버가 아닙니다."),
+    STUDY_NOT_LEADER("스터디장이 아닙니다.")
     ;
     private final String text;
 }

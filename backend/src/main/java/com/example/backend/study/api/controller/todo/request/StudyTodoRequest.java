@@ -56,7 +56,7 @@ public class StudyTodoRequest {
     private StudyTodoStatus status;
 
 
-    public StudyTodo studyTodoRequest() {
+    public StudyTodo registerStudyTodo() {
         return StudyTodo.builder()
                 .id(getTodoId())
                 .title(getTitle())
@@ -66,7 +66,7 @@ public class StudyTodoRequest {
                 .build();
     }
 
-    public StudyTodoMapping studyTodoMapping() {
+    public StudyTodoMapping registerStudyTodoMapping() {
         return StudyTodoMapping.builder()
                 .todoId(getTodoId())
                 .userId(getUserId())
