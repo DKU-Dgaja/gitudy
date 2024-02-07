@@ -62,7 +62,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(post("/commits/user/" + userId)
+        mockMvc.perform(get("/commits/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -91,7 +91,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(post("/commits/user/" + userId)
+        mockMvc.perform(get("/commits/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -119,7 +119,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(post("/commits/user/" + userId)
+        mockMvc.perform(get("/commits/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "-1")
