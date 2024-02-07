@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/auth/studytodo")
+@RequestMapping("/studytodo")
 public class StudyTodoController {
 
     private final AuthService authService;
