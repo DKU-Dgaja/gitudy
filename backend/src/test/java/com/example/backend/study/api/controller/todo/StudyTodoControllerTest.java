@@ -5,7 +5,9 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
@@ -78,15 +80,27 @@ public class StudyTodoControllerTest extends TestConfig {
         ObjectMapper mapper = new ObjectMapper();
         mapper.registerModule(new JavaTimeModule());
 
+        StudyTodo studyTodo = StudyTodo.builder()
+                .title(expectedTitle)
+                .detail(expectedDetail)
+                .todoLink(expectedTodoLink)
+                .endTime(expectedEndTime)
+                .studyInfoId(expectedStudyInfoId)
+                .build();
+        studyTodoRepository.save(studyTodo);
+
+        StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
+                .todoId(studyTodo.getId())
+                .userId(expectedUserId)
+                .status(expectedStatus)
+                .build();
+        studyTodoMappingRepository.save(studyTodoMapping);
+
         StudyTodoRequest studyTodoRequest = new StudyTodoRequest();
-        studyTodoRequest.setStudyInfoId(expectedStudyInfoId);
-        studyTodoRequest.setTodoId(expectedTodoId);
-        studyTodoRequest.setUserId(expectedUserId);
-        studyTodoRequest.setEndTime(expectedEndTime);
-        studyTodoRequest.setTitle(expectedTitle);
+        studyTodoRequest.setTodoLink(expectedTitle);
         studyTodoRequest.setDetail(expectedDetail);
         studyTodoRequest.setTodoLink(expectedTodoLink);
-        studyTodoRequest.setStatus(expectedStatus);
+        studyTodoRequest.setEndTime(expectedEndTime);
 
         User savedUser = User.builder()
                 .platformId(expectedUserPlatformId)
@@ -103,7 +117,7 @@ public class StudyTodoControllerTest extends TestConfig {
 
 
         //when
-        mockMvc.perform(post("/study/todo/register")
+        mockMvc.perform(post("/study/" + expectedStudyInfoId + "/todo/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(mapper.writeValueAsString(studyTodoRequest)))
@@ -155,7 +169,7 @@ public class StudyTodoControllerTest extends TestConfig {
         when(studyTodoService.readStudyTodo(expectedStudyInfoId)).thenReturn(expectedTodos);
 
 
-        mockMvc.perform(get("/study/todo/" + expectedStudyInfoId)
+        mockMvc.perform(get("/study/" + expectedStudyInfoId + "/todo/read")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
@@ -198,7 +212,7 @@ public class StudyTodoControllerTest extends TestConfig {
         doNothing().when(studyTodoService).updateStudyTodo(expectedTodoId, updateRequest, savedUser.getId());
 
         //then
-        mockMvc.perform(put("/study/todo/update/" + expectedTodoId)
+        mockMvc.perform(put("/study/" + expectedTodoId + "/todo/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(mapper.writeValueAsString(updateRequest)))
@@ -230,11 +244,11 @@ public class StudyTodoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         //when
-        doNothing().when(studyTodoService).deleteStudyTodo(expectedTodoId, userId);
+        doNothing().when(studyTodoService).deleteStudyTodo(expectedTodoId, expectedStudyInfoId, userId);
 
 
         //then
-        mockMvc.perform(delete("/study/todo/delete/" + expectedTodoId)
+        mockMvc.perform(delete("/study/" + expectedStudyInfoId + "/" + expectedTodoId + "/todo/delete")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 .andExpect(status().isOk())
@@ -243,8 +257,6 @@ public class StudyTodoControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Todo delete Success"))
                 .andDo(print());
     }
-
-
 
 
 }

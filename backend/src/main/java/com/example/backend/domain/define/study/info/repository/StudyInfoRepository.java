@@ -12,5 +12,4 @@ public interface StudyInfoRepository extends JpaRepository<StudyInfo, Long> {
 
     Optional<StudyInfo> findByUserId(Long userid);
 
-    Optional<StudyInfo> findStudyInfo(Long studyInfoId);
 }

@@ -69,7 +69,7 @@ public class StudyTodoServiceTest extends TestConfig {
         //given
         StudyInfo studyInfo = StudyInfo.builder()
                 .userId(expectedLeaderId)
-                .topic("깃터디1")
+                .topic("깃터디 화이팅")
                 .build();
         studyInfoRepository.save(studyInfo);
 
@@ -90,7 +90,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoMappingRepository.save(studyTodoMappings);
 
         //when
-        studyTodoService.registerStudyTodo(studyTodo, studyTodoMappings, expectedLeaderId);
+        studyTodoService.registerStudyTodo(studyTodo, expectedStudyInfoId, expectedLeaderId);
 
         //then
         // StudyTodo
@@ -153,29 +153,31 @@ public class StudyTodoServiceTest extends TestConfig {
     public void readStudyInfoIdTodo() {
 
         // given
-        StudyTodo todo1 = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
+        StudyInfo studyInfo = StudyInfo.builder()
+                .userId(expectedLeaderId)
+                .topic("깃터디 화이팅")
+                .build();
+        StudyInfo savedStudyInfo = studyInfoRepository.save(studyInfo);
+
+
+        StudyTodo studyTodo = StudyTodo.builder()
+                .studyInfoId(savedStudyInfo.getId())
                 .title(expectedTitle)
                 .detail(expectedDetail)
                 .todoLink(expectedTodoLink)
                 .endTime(expectedEndTime)
                 .build();
-        StudyTodo todo2 = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
-        studyTodoRepository.saveAll(List.of(todo1, todo2));
+        studyTodoRepository.save(studyTodo);
 
         // when
-        List<StudyTodoResponse> findTodos = studyTodoService.readStudyTodo(expectedStudyInfoId);
+        List<StudyTodoResponse> studyTodoResponses = studyTodoService.readStudyTodo(savedStudyInfo.getId());
 
         // then
-        assertEquals(2, findTodos.size());
-        assertTrue(findTodos.stream().allMatch(todo -> todo.getStudyInfoId().equals(expectedStudyInfoId)));
-
+        StudyTodoResponse response = studyTodoResponses.get(0);
+        assertEquals(expectedTitle, response.getTitle());
+        assertEquals(expectedDetail, response.getDetail());
+        assertEquals(expectedTodoLink, response.getTodoLink());
+        assertEquals(expectedEndTime, response.getEndTime());
 
     }
 
@@ -278,10 +280,11 @@ public class StudyTodoServiceTest extends TestConfig {
                 .userId(expectedLeaderId)
                 .topic("깃터디1")
                 .build();
-        studyInfoRepository.save(studyInfo);
+        StudyInfo savedStudyInfo = studyInfoRepository.save(studyInfo);
+
 
         StudyTodo studyTodo = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
+                .studyInfoId(savedStudyInfo.getId())
                 .title(expectedTitle)
                 .detail(expectedDetail)
                 .todoLink(expectedTodoLink)
@@ -290,18 +293,18 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoRepository.save(studyTodo);
 
         StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
-                .todoId(expectedTodoId)
+                .todoId(studyTodo.getId())
                 .userId(expectedUserId)
                 .status(expectedStatus)
                 .build();
         studyTodoMappingRepository.save(studyTodoMapping);
 
         // when
-        studyTodoService.deleteStudyTodo(expectedTodoId, expectedLeaderId);
+        studyTodoService.deleteStudyTodo(savedStudyInfo.getId(), studyTodo.getId(), expectedLeaderId);
 
         // then
-        assertFalse(studyTodoRepository.existsById(studyTodoMapping.getTodoId()));
-        assertTrue(studyTodoMappingRepository.findByTodoId(studyTodoMapping.getTodoId()).isEmpty());
+        assertFalse(studyTodoRepository.existsById(studyTodo.getId()));
+        assertTrue(studyTodoMappingRepository.findByTodoId(studyTodo.getId()).isEmpty());
     }
 
 }
