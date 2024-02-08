@@ -74,13 +74,32 @@ public class CommitCommentService {
         });
 
         // 커밋 댓글의 주인이 아닐 경우 예외 발생
+        isCommitOwner(userId, commitComment);
+
+        // 댓글 수정
+        commitComment.updateComment(request.getContent());
+    }
+
+    @Transactional
+    public void deleteCommitComment(Long userId, Long commentId) {
+        CommitComment commitComment = commitCommentRepository.findById(commentId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", commentId, ExceptionMessage.COMMIT_COMMENT_NOT_FOUND.getText());
+
+            throw new CommitException(ExceptionMessage.COMMIT_COMMENT_NOT_FOUND);
+        });
+
+        // 커밋 댓글의 주인이 아닐 경우 예외 발생
+        isCommitOwner(userId, commitComment);
+
+        // 댓글 삭제
+        commitCommentRepository.delete(commitComment);
+    }
+
+    private static void isCommitOwner(Long userId, CommitComment commitComment) {
         if (userId != commitComment.getUserId()) {
             log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_MEMBER_IS_NOT_ACTIVE.getText());
 
             throw new CommitException(ExceptionMessage.STUDY_MEMBER_IS_NOT_ACTIVE);
         }
-
-        // 댓글 수정
-        commitComment.updateComment(request.getContent());
     }
 }

@@ -175,4 +175,20 @@ class CommitCommentServiceTest extends TestConfig {
             commitCommentService.updateCommitComment(userB.getId(), saveComment.getId(), request);
         });
     }
+
+    @Test
+    void 커밋_주인이_커밋_삭제를_시도해_성공하는_테스트() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
+
+        var saveComment = commitCommentRepository.save(CommitCommentFixture.createDefaultCommitComment(user.getId(), commit.getId()));
+
+        // when
+        commitCommentService.deleteCommitComment(user.getId(), saveComment.getId());
+        CommitComment comment = commitCommentRepository.findById(saveComment.getId()).orElse(null);
+
+        // then
+        assertNull(comment);
+    }
 }

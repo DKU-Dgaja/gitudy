@@ -112,7 +112,6 @@ class CommitCommentControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        doNothing().when(commitCommentService).isActiveStudyMember(any(Long.class), any(Long.class));
         doNothing().when(commitCommentService).addCommitComment(any(Long.class), any(Long.class), any(AddCommitCommentRequest.class));
 
         // when
