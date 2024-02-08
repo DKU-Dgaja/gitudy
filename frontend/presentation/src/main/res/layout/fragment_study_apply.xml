@@ -51,18 +51,22 @@
             android:id="@+id/messageToCaptainLayout"
             android:layout_width="match_parent"
             android:layout_height="131dp"
-            android:layout_marginTop="23dp"
+            android:layout_marginTop="20dp"
             android:background="@drawable/box_non_stroke_r8"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
+            android:backgroundTint="#F3F5F7"
             android:paddingLeft="17dp"
             android:paddingTop="19dp"
             android:paddingRight="17dp"
             android:paddingBottom="19dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/messageToCaptainTitle">
+
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="93dp">
+
                 <EditText
                     android:id="@+id/messageToCaptain"
                     style="@style/B6_2"

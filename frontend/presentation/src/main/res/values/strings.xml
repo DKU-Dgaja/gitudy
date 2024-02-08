@@ -6,7 +6,8 @@
     <string name="cancel">취소</string>
     <string name="save">저장하기</string>
     <string name="post">등록</string>
-    <string name="input">입력하</string>
+    <string name="input">입력하기</string>
+    <string name="next">다음</string>
     <string name="text_length">%d/%d</string>
     <string name="text_length_alert">%d자 이내</string>
     <string name="comment_hint">%s님에게 응원과 격려의 메시지를 남겨주세요!</string>
