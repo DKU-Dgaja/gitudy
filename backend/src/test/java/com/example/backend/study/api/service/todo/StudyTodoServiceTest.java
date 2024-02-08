@@ -11,6 +11,7 @@ import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoSt
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -169,7 +170,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoRepository.saveAll(List.of(todo1, todo2));
 
         // when
-        List<StudyTodo> findTodos = studyTodoService.readStudyTodo(expectedStudyInfoId);
+        List<StudyTodoResponse> findTodos = studyTodoService.readStudyTodo(expectedStudyInfoId);
 
         // then
         assertEquals(2, findTodos.size());

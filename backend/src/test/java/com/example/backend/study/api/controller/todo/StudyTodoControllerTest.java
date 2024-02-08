@@ -10,6 +10,7 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingR
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -118,23 +119,23 @@ public class StudyTodoControllerTest extends TestConfig {
     public void 특정_스터디아이디로_Todo_조회_테스트() throws Exception {
 
         //given
-        StudyTodo todo1 = StudyTodo.builder()
+        StudyTodoResponse todo1 = StudyTodoResponse.of(StudyTodo.builder()
                 .id(expectedTodoId)
                 .studyInfoId(expectedStudyInfoId)
                 .title(expectedTitle)
                 .detail(expectedDetail)
                 .todoLink(expectedTodoLink)
                 .endTime(expectedEndTime)
-                .build();
-        StudyTodo todo2 = StudyTodo.builder()
+                .build());
+        StudyTodoResponse todo2 = StudyTodoResponse.of(StudyTodo.builder()
                 .id(expectedUserId + 1L)
                 .studyInfoId(expectedStudyInfoId + 1L)
                 .title("프로그래머스 1234번 풀기")
                 .detail("3시까지 제출")
                 .todoLink("https://programmers.co.kr/")
                 .endTime(expectedEndTime)
-                .build();
-        List<StudyTodo> expectedTodos = List.of(todo1, todo2);
+                .build());
+        List<StudyTodoResponse> expectedTodos = List.of(todo1, todo2);
 
         User savedUser = User.builder()
                 .platformId(expectedUserPlatformId)

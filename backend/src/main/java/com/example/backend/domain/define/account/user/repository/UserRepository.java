@@ -13,4 +13,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // select u from user u where u.platformId = :platformId and u.platformType = :platformType
     Optional<User> findByPlatformIdAndPlatformType(String platformId, UserPlatformType platformType);
 
+   Optional<User> findById(Long userId);
 }
