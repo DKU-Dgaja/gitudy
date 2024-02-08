@@ -6,7 +6,8 @@
     <string name="cancel">취소</string>
     <string name="save">저장하기</string>
     <string name="post">등록</string>
-    <string name="input">입력하</string>
+    <string name="input">입력하기</string>
+    <string name="next">다음</string>
     <string name="text_length">%d/%d</string>
     <string name="text_length_alert">%d자 이내</string>
     <string name="comment_hint">%s님에게 응원과 격려의 메시지를 남겨주세요!</string>
@@ -18,7 +19,6 @@
 
     <!-- Strings related to study -->
     <string name="study_my_cnt">마이스터디  %d</string>
-    <string name="study_all_cnt">전체스터디  %d</string>
     <string name="study_name">단국알고깃터디</string>
     <string name="study_commit_rule">월/수/금 커밋 필수</string>
     <string name="study_lock">스터디 공개</string>
@@ -39,7 +39,14 @@
 
 
     <!-- Strings related to feed -->
-    <string name="feed_cnt">전체스터디  %d</string>
+    <string name="feed_cnt">전체  %d</string>
+    <string name="feed_explanation">"야금야금, 하지만 확실하게"\n이 스터디는 코딩 테스트를 준비하시는 분들이 각자 알고리즘 문제를 풀고, 서로 학습한 내용을 공유하며 동기부여 형성을 하도록 하는 스터디입니다.</string>
+    <string name="feed_rule">주 %d일 제출 • %s %d시 마감</string>
+    <string name="feed_member_number">%d/%d 명</string>
+    <string name="feed_member_full_number">%d명</string>
+    <string name="feed_make_study_1">%s</string>
+    <string name="feed_make_study_2">주 %d일 커밋/%s %d시 마감/%d명</string>
+
 
     <!-- Strings related to login -->
     <string name="detail1_body">서비스 이용 약관 내용</string>
