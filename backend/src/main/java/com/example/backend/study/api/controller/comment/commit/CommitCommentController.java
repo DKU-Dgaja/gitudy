@@ -17,14 +17,14 @@ import org.springframework.web.bind.annotation.RestController;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/comments/commits")
+@RequestMapping("/commits")
 public class CommitCommentController {
     private final CommitCommentService commitCommentService;
 
     @ApiResponse(responseCode = "200",
             description = "커밋 댓글 리스트 조회 성공",
             content = @Content(schema = @Schema(implementation = CommitCommentInfoResponse.class)))
-    @GetMapping("/{commitId}")
+    @GetMapping("/{commitId}/comments")
     public JsonResult<?> commitCommentList(@PathVariable(name = "commitId") Long commitId) {
         return JsonResult.successOf(commitCommentService.getCommitCommentsList(commitId));
     }

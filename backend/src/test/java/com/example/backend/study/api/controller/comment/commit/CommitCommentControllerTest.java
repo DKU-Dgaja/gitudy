@@ -52,7 +52,7 @@ class CommitCommentControllerTest extends TestConfig {
         when(commitCommentService.getCommitCommentsList(any(Long.class))).thenReturn(List.of(CommitCommentInfoResponse.builder().studyCommitId(commitId).build()));
 
         // when
-        mockMvc.perform(get("/comments/commits/" + commitId)
+        mockMvc.perform(get("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
@@ -78,7 +78,7 @@ class CommitCommentControllerTest extends TestConfig {
         when(commitCommentService.getCommitCommentsList(any(Long.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
-        mockMvc.perform(get("/comments/commits/" + commitId)
+        mockMvc.perform(get("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
