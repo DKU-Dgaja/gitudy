@@ -7,7 +7,7 @@
     android:paddingRight="22dp"
     android:paddingBottom="48dp"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.feed.MakeStudyFragment">
+    tools:context=".ui.feed.MakeStudy1Fragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/makeStudyTitle"
