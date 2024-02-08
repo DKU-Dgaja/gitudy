@@ -54,8 +54,14 @@ public class StudyTodoService {
 
 
     // Todo 조회
-    @Transactional
     public List<StudyTodoResponse> readStudyTodo(Long studyInfoId) {
+
+        // 스터디 Id 예외처리
+        StudyInfo studyInfo = studyInfoRepository.findStudyInfo(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
         List<StudyTodo> studyTodoList = studyTodoRepository.findByStudyInfoId(studyInfoId);
 
         return studyTodoList.stream()
@@ -81,8 +87,8 @@ public class StudyTodoService {
 
         // 수정하려는 Todo 아이디로 TodoMapping을 조회
         StudyTodoMapping studyTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(todoId, userId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.STUDY_NOT_FOUND.getText());
-            return new TodoException(ExceptionMessage.STUDY_NOT_FOUND);
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND.getText());
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
 
 
@@ -104,8 +110,6 @@ public class StudyTodoService {
         studyTodoMapping.updateStudyTodoMapping(
                 request.getStatus());
 
-        studyTodoRepository.save(studyTodo);
-        studyTodoMappingRepository.save(studyTodoMapping);
 
     }
 
@@ -128,11 +132,15 @@ public class StudyTodoService {
 
 
         // StudyTodoMapping 테이블에서 todoId로 연결된 레코드 삭제
-        List<StudyTodoMapping> todoMapping = studyTodoMappingRepository.findByTodoId(todoId);
-        studyTodoMappingRepository.deleteAll(todoMapping);
+        studyTodoMappingRepository.deleteByTodoId(todoId);
 
-        // StudyTodo 테이블에서 todoId로 찾은 레코드 삭제
-        studyTodoRepository.findById(todoId).ifPresent(studyTodoRepository::delete);
+        // StudyTodo 테이블에서 해당 todoId에 해당하는 레코드 삭제
+        Optional<StudyTodo> studyTodo = studyTodoRepository.findById(todoId);
+        if (studyTodo.isPresent()) {
+            studyTodoRepository.delete(studyTodo.get());
+        } else {
+            throw new TodoException(ExceptionMessage.STUDY_TODO_RECORD_NOT_FOUND);
+        }
 
     }
 
