@@ -46,6 +46,9 @@ public enum ExceptionMessage {
     // CommitException
     COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),
 
+    // MemberException
+    STUDY_MEMBER_IS_NOT_ACTIVE("해당 사용자는 해당 스터디의 소속이 아닙니다.")
+
     ;
     private final String text;
 }

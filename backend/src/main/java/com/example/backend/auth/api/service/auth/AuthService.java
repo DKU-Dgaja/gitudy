@@ -276,4 +276,14 @@ public class AuthService {
 
         user.updatePushAlarmYn(pushAlarmEnable);
     }
+    
+    public UserInfoResponse findUserInfo(User contextUser) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(contextUser.getPlatformId(), contextUser.getPlatformType())
+                .orElseThrow(() -> {
+                    log.error(">>>> User not found for platformId {} and platformType {} <<<<", contextUser.getPlatformId(), contextUser.getPlatformType());
+                    throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
+
+        return UserInfoResponse.of(findUser);
+    }
 }
