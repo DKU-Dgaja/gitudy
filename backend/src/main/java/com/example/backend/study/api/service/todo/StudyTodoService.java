@@ -3,6 +3,8 @@ package com.example.backend.study.api.service.todo;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -10,6 +12,7 @@ import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +31,7 @@ public class StudyTodoService {
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyInfoRepository studyInfoRepository;
+    private final UserRepository userRepository;
 
     // Todo 등록
     @Transactional
@@ -51,8 +55,12 @@ public class StudyTodoService {
 
     // Todo 조회
     @Transactional
-    public List<StudyTodo> readStudyTodo(Long studyInfoId) {
-        return studyTodoRepository.findByStudyInfoId(studyInfoId);
+    public List<StudyTodoResponse> readStudyTodo(Long studyInfoId) {
+        List<StudyTodo> studyTodoList = studyTodoRepository.findByStudyInfoId(studyInfoId);
+
+        return studyTodoList.stream()
+                .map(StudyTodoResponse::of)
+                .toList();
     }
 
     // Todo 수정

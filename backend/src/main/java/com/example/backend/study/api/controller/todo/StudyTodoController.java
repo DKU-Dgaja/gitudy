@@ -1,8 +1,12 @@
 package com.example.backend.study.api.controller.todo;
 
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
@@ -20,6 +24,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -30,19 +35,28 @@ public class StudyTodoController {
 
     private final AuthService authService;
     private final StudyTodoService studyTodoService;
+    private final UserRepository userRepository;
 
     // Todo 등록
     @ApiResponse(responseCode = "200", description = "Todo 등록 성공")
     @PostMapping("/register")
-    public JsonResult<?> registerStudyTodo(@AuthenticationPrincipal User user,
+    public JsonResult<?> registerStudyTodo(@AuthenticationPrincipal User userPrincipal,
                                            @Valid @RequestBody StudyTodoRequest studyTodoRequest) {
 
-        authService.authenticate(user);
+        authService.authenticate(userPrincipal);
+
+        User user = userRepository.findById(userPrincipal.getId()).orElse(null);
+        Long userId = user.getId();
+
+        if (userId == null) {
+            throw new TodoException(ExceptionMessage.USER_NOT_FOUND);
+        }
 
         StudyTodo studyTodo = studyTodoRequest.registerStudyTodo();
         StudyTodoMapping studyTodoMapping = studyTodoRequest.registerStudyTodoMapping();
 
-        studyTodoService.registerStudyTodo(studyTodo, studyTodoMapping, user.getId());
+
+        studyTodoService.registerStudyTodo(studyTodo, studyTodoMapping, userId);
 
         return JsonResult.successOf("Todo register Success");
     }
@@ -55,11 +69,9 @@ public class StudyTodoController {
                                        @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
 
-        List<StudyTodo> studyTodoList = studyTodoService.readStudyTodo(studyInfoId);
+        List<StudyTodoResponse> studyTodoResponses = studyTodoService.readStudyTodo(studyInfoId);
 
-        List<StudyTodoResponse> studyTodoResponses = studyTodoList.stream()
-                .map(StudyTodoResponse::of)
-                .toList();
+
 
         return JsonResult.successOf(studyTodoResponses);
     }
@@ -67,13 +79,20 @@ public class StudyTodoController {
     // Todo 수정
     @ApiResponse(responseCode = "200", description = "Todo 수정 성공")
     @PutMapping("/update/{todoId}")
-    public JsonResult<?> updateStudyTodo(@AuthenticationPrincipal User user,
+    public JsonResult<?> updateStudyTodo(@AuthenticationPrincipal User userPrincipal,
                                          @PathVariable(name = "todoId") Long todoId,
                                          @Valid @RequestBody StudyTodoUpdateRequest request) {
 
-        authService.authenticate(user);
+        authService.authenticate(userPrincipal);
 
-        studyTodoService.updateStudyTodo(todoId, request, user.getId());
+        User user = userRepository.findById(userPrincipal.getId()).orElse(null);
+        Long userId = user.getId();
+
+        if (userId == null) {
+            throw new TodoException(ExceptionMessage.USER_NOT_FOUND);
+        }
+
+        studyTodoService.updateStudyTodo(todoId, request, userId);
 
         return JsonResult.successOf("Todo update Success");
     }
@@ -82,11 +101,18 @@ public class StudyTodoController {
     // Todo 삭제
     @ApiResponse(responseCode = "200", description = "Todo 삭제 성공")
     @DeleteMapping("/delete/{todoId}")
-    public JsonResult<?> deleteStudyTodo(@AuthenticationPrincipal User user,
+    public JsonResult<?> deleteStudyTodo(@AuthenticationPrincipal User userPrincipal,
                                          @PathVariable(name = "todoId") Long todoId) {
-        authService.authenticate(user);
+        authService.authenticate(userPrincipal);
 
-        studyTodoService.deleteStudyTodo(todoId, user.getId());
+        User user = userRepository.findById(userPrincipal.getId()).orElse(null);
+        Long userId = user.getId();
+
+        if (userId == null) {
+            throw new TodoException(ExceptionMessage.USER_NOT_FOUND);
+        }
+
+        studyTodoService.deleteStudyTodo(todoId, userId);
         return JsonResult.successOf("Todo delete Success");
     }
 
