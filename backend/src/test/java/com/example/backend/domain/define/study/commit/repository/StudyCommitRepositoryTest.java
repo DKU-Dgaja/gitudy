@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Random;
 
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
-import static com.example.backend.domain.define.study.commit.StudyCommitFixture.expectedUserId;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -34,11 +33,11 @@ class StudyCommitRepositoryTest extends TestConfig {
         Random random = new Random();
         Long cursorIdx = random.nextLong(LIMIT) + 1L;
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L);
         studyCommitRepository.saveAll(commitList);
 
         // when
-        List<CommitInfoResponse> commitInfoList = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(expectedUserId, cursorIdx, LIMIT);
+        List<CommitInfoResponse> commitInfoList = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(1L, cursorIdx, LIMIT);
 //        for (CommitInfoResponse c : commitInfoList) {
 //            System.out.println("c.getId() = " + c.getId());
 //        }
@@ -53,11 +52,11 @@ class StudyCommitRepositoryTest extends TestConfig {
     @Test
     void 커서가_null일_경우_마이_커밋_페이지_조회_테스트() {
         // given
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L);
         studyCommitRepository.saveAll(commitList);
 
         // when
-        List<CommitInfoResponse> commitInfoList = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(expectedUserId, null, LIMIT);
+        List<CommitInfoResponse> commitInfoList = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(1L, null, LIMIT);
 //        for (CommitInfoResponse c : commitInfoList) {
 //            System.out.println("c.getId() = " + c.getId());
 //        }

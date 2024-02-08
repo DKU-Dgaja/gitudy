@@ -56,13 +56,16 @@ public class CommitCommentService {
     }
 
     @Transactional
-    public void addCommitComment(Long userId, Long commitId, AddCommitCommentRequest request) {
+    public Long addCommitComment(Long userId, Long commitId, AddCommitCommentRequest request) {
         // 댓글 저장
-        commitCommentRepository.save(CommitComment.builder()
+        CommitComment save = commitCommentRepository.save(CommitComment.builder()
                 .userId(userId)
                 .studyCommitId(commitId)
                 .content(request.getContent())
                 .build());
+
+        // 저장한 댓글 id
+        return save.getId();
     }
 
     @Transactional

@@ -12,6 +12,8 @@ import com.example.backend.domain.define.study.comment.commit.repository.CommitC
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -58,8 +60,8 @@ class CommitCommentServiceTest extends TestConfig {
         User userB = userRepository.save(User.builder().platformId("B").profileImageUrl("testB").build());
         User userC = userRepository.save(User.builder().platformId("C").profileImageUrl("testC").build());
 
-        StudyCommit commitA = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("1"));
-        StudyCommit commitB = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("2"));
+        StudyCommit commitA = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userA.getId(), 1L, "1"));
+        StudyCommit commitB = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userA.getId(), 1L, "2"));
 
         commitCommentRepository.saveAll(CommitCommentFixture.createDefaultCommitCommentList(5, userA.getId(), commitA.getId()));
         commitCommentRepository.saveAll(CommitCommentFixture.createDefaultCommitCommentList(5, userB.getId(), commitB.getId()));
@@ -99,7 +101,7 @@ class CommitCommentServiceTest extends TestConfig {
         String commitSha = "test";
 
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userId, studyInfoId));
-        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(commitSha));
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyInfoId, commitSha));
 
         // when & then
         assertTrue(commitCommentService.isActiveStudyMember(userId, commit.getId()));
@@ -109,11 +111,12 @@ class CommitCommentServiceTest extends TestConfig {
     void 커밋이_속한_스터디의_스터디원인지_검증_실패_테스트() {
         // given
         Long userId = 1L;
+        Long otherStudy = 1L;
         Long studyInfoId = 2L;
         String commitSha = "test";
 
-        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userId, studyInfoId));
-        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(commitSha));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userId, otherStudy));
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyInfoId, commitSha));
 
         // when & then
         assertThrows(StudyMemberException.class, () -> {
@@ -125,14 +128,14 @@ class CommitCommentServiceTest extends TestConfig {
     void 커밋_댓글_저장_테스트() {
         // given
         User user = userRepository.save(UserFixture.generateAuthUser());
-        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), 1L, "123"));
         String content = "testtesttest";
 
         AddCommitCommentRequest request = AddCommitCommentRequest.builder().content(content).build();
 
         // when
-        commitCommentService.addCommitComment(user.getId(), commit.getId(), request);
-        CommitComment findCommitComment = commitCommentRepository.findById(commit.getId()).get();
+        Long commentId = commitCommentService.addCommitComment(user.getId(), commit.getId(), request);
+        CommitComment findCommitComment = commitCommentRepository.findById(commentId).get();
 
         assertEquals(user.getId(), findCommitComment.getUserId());
         assertEquals(content, findCommitComment.getContent());
@@ -142,7 +145,7 @@ class CommitCommentServiceTest extends TestConfig {
     void 커밋_주인이_커밋_수정을_시도해_성공하는_테스트() {
         // given
         User user = userRepository.save(UserFixture.generateAuthUser());
-        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), 1L, "SHA"));
 
         String updateContent = "update";
 
@@ -163,7 +166,7 @@ class CommitCommentServiceTest extends TestConfig {
         // given
         User userA = userRepository.save(UserFixture.generateAuthUser());
         User userB = userRepository.save(UserFixture.generateGoogleUser());
-        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userA.getId(), 1L, "SHA"));
 
         String updateContent = "update";
 
@@ -180,7 +183,7 @@ class CommitCommentServiceTest extends TestConfig {
     void 커밋_주인이_커밋_삭제를_시도해_성공하는_테스트() {
         // given
         User user = userRepository.save(UserFixture.generateAuthUser());
-        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), 1L, "SHA"));
 
         var saveComment = commitCommentRepository.save(CommitCommentFixture.createDefaultCommitComment(user.getId(), commit.getId()));
 

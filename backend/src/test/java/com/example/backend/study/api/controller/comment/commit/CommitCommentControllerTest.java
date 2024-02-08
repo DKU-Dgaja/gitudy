@@ -112,7 +112,7 @@ class CommitCommentControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        doNothing().when(commitCommentService).addCommitComment(any(Long.class), any(Long.class), any(AddCommitCommentRequest.class));
+        when(commitCommentService.addCommitComment(any(Long.class), any(Long.class), any(AddCommitCommentRequest.class))).thenReturn(1L);
 
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")

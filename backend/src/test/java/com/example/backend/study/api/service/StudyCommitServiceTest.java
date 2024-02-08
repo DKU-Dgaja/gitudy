@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Random;
 
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
-import static com.example.backend.domain.define.study.commit.StudyCommitFixture.expectedUserId;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -41,11 +40,11 @@ class StudyCommitServiceTest extends TestConfig {
         Random random = new Random();
         Long cursorIdx = random.nextLong(LIMIT) + 1L;
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L);
         studyCommitRepository.saveAll(commitList);
 
         // when
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, cursorIdx, LIMIT);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(1L, cursorIdx, LIMIT);
 //        for (CommitInfoResponse commit : commitInfoList) {
 //            System.out.println("commit.getId() = " + commit.getId());
 //        }
@@ -58,11 +57,11 @@ class StudyCommitServiceTest extends TestConfig {
     @Test
     void 커서가_null인_경우_마이_커밋_조회_테스트() {
         // given
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L);
         studyCommitRepository.saveAll(commitList);
 
         // when
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(expectedUserId, null, LIMIT);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(1L, null, LIMIT);
 //        List<CommitInfoResponse> content = commitInfoPage.getContent();
 //        for (CommitInfoResponse c : content) {
 //            System.out.println("c.getId() = " + c.getId());
@@ -75,7 +74,7 @@ class StudyCommitServiceTest extends TestConfig {
     void 커밋_상세_조회_성공_테스트() {
         // given
         String commitSha = "123";
-        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(commitSha));
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(1L, 1L, commitSha));
 
         // when
         CommitInfoResponse commitInfoResponse = studyCommitService.getCommitDetailsById(savedCommit.getId());
