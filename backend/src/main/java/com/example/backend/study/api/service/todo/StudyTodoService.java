@@ -9,6 +9,7 @@ import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
@@ -31,33 +32,39 @@ public class StudyTodoService {
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyInfoRepository studyInfoRepository;
-    private final UserRepository userRepository;
 
     // Todo 등록
     @Transactional
-    public void registerStudyTodo(StudyTodo studyTodo, StudyTodoMapping studyTodoMapping, Long userId) {
+    public void registerStudyTodo(StudyTodo studyTodo, Long studyInfoId, Long userId) {
 
         // 스터디 정보 조회
-        StudyInfo studyInfo = studyInfoRepository.findByUserId(userId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_NOT_MEMBER.getText());
-            return new TodoException(ExceptionMessage.STUDY_NOT_MEMBER);
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
 
-        // 스터디장인지 확인 (#어차피 studyInfoRepository에서 userId는 팀장만 저장되니 필요없나요?)
+        // 스터디장인지 확인
         if (!studyInfo.getUserId().equals(userId)) {
             throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
         }
 
+
         studyTodoRepository.save(studyTodo);
+        StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
+                .userId(userId)
+                .todoId(studyTodo.getId())
+                .status(StudyTodoStatus.TODO_INCOMPLETE)  // default
+                .build();
         studyTodoMappingRepository.save(studyTodoMapping);
+
     }
 
 
     // Todo 조회
     public List<StudyTodoResponse> readStudyTodo(Long studyInfoId) {
 
-        // 스터디 Id 예외처리
-        StudyInfo studyInfo = studyInfoRepository.findStudyInfo(studyInfoId).orElseThrow(() -> {
+        // 스터디 정보 조회
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
@@ -97,7 +104,7 @@ public class StudyTodoService {
         Long studyLeader = studyInfo.getUserId();
 
         // 현재 유저가 해당 Todo 할당자, 팀장인지 확인
-        if (!todoUserId.equals(userId) || !studyLeader.equals(userId) ) {
+        if (!todoUserId.equals(userId) || !studyLeader.equals(userId)) {
             throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
         }
 
@@ -116,16 +123,26 @@ public class StudyTodoService {
 
     // Todo 삭제
     @Transactional
-    public void deleteStudyTodo(Long todoId, Long userId) {
+    public void deleteStudyTodo(Long studyInfoId, Long todoId, Long userId) {
+
 
         // 스터디 정보 조회
-        StudyInfo studyInfo = studyInfoRepository.findByUserId(userId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_NOT_MEMBER.getText());
-            return new TodoException(ExceptionMessage.STUDY_NOT_MEMBER);
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
 
 
-        // 스터디장인지 확인 (#어차피 studyInfoRepository에서 userId는 팀장만 저장되니 필요없나요?)
+        // StudyTodo 조회
+        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+
+
+
+
+        // 스터디장인지 확인
         if (!studyInfo.getUserId().equals(userId)) {
             throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
         }
@@ -134,13 +151,10 @@ public class StudyTodoService {
         // StudyTodoMapping 테이블에서 todoId로 연결된 레코드 삭제
         studyTodoMappingRepository.deleteByTodoId(todoId);
 
+
         // StudyTodo 테이블에서 해당 todoId에 해당하는 레코드 삭제
-        Optional<StudyTodo> studyTodo = studyTodoRepository.findById(todoId);
-        if (studyTodo.isPresent()) {
-            studyTodoRepository.delete(studyTodo.get());
-        } else {
-            throw new TodoException(ExceptionMessage.STUDY_TODO_RECORD_NOT_FOUND);
-        }
+        studyTodoRepository.delete(studyTodo);
+
 
     }
 

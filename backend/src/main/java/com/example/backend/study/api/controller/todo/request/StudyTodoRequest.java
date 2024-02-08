@@ -21,10 +21,6 @@ import java.time.LocalDate;
 @Getter @Setter
 public class StudyTodoRequest {
 
-    @NotNull
-    @JsonProperty("studyInfoId")
-    private Long studyInfoId;
-
     @Size(max = 20, message = "제목 20자 이내")
     @JsonProperty("title")
     private String title;
@@ -43,22 +39,8 @@ public class StudyTodoRequest {
     private LocalDate endTime;
 
 
-    @NotNull
-    @JsonProperty("todoId")
-    private Long todoId;
-
-    @NotNull
-    @JsonProperty("userId")
-    private Long userId;
-
-    @JsonProperty("status")
-    @Enumerated(EnumType.STRING)
-    private StudyTodoStatus status;
-
-
     public StudyTodo registerStudyTodo() {
         return StudyTodo.builder()
-                .id(getTodoId())
                 .title(getTitle())
                 .detail(getDetail())
                 .todoLink(getTodoLink())
@@ -66,12 +48,5 @@ public class StudyTodoRequest {
                 .build();
     }
 
-    public StudyTodoMapping registerStudyTodoMapping() {
-        return StudyTodoMapping.builder()
-                .todoId(getTodoId())
-                .userId(getUserId())
-                .status(getStatus())
-                .build();
-    }
 
 }
