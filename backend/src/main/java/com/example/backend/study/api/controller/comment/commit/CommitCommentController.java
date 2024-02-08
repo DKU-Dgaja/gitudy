@@ -38,8 +38,7 @@ public class CommitCommentController {
         return JsonResult.successOf(commitCommentService.getCommitCommentsList(commitId));
     }
 
-    @ApiResponse(responseCode = "200",
-            description = "커밋 댓글 등록 성공")
+    @ApiResponse(responseCode = "200", description = "커밋 댓글 등록 성공")
     @PostMapping("/{commitId}/comments")
     public JsonResult<?> addCommitComment(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "commitId") Long commitId,
@@ -55,6 +54,30 @@ public class CommitCommentController {
             commitCommentService.addCommitComment(userInfo.getUserId(), commitId, request);
 
             return JsonResult.successOf("댓글 작성에 성공하였습니다.");
+
+        } catch (GitudyException e) {
+            return JsonResult.failOf(e.getMessage());
+        }
+    }
+
+    @ApiResponse(responseCode = "200", description = "커밋 댓글 수정 성공")
+    @PostMapping("/{commitId}/comments/{commentId}")
+    public JsonResult<?> updateCommitComment(@AuthenticationPrincipal User user,
+                                             @PathVariable(name = "commitId") Long commitId,
+                                             @PathVariable(name = "commentId") Long commentId,
+                                             @Valid @RequestBody AddCommitCommentRequest request) {
+
+        try {
+            // 시큐리티 유저로부터 DB 유저 정보 획득
+            UserInfoResponse userInfo = authService.findUserInfo(user);
+
+            // 강퇴 or 탈퇴 당한 사용자가 댓글을 수정할 수 없도록 활동중인 스터디원인지 확인
+            commitCommentService.isActiveStudyMember(userInfo.getUserId(), commitId);
+
+            // 댓글 수정
+            commitCommentService.updateCommitComment(userInfo.getUserId(), commentId, request);
+
+            return JsonResult.successOf("댓글 수정에 성공하였습니다.");
 
         } catch (GitudyException e) {
             return JsonResult.failOf(e.getMessage());

@@ -64,4 +64,23 @@ public class CommitCommentService {
                 .content(request.getContent())
                 .build());
     }
+
+    @Transactional
+    public void updateCommitComment(Long userId, Long commentId, AddCommitCommentRequest request) {
+        CommitComment commitComment = commitCommentRepository.findById(commentId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", commentId, ExceptionMessage.COMMIT_COMMENT_NOT_FOUND.getText());
+
+            throw new CommitException(ExceptionMessage.COMMIT_COMMENT_NOT_FOUND);
+        });
+
+        // 커밋 댓글의 주인이 아닐 경우 예외 발생
+        if (userId != commitComment.getUserId()) {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_MEMBER_IS_NOT_ACTIVE.getText());
+
+            throw new CommitException(ExceptionMessage.STUDY_MEMBER_IS_NOT_ACTIVE);
+        }
+
+        // 댓글 수정
+        commitComment.updateComment(request.getContent());
+    }
 }

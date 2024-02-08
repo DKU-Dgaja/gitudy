@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.comment.commit;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.commit.CommitException;
 import com.example.backend.common.exception.member.StudyMemberException;
 import com.example.backend.domain.define.account.user.User;
@@ -123,17 +124,55 @@ class CommitCommentServiceTest extends TestConfig {
     @Test
     void 커밋_댓글_저장_테스트() {
         // given
-        Long userId = 1L;
-        Long commitId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
         String content = "testtesttest";
 
         AddCommitCommentRequest request = AddCommitCommentRequest.builder().content(content).build();
 
         // when
-        commitCommentService.addCommitComment(userId, commitId, request);
-        CommitComment findCommitComment = commitCommentRepository.findById(commitId).get();
+        commitCommentService.addCommitComment(user.getId(), commit.getId(), request);
+        CommitComment findCommitComment = commitCommentRepository.findById(commit.getId()).get();
 
-        assertEquals(userId, findCommitComment.getUserId());
+        assertEquals(user.getId(), findCommitComment.getUserId());
         assertEquals(content, findCommitComment.getContent());
+    }
+
+    @Test
+    void 커밋_주인이_커밋_수정을_시도해_성공하는_테스트() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
+
+        String updateContent = "update";
+
+        var saveComment = commitCommentRepository.save(CommitCommentFixture.createDefaultCommitComment(user.getId(), commit.getId()));
+        var request = AddCommitCommentRequest.builder().content(updateContent).build();
+
+        // when
+        commitCommentService.updateCommitComment(user.getId(), saveComment.getId(), request);
+        CommitComment comment = commitCommentRepository.findById(saveComment.getId()).get();
+
+        // then
+        assertEquals(updateContent, comment.getContent());
+
+    }
+
+    @Test
+    void 커밋_주인이_아닌_사람이_커밋_수정을_시도해_실패하는_테스트() {
+        // given
+        User userA = userRepository.save(UserFixture.generateAuthUser());
+        User userB = userRepository.save(UserFixture.generateGoogleUser());
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("SHA"));
+
+        String updateContent = "update";
+
+        var saveComment = commitCommentRepository.save(CommitCommentFixture.createDefaultCommitComment(commit.getUserId(), commit.getId()));
+        var request = AddCommitCommentRequest.builder().content(updateContent).build();
+
+        // when
+        assertThrows(CommitException.class, () -> {
+            commitCommentService.updateCommitComment(userB.getId(), saveComment.getId(), request);
+        });
     }
 }
