@@ -2,10 +2,10 @@ package com.example.backend.study.api.controller.todo;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
@@ -102,14 +102,7 @@ public class StudyTodoControllerTest extends TestConfig {
         studyTodoRequest.setTodoLink(expectedTodoLink);
         studyTodoRequest.setEndTime(expectedEndTime);
 
-        User savedUser = User.builder()
-                .platformId(expectedUserPlatformId)
-                .platformType(GITHUB)
-                .role(UNAUTH)
-                .name(expectedUserName)
-                .githubId(expectedUserGithubId)
-                .profileImageUrl(expectedUserProfileImageUrl)
-                .build();
+        User savedUser = UserFixture.generateAuthUser();
         userRepository.save(savedUser);
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -151,14 +144,8 @@ public class StudyTodoControllerTest extends TestConfig {
                 .build());
         List<StudyTodoResponse> expectedTodos = List.of(todo1, todo2);
 
-        User savedUser = User.builder()
-                .platformId(expectedUserPlatformId)
-                .platformType(GITHUB)
-                .role(UNAUTH)
-                .name(expectedUserName)
-                .githubId(expectedUserGithubId)
-                .profileImageUrl(expectedUserProfileImageUrl)
-                .build();
+
+        User savedUser = UserFixture.generateAuthUser();
         userRepository.save(savedUser);
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -195,14 +182,7 @@ public class StudyTodoControllerTest extends TestConfig {
         updateRequest.setEndTime(LocalDate.now().plusDays(1));
         updateRequest.setStatus(expectedStatus);
 
-        User savedUser = User.builder()
-                .platformId(expectedUserPlatformId)
-                .platformType(GITHUB)
-                .role(UNAUTH)
-                .name(expectedUserName)
-                .githubId(expectedUserGithubId)
-                .profileImageUrl(expectedUserProfileImageUrl)
-                .build();
+        User savedUser = UserFixture.generateAuthUser();
         userRepository.save(savedUser);
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -230,14 +210,8 @@ public class StudyTodoControllerTest extends TestConfig {
 
 
         Long userId = 1L;
-        User savedUser = User.builder()
-                .platformId(expectedUserPlatformId)
-                .platformType(GITHUB)
-                .role(UNAUTH)
-                .name(expectedUserName)
-                .githubId(expectedUserGithubId)
-                .profileImageUrl(expectedUserProfileImageUrl)
-                .build();
+
+        User savedUser = UserFixture.generateAuthUser();
         userRepository.save(savedUser);
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
