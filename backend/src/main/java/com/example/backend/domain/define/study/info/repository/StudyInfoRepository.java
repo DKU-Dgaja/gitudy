@@ -7,6 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface StudyInfoRepository extends JpaRepository<StudyInfo, Long> {
+public interface StudyInfoRepository extends JpaRepository<StudyInfo, Long> , StudyInfoRepositoryCustom{
     Optional<StudyInfo> findById(Long id);
-}
+    }
