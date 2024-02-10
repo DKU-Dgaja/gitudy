@@ -1,6 +1,9 @@
 package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.study.info.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -13,24 +16,31 @@ import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRe
 import com.example.backend.study.api.controller.info.response.AllStudyInfoResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoResponse;
-import com.example.backend.study.api.service.info.StudyInfoService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.domain.define.study.info.StudyInfoFixture.createDefaultStudyInfoList;
+import static com.example.backend.domain.define.study.info.StudyInfoFixture.createDefaultStudyInfoListRandomScoreAndLastCommitDay;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
+
 @SpringBootTest
 class StudyInfoServiceTest extends TestConfig {
+    private final static int DATA_SIZE = 10;
+    private final static Long LIMIT = 10L;
     @Autowired
     private StudyInfoRepository studyInfoRepository;
 
@@ -39,24 +49,40 @@ class StudyInfoServiceTest extends TestConfig {
     @Autowired
     UserRepository userRepository;
 
-    @AfterEach
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @MockBean
+    private AuthService authService;
+
+    @Autowired
+    private JwtService jwtService;
+
+    @BeforeEach
     void tearDown() {
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
     }
+
+    @AfterEach
+    void tearDown1() {
+        studyInfoRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
+    }
+
     @Test
     @DisplayName("하나의 스터디 상세정보 테스트")
     void testSelectStudyInfo() {
         // given
         User user = userRepository.save(generateAuthUser());
-        StudyInfo studyInfo =studyInfoRepository.save(generateStudyInfo(user.getId()));
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
         // when
         Optional<StudyInfoResponse> result = studyInfoService.selectStudyInfo(studyInfo.getId());
 
         // then
-        // createdDateTime, modifiedDateTime에서 정밀도 오류가 나서 하드코딩 했습니다..
-        // assertThat(studyInfo).usingRecursiveComparison() .isEqualTo(result.get());;
-
         assertTrue(result.isPresent());
         assertThat(studyInfo.getTopic()).isEqualTo(result.get().getTopic());
         assertThat(studyInfo.getScore()).isEqualTo(result.get().getScore());
@@ -75,10 +101,10 @@ class StudyInfoServiceTest extends TestConfig {
     @DisplayName("모든 스터디 반환 테스트")
     void testSelectStudyInfoList() {
         // given
-        Long userId1= 1L;
-        Long userId2= 2L;
-        StudyInfo studyInfo1 = generateStudyInfo(userId1);
-        StudyInfo studyInfo2 = generateStudyInfo(userId2);
+        User user1 = userRepository.save(generateAuthUser());
+        User user2 = userRepository.save(generateGoogleUser());
+        StudyInfo studyInfo1 = generateStudyInfo(user1.getId());
+        StudyInfo studyInfo2 = generateStudyInfo(user2.getId());
         studyInfoRepository.save(studyInfo1);
         studyInfoRepository.save(studyInfo2);
 
@@ -117,7 +143,8 @@ class StudyInfoServiceTest extends TestConfig {
     @DisplayName("StudyInfo 등록 테스트")
     void testRegisterStudy() {
         // given
-        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequest(1L);
+        User user = userRepository.save(generateAuthUser());
+        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequest(user.getId());
 
         // when
         StudyInfoRegisterResponse response = studyInfoService.registerStudy(request);
@@ -138,7 +165,7 @@ class StudyInfoServiceTest extends TestConfig {
     void testDeleteStudy() {
         // given
         User user = userRepository.save(generateAuthUser());
-        StudyInfo studyInfo= studyInfoRepository.save(generateStudyInfo(user.getId()));
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
 
         // when
         boolean isDeleted = studyInfoService.deleteStudy(studyInfo.getId());
@@ -163,8 +190,9 @@ class StudyInfoServiceTest extends TestConfig {
     @DisplayName("스터디인원의 최대 수가 10이 넘어가면 예외가 발생한다.")
     void registerStudy_maximum_throwException() {
         int invaildMaximumMember = 100;
+        User user = userRepository.save(generateAuthUser());
         StudyInfoRegisterRequest request = StudyInfoRegisterRequest.builder()
-                .userId(1L)
+                .userId(user.getId())
                 .topic("Sample Study")
                 .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
@@ -185,8 +213,9 @@ class StudyInfoServiceTest extends TestConfig {
     @DisplayName("스터디인원의 최대 수 음수면 예외가 발생한다.")
     void registerStudy_minimum_throwException() {
         int invaildMaximumMember = -1;
+        User user = userRepository.save(generateAuthUser());
         StudyInfoRegisterRequest request = StudyInfoRegisterRequest.builder()
-                .userId(1L)
+                .userId(user.getId())
                 .topic("Sample Study")
                 .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
@@ -201,5 +230,113 @@ class StudyInfoServiceTest extends TestConfig {
         // when, then
         assertThrows(StudyInfoException.class, () -> studyInfoService.registerStudy(request),
                 "깃터디 최소인원 수는 1명입니다.");
+    }
+
+    // @Test : 테스트 어노테이션 임시 제거
+    // studyInfoList 전체 테스트시 studyInfoList를 데이터 베이스에 저장할 때 strategy = GenerationType.IDENTITY로 인하여
+    // 다른 테스트에서 증가한 인덱스가 그대로 적용되어 오류가 뜹니다. (단위 테스트는 성공)
+    void 커서가_null이_아닌_경우_마이_스터디_조회_테스트() {
+        // given
+        User user = UserFixture.generateAuthUser();
+
+        User savedUser = userRepository.save(user);
+        System.out.println(savedUser.getId());
+        Random random = new Random();
+        Long cursorIdx = random.nextLong(LIMIT) + 1L;
+
+        List<StudyInfo> studyInfoList = createDefaultStudyInfoList(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfoList);
+
+        // when
+        List<StudyInfoResponse> studyInfoPage = studyInfoService.selectUserStudyInfoList(savedUser.getId(), cursorIdx, LIMIT);
+
+        // then
+        assertEquals(cursorIdx <= LIMIT ? cursorIdx - 1 : LIMIT, studyInfoPage.size());
+    }
+
+    @Test
+    void 커서가_null인_경우_마이_스터디_조회_테스트() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> studyInfos = createDefaultStudyInfoList(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfos);
+
+        // when
+        List<StudyInfoResponse> studyInfoList = studyInfoService.selectUserStudyInfoList(savedUser.getId(), null, LIMIT);
+
+        // then
+        assertEquals(LIMIT, studyInfoList.size());
+    }
+
+    @Test
+    void lastCommitDay_기준_정렬된_모든_스터디_조회_테스트() {
+        // given
+        String sortBy = "lastCommitDay";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfos);
+
+//        System.out.println("---------Before sort by lastCommitDay---------");
+//        for(StudyInfo x: studyInfos){
+//            System.out.println(x.getLastCommitDay());
+//        }
+//        System.out.println("----------------------------------------------");
+
+        // when
+        List<AllStudyInfoResponse> studyInfoList = studyInfoService.selectStudyInfoListbyParameter(savedUser.getId(), null, LIMIT, sortBy);
+
+//        System.out.println("---------After sort by lastCommitDay----------");
+//        for(AllStudyInfoResponse x: studyInfoList){
+//            System.out.println(x.getLastCommitDay());
+//        }
+//        System.out.println("----------------------------------------------");
+
+        // then
+        assertEquals(LIMIT, studyInfoList.size());
+        // then
+        assertEquals(LIMIT, studyInfoList.size());
+        LocalDate previousCommitDay = null;
+        for (AllStudyInfoResponse studyInfo : studyInfoList) {
+            LocalDate currentCommitDay = studyInfo.getLastCommitDay();
+            if (previousCommitDay != null) {
+                assertTrue(currentCommitDay.isBefore(previousCommitDay) || currentCommitDay.isEqual(previousCommitDay));
+            }
+            previousCommitDay = currentCommitDay;
+        }
+    }
+
+    @Test
+    void score_기준_정렬된_모든_스터디_조회_테스트() {
+        // given
+        String sortBy = "score";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfos);
+
+//        System.out.println("---------Before sort by Score---------");
+//        for(StudyInfo x: studyInfos){
+//            System.out.println(x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // when
+        List<AllStudyInfoResponse> studyInfoList = studyInfoService.selectStudyInfoListbyParameter(savedUser.getId(), null, LIMIT, sortBy);
+
+//        System.out.println("---------After sort by Score----------");
+//        for(AllStudyInfoResponse x: studyInfoList){
+//            System.out.println(x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
+
+
+        // then
+        assertEquals(LIMIT, studyInfoList.size());
+        // then
+        int previousScore = Integer.MAX_VALUE;
+        for (AllStudyInfoResponse studyInfo : studyInfoList) {
+            int currentScore = studyInfo.getScore();
+            assertTrue(currentScore <= previousScore);
+            previousScore = currentScore;
+        }
     }
 }

@@ -13,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,7 +31,7 @@ public class StudyInfoService {
             log.warn(">>>> {} : {} <<<<", request.getMaximumMember(), ExceptionMessage.MAXIMUM_10_ERROR.getText());
             throw new StudyInfoException(ExceptionMessage.MAXIMUM_10_ERROR);
         }
-        if(request.getMaximumMember() < 0){
+        if(request.getMaximumMember() < 1){
             log.warn(">>>> {} : {} <<<<", request.getMaximumMember(), ExceptionMessage. MINIMUM_1_ERROR.getText());
             throw new StudyInfoException(ExceptionMessage. MINIMUM_1_ERROR);
         }
@@ -101,7 +100,6 @@ public class StudyInfoService {
         return response;
     }
 
-
     // 스터디 삭제
     @Transactional
     public boolean deleteStudy(Long studyInfoId) {
@@ -111,5 +109,14 @@ public class StudyInfoService {
         });
         studyInfoRepository.delete(studyInfo);
         return true;
+    }
+    // 마이 커밋 조회
+    public List<StudyInfoResponse> selectUserStudyInfoList(Long userId, Long idx, Long limit) {
+        return studyInfoRepository.findStudyInfoListByUserId_CursorPaging(userId, idx, limit);
+    }
+
+    // 정렬된 스터디 조회
+    public List<AllStudyInfoResponse> selectStudyInfoListbyParameter(Long userId, Long cursorIdx, Long limit, String sortBy) {
+        return studyInfoRepository.findStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
     }
 }
