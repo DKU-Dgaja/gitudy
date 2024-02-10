@@ -19,6 +19,8 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class StudyInfoResponse {
 
+    private Long id;                                // 아이디
+
     @JsonProperty("userId")
     private Long userId;                            // 스터디장 ID
 
