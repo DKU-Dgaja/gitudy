@@ -16,11 +16,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 
 
-import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
-import com.example.backend.auth.config.fixture.UserFixture;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.constant.UserPlatformType;
-import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
@@ -33,20 +28,13 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.example.backend.auth.config.fixture.UserFixture.expectedUserPlatformId;
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
-import static java.util.Map.entry;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class TestConfig {
-
+    private final static Long LIMIT = 10L;
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer";
 
