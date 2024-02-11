@@ -1,4 +1,4 @@
-package com.takseha.frontend
+package com.takseha.gitudy
 
 import android.content.Intent
 import android.os.Bundle

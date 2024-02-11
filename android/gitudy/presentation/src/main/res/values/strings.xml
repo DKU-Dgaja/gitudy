@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">GITUDY</string>
+    <string name="app_name">gitudy</string>
 
     <!-- Strings related to common -->
     <string name="confirm">확인</string>

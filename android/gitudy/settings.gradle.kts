@@ -13,7 +13,7 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "frontend"
+rootProject.name = "gitudy"
 include(":app")
 include(":core")
 include(":domain")

@@ -7,11 +7,11 @@ plugins {
 }
 
 android {
-    namespace = "com.takseha.frontend"
+    namespace = "com.takseha.gitudy"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.takseha.frontend"
+        applicationId = "com.takseha.gitudy"
         minSdk = 24
         targetSdk = 34
         versionCode = 1

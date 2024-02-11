@@ -1,4 +1,4 @@
-package com.takseha.frontend
+package com.takseha.gitudy
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
