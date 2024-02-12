@@ -10,7 +10,6 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,15 +38,12 @@ public class StudyCommitController {
 
         List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, cursorIdx, limit);
 
-        // 다음 cursorIdx
-        Long nextCursorIdx = 0L;
-        if (!commitInfoList.isEmpty()) {
-            nextCursorIdx = commitInfoList.get(commitInfoList.size() - 1).getId();
-        }
-
-        return JsonResult.successOf(CommitInfoListAndCursorIdxResponse.builder()
+        CommitInfoListAndCursorIdxResponse response = CommitInfoListAndCursorIdxResponse.builder()
                 .commitInfoList(commitInfoList)
-                .cursorIdx(nextCursorIdx)
-                .build());
+                .build();
+
+        response.setNextCursorIdx();
+
+        return JsonResult.successOf(response);
     }
 }

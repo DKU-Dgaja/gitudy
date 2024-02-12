@@ -16,4 +16,10 @@ public class CommitInfoListAndCursorIdxResponse {
         this.commitInfoList = commitInfoList;
         this.cursorIdx = cursorIdx;
     }
+
+    public void setNextCursorIdx() {
+        cursorIdx = commitInfoList == null || commitInfoList.isEmpty() ?
+                0L : commitInfoList.get(commitInfoList.size() - 1).getId();
+
+    }
 }
