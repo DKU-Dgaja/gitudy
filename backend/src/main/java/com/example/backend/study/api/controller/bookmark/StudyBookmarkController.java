@@ -38,16 +38,13 @@ public class StudyBookmarkController {
         authService.authenticate(userId, user);
         List<BookmarkInfoResponse> bookmarkInfoList = studyBookmarkService.selectUserBookmarkList(userId, cursorIdx, limit);
 
-        // 다음 cursorIdx
-        Long nextCursorIdx = 0L;
-        if (!bookmarkInfoList.isEmpty()) {
-            nextCursorIdx = bookmarkInfoList.get(bookmarkInfoList.size() - 1).getId();
-        }
-
-        return JsonResult.successOf(BookmarkInfoListAndCursorIdxResponse.builder()
+        BookmarkInfoListAndCursorIdxResponse response = BookmarkInfoListAndCursorIdxResponse.builder()
                 .bookmarkInfoList(bookmarkInfoList)
-                .cursorIdx(nextCursorIdx)
-                .build());
+                .build();
+
+        response.getNextCursorIdx();
+
+        return JsonResult.successOf(response);
     }
 
     @ApiResponse(responseCode = "200", description = "북마크 등록/삭제 성공")

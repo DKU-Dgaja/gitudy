@@ -16,4 +16,9 @@ public class BookmarkInfoListAndCursorIdxResponse {
         this.bookmarkInfoList = bookmarkInfoList;
         this.cursorIdx = cursorIdx;
     }
+
+    public void getNextCursorIdx() {
+        cursorIdx = bookmarkInfoList == null || bookmarkInfoList.isEmpty() ?
+                0L : bookmarkInfoList.get(bookmarkInfoList.size() - 1).getId();
+    }
 }
