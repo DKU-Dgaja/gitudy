@@ -42,6 +42,9 @@ public enum ExceptionMessage {
     AUTH_DUPLICATE_UNAUTH_REGISTER("중복된 회원가입 요청입니다."),
     AUTH_NOT_FOUND("계정 정보를 찾을 수 없습니다."),
     AUTH_DELETE_FAIL("계정 삭제에 실패했습니다."),
+
+    // BokmarkException
+    BOOKMARK_DELETE_FAIL("북마크 삭제에 실패했습니다.")
     ;
     private final String text;
 }

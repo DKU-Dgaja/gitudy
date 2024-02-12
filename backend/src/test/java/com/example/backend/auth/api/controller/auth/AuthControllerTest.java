@@ -226,7 +226,7 @@ class AuthControllerTest extends TestConfig {
         User user = generateAuthUser();
         UserInfoResponse savedUser = UserInfoResponse.of(userRepository.save(user));
 
-        when(authService.getUserByInfo(expectedUserPlatformId, GITHUB)).thenReturn(savedUser);
+        when(authService.getUserByInfo(user.getPlatformId(), GITHUB)).thenReturn(savedUser);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", user.getRole().name());
@@ -244,8 +244,8 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj.role").value(String.valueOf(UserRole.USER)))
-                .andExpect(jsonPath("$.res_obj.name").value(expectedUserName))
-                .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedUserProfileImageUrl));
+                .andExpect(jsonPath("$.res_obj.name").value(savedUser.getName()))
+                .andExpect(jsonPath("$.res_obj.profile_image_url").value(savedUser.getProfileImageUrl()));
 
     }
 
@@ -304,8 +304,8 @@ class AuthControllerTest extends TestConfig {
         // when
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(authService.updateUserPage(any(Long.class))).thenReturn(UserUpdatePageResponse.builder()
-                .name(expectedUserName)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .name(savedUser.getName())
+                .profileImageUrl(savedUser.getProfileImageUrl())
                 .build());
 
         // then
@@ -315,8 +315,8 @@ class AuthControllerTest extends TestConfig {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_obj.name").value(expectedUserName))
-                .andExpect(jsonPath("$.res_obj.profile_image_url").value(expectedUserProfileImageUrl))
+                .andExpect(jsonPath("$.res_obj.name").value(savedUser.getName()))
+                .andExpect(jsonPath("$.res_obj.profile_image_url").value(savedUser.getProfileImageUrl()))
                 .andDo(print());
 
     }
@@ -355,8 +355,8 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
-                .name(expectedUserName)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .name(savedUser.getName())
+                .profileImageUrl(savedUser.getProfileImageUrl())
                 .profilePublicYn(false)
                 .socialInfo(SocialInfo.builder()
                         .blogLink("test@naver.com").build())
@@ -389,8 +389,8 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
-                .name(expectedUserName)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .name(savedUser.getName())
+                .profileImageUrl(savedUser.getProfileImageUrl())
                 .profilePublicYn(false)
                 .socialInfo(SocialInfo.builder()
                         .blogLink("test@naver.com").build())
@@ -426,8 +426,8 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
-                .name(expectedUserName)
-                .profileImageUrl(expectedUserProfileImageUrl)
+                .name(savedUser.getName())
+                .profileImageUrl(savedUser.getProfileImageUrl())
                 .profilePublicYn(false)
                 .socialInfo(SocialInfo.builder()
                         .blogLink("Invalid Link").build())
