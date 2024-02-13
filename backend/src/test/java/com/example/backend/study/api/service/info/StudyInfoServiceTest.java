@@ -53,16 +53,18 @@ class StudyInfoServiceTest extends TestConfig {
     private StudyInfoService studyInfoService;
     @Autowired
     private StudyInfoRepository studyInfoRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
     }
+
     @Test
     @DisplayName("StudyInfo 등록 테스트")
     void testRegisterStudy() {
         // given
-        User user=userRepository.save(generateAuthUser());
+        User user = userRepository.save(generateAuthUser());
         StudyInfoRegisterRequest studyInfoRegisterRequest = generateStudyInfoRegisterRequest(user.getId());
 
         // when
