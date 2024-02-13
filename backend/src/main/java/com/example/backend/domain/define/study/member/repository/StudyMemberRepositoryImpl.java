@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.member.repository;
 
+import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,14 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                         .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)))
                 .fetchFirst() != null;
 
+    }
+
+    @Override
+    public boolean isStudyLeaderByUserIdAndStudyInfoId(Long userId, Long studyInfoId) {
+        return queryFactory.from(studyMember)
+                .where(studyMember.studyInfoId.eq(studyInfoId)
+                        .and(studyMember.userId.eq(userId))
+                        .and(studyMember.role.eq(StudyMemberRole.STUDY_LEADER)))
+                .fetchFirst() != null;
     }
 }
