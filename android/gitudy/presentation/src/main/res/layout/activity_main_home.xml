@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/BACKGROUND"
+    tools:context=".ui.home.MainHomeActivity">
+
+    <FrameLayout
+        android:id="@+id/mainFrameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/menu_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="140dp"
+        android:layout_marginBottom="-20dp"
+        android:background="@color/WHITE"
+        android:elevation="60dp"
+        app:cardCornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="120dp"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:paddingLeft="50dp"
+            android:paddingRight="50dp">
+
+            <ImageView
+                android:id="@+id/navHome"
+                android:layout_width="52dp"
+                android:layout_height="48dp"
+                android:layout_marginRight="40dp"
+                android:src="@drawable/selector_nav_home" />
+
+            <ImageView
+                android:id="@+id/navMyStudy"
+                android:layout_width="52dp"
+                android:layout_height="48dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="40dp"
+                android:src="@drawable/selector_nav_mystudy" />
+
+            <ImageView
+                android:id="@+id/navFeed"
+                android:layout_width="52dp"
+                android:layout_height="48dp"
+                android:layout_marginRight="40dp"
+                android:src="@drawable/selector_nav_feed" />
+
+            <ImageView
+                android:id="@+id/navProfile"
+                android:layout_width="52dp"
+                android:layout_height="48dp"
+                android:src="@drawable/selector_nav_profile" />
+
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
