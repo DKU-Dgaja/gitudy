@@ -15,11 +15,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
  */
 
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
+import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+
+import java.time.LocalDate;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
@@ -34,5 +41,72 @@ public class TestConfig {
         return BEARER + " " + accessToken + " " + refreshToken;
     }
 
+    // StudyInfo 생성 해주는 메소드
+    public static StudyInfo generateStudyInfo(Long userId) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .score(100)
+                .endDate(LocalDate.now().plusMonths(3))
+                .info("This is a sample study.")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .joinCode("ABC123")
+                .maximumMember(5)
+                .currentMember(3)
+                .lastCommitDay(LocalDate.now())
+                .profileImageUrl("https://example.com/profile.jpg")
+                .notice("Important notice for the study.")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+
+    // generateStudyInfoRegisterRequest 생성 해주는 메소드
+    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequest(Long userId) {
+        return StudyInfoRegisterRequest.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .endDate(LocalDate.now().plusMonths(3))
+                .info("This is a sample study.")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .joinCode(null)
+                .maximumMember(5)
+                .profileImageUrl("https://example.com/profile.jpg")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+
+    // MaximumMember가 10보다 클 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
+    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(Long userId) {
+        return StudyInfoRegisterRequest.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .endDate(LocalDate.now().plusMonths(3))
+                .info("This is a sample study.")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .joinCode(null)
+                .maximumMember(11)
+                .profileImageUrl("https://example.com/profile.jpg")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+
+    // MaximumMember가 1보다 작을 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
+    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(Long userId) {
+        return StudyInfoRegisterRequest.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .endDate(LocalDate.now().plusMonths(3))
+                .info("This is a sample study.")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .joinCode(null)
+                .maximumMember(-1)
+                .profileImageUrl("https://example.com/profile.jpg")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
 }
 
