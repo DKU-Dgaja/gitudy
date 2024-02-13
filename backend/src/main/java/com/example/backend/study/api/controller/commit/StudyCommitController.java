@@ -31,12 +31,13 @@ public class StudyCommitController {
     @PostMapping("/user/{userId}")
     public JsonResult<?> userCommitList(@AuthenticationPrincipal User user,
                                         @PathVariable(name = "userId") Long userId,
+                                        @RequestParam(name = "studyId", required = false) Long studyId,
                                         @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
                                         @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "20") Long limit) {
 
         authService.authenticate(userId, user);
 
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, cursorIdx, limit);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, studyId, cursorIdx, limit);
 
         CommitInfoListAndCursorIdxResponse response = CommitInfoListAndCursorIdxResponse.builder()
                 .commitInfoList(commitInfoList)

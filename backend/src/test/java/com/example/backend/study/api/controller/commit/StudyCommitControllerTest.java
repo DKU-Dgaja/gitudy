@@ -58,7 +58,7 @@ class StudyCommitControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class)))
+        when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when

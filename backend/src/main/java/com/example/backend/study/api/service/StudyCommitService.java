@@ -18,10 +18,10 @@ public class StudyCommitService {
 
     private final StudyCommitRepository studyCommitRepository;
 
-    public List<CommitInfoResponse> selectUserCommitList(Long userId, Long cursorIdx, Long limit) {
+    public List<CommitInfoResponse> selectUserCommitList(Long userId, Long studyId, Long cursorIdx, Long limit) {
 
         limit = Math.min(limit, MAX_LIMIT);
 
-        return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, cursorIdx, limit);
+        return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, studyId, cursorIdx, limit);
     }
 }

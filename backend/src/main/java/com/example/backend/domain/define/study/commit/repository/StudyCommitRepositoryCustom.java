@@ -7,5 +7,5 @@ import java.util.List;
 public interface StudyCommitRepositoryCustom {
 
     // 커서 기반 마이 커밋 페이지네이션
-    List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long idx, Long limit);
+    List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long studyId, Long cursorIdx, Long limit);
 }

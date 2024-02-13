@@ -17,7 +17,7 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long cursorIdx, Long limit) {
+    public List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long studyId, Long cursorIdx, Long limit) {
 
         JPAQuery<CommitInfoResponse> query = queryFactory
                 .select(Projections.constructor(CommitInfoResponse.class,
@@ -37,6 +37,11 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
         // cursorIdx가 null이 아닌 경우 커서 기반으로 데이터 가져오도록
         if (cursorIdx != null) {
             query = query.where(studyCommit.id.lt(cursorIdx));
+        }
+
+        // 해당하는 studyId로 필터링
+        if (studyId != null) {
+            query.where(studyCommit.studyInfoId.eq(studyId));
         }
 
         // 커서 다음부터 limit만큼 가져오기
