@@ -35,23 +35,23 @@ public class StudyTodo extends BaseEntity {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "TODO_DATE", nullable = false)
-    private LocalDate endTime;                 // To do 날짜
+    private LocalDate todoDate;                 // To do 날짜
 
     @Builder
-    public StudyTodo(Long id, Long studyInfoId, String title, String detail, String todoLink, LocalDate endTime) {
+    public StudyTodo(Long id, Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.title = title;
         this.detail = detail;
         this.todoLink = todoLink;
-        this.endTime = endTime;
+        this.todoDate = todoDate;
     }
 
 
-    public void updateStudyTodo(String title, String detail, String todoLink, LocalDate endTime) {
+    public void updateStudyTodo(String title, String detail, String todoLink, LocalDate todoDate) {
         this.title = title;
         this.detail = detail;
         this.todoLink = todoLink;
-        this.endTime = endTime;
+        this.todoDate = todoDate;
     }
 }

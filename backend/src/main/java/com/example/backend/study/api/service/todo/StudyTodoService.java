@@ -132,7 +132,7 @@ public class StudyTodoService {
                 request.getTitle(),
                 request.getDetail(),
                 request.getTodoLink(),
-                request.getEndTime());
+                request.getTodoDate());
         studyTodoMapping.updateStudyTodoMapping(
                 request.getStatus());
 

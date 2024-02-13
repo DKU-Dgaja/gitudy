@@ -50,14 +50,14 @@ public class StudyTodoServiceTest extends TestConfig {
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
     public final static String expectedTodoLink = "https://www.acmicpc.net/";
-    public final static LocalDate expectedEndTime = LocalDate.now();
+    public final static LocalDate expectedTodoDate = LocalDate.now();
     public final static Long expectedTodoId = 2L;
     public final static Long expectedUserId = 3L;
     public final static StudyTodoStatus expectedStatus = TODO_INCOMPLETE;
     public final static String updatedTitle = "프로그래머스 1234번 풀기";
     public final static String updatedDetail = "오늘 오후 3시까지 풀다";
     public final static String updatedTodoLink = "https://programmers.co.kr/";
-    public final static LocalDate updatedEndTime = LocalDate.now().plusDays(1);
+    public final static LocalDate updatedTodoDate = LocalDate.now().plusDays(1);
     public final static StudyTodoStatus updatedStatus = TODO_COMPLETE;
 
     @AfterEach
@@ -105,7 +105,7 @@ public class StudyTodoServiceTest extends TestConfig {
         assertEquals(expectedTitle, savedStudyTodo.getTitle());
         assertEquals(expectedDetail, savedStudyTodo.getDetail());
         assertEquals(expectedTodoLink, savedStudyTodo.getTodoLink());
-        assertEquals(expectedEndTime, savedStudyTodo.getEndTime());
+        assertEquals(expectedTodoDate, savedStudyTodo.getTodoDate());
 
         // StudyTodoMapping
         List<StudyTodoMapping> studyTodoMappings = studyTodoMappingRepository.findAll();
@@ -162,7 +162,7 @@ public class StudyTodoServiceTest extends TestConfig {
         assertEquals(expectedTitle, response.getTitle());
         assertEquals(expectedDetail, response.getDetail());
         assertEquals(expectedTodoLink, response.getTodoLink());
-        assertEquals(expectedEndTime, response.getEndTime());
+        assertEquals(expectedTodoDate, response.getTodoDate());
 
     }
 
@@ -216,7 +216,7 @@ public class StudyTodoServiceTest extends TestConfig {
         assertEquals(updatedTitle, updatedTodo.getTitle());
         assertEquals(updatedDetail, updatedTodo.getDetail());
         assertEquals(updatedTodoLink, updatedTodo.getTodoLink());
-        assertEquals(updatedEndTime, updatedTodo.getEndTime());
+        assertEquals(updatedTodoDate, updatedTodo.getTodoDate());
         assertEquals(updatedStatus, updatedTodoMapping.getStatus());
 
     }

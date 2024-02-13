@@ -18,7 +18,7 @@ public class StudyTodoFixture {
                 .title(expectedTitle)
                 .detail(expectedDetail)
                 .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
+                .todoDate(expectedTodoDate)
                 .build();
     }
 
@@ -41,7 +41,7 @@ public class StudyTodoFixture {
         request.setTitle(expectedTitle);
         request.setDetail(expectedDetail);
         request.setTodoLink(expectedTodoLink);
-        request.setEndTime(expectedEndTime);
+        request.setTodoDate(expectedTodoDate);
 
         return request;
     }
@@ -53,7 +53,7 @@ public class StudyTodoFixture {
         request.setTitle(updatedTitle);
         request.setDetail(updatedDetail);
         request.setTodoLink(updatedTodoLink);
-        request.setEndTime(updatedEndTime);
+        request.setTodoDate(updatedTodoDate);
         request.setStatus(updatedStatus);
 
         return request;
@@ -67,7 +67,7 @@ public class StudyTodoFixture {
                 .title(expectedTitle)
                 .detail(expectedDetail)
                 .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
+                .todoDate(expectedTodoDate)
                 .build());
     }
 

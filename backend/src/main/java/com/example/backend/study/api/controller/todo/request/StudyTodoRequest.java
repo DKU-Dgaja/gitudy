@@ -31,7 +31,7 @@ public class StudyTodoRequest {
 
     private String todoLink;
 
-    private LocalDate endTime;
+    private LocalDate todoDate;
 
 
     public StudyTodo registerStudyTodo() {
@@ -40,7 +40,7 @@ public class StudyTodoRequest {
                 .title(getTitle())
                 .detail(getDetail())
                 .todoLink(getTodoLink())
-                .endTime(getEndTime())
+                .todoDate(getTodoDate())
                 .build();
     }
 

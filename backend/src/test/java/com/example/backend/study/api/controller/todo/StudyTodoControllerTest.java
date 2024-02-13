@@ -19,7 +19,6 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequ
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -85,7 +84,6 @@ public class StudyTodoControllerTest extends TestConfig {
     public void Todo_등록_테스트() throws Exception {
         //given
         ObjectMapper mapper = objectMapper.objectMapper();
-        mapper.registerModule(new JavaTimeModule());
 
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
@@ -152,7 +150,7 @@ public class StudyTodoControllerTest extends TestConfig {
 
         //given
         ObjectMapper mapper = objectMapper.objectMapper();
-        mapper.registerModule(new JavaTimeModule());
+
 
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);

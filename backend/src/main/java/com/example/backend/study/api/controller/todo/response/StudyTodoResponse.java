@@ -19,7 +19,6 @@ public class StudyTodoResponse {
 
     private Long id;             // to doid
 
-    @NotNull
     private Long studyInfoId;    // 스터티 Id
 
     @Size(max = 20, message = "제목 20자 이내")
@@ -30,20 +29,18 @@ public class StudyTodoResponse {
 
     private String todoLink;     // To do 링크
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    private LocalDate endTime;  // To do 날짜
+    private LocalDate todoDate;  // To do 날짜
 
 
     @Builder
     public StudyTodoResponse(Long id, Long studyInfoId, String title, String detail, String todoLink,
-                             LocalDate endTime) {
+                             LocalDate todoDate) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.title = title;
         this.detail = detail;
         this.todoLink = todoLink;
-        this.endTime = endTime;
+        this.todoDate = todoDate;
 
     }
 
@@ -54,7 +51,7 @@ public class StudyTodoResponse {
                 .title(studyTodo.getTitle())
                 .detail(studyTodo.getDetail())
                 .todoLink(studyTodo.getTodoLink())
-                .endTime(studyTodo.getEndTime())
+                .todoDate(studyTodo.getTodoDate())
                 .build();
     }
 

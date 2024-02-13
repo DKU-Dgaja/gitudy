@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateSerializer;
+import jakarta.validation.constraints.Size;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -21,31 +22,29 @@ import java.time.LocalTime;
 public class StudyTodoUpdateRequest {
 
 
-    @JsonProperty("title")
+    @Size(max = 20, message = "제목 20자 이내")
     private String title;        // To do 이름
 
-    @JsonProperty("detail")
+    @Size(max = 50, message = "설명 50자 이내")
     private String detail;       // To do 설명
 
-    @JsonProperty("totoLink")
+
     private String todoLink;     // To do 링크
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonProperty("endTime")
-    private LocalDate endTime;  // To do 날짜
 
-    @JsonProperty("status")
+    private LocalDate todoDate;  // To do 날짜
+
+
     private StudyTodoStatus status; // To do 진행상황
 
     @Builder
     public StudyTodoUpdateRequest(String title, String detail, String todoLink,
-                                  LocalDate endTime, StudyTodoStatus status) {
+                                  LocalDate todoDate, StudyTodoStatus status) {
 
         this.title = title;
         this.detail = detail;
         this.todoLink = todoLink;
-        this.endTime = endTime;
+        this.todoDate = todoDate;
         this.status = status;
     }
 
