@@ -1,15 +1,7 @@
 package com.example.backend.study.api.controller.todo;
 
-import com.example.backend.auth.api.service.auth.AuthService;
-import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.constant.UserPlatformType;
-import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
-import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
@@ -24,8 +16,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @RestController
@@ -33,9 +23,7 @@ import java.util.stream.Collectors;
 @RequestMapping("/study")
 public class StudyTodoController {
 
-    private final AuthService authService;
     private final StudyTodoService studyTodoService;
-    private final UserRepository userRepository;
 
     // Todo 등록
     @ApiResponse(responseCode = "200", description = "Todo 등록 성공")
@@ -72,7 +60,6 @@ public class StudyTodoController {
                                          @PathVariable(name = "todoId") Long todoId,
                                          @Valid @RequestBody StudyTodoUpdateRequest request) {
 
-        authService.authenticate(user);
 
         studyTodoService.updateStudyTodo(todoId, request, user);
 
@@ -86,8 +73,6 @@ public class StudyTodoController {
     public JsonResult<?> deleteStudyTodo(@AuthenticationPrincipal User user,
                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
                                          @PathVariable(name = "todoId") Long todoId) {
-        authService.authenticate(user);
-
 
         studyTodoService.deleteStudyTodo(studyInfoId, todoId, user);
 
