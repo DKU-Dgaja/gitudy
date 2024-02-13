@@ -44,4 +44,28 @@ class StudyMemberRepositoryTest extends TestConfig {
         assertFalse(studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
     }
 
+    @Test
+    void 해당_유저가_스터디장일_경우() {
+        // given
+        Long userId = 1L;
+        Long studyInfoId = 1L;
+
+        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userId, studyInfoId));
+
+        // when
+        assertTrue(studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
+    }
+
+    @Test
+    void 해당_유저가_스터디장이_아닐_경우() {
+        // given
+        Long userId = 1L;
+        Long studyInfoId = 1L;
+
+        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userId, studyInfoId));
+
+        // when
+        assertFalse(studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
+    }
+
 }
