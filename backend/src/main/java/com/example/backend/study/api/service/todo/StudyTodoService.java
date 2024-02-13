@@ -12,6 +12,7 @@ import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import lombok.RequiredArgsConstructor;
@@ -32,10 +33,22 @@ public class StudyTodoService {
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyInfoRepository studyInfoRepository;
+    private final UserRepository userRepository;
 
     // Todo 등록
     @Transactional
-    public void registerStudyTodo(StudyTodo studyTodo, Long studyInfoId, Long userId) {
+    public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId, User userPrincipal) {
+
+
+        // platformId와 platformType을 이용하여 User 객체 조회
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+            return new TodoException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
+
+        StudyTodo studyTodo = studyTodoRequest.registerStudyTodo();
+
 
         // 스터디 정보 조회
         StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
@@ -44,14 +57,14 @@ public class StudyTodoService {
         });
 
         // 스터디장인지 확인
-        if (!studyInfo.getUserId().equals(userId)) {
+        if (!studyInfo.getUserId().equals(user.getId())) {
             throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
         }
 
 
         studyTodoRepository.save(studyTodo);
         StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
-                .userId(userId)
+                .userId(user.getId())
                 .todoId(studyTodo.getId())
                 .status(StudyTodoStatus.TODO_INCOMPLETE)  // default
                 .build();
@@ -78,11 +91,18 @@ public class StudyTodoService {
 
     // Todo 수정
     @Transactional
-    public void updateStudyTodo(Long todoId, StudyTodoUpdateRequest request, Long userId) {
+    public void updateStudyTodo(Long todoId, StudyTodoUpdateRequest request, User userPrincipal) {
+
+        // platformId와 platformType을 이용하여 User 객체 조회
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+            return new TodoException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
 
         // 스터디 정보 조회
-        StudyInfo studyInfo = studyInfoRepository.findByUserId(userId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_NOT_MEMBER.getText());
+        StudyInfo studyInfo = studyInfoRepository.findByUserId(user.getId()).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", user.getId(), ExceptionMessage.STUDY_NOT_MEMBER.getText());
             return new TodoException(ExceptionMessage.STUDY_NOT_MEMBER);
         });
 
@@ -93,8 +113,8 @@ public class StudyTodoService {
         });
 
         // 수정하려는 Todo 아이디로 TodoMapping을 조회
-        StudyTodoMapping studyTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(todoId, userId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND.getText());
+        StudyTodoMapping studyTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(todoId, user.getId()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", todoId, user.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
             return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
 
@@ -104,7 +124,7 @@ public class StudyTodoService {
         Long studyLeader = studyInfo.getUserId();
 
         // 현재 유저가 해당 Todo 할당자, 팀장인지 확인
-        if (!todoUserId.equals(userId) || !studyLeader.equals(userId)) {
+        if (!todoUserId.equals(user.getId()) || !studyLeader.equals(user.getId())) {
             throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
         }
 
@@ -123,7 +143,14 @@ public class StudyTodoService {
 
     // Todo 삭제
     @Transactional
-    public void deleteStudyTodo(Long studyInfoId, Long todoId, Long userId) {
+    public void deleteStudyTodo(Long studyInfoId, Long todoId, User userPrincipal) {
+
+
+        // platformId와 platformType을 이용하여 User 객체 조회
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+            return new TodoException(ExceptionMessage.USER_NOT_FOUND);
+        });
 
 
         // 스터디 정보 조회
@@ -140,10 +167,8 @@ public class StudyTodoService {
         });
 
 
-
-
         // 스터디장인지 확인
-        if (!studyInfo.getUserId().equals(userId)) {
+        if (!studyInfo.getUserId().equals(user.getId())) {
             throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
         }
 

@@ -21,32 +21,29 @@ import java.time.LocalDate;
 @Getter @Setter
 public class StudyTodoRequest {
 
+    private Long studyInfoId;
+
     @Size(max = 20, message = "제목 20자 이내")
-    @JsonProperty("title")
     private String title;
 
     @Size(max = 50, message = "설명 50자 이내")
-    @JsonProperty("detail")
     private String detail;
 
-    @JsonProperty("todoLink")
     private String todoLink;
 
-    @JsonSerialize(using = LocalDateSerializer.class)
-    @JsonDeserialize(using = LocalDateDeserializer.class)
-    @JsonProperty("endTime")
-   // @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
     private LocalDate endTime;
 
 
     public StudyTodo registerStudyTodo() {
         return StudyTodo.builder()
+                .studyInfoId(getStudyInfoId())
                 .title(getTitle())
                 .detail(getDetail())
                 .todoLink(getTodoLink())
                 .endTime(getEndTime())
                 .build();
     }
+
 
 
 }

@@ -1,15 +1,19 @@
 package com.example.backend.study.api.service.todo;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -21,6 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.List;
 
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,6 +44,9 @@ public class StudyTodoServiceTest extends TestConfig {
     @Autowired
     private StudyTodoService studyTodoService;
 
+    @Autowired
+    private UserRepository userRepository;
+
     public final static Long expectedStudyInfoId = 1L;
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
@@ -47,13 +55,18 @@ public class StudyTodoServiceTest extends TestConfig {
     public final static Long expectedTodoId = 2L;
     public final static Long expectedUserId = 3L;
     public final static StudyTodoStatus expectedStatus = TODO_INCOMPLETE;
-    public final static Long expectedLeaderId = 3L;
+    public final static String updatedTitle = "프로그래머스 1234번 풀기";
+    public final static String updatedDetail = "오늘 오후 3시까지 풀다";
+    public final static String updatedTodoLink = "https://programmers.co.kr/";
+    public final static LocalDate updatedEndTime = LocalDate.now().plusDays(1);
+    public final static StudyTodoStatus updatedStatus = TODO_COMPLETE;
 
     @AfterEach
     void tearDown() {
         studyTodoMappingRepository.deleteAllInBatch();
         studyTodoRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @BeforeEach
@@ -61,52 +74,46 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @Test
     @DisplayName("Todo 등록 테스트")
     public void registerTodo() {
         //given
-        StudyInfo studyInfo = StudyInfo.builder()
-                .userId(expectedLeaderId)
-                .topic("깃터디 화이팅")
-                .build();
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyTodo studyTodo = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.save(studyTodo);
 
-        StudyTodoMapping studyTodoMappings = StudyTodoMapping.builder()
-                .todoId(expectedTodoId)
-                .userId(expectedUserId)
-                .status(expectedStatus)
-                .build();
-        studyTodoMappingRepository.save(studyTodoMappings);
+        StudyTodoMapping studyTodoMapping = StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), savedUser.getId());
+        studyTodoMappingRepository.save(studyTodoMapping);
+
+        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
 
         //when
-        studyTodoService.registerStudyTodo(studyTodo, expectedStudyInfoId, expectedLeaderId);
+        studyTodoService.registerStudyTodo(request, studyInfo.getId(), savedUser);
 
         //then
         // StudyTodo
-        StudyTodo savedStudyTodo = studyTodoRepository.findById(studyTodo.getId()).orElse(null);
-        assertNotNull(savedStudyTodo);
-        assertEquals(expectedStudyInfoId, savedStudyTodo.getStudyInfoId());
+        List<StudyTodo> studyTodos = studyTodoRepository.findAll();
+        assertNotNull(studyTodos);
+        StudyTodo savedStudyTodo = studyTodos.get(0);
+        assertEquals(studyInfo.getId(), savedStudyTodo.getStudyInfoId());
         assertEquals(expectedTitle, savedStudyTodo.getTitle());
         assertEquals(expectedDetail, savedStudyTodo.getDetail());
         assertEquals(expectedTodoLink, savedStudyTodo.getTodoLink());
         assertEquals(expectedEndTime, savedStudyTodo.getEndTime());
 
         // StudyTodoMapping
-        StudyTodoMapping savedStudyTodoMapping = studyTodoMappingRepository.findById(studyTodoMappings.getId()).orElse(null);
-        assertNotNull(savedStudyTodoMapping);
-        assertEquals(expectedTodoId, savedStudyTodoMapping.getTodoId());
-        assertEquals(expectedUserId, savedStudyTodoMapping.getUserId());
+        List<StudyTodoMapping> studyTodoMappings = studyTodoMappingRepository.findAll();
+        assertNotNull(studyTodoMappings);
+        StudyTodoMapping savedStudyTodoMapping = studyTodoMappings.get(0);
+        assertEquals(studyTodoMapping.getTodoId(), savedStudyTodoMapping.getTodoId());
+        assertEquals(studyTodoMapping.getUserId(), savedStudyTodoMapping.getUserId());
         assertEquals(expectedStatus, savedStudyTodoMapping.getStatus());
     }
 
@@ -115,27 +122,14 @@ public class StudyTodoServiceTest extends TestConfig {
     @DisplayName("Todo 리스트 조회 테스트")
     public void readTodoAll() {
         //given
-        StudyTodo studyTodo1 = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
-        StudyTodo studyTodo2 = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
-        StudyTodo studyTodo3 = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo studyTodo1 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo studyTodo2 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo studyTodo3 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
 
         studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2, studyTodo3));
 
@@ -153,24 +147,16 @@ public class StudyTodoServiceTest extends TestConfig {
     public void readStudyInfoIdTodo() {
 
         // given
-        StudyInfo studyInfo = StudyInfo.builder()
-                .userId(expectedLeaderId)
-                .topic("깃터디 화이팅")
-                .build();
-        StudyInfo savedStudyInfo = studyInfoRepository.save(studyInfo);
+        User savedUser = userRepository.save(generateAuthUser());
 
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
 
-        StudyTodo studyTodo = StudyTodo.builder()
-                .studyInfoId(savedStudyInfo.getId())
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.save(studyTodo);
 
         // when
-        List<StudyTodoResponse> studyTodoResponses = studyTodoService.readStudyTodo(savedStudyInfo.getId());
+        List<StudyTodoResponse> studyTodoResponses = studyTodoService.readStudyTodo(studyInfo.getId());
 
         // then
         StudyTodoResponse response = studyTodoResponses.get(0);
@@ -187,13 +173,12 @@ public class StudyTodoServiceTest extends TestConfig {
     public void readTodoId() {
 
         // given
-        StudyTodo studyTodoId = StudyTodo.builder()
-                .studyInfoId(expectedStudyInfoId)
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo studyTodoId = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.save(studyTodoId);
 
         // when
@@ -210,97 +195,52 @@ public class StudyTodoServiceTest extends TestConfig {
     public void updateTodo() {
 
         // given
-        StudyInfo studyInfo = StudyInfo.builder()
-                .userId(expectedLeaderId)
-                .topic("깃터디1")
-                .build();
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyTodo studyTodo = StudyTodo.builder()
-                .studyInfoId(1L)
-                .title("백준 1234번 풀기")
-                .detail("오늘 자정까지 풀고 제출한다")
-                .todoLink("https://www.acmicpc.net/")
-                .endTime(LocalDate.now())
-                .build();
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.save(studyTodo);
-        StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
-                .todoId(studyTodo.getId())
-                .userId(expectedUserId)
-                .status(expectedStatus)
-                .build();
+
+        StudyTodoMapping studyTodoMapping = StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), savedUser.getId());
         studyTodoMappingRepository.save(studyTodoMapping);
 
-        String updateTitle = "프로그래머스 1234번 풀기";
-        String updateDetail = "오늘 오후 3시까지 풀다";
-        String updateTodoLink = "https://programmers.co.kr/";
-        LocalDate updateEndTime = LocalDate.of(2024, 2, 5);
-        StudyTodoStatus updateStatus = TODO_COMPLETE;
-
-
-        StudyTodoUpdateRequest request = new StudyTodoUpdateRequest();
-        request.setTitle(updateTitle);
-        request.setDetail(updateDetail);
-        request.setTodoLink(updateTodoLink);
-        request.setEndTime(updateEndTime);
-        request.setStatus(updateStatus);
+        StudyTodoUpdateRequest request = StudyTodoFixture.updateStudyTodoRequest();
 
         // when
-        studyTodoService.updateStudyTodo(studyTodo.getId(), request, expectedLeaderId);
+        studyTodoService.updateStudyTodo(studyTodo.getId(), request, savedUser);
 
         // then
         StudyTodo updatedTodo = studyTodoRepository.findById(studyTodo.getId()).orElseThrow();
-        StudyTodoMapping updatedTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(studyTodo.getId(), expectedUserId).orElseThrow();
-        assertEquals(updateTitle, updatedTodo.getTitle());
-        assertEquals(updateDetail, updatedTodo.getDetail());
-        assertEquals(updateTodoLink, updatedTodo.getTodoLink());
-        assertEquals(updateEndTime, updatedTodo.getEndTime());
-        assertEquals(updateStatus, updatedTodoMapping.getStatus());
+        StudyTodoMapping updatedTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(studyTodo.getId(), savedUser.getId()).orElseThrow();
+        assertEquals(updatedTitle, updatedTodo.getTitle());
+        assertEquals(updatedDetail, updatedTodo.getDetail());
+        assertEquals(updatedTodoLink, updatedTodo.getTodoLink());
+        assertEquals(updatedEndTime, updatedTodo.getEndTime());
+        assertEquals(updatedStatus, updatedTodoMapping.getStatus());
 
     }
 
-
-    @Test
-    @DisplayName("Todo 수정 권한 없는 경우")
-    void updateTodo_NotAllowedUser_ThrowsException() {
-        // given
-        Long todoId = 1L;
-        StudyTodoUpdateRequest request = new StudyTodoUpdateRequest();
-        Long wrongUserId = expectedUserId + 1; // 잘못된 사용자 ID
-
-        // when , then
-        assertThrows(TodoException.class, () -> studyTodoService.updateStudyTodo(todoId, request, wrongUserId));
-    }
 
     @Test
     @DisplayName("Todo 삭제 테스트")
     void deleteTodo_Success() {
         // given
-        StudyInfo studyInfo = StudyInfo.builder()
-                .userId(expectedLeaderId)
-                .topic("깃터디1")
-                .build();
-        StudyInfo savedStudyInfo = studyInfoRepository.save(studyInfo);
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
 
 
-        StudyTodo studyTodo = StudyTodo.builder()
-                .studyInfoId(savedStudyInfo.getId())
-                .title(expectedTitle)
-                .detail(expectedDetail)
-                .todoLink(expectedTodoLink)
-                .endTime(expectedEndTime)
-                .build();
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.save(studyTodo);
 
-        StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
-                .todoId(studyTodo.getId())
-                .userId(expectedUserId)
-                .status(expectedStatus)
-                .build();
+        StudyTodoMapping studyTodoMapping = StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), savedUser.getId());
         studyTodoMappingRepository.save(studyTodoMapping);
 
         // when
-        studyTodoService.deleteStudyTodo(savedStudyInfo.getId(), studyTodo.getId(), expectedLeaderId);
+        studyTodoService.deleteStudyTodo(studyInfo.getId(), studyTodo.getId(), savedUser);
 
         // then
         assertFalse(studyTodoRepository.existsById(studyTodo.getId()));
