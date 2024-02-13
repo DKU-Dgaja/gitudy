@@ -44,13 +44,11 @@ public enum ExceptionMessage {
     AUTH_DELETE_FAIL("계정 삭제에 실패했습니다."),
 
     // CommitException
-    COMMIT_CURSOR_IDX_IS_NEGATIVE("에러가 발생했습니다. 커밋 정보를 불러올 수 없습니다."),
-    COMMIT_PAGEABLE_IS_INVALID("에러가 발생했습니다. 커밋 정보를 불러올 수 없습니다."),
-
+    COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),
 
     // BokmarkException
     BOOKMARK_DELETE_FAIL("북마크 삭제에 실패했습니다.")
-    
+
     
     ;
     private final String text;
