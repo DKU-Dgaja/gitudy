@@ -1,4 +1,4 @@
-package com.takseha.core
+package com.takseha.common
 
 import org.junit.Test
 
