@@ -52,7 +52,7 @@ public class StudyTodoControllerTest extends TestConfig {
     private StudyInfoRepository studyInfoRepository;
 
     @Autowired
-    private ProjectConfig objectMapper;
+    private ObjectMapper objectMapper;
 
     @AfterEach
     void tearDown() {
@@ -66,7 +66,6 @@ public class StudyTodoControllerTest extends TestConfig {
     @Test
     public void Todo_등록_테스트() throws Exception {
         //given
-        ObjectMapper mapper = objectMapper.objectMapper();
 
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
@@ -88,7 +87,7 @@ public class StudyTodoControllerTest extends TestConfig {
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .content(mapper.writeValueAsString(studyTodoRequest)))
+                        .content(objectMapper.writeValueAsString(studyTodoRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
