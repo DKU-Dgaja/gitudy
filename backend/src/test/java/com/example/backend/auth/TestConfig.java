@@ -15,6 +15,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
  */
 
+import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
@@ -27,6 +28,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
@@ -62,6 +65,10 @@ public class TestConfig {
 
     // generateStudyInfoRegisterRequest 생성 해주는 메소드
     public static StudyInfoRegisterRequest generateStudyInfoRegisterRequest(Long userId) {
+        List<StudyCategory> categories = new ArrayList<>();
+        categories.add(new StudyCategory("c++"));
+        categories.add(new StudyCategory("python"));
+
         return StudyInfoRegisterRequest.builder()
                 .userId(userId)
                 .topic("Sample Study")
@@ -72,11 +79,16 @@ public class TestConfig {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .categories(categories)
                 .build();
     }
 
     // MaximumMember가 10보다 클 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
     public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(Long userId) {
+        List<StudyCategory> categories = new ArrayList<>();
+        categories.add(new StudyCategory("c++"));
+        categories.add(new StudyCategory("python"));
+
         return StudyInfoRegisterRequest.builder()
                 .userId(userId)
                 .topic("Sample Study")
@@ -87,11 +99,16 @@ public class TestConfig {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .categories(categories)
                 .build();
     }
 
     // MaximumMember가 1보다 작을 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
     public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(Long userId) {
+        List<StudyCategory> categories = new ArrayList<>();
+        categories.add(new StudyCategory("c++"));
+        categories.add(new StudyCategory("python"));
+
         return StudyInfoRegisterRequest.builder()
                 .userId(userId)
                 .topic("Sample Study")
@@ -102,6 +119,7 @@ public class TestConfig {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .categories(categories)
                 .build();
     }
 }

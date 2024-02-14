@@ -80,5 +80,7 @@ class StudyInfoServiceTest extends TestConfig {
         assertThat(studyInfoRegisterRequest.getProfileImageUrl()).isEqualTo(registeredStudy.getProfileImageUrl());
         assertThat(studyInfoRegisterRequest.getRepositoryInfo()).usingRecursiveComparison().isEqualTo(registeredStudy.getRepositoryInfo());
         assertThat(studyInfoRegisterRequest.getPeriodType()).isEqualTo(registeredStudy.getPeriodType());
+        assertThat(studyInfoRegisterRequest.getCategories().get(0).getName()).isEqualTo(registeredStudy.getCategories().get(0).getName());
+        assertThat(studyInfoRegisterRequest.getCategories().get(1).getName()).isEqualTo(registeredStudy.getCategories().get(1).getName());
     }
 }
