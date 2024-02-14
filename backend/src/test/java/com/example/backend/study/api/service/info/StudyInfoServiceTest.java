@@ -76,7 +76,6 @@ class StudyInfoServiceTest extends TestConfig {
         assertThat(studyInfoRegisterRequest.getEndDate()).isEqualTo(registeredStudy.getEndDate());
         assertThat(studyInfoRegisterRequest.getInfo()).isEqualTo(registeredStudy.getInfo());
         assertThat(studyInfoRegisterRequest.getStatus()).isEqualTo(registeredStudy.getStatus());
-        assertThat(studyInfoRegisterRequest.getJoinCode()).isEqualTo(registeredStudy.getJoinCode());
         assertThat(studyInfoRegisterRequest.getMaximumMember()).isEqualTo(registeredStudy.getMaximumMember());
         assertThat(studyInfoRegisterRequest.getProfileImageUrl()).isEqualTo(registeredStudy.getProfileImageUrl());
         assertThat(studyInfoRegisterRequest.getRepositoryInfo()).usingRecursiveComparison().isEqualTo(registeredStudy.getRepositoryInfo());

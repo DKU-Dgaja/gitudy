@@ -33,7 +33,6 @@ import java.time.LocalDate;
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class TestConfig {
-
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer";
 
@@ -69,7 +68,6 @@ public class TestConfig {
                 .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
-                .joinCode(null)
                 .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
@@ -85,7 +83,6 @@ public class TestConfig {
                 .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
-                .joinCode(null)
                 .maximumMember(11)
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
@@ -101,7 +98,6 @@ public class TestConfig {
                 .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
-                .joinCode(null)
                 .maximumMember(-1)
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
