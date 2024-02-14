@@ -1,16 +1,28 @@
 package com.example.backend.study.api.service.info;
 
+import com.example.backend.domain.define.study.category.info.StudyCategory;
+import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
+import com.example.backend.study.api.service.category.info.repository.StudyCategoryRepository;
+import com.example.backend.study.api.service.category.mapping.repository.StudyCategoryMappingRepository;
+import jdk.jfr.Category;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+
+import static com.example.backend.domain.define.study.member.constant.StudyMemberRole.STUDY_LEADER;
+import static com.example.backend.domain.define.study.member.constant.StudyMemberStatus.STUDY_ACTIVE;
 
 @Slf4j
 @Service
@@ -21,9 +33,18 @@ public class StudyInfoService {
     private static final int JOIN_CODE_LENGTH = 10;
 
     private final StudyInfoRepository studyInfoRepository;
+
+    private final StudyMemberRepository memberRepository;
+
+    private final StudyCategoryRepository studyCategoryRepository;
+
+    private final StudyCategoryMappingRepository studyCategoryMappingRepository;
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
+        // joinCode 생성
         String joinCode = generateRandomString(JOIN_CODE_LENGTH);
+
+        // 새로운 스터디 생성
         StudyInfo studyInfo = StudyInfo.builder()
                 .userId(request.getUserId())
                 .topic(request.getTopic())
@@ -41,7 +62,30 @@ public class StudyInfoService {
                 .periodType(request.getPeriodType())
                 .build();
         studyInfoRepository.save(studyInfo);
-        return StudyInfoRegisterResponse.of(studyInfo);
+
+        // 스터디장 생성
+        StudyMember studyMember= StudyMember.builder()
+                .studyInfoId(studyInfo.getId())
+                .userId(request.getUserId())
+                .role(STUDY_LEADER)
+                .status(STUDY_ACTIVE)
+                .score(0)
+                .build();
+        memberRepository.save(studyMember);
+
+        // 스터디 카테고리 생성
+        List<StudyCategory> categories=new ArrayList<>();;
+        for(StudyCategory studyCategory : request.getCategories()){
+            categories.add(studyCategoryRepository.save(studyCategory));
+
+            // 스터디 카테코리 매핑
+            StudyCategoryMapping studyCategoryMapping=StudyCategoryMapping.builder()
+                    .studyInfoId(studyInfo.getId())
+                    .studyCategoryId(studyCategory.getId())
+                    .build();
+            studyCategoryMappingRepository.save(studyCategoryMapping);
+        }
+        return StudyInfoRegisterResponse.of(studyInfo, categories);
     }
     private String generateRandomString(int length) {
         Random random = new SecureRandom();
