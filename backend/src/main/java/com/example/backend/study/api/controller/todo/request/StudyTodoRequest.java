@@ -2,12 +2,17 @@ package com.example.backend.study.api.controller.todo.request;
 
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Getter @Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
 public class StudyTodoRequest {
 
     private Long studyInfoId;

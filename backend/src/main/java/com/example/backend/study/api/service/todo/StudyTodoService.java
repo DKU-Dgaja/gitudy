@@ -7,6 +7,8 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
@@ -17,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -29,15 +33,16 @@ public class StudyTodoService {
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyInfoRepository studyInfoRepository;
     private final UserRepository userRepository;
+    private final StudyMemberRepository studyMemberRepository;
 
     // Todo 등록
     @Transactional
-    public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId, User user) {
+    public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId, User userPrincipal) {
 
 
         // platformId와 platformType을 이용하여 User 객체 조회
-        User userId = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElseThrow(() -> {
-            log.warn(">>>> {},{} : {} <<<<", user.getPlatformId(), user.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
             return new TodoException(ExceptionMessage.USER_NOT_FOUND);
         });
 
@@ -48,19 +53,25 @@ public class StudyTodoService {
         });
 
         // 스터디장인지 확인
-        if (!studyInfo.getUserId().equals(userId.getId())) {
-            throw new TodoException(ExceptionMessage.STUDY_NOT_LEADER);
+        if (!studyInfo.getUserId().equals(user.getId())) {
+            throw new TodoException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER);
         }
+
+        // 스터디에 속한 스터디원 조회
+        List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfoId);
 
         StudyTodo studyTodo = studyTodoRequest.StudyTodoRegister();
         studyTodoRepository.save(studyTodo);
 
-        StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
-                .userId(userId.getId())
-                .todoId(studyTodo.getId())
-                .status(StudyTodoStatus.TODO_INCOMPLETE)  // default
-                .build();
-        studyTodoMappingRepository.save(studyTodoMapping);
+        studyMembers.forEach(studyMember -> {
+            StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
+                    .userId(studyMember.getUserId())
+                    .todoId(studyTodo.getId())
+                    .status(StudyTodoStatus.TODO_INCOMPLETE) // default
+                    .build();
+            studyTodoMappingRepository.save(studyTodoMapping);
+        });
+
 
     }
 }
