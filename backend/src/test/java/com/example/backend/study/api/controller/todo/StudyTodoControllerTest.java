@@ -2,7 +2,6 @@ package com.example.backend.study.api.controller.todo;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.config.ProjectConfig;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -10,8 +9,6 @@ import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
-import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
@@ -74,12 +71,6 @@ public class StudyTodoControllerTest extends TestConfig {
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
-
-        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        studyTodoRepository.save(studyTodo);
-
-        StudyTodoMapping studyTodoMapping = StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), savedUser.getId());
-        studyTodoMappingRepository.save(studyTodoMapping);
 
         StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest();
 

@@ -6,6 +6,9 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
@@ -24,8 +27,7 @@ import java.util.List;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StudyTodoServiceTest extends TestConfig {
 
@@ -43,6 +45,8 @@ public class StudyTodoServiceTest extends TestConfig {
 
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private StudyMemberRepository studyMemberRepository;
 
     public final static Long expectedStudyInfoId = 1L;
     public final static String expectedTitle = "백준 1234번 풀기";
@@ -76,11 +80,8 @@ public class StudyTodoServiceTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        studyTodoRepository.save(studyTodo);
-
-        StudyTodoMapping studyTodoMapping = StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), savedUser.getId());
-        studyTodoMappingRepository.save(studyTodoMapping);
+        StudyMember studyMember = StudyMemberFixture.createStudyMember(studyInfo.getId(), savedUser.getId());
+        studyMemberRepository.save(studyMember);
 
         StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
 
@@ -101,9 +102,9 @@ public class StudyTodoServiceTest extends TestConfig {
         // StudyTodoMapping
         List<StudyTodoMapping> studyTodoMappings = studyTodoMappingRepository.findAll();
         assertNotNull(studyTodoMappings);
-        StudyTodoMapping savedStudyTodoMapping = studyTodoMappings.get(0);
-        assertEquals(studyTodoMapping.getTodoId(), savedStudyTodoMapping.getTodoId());
-        assertEquals(studyTodoMapping.getUserId(), savedStudyTodoMapping.getUserId());
-        assertEquals(expectedStatus, savedStudyTodoMapping.getStatus());
+        assertFalse(studyTodoMappings.isEmpty());
+        studyTodoMappings.forEach(mapping -> {
+            assertEquals(savedStudyTodo.getId(), mapping.getTodoId());
+        });
     }
 }

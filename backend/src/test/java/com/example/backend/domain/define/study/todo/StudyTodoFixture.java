@@ -32,15 +32,13 @@ public class StudyTodoFixture {
 
     // 테스트용 To do 등록
     public static StudyTodoRequest generateStudyTodoRequest() {
-        StudyTodoRequest request = new StudyTodoRequest();
-
-        request.setStudyInfoId(expectedStudyInfoId);
-        request.setTitle(expectedTitle);
-        request.setDetail(expectedDetail);
-        request.setTodoLink(expectedTodoLink);
-        request.setTodoDate(expectedTodoDate);
-
-        return request;
+        return StudyTodoRequest.builder()
+                .studyInfoId(expectedStudyInfoId)
+                .title(expectedTitle)
+                .detail(expectedDetail)
+                .todoLink(expectedTodoLink)
+                .todoDate(expectedTodoDate)
+                .build();
     }
 
 
