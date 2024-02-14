@@ -1,3 +1,9 @@
+import java.io.FileInputStream
+import java.util.Properties;
+
+var properties = Properties()
+properties.load(FileInputStream("local.properties"))
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -18,6 +24,12 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "APP_ID", properties.getProperty("APP_ID"))
+        manifestPlaceholders["APP_ID"] = properties.getProperty("APP_ID")
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
