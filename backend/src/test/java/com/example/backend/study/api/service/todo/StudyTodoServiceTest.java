@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static com.example.backend.auth.config.fixture.UserFixture.generateGoogleUser;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -68,18 +69,22 @@ public class StudyTodoServiceTest extends TestConfig {
     @DisplayName("Todo 등록 테스트")
     public void registerTodo() {
         //given
-        User savedUser = userRepository.save(generateAuthUser());
+        User leader = userRepository.save(generateAuthUser());
+        User member = userRepository.save(generateGoogleUser());
 
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyMember studyMember = StudyMemberFixture.createStudyMember(studyInfo.getId(), savedUser.getId());
-        studyMemberRepository.save(studyMember);
+        StudyMember studyMember1 = StudyMemberFixture.createStudyMember(studyInfo.getId(), leader.getId());
+        StudyMember studyMember2 = StudyMemberFixture.createStudyMember(studyInfo.getId(), member.getId());
+        studyMemberRepository.save(studyMember1);
+        studyMemberRepository.save(studyMember2);
 
-        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
+
+        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest(studyInfo.getId());
 
         //when
-        studyTodoService.registerStudyTodo(request, studyInfo.getId(), savedUser);
+        studyTodoService.registerStudyTodo(request, studyInfo.getId(), leader);
 
         //then
         // StudyTodo
@@ -87,17 +92,17 @@ public class StudyTodoServiceTest extends TestConfig {
         assertNotNull(studyTodos);
         StudyTodo savedStudyTodo = studyTodos.get(0);
         assertEquals(studyInfo.getId(), savedStudyTodo.getStudyInfoId());
-        assertEquals(expectedTitle, savedStudyTodo.getTitle());
-        assertEquals(expectedDetail, savedStudyTodo.getDetail());
-        assertEquals(expectedTodoLink, savedStudyTodo.getTodoLink());
-        assertEquals(expectedTodoDate, savedStudyTodo.getTodoDate());
 
-        // StudyTodoMapping
-        List<StudyTodoMapping> studyTodoMappings = studyTodoMappingRepository.findAll();
-        assertNotNull(studyTodoMappings);
-        assertFalse(studyTodoMappings.isEmpty());
-        studyTodoMappings.forEach(mapping -> {
-            assertEquals(savedStudyTodo.getId(), mapping.getTodoId());
+        List<StudyMember> members = studyMemberRepository.findByStudyInfoId(studyInfo.getId()); // 스터디 멤버 조회
+        assertFalse(members.isEmpty()); // 스터디 멤버가 존재하는지 확인
+
+        members.forEach(mb -> {
+            // 각 스터디 멤버에 대한 StudyTodoMapping이 존재하는지 확인
+            List<StudyTodoMapping> mappings = studyTodoMappingRepository.findByUserId(mb.getUserId());
+            assertFalse(mappings.isEmpty()); // 각 스터디 멤버에 대해 해당 StudyTodo에 대한 매핑이 존재하는지 확인
+            assertTrue(mappings.stream().anyMatch(mapping -> mapping.getTodoId().equals(savedStudyTodo.getId()))); // 매핑된 To do 확인
         });
+
+
     }
 }

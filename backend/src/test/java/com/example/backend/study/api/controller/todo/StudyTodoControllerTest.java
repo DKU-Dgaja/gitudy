@@ -72,7 +72,7 @@ public class StudyTodoControllerTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest();
+        StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest(studyInfo.getId());
 
         //when
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo/register")
