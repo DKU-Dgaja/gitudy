@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.*;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;

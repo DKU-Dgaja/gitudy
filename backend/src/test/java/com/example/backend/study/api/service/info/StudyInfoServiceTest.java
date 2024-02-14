@@ -23,6 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfoRegisterRequest;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
