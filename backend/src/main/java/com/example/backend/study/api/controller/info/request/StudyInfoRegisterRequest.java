@@ -1,18 +1,21 @@
 package com.example.backend.study.api.controller.info.request;
 
 
+import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
@@ -38,6 +41,8 @@ public class StudyInfoRegisterRequest {
     private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
+
+    private List<StudyCategory> categories;
     public static StudyInfoRegisterRequest of(StudyInfo request) {
         return StudyInfoRegisterRequest.builder()
                 .userId(request.getUserId())

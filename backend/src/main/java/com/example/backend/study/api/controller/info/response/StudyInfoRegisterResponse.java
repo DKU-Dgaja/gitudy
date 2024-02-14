@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.info.response;
 
+import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 @Builder
@@ -37,7 +39,9 @@ public class StudyInfoRegisterResponse {
     private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
-    public static StudyInfoRegisterResponse of(StudyInfo response) {
+
+    private List<StudyCategory> categories;            // 스터디 카테고리 리스트
+    public static StudyInfoRegisterResponse of(StudyInfo response, List<StudyCategory> categories) {
         return StudyInfoRegisterResponse.builder()
                 .userId(response.getUserId())
                 .topic(response.getTopic())
@@ -49,6 +53,7 @@ public class StudyInfoRegisterResponse {
                 .profileImageUrl(response.getProfileImageUrl())
                 .repositoryInfo(response.getRepositoryInfo())
                 .periodType(response.getPeriodType())
+                .categories(categories)
                 .build();
     }
 }
