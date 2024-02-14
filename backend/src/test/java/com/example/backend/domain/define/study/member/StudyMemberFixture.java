@@ -34,5 +34,15 @@ public class StudyMemberFixture {
                 .build();
     }
 
+    // 테스트용 비활동중인(탈퇴) 스터디원 생성 메서드
+    public static StudyMember createInActiveStudyMember(Long userId, Long studyInfoId) {
+        return StudyMember.builder()
+                .userId(userId)
+                .studyInfoId(studyInfoId)
+                .role(StudyMemberRole.STUDY_MEMBER)
+                .status(StudyMemberStatus.STUDY_WITHDRAWAL)
+                .build();
+    }
+
 
 }

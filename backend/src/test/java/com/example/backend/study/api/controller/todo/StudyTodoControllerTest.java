@@ -15,20 +15,25 @@ import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
+import com.example.backend.study.api.service.todo.StudyTodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static reactor.core.publisher.Mono.when;
 
 
 public class StudyTodoControllerTest extends TestConfig {
@@ -57,6 +62,9 @@ public class StudyTodoControllerTest extends TestConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @MockBean
+    private StudyTodoService studyTodoService;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
@@ -81,9 +89,11 @@ public class StudyTodoControllerTest extends TestConfig {
         StudyMember studyMemberLeader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
         studyMemberRepository.save(studyMemberLeader);
 
-        StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest(studyInfo.getId());
+        StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest();
 
-        //when
+        doNothing().when(studyTodoService).registerStudyTodo(any(StudyTodoRequest.class), any(Long.class), any(User.class));
+
+        //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))

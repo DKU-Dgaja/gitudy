@@ -31,9 +31,8 @@ public class StudyTodoFixture {
 
 
     // 테스트용 To do 등록
-    public static StudyTodoRequest generateStudyTodoRequest(Long studyInfoId) {
+    public static StudyTodoRequest generateStudyTodoRequest() {
         return StudyTodoRequest.builder()
-                .studyInfoId(studyInfoId)
                 .title(expectedTitle)
                 .detail(expectedDetail)
                 .todoLink(expectedTodoLink)

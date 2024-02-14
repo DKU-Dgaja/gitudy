@@ -24,8 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.util.List;
 
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static com.example.backend.auth.config.fixture.UserFixture.generateGoogleUser;
+import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -70,18 +69,21 @@ public class StudyTodoServiceTest extends TestConfig {
     public void registerTodo() {
         //given
         User leader = userRepository.save(generateAuthUser());
-        User member = userRepository.save(generateGoogleUser());
+        User activeMember = userRepository.save(generateGoogleUser());
+        User inactiveMember = userRepository.save(generateKaKaoUser());
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyMember studyMember1 = StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId());
-        StudyMember studyMember2 = StudyMemberFixture.createDefaultStudyMember(member.getId(), studyInfo.getId());
-        studyMemberRepository.save(studyMember1);
-        studyMemberRepository.save(studyMember2);
+
+        studyMemberRepository.saveAll(List.of(
+                StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),
+                StudyMemberFixture.createInActiveStudyMember(inactiveMember.getId(), studyInfo.getId())
+        ));
 
 
-        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest(studyInfo.getId());
+        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
 
         //when
         studyTodoService.registerStudyTodo(request, studyInfo.getId(), leader);
@@ -93,16 +95,12 @@ public class StudyTodoServiceTest extends TestConfig {
         StudyTodo savedStudyTodo = studyTodos.get(0);
         assertEquals(studyInfo.getId(), savedStudyTodo.getStudyInfoId());
 
-        List<StudyMember> members = studyMemberRepository.findByStudyInfoId(studyInfo.getId()); // 스터디 멤버 조회
-        assertFalse(members.isEmpty()); // 스터디 멤버가 존재하는지 확인
 
-        members.forEach(mb -> {
-            // 각 스터디 멤버에 대한 StudyTodoMapping이 존재하는지 확인
-            List<StudyTodoMapping> mappings = studyTodoMappingRepository.findByUserId(mb.getUserId());
-            assertFalse(mappings.isEmpty()); // 각 스터디 멤버에 대해 해당 StudyTodo에 대한 매핑이 존재하는지 확인
-            assertTrue(mappings.stream().anyMatch(mapping -> mapping.getTodoId().equals(savedStudyTodo.getId()))); // 매핑된 To do 확인
-        });
-
+        List<StudyTodoMapping> mappings = studyTodoMappingRepository.findAll();
+        // 활동중인 멤버에게 할당되었는지 확인
+        assertTrue(mappings.stream().anyMatch(mappingMember -> mappingMember.getUserId().equals(activeMember.getId())));
+        // 비활동중인 멤버에게 할당되지 않았는지 확인
+        assertFalse(mappings.stream().anyMatch(mappingMember -> mappingMember.getUserId().equals(inactiveMember.getId())));
 
     }
 }
