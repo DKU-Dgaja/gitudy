@@ -61,6 +61,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
+        studyInfoRepository.deleteAllInBatch();
     }
 
     @BeforeEach
