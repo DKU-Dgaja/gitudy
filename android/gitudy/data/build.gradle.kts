@@ -1,3 +1,9 @@
+import java.io.FileInputStream
+import java.util.Properties;
+
+var properties = Properties()
+properties.load(FileInputStream("local.properties"))
+
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
@@ -15,6 +21,11 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
+
+        buildConfigField("String", "LOGIN_PAGE_API", properties.getProperty("LOGIN_PAGE_API"))
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
