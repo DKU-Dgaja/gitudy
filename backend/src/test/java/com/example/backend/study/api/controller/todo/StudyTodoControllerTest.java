@@ -75,7 +75,7 @@ public class StudyTodoControllerTest extends TestConfig {
         StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest(studyInfo.getId());
 
         //when
-        mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo/register")
+        mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(studyTodoRequest)))

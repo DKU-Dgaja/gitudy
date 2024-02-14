@@ -21,7 +21,7 @@ public class StudyTodoController {
 
     // Todo 등록
     @ApiResponse(responseCode = "200", description = "Todo 등록 성공")
-    @PostMapping("/{studyInfoId}/todo/register")
+    @PostMapping("/{studyInfoId}/todo")
     public JsonResult<?> registerStudyTodo(@AuthenticationPrincipal User user,
                                            @PathVariable("studyInfoId") Long studyInfoId,
                                            @Valid @RequestBody StudyTodoRequest studyTodoRequest) {
