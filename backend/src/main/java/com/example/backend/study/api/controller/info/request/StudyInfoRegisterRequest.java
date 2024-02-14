@@ -29,8 +29,6 @@ public class StudyInfoRegisterRequest {
 
     private StudyStatus status;                     // 스터디 상태
 
-    private String joinCode;                        // 스터디 참여 코드
-
     @Min(value = 1)
     @Max(value = 10)
     private int maximumMember;                      // 스터디 제한 인원

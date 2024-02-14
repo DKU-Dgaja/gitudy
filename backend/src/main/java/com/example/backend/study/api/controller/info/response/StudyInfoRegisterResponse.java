@@ -4,6 +4,7 @@ import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -26,6 +27,7 @@ public class StudyInfoRegisterResponse {
 
     private StudyStatus status;                     // 스터디 상태
 
+    @Size(max = 10)
     private String joinCode;                        // 스터디 참여 코드
 
     private int maximumMember;                      // 스터디 제한 인원
@@ -35,17 +37,18 @@ public class StudyInfoRegisterResponse {
     private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
-    public static StudyInfoRegisterResponse of(StudyInfo request) {
+    public static StudyInfoRegisterResponse of(StudyInfo response) {
         return StudyInfoRegisterResponse.builder()
-                .userId(request.getUserId())
-                .topic(request.getTopic())
-                .endDate(request.getEndDate())
-                .info(request.getInfo())
-                .status(request.getStatus())
-                .maximumMember(request.getMaximumMember())
-                .profileImageUrl(request.getProfileImageUrl())
-                .repositoryInfo(request.getRepositoryInfo())
-                .periodType(request.getPeriodType())
+                .userId(response.getUserId())
+                .topic(response.getTopic())
+                .endDate(response.getEndDate())
+                .info(response.getInfo())
+                .status(response.getStatus())
+                .joinCode(response.getJoinCode())
+                .maximumMember(response.getMaximumMember())
+                .profileImageUrl(response.getProfileImageUrl())
+                .repositoryInfo(response.getRepositoryInfo())
+                .periodType(response.getPeriodType())
                 .build();
     }
 }
