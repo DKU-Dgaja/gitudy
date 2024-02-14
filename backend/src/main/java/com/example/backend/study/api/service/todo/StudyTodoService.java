@@ -21,6 +21,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -46,31 +47,29 @@ public class StudyTodoService {
             return new TodoException(ExceptionMessage.USER_NOT_FOUND);
         });
 
-        // 스터디 정보 조회
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
 
         // 스터디장인지 확인
-        if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfo.getId())){
+        if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfoId)){
             throw new TodoException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER);
         }
 
-        // 스터디에 속한 스터디원 조회
-        List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfoId);
+        // 스터디에 속한 활동중인 스터디원 조회
+        List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
-        StudyTodo studyTodo = studyTodoRequest.StudyTodoRegister();
+        StudyTodo studyTodo = studyTodoRequest.StudyTodoRegister(studyInfoId);
         studyTodoRepository.save(studyTodo);
 
-        studyMembers.forEach(studyMember -> {
-            StudyTodoMapping studyTodoMapping = StudyTodoMapping.builder()
-                    .userId(studyMember.getUserId())
-                    .todoId(studyTodo.getId())
-                    .status(StudyTodoStatus.TODO_INCOMPLETE) // default
-                    .build();
-            studyTodoMappingRepository.save(studyTodoMapping);
-        });
+        // 활동중인 스터디원에게만 TO DO 할당
+        List<StudyTodoMapping> todoMappings = studyActiveMembers.stream()
+                .map(activeMember -> StudyTodoMapping.builder()
+                        .userId(activeMember.getUserId())
+                        .todoId(studyTodo.getId())
+                        .status(StudyTodoStatus.TODO_INCOMPLETE) // 기본 상태
+                        .build())
+                .collect(Collectors.toList());
+
+        // 한 번의 쿼리로 모든 매핑 저장
+        studyTodoMappingRepository.saveAll(todoMappings);
 
 
     }

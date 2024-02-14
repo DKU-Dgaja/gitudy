@@ -15,8 +15,6 @@ import java.time.LocalDate;
 @Builder
 public class StudyTodoRequest {
 
-    private Long studyInfoId;
-
     @Size(max = 20, message = "제목 20자 이내")
     private String title;
 
@@ -28,9 +26,9 @@ public class StudyTodoRequest {
     private LocalDate todoDate;
 
 
-    public StudyTodo StudyTodoRegister() {
+    public StudyTodo StudyTodoRegister(Long studyInfoId) {
         return StudyTodo.builder()
-                .studyInfoId(getStudyInfoId())
+                .studyInfoId(studyInfoId)
                 .title(getTitle())
                 .detail(getDetail())
                 .todoLink(getTodoLink())
