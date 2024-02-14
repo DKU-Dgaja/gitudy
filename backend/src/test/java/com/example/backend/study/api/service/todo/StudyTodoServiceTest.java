@@ -75,8 +75,8 @@ public class StudyTodoServiceTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyMember studyMember1 = StudyMemberFixture.createStudyMember(studyInfo.getId(), leader.getId());
-        StudyMember studyMember2 = StudyMemberFixture.createStudyMember(studyInfo.getId(), member.getId());
+        StudyMember studyMember1 = StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId());
+        StudyMember studyMember2 = StudyMemberFixture.createDefaultStudyMember(member.getId(), studyInfo.getId());
         studyMemberRepository.save(studyMember1);
         studyMemberRepository.save(studyMember2);
 

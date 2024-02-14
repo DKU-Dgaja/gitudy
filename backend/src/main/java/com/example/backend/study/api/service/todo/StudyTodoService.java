@@ -53,7 +53,7 @@ public class StudyTodoService {
         });
 
         // 스터디장인지 확인
-        if (!studyInfo.getUserId().equals(user.getId())) {
+        if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfo.getId())){
             throw new TodoException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER);
         }
 

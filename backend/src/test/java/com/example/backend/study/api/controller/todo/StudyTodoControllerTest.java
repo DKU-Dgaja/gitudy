@@ -8,6 +8,9 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
@@ -49,6 +52,9 @@ public class StudyTodoControllerTest extends TestConfig {
     private StudyInfoRepository studyInfoRepository;
 
     @Autowired
+    private StudyMemberRepository studyMemberRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @AfterEach
@@ -71,6 +77,9 @@ public class StudyTodoControllerTest extends TestConfig {
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
+
+        StudyMember studyMemberLeader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
+        studyMemberRepository.save(studyMemberLeader);
 
         StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest(studyInfo.getId());
 
