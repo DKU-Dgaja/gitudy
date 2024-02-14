@@ -17,7 +17,6 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingR
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,16 +60,9 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
-        studyInfoRepository.deleteAllInBatch();
+        studyMemberRepository.deleteAllInBatch();
     }
 
-    @BeforeEach
-    void setUp() {
-        studyTodoRepository.deleteAllInBatch();
-        studyTodoMappingRepository.deleteAllInBatch();
-        studyInfoRepository.deleteAllInBatch();
-        userRepository.deleteAllInBatch();
-    }
 
     @Test
     @DisplayName("Todo 등록 테스트")
