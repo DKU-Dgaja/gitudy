@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="22dp"
+    android:padding="22dp"
     tools:context=".ui.login.SubLoginActivity">
 
     <TextView
@@ -49,7 +49,7 @@
         android:id="@+id/googleLoginBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="74dp"
+        android:layout_marginBottom="52dp"
         android:background="@drawable/box_non_stroke_r6"
         android:backgroundTint="@color/WHITE"
         android:gravity="center"
