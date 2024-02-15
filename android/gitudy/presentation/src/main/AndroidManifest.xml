@@ -6,18 +6,17 @@
     <application>
         <activity
             android:name=".ui.login.LoginKakaoActivity"
-            android:launchMode="singleTask"
-            android:exported="true">
+            android:exported="true"
+            android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:host="kakao-auth"
-                    android:scheme="gitudy"/>
+                    android:scheme="gitudy" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.feed.StudyApplyActivity"
             android:exported="false" />

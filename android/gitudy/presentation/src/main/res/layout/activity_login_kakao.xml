@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginRight="22dp"
-    android:layout_marginLeft="22dp"
-    android:layout_marginBottom="48dp"
     tools:context=".ui.login.LoginKakaoActivity">
 
     <WebView
         android:id="@+id/kakaoLoginWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="48dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
