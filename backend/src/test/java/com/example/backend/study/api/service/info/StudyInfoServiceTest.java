@@ -31,8 +31,7 @@ import java.util.*;
 
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
-import static com.example.backend.domain.define.study.info.StudyInfoFixture.createDefaultStudyInfoList;
-import static com.example.backend.domain.define.study.info.StudyInfoFixture.createDefaultStudyInfoListRandomScoreAndLastCommitDay;
+import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -160,6 +159,7 @@ class StudyInfoServiceTest extends TestConfig {
         assertThat(request.getRepositoryInfo()).usingRecursiveComparison().isEqualTo(response.getRepositoryInfo());
         assertThat(request.getPeriodType()).isEqualTo(response.getPeriodType());
     }
+
     @Test
     @DisplayName("StudyInfo 삭제 테스트")
     void testDeleteStudy() {
@@ -175,6 +175,7 @@ class StudyInfoServiceTest extends TestConfig {
         assertThrows(StudyInfoException.class, () -> studyInfoService.deleteStudy(studyInfo.getId()),
                 "데이터베이스에서 스터디정보를 찾을 수 없습니다.");
     }
+
     @Test
     @DisplayName("StudyInfo 삭제 예외 테스트")
     void testDeleteStudyException() {
@@ -338,5 +339,57 @@ class StudyInfoServiceTest extends TestConfig {
             assertTrue(currentScore <= previousScore);
             previousScore = currentScore;
         }
+    }
+
+    void 스터디조회_커서기반_페이지네이션_누락_테스트() {
+        // given
+        String sortBy = "score";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> list = new ArrayList<>();
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 10));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 30));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 20));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 70));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 100));
+
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 10));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 50));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 40));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 30));
+        list.add(testStudyCursorPaginationWithMissingData(savedUser.getId(), 30));
+        studyInfoRepository.saveAll(list);
+
+//        System.out.println("---------Before sort by Score---------");
+//        for(StudyInfo x: list){
+//            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // when
+        List<AllStudyInfoResponse> studyInfoList = studyInfoService.selectStudyInfoListbyParameter(savedUser.getId(), null, LIMIT, sortBy);
+
+//        System.out.println("---------After sort by Score----------");
+//        for(AllStudyInfoResponse x: studyInfoList){
+//            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // when
+        List<AllStudyInfoResponse> studyInfoList1 = studyInfoService.selectStudyInfoListbyParameter(savedUser.getId(), 4L, 3L, sortBy);
+
+//        System.out.println("---- cursorIdx : 4, limit : 3 ---------");
+//        for(AllStudyInfoResponse x: studyInfoList1){
+//            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // when
+        List<AllStudyInfoResponse> studyInfoList2 = studyInfoService.selectStudyInfoListbyParameter(savedUser.getId(), 10L, 3L, sortBy);
+
+//        System.out.println("---- cursorIdx : 10, limit : 3 ---------");
+//        for(AllStudyInfoResponse x: studyInfoList2){
+//            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
     }
 }

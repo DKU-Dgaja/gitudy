@@ -78,12 +78,15 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom{
             orderSpecifier = studyInfo.lastCommitDay.desc();
         } else if (sortBy.equals("score")) {
             orderSpecifier = studyInfo.score.desc();
+        } else if (sortBy.equals("createdDateTime")) {
+            orderSpecifier = studyInfo.createdDateTime.desc();
         } else {
-            // 정렬 기준이 잘못된 경우 기본적으로 score를 사용
-            orderSpecifier = studyInfo.score.desc();
+            orderSpecifier = studyInfo.createdDateTime.desc(); // 기본적으로 createdDateTime 내림차순으로 정렬
         }
 
-        // 마이 스터디 리스트를 정렬 후 커서 기반 페이지 조회
+        // ID 내림차순으로 정렬
+        OrderSpecifier<Long> idOrder = studyInfo.id.desc();
+
         JPAQuery<AllStudyInfoResponse> query = queryFactory
                 .select(Projections.constructor(AllStudyInfoResponse.class,
                         studyInfo.id,
@@ -100,28 +103,68 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom{
                         studyInfo.periodType))
                 .from(studyInfo)
                 .where(studyInfo.userId.eq(userId))
-                .orderBy(orderSpecifier);
+                .orderBy(orderSpecifier, idOrder); // 여기서 다중 정렬 조건을 적용합니다.
 
         // cursorIdx가 null이 아닌 경우 커서 기반으로 데이터 가져오도록
         if (cursorIdx != null) {
             if (sortBy.equals("lastCommitDay")) {
-                query = query.where(studyInfo.lastCommitDay.lt(
-                        JPAExpressions
-                                .select(studyInfo.lastCommitDay)
-                                .from(studyInfo)
-                                .where(studyInfo.id.eq(cursorIdx))
-                ));
+                query = query.where(
+                        studyInfo.lastCommitDay.loe(
+                                JPAExpressions
+                                        .select(studyInfo.lastCommitDay.max())
+                                        .from(studyInfo)
+                                        .where(studyInfo.id.eq(cursorIdx))
+                        ).and(
+                                studyInfo.id.lt(cursorIdx).or(
+                                        studyInfo.lastCommitDay.lt(
+                                                JPAExpressions
+                                                        .select(studyInfo.lastCommitDay.max())
+                                                        .from(studyInfo)
+                                                        .where(studyInfo.id.eq(cursorIdx))
+                                        )
+                                )
+                        )
+                );
             } else if (sortBy.equals("score")) {
-                query = query.where(studyInfo.score.lt(
-                        JPAExpressions
-                                .select(studyInfo.score)
-                                .from(studyInfo)
-                                .where(studyInfo.id.eq(cursorIdx))
-                ));
+                query = query.where(
+                        studyInfo.score.loe(
+                                JPAExpressions
+                                        .select(studyInfo.score.max())
+                                        .from(studyInfo)
+                                        .where(studyInfo.id.eq(cursorIdx))
+                        ).and(
+                                studyInfo.id.lt(cursorIdx).or(
+                                        studyInfo.score.lt(
+                                                JPAExpressions
+                                                        .select(studyInfo.score.max())
+                                                        .from(studyInfo)
+                                                        .where(studyInfo.id.eq(cursorIdx))
+                                        )
+                                )
+                        )
+                );
+            } else if (sortBy.equals("createdDateTime")) {
+                query = query.where(
+                        studyInfo.createdDateTime.loe(
+                                JPAExpressions
+                                        .select(studyInfo.createdDateTime.max())
+                                        .from(studyInfo)
+                                        .where(studyInfo.id.eq(cursorIdx))
+                        ).and(
+                                studyInfo.id.lt(cursorIdx).or(
+                                        studyInfo.createdDateTime.lt(
+                                                JPAExpressions
+                                                        .select(studyInfo.createdDateTime.max())
+                                                        .from(studyInfo)
+                                                        .where(studyInfo.id.eq(cursorIdx))
+                                        )
+                                )
+                        )
+                );
             }
         }
 
         return query.limit(limit).fetch();
-    }
 
+    }
 }
