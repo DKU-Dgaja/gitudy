@@ -26,7 +26,7 @@ public class StudyInfoController {
     @PostMapping("/")
     public JsonResult<?> registerStudy(@AuthenticationPrincipal User user,
                                        @Valid @RequestBody StudyInfoRegisterRequest studyInfoRequest) {
-        authService.authenticate(user.getId(), user);
+        authService.authenticate(studyInfoRequest.getUserId(), user);
         StudyInfoRegisterResponse response = studyInfoService.registerStudy(studyInfoRequest);
         return JsonResult.successOf("Study Register Success.");
     }

@@ -1,6 +1,5 @@
 package com.example.backend.study.api.controller.info.response;
 
-import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
@@ -40,8 +39,8 @@ public class StudyInfoRegisterResponse {
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
-    private List<StudyCategory> categories;            // 스터디 카테고리 리스트
-    public static StudyInfoRegisterResponse of(StudyInfo response, List<StudyCategory> categories) {
+    private List<Long> categoriesId;              // 카테고리 ID 리스트
+    public static StudyInfoRegisterResponse of(StudyInfo response, List<Long> categoriesId) {
         return StudyInfoRegisterResponse.builder()
                 .userId(response.getUserId())
                 .topic(response.getTopic())
@@ -53,7 +52,7 @@ public class StudyInfoRegisterResponse {
                 .profileImageUrl(response.getProfileImageUrl())
                 .repositoryInfo(response.getRepositoryInfo())
                 .periodType(response.getPeriodType())
-                .categories(categories)
+                .categoriesId(categoriesId)
                 .build();
     }
 }

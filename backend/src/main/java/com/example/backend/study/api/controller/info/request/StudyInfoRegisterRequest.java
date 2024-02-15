@@ -1,14 +1,12 @@
 package com.example.backend.study.api.controller.info.request;
 
 
-import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,7 +40,7 @@ public class StudyInfoRegisterRequest {
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
-    private List<StudyCategory> categories;
+    private List<Long> categoriesId;              // 카테고리 ID 리스트
     public static StudyInfoRegisterRequest of(StudyInfo request) {
         return StudyInfoRegisterRequest.builder()
                 .userId(request.getUserId())

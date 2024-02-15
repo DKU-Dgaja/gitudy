@@ -1,6 +1,5 @@
 package com.example.backend.domain.define.study.info;
 
-import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
@@ -44,9 +43,9 @@ public class StudyInfoFixture {
 
     // generateStudyInfoRegisterRequest 생성 해주는 메소드
     public static StudyInfoRegisterRequest generateStudyInfoRegisterRequest(Long userId) {
-        List<StudyCategory> categories = new ArrayList<>();
-        categories.add(new StudyCategory("c++"));
-        categories.add(new StudyCategory("python"));
+        List<Long> categoriesId = new ArrayList<>();
+        categoriesId.add(1L);
+        categoriesId.add(2L);
 
         return StudyInfoRegisterRequest.builder()
                 .userId(userId)
@@ -58,15 +57,15 @@ public class StudyInfoFixture {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
-                .categories(categories)
+                .categoriesId(categoriesId)
                 .build();
     }
 
     // MaximumMember가 10보다 클 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
     public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(Long userId) {
-        List<StudyCategory> categories = new ArrayList<>();
-        categories.add(new StudyCategory("c++"));
-        categories.add(new StudyCategory("python"));
+        List<Long> categoriesId = new ArrayList<>();
+        categoriesId.add(1L);
+        categoriesId.add(2L);
 
         return StudyInfoRegisterRequest.builder()
                 .userId(userId)
@@ -78,15 +77,15 @@ public class StudyInfoFixture {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
-                .categories(categories)
+                .categoriesId(categoriesId)
                 .build();
     }
 
     // MaximumMember가 1보다 작을 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
     public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(Long userId) {
-        List<StudyCategory> categories = new ArrayList<>();
-        categories.add(new StudyCategory("c++"));
-        categories.add(new StudyCategory("python"));
+        List<Long> categoriesId = new ArrayList<>();
+        categoriesId.add(1L);
+        categoriesId.add(2L);
 
         return StudyInfoRegisterRequest.builder()
                 .userId(userId)
@@ -98,7 +97,7 @@ public class StudyInfoFixture {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
-                .categories(categories)
+                .categoriesId(categoriesId)
                 .build();
     }
 }
