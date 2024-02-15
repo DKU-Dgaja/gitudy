@@ -9,7 +9,7 @@
         android:layout_height="match_parent"
         android:background="@color/WHITE"
         android:padding="22dp"
-        tools:context=".ui.SplashActivity">
+        tools:context="com.takseha.presentation.ui.SplashActivity">
 
         <ImageView
             android:layout_width="230.18dp"
