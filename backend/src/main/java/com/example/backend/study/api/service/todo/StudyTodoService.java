@@ -55,7 +55,7 @@ public class StudyTodoService {
         // 스터디에 속한 활동중인 스터디원 조회
         List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
-        StudyTodo studyTodo = studyTodoRequest.StudyTodoRegister(studyInfoId);
+        StudyTodo studyTodo = createStudyTodo(studyTodoRequest, studyInfoId);
         studyTodoRepository.save(studyTodo);
 
         // 활동중인 스터디원에게만 TO DO 할당
@@ -71,5 +71,16 @@ public class StudyTodoService {
         studyTodoMappingRepository.saveAll(todoMappings);
 
 
+    }
+
+    // StudyTodo 생성 로직
+    private StudyTodo createStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId) {
+        return StudyTodo.builder()
+                .studyInfoId(studyInfoId)
+                .title(studyTodoRequest.getTitle())
+                .detail(studyTodoRequest.getDetail())
+                .todoLink(studyTodoRequest.getTodoLink())
+                .todoDate(studyTodoRequest.getTodoDate())
+                .build();
     }
 }
