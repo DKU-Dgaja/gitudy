@@ -20,24 +20,19 @@ import lombok.NoArgsConstructor;
 public class AuthRegisterRequest {
     @Enumerated(EnumType.STRING)
     @NotNull
-    @JsonProperty("role")
     private UserRole role;
 
     @NotNull
-    @JsonProperty("platformId")
     private String platformId;
 
     @Enumerated(EnumType.STRING)
-    @JsonProperty("platformType")
     private UserPlatformType platformType;
 
     @NotNull
-    @JsonProperty("name")
     private String name;
 
     @NotNull
     @Email
-    @JsonProperty("githubId")
     private String githubId;
 
 }
