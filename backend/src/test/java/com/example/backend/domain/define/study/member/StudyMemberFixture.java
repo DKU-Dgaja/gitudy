@@ -35,7 +35,7 @@ public class StudyMemberFixture {
     }
 
     // 테스트용 비활동중인(탈퇴) 스터디원 생성 메서드
-    public static StudyMember createWithdrawalStudyMember(Long userId, Long studyInfoId) {
+    public static StudyMember createStudyMemberWithdrawal(Long userId, Long studyInfoId) {
         return StudyMember.builder()
                 .userId(userId)
                 .studyInfoId(studyInfoId)

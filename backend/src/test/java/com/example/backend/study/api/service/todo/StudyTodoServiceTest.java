@@ -83,7 +83,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
                 StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),
-                StudyMemberFixture.createWithdrawalStudyMember(withdrawalMember.getId(), studyInfo.getId())
+                StudyMemberFixture.createStudyMemberWithdrawal(withdrawalMember.getId(), studyInfo.getId())
         ));
 
 
@@ -125,7 +125,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
                 StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),  // 활동중인 멤버
-                StudyMemberFixture.createWithdrawalStudyMember(withdrawalMember.getId(), studyInfo.getId()) // 비활동중인 멤버
+                StudyMemberFixture.createStudyMemberWithdrawal(withdrawalMember.getId(), studyInfo.getId()) // 비활동중인 멤버
         ));
 
         // when

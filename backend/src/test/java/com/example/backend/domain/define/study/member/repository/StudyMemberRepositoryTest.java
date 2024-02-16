@@ -7,6 +7,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -66,6 +68,29 @@ class StudyMemberRepositoryTest extends TestConfig {
 
         // when
         assertFalse(studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
+    }
+
+    @Test
+    void 해당_스터디의_활동중인_스터디원일_경우() {
+        // given
+        Long leaderId = 1L;
+        Long withdrawalId = 2L;
+        Long studyInfoId = 1L;
+
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(leaderId, studyInfoId));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberWithdrawal(withdrawalId, studyInfoId));
+
+        // when
+        List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
+
+        // then
+        assertFalse(activeMembers.isEmpty());
+        assertTrue(activeMembers.stream()
+                .anyMatch(member -> member.getUserId().equals(leaderId) &&
+                        member.getStudyInfoId().equals(studyInfoId)));
+        assertFalse(activeMembers.stream()
+                .anyMatch(member -> member.getUserId().equals(withdrawalId) &&
+                        member.getStudyInfoId().equals(studyInfoId)));
     }
 
 }
