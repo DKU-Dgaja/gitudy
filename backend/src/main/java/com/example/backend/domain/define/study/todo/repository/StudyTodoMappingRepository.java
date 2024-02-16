@@ -9,5 +9,5 @@ import java.util.Optional;
 
 @Repository
 public interface StudyTodoMappingRepository extends JpaRepository<StudyTodoMapping, Long> {
-    List<StudyTodoMapping> findByUserId(Long userId);
+    Optional<StudyTodoMapping> deleteByTodoId(Long todoId);
 }
