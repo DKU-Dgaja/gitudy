@@ -93,7 +93,7 @@ public class StudyTodoControllerTest extends TestConfig {
 
         StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest();
 
-        doNothing().when(studyMemberService).validateStudyLeader(any(User.class), any(Long.class));
+        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
         doNothing().when(studyTodoService).registerStudyTodo(any(StudyTodoRequest.class), any(Long.class));
 
         //when , then

@@ -6,6 +6,7 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
@@ -73,7 +74,7 @@ public class StudyTodoServiceTest extends TestConfig {
         //given
         User leader = userRepository.save(generateAuthUser());
         User activeMember = userRepository.save(generateGoogleUser());
-        User inactiveMember = userRepository.save(generateKaKaoUser());
+        User withdrawalMember = userRepository.save(generateKaKaoUser());
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
@@ -82,14 +83,14 @@ public class StudyTodoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
                 StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),
-                StudyMemberFixture.createWithdrawalStudyMember(inactiveMember.getId(), studyInfo.getId())
+                StudyMemberFixture.createWithdrawalStudyMember(withdrawalMember.getId(), studyInfo.getId())
         ));
 
 
         StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
 
         //when
-        studyMemberService.validateStudyLeader(leader, studyInfo.getId());
+        studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
         studyTodoService.registerStudyTodo(request, studyInfo.getId());
 
         //then
@@ -106,7 +107,40 @@ public class StudyTodoServiceTest extends TestConfig {
                 .anyMatch(mappingMember -> mappingMember.getUserId().equals(activeMember.getId())));
         // 비활동중인 멤버에게 할당되지 않았는지 확인
         assertFalse(mappings.stream()
-                .anyMatch(mappingMember -> mappingMember.getUserId().equals(inactiveMember.getId())));
+                .anyMatch(mappingMember -> mappingMember.getUserId().equals(withdrawalMember.getId())));
+
+    }
+
+
+    @Test
+    void 스터디의_활동중인_스터디원들_조회() {
+        // given
+        User leader = userRepository.save(generateAuthUser());
+        User activeMember = userRepository.save(generateGoogleUser());
+        User withdrawalMember = userRepository.save(generateKaKaoUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        studyMemberRepository.saveAll(List.of(
+                StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),  // 활동중인 멤버
+                StudyMemberFixture.createWithdrawalStudyMember(withdrawalMember.getId(), studyInfo.getId()) // 비활동중인 멤버
+        ));
+
+        // when
+        List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfo.getId());
+
+        // then
+        assertNotNull(activeMembers);
+        assertEquals(2, activeMembers.size()); // 리더와 활동중인 멤버
+
+        assertTrue(activeMembers.stream()
+                .anyMatch(member -> member.getUserId().equals(leader.getId())));
+        assertTrue(activeMembers.stream()
+                .anyMatch(member -> member.getUserId().equals(activeMember.getId())));
+        assertFalse(activeMembers.stream()
+                .anyMatch(member -> member.getUserId().equals(withdrawalMember.getId())));
 
     }
 }
