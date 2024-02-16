@@ -6,6 +6,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class StudyInfoController {
     private final StudyInfoService studyInfoService;
     private final AuthService authService;
 
+    @ApiResponse(responseCode = "200", description = "스터디 등록 성공")
     @PostMapping("/")
     public JsonResult<?> registerStudy(@AuthenticationPrincipal User user,
                                        @Valid @RequestBody StudyInfoRegisterRequest studyInfoRequest) {

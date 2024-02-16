@@ -50,6 +50,7 @@ public class StudyInfoService {
         return StudyInfoRegisterResponse.of(studyInfo, categories);
     }
 
+    // 카테고리 매핑 생성해주는 함수
     private static List<StudyCategoryMapping> getStudyCategoryMappings(StudyInfoRegisterRequest request, StudyInfo studyInfo, List<Long> categories) {
         return request.getCategoriesId().stream()
                 .peek(categories::add)
@@ -60,6 +61,7 @@ public class StudyInfoService {
                 .collect(Collectors.toList());
     }
 
+    // StudyMember를 leader로 생성해주는 함수
     private static StudyMember getStudyMember(StudyInfoRegisterRequest request, StudyInfo studyInfo) {
         StudyMember studyMember = StudyMember.builder()
                 .studyInfoId(studyInfo.getId())
@@ -71,6 +73,7 @@ public class StudyInfoService {
         return studyMember;
     }
 
+    // StudyInfo를 생성해주는 함수
     private static StudyInfo getStudyInfo(StudyInfoRegisterRequest request) {
         StudyInfo studyInfo = StudyInfo.builder()
                 .userId(request.getUserId())

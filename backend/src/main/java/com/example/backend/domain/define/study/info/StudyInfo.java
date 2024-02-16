@@ -94,6 +94,7 @@ public class StudyInfo extends BaseEntity {
         this.repositoryInfo = repositoryInfo;
         this.periodType = periodType;
     }
+
     private String generateRandomString(int length) {
         Random random = new SecureRandom();
         StringBuilder sb = new StringBuilder(length);
@@ -102,6 +103,4 @@ public class StudyInfo extends BaseEntity {
         }
         return sb.toString();
     }
-
-
 }

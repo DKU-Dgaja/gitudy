@@ -89,7 +89,7 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertIterableEquals(studyInfoRegisterRequest.getCategoriesId(), registeredStudy.getCategoriesId())
         );
 
-        // joinCode10자리가 잘 생성되었는지 검증
+        // joinCode 10자리가 잘 생성되었는지 검증
         assertEquals(registeredStudy.getJoinCode().length(), JOIN_CODE_LENGTH);
     }
 }

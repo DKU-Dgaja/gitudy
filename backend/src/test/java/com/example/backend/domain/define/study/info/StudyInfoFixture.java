@@ -124,6 +124,7 @@ public class StudyInfoFixture {
                 .build();
     }
 
+    // 카테고리 id 리스트를 생성해주는 함수
     private static List<Long> getCategoriesId(List<StudyCategory> studyCategories) {
         List<Long> categoriesId = studyCategories.stream()
                 .limit(studyCategories.size())
