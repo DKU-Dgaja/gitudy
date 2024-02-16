@@ -40,6 +40,17 @@ public class UserFixture {
                 .build();
     }
 
+    public static User generateKaKaoUser() {
+        return User.builder()
+                .platformId("1")
+                .platformType(KAKAO)
+                .role(UNAUTH)
+                .name("이름")
+                .githubId("카카오아이디")
+                .profileImageUrl("프로필이미지")
+                .build();
+    }
+
     public static OAuthResponse generateOauthResponse() {
         return OAuthResponse.builder()
                 .platformId("1")
