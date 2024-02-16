@@ -3,14 +3,15 @@ package com.example.backend.study.api.controller.info;
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
-import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-
+import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
+import com.example.backend.study.api.service.category.info.repository.StudyCategoryRepository;
+import com.example.backend.study.api.service.info.StudyInfoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
@@ -21,13 +22,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
-import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static com.example.backend.domain.define.study.StudyCategory.StudyCategoryFixture.CATEGORY_SIZE;
+import static com.example.backend.domain.define.study.StudyCategory.StudyCategoryFixture.createDefaultPublicStudyCategories;
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,11 +58,14 @@ class StudyInfoControllerTest extends TestConfig {
     private StudyInfoService studyInfoService;
     @Autowired
     private StudyInfoRepository studyInfoRepository;
+    @Autowired
+    private StudyCategoryRepository studyCategoryRepository;
 
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        studyCategoryRepository.deleteAllInBatch();
     }
 
     @Test
@@ -66,7 +73,9 @@ class StudyInfoControllerTest extends TestConfig {
         objectMapper.registerModule(new JavaTimeModule());
         // given
         User savedUser = userRepository.save(generateAuthUser());
-        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequest(savedUser.getId());
+
+        List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
+        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequest(savedUser.getId(), studyCategories);
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -92,8 +101,11 @@ class StudyInfoControllerTest extends TestConfig {
         objectMapper.registerModule(new JavaTimeModule());
         // given
         User savedUser = userRepository.save(generateAuthUser());
+
+        List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
+
         // MaximumMember가 11일 때
-        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(savedUser.getId());
+        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(savedUser.getId(), studyCategories);
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -118,8 +130,11 @@ class StudyInfoControllerTest extends TestConfig {
         objectMapper.registerModule(new JavaTimeModule());
         // given
         User savedUser = userRepository.save(generateAuthUser());
+
+        List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
+
         // MaximumMember가 -1일 때
-        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(savedUser.getId());
+        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(savedUser.getId(), studyCategories);
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);

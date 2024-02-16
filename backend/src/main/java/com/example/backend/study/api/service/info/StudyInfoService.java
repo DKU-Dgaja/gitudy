@@ -35,34 +35,34 @@ public class StudyInfoService {
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
         // 새로운 스터디 생성
-        StudyInfo studyInfo = getStudyInfo(request);
-        studyInfoRepository.save(studyInfo);
+        StudyInfo studyInfo = saveStudyInfo(request);
 
         // 스터디장 생성
-        StudyMember studyMember = getStudyMember(request, studyInfo);
-        memberRepository.save(studyMember);
+        StudyMember studyMember = saveStudyMember(request, studyInfo);
 
         // 스터디 카테고리 매핑
-        List<Long> categories = new ArrayList<>();
-        List<StudyCategoryMapping> studyCategoryMapping = getStudyCategoryMappings(request, studyInfo, categories);
-        studyCategoryMappingRepository.saveAll(studyCategoryMapping);
+        List<Long> categories = saveStudyCategoryMappings(request, studyInfo);
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
     }
 
     // 카테고리 매핑 생성해주는 함수
-    private static List<StudyCategoryMapping> getStudyCategoryMappings(StudyInfoRegisterRequest request, StudyInfo studyInfo, List<Long> categories) {
-        return request.getCategoriesId().stream()
-                .peek(categories::add)
+    private List<Long> saveStudyCategoryMappings(StudyInfoRegisterRequest request, StudyInfo studyInfo) {
+        List<Long> categoriesId = new ArrayList<>();
+        List<StudyCategoryMapping> studyCategoryMapping = request.getCategoriesId().stream()
+                .peek(categoriesId::add)
                 .map(categoryId -> StudyCategoryMapping.builder()
                         .studyInfoId(studyInfo.getId())
                         .studyCategoryId(categoryId)
                         .build())
                 .collect(Collectors.toList());
+
+        studyCategoryMappingRepository.saveAll(studyCategoryMapping);
+        return categoriesId;
     }
 
     // StudyMember를 leader로 생성해주는 함수
-    private static StudyMember getStudyMember(StudyInfoRegisterRequest request, StudyInfo studyInfo) {
+    private StudyMember saveStudyMember(StudyInfoRegisterRequest request, StudyInfo studyInfo) {
         StudyMember studyMember = StudyMember.builder()
                 .studyInfoId(studyInfo.getId())
                 .userId(request.getUserId())
@@ -70,11 +70,11 @@ public class StudyInfoService {
                 .status(STUDY_ACTIVE)
                 .score(0)
                 .build();
-        return studyMember;
+        return memberRepository.save(studyMember);
     }
 
     // StudyInfo를 생성해주는 함수
-    private static StudyInfo getStudyInfo(StudyInfoRegisterRequest request) {
+    private StudyInfo saveStudyInfo(StudyInfoRegisterRequest request) {
         StudyInfo studyInfo = StudyInfo.builder()
                 .userId(request.getUserId())
                 .topic(request.getTopic())
@@ -82,7 +82,6 @@ public class StudyInfoService {
                 .endDate(request.getEndDate())
                 .info(request.getInfo())
                 .status(request.getStatus())
-                .joinCode("")
                 .maximumMember(request.getMaximumMember())
                 .currentMember(1)
                 .lastCommitDay(null)
@@ -91,6 +90,6 @@ public class StudyInfoService {
                 .repositoryInfo(request.getRepositoryInfo())
                 .periodType(request.getPeriodType())
                 .build();
-        return studyInfo;
+        return studyInfoRepository.save(studyInfo);
     }
 }
