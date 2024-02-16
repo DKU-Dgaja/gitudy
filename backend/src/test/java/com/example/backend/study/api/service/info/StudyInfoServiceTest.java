@@ -16,12 +16,12 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.IntStream;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static com.example.backend.domain.define.study.StudyCategory.StudyCategoryFixture.createDefaultPublicStudyCategory;
+import static com.example.backend.domain.define.study.StudyCategory.StudyCategoryFixture.CATEGORY_SIZE;
+import static com.example.backend.domain.define.study.StudyCategory.StudyCategoryFixture.createDefaultPublicStudyCategories;
 import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_LENGTH;
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfoRegisterRequestWithCategory;
 import static org.junit.jupiter.api.Assertions.*;
@@ -50,16 +50,12 @@ class StudyInfoServiceTest extends TestConfig {
 
     @Test
     @DisplayName("StudyInfo 등록 테스트")
-    void testRegisterStudy() { //joincode도메인에 넣기
+    void testRegisterStudy() {
         // given
         User user = userRepository.save(generateAuthUser());
 
-        List<StudyCategory> studyCategories = new ArrayList<>();
-        StudyCategory studyCategory1 = createDefaultPublicStudyCategory("알고리즘");
-        StudyCategory studyCategory2 = createDefaultPublicStudyCategory("파이썬");
+        List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
 
-        studyCategories.add(studyCategory1);
-        studyCategories.add(studyCategory2);
         studyCategoryRepository.saveAll(studyCategories);
 
         StudyInfoRegisterRequest studyInfoRegisterRequest = generateStudyInfoRegisterRequestWithCategory(user.getId(), studyCategories);
@@ -69,6 +65,10 @@ class StudyInfoServiceTest extends TestConfig {
         List<StudyMember> studyMember = studyMemberRepository.findAll();
 
         // then
+
+        // 스더디 등록시 멤버는 등록한 사람 한명이다
+        assertEquals(studyMember.size(), 1);
+
         // studyCategoryMapping와 studyMember가 잘 저장 되었는지 검증
         IntStream.range(0, studyCategories.size())
                 .forEach(i -> {
