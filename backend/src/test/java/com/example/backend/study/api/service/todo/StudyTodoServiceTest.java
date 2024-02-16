@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.todo;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -110,5 +111,47 @@ public class StudyTodoServiceTest extends TestConfig {
                 .anyMatch(mappingMember -> mappingMember.getUserId().equals(withdrawalMember.getId())));
 
     }
-    
+
+    @Test
+    @DisplayName("Todo 삭제 테스트")
+    void deleteTodo_Success() {
+        // given
+        User leader = userRepository.save(generateAuthUser());
+        User activeMember = userRepository.save(generateGoogleUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        studyMemberRepository.saveAll(List.of(
+                StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId())
+
+        ));
+
+
+        StudyTodo leaderTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo activeMemberTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(leaderTodo);
+        studyTodoRepository.save(activeMemberTodo);
+
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(leaderTodo.getId(), leader.getId()));
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(activeMemberTodo.getId(), activeMember.getId()));
+
+        // when
+        studyTodoService.deleteStudyTodo(activeMemberTodo.getId(), studyInfo.getId());  // 활동중인 멤버의 To do 삭제
+
+        // then
+        assertThrows(TodoException.class, () -> {
+            studyTodoService.deleteStudyTodo(990927L, studyInfo.getId());
+        }, "TODO_NOT_FOUND 예외가 발생해야 한다.");
+
+        // 활동중인 멤버의 Todo는 삭제되어야 한다.
+        assertFalse(studyTodoRepository.existsById(activeMemberTodo.getId()));
+        assertFalse(studyTodoMappingRepository.existsById(activeMemberTodo.getId()));
+        // 리더의 Todo는 삭제되지 않아야 한다.
+        assertTrue(studyTodoRepository.existsById(leaderTodo.getId()));
+        assertTrue(studyMemberRepository.existsById(leaderTodo.getId()));
+
+    }
+
 }

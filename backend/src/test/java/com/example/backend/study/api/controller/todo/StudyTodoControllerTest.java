@@ -11,6 +11,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
@@ -29,6 +30,7 @@ import java.util.Map;
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -108,4 +110,36 @@ public class StudyTodoControllerTest extends TestConfig {
                 .andDo(print());
 
     }
+
+    @Test
+    public void Todo_삭제_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(studyTodo);
+
+
+        //when
+        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        doNothing().when(studyTodoService).deleteStudyTodo(any(Long.class), any(Long.class));
+
+
+        //then
+        mockMvc.perform(delete("/study/" + studyInfo.getId() + "/" + studyTodo.getId() + "/todo/delete")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("Todo delete Success"))
+                .andDo(print());
+    }
+
 }
