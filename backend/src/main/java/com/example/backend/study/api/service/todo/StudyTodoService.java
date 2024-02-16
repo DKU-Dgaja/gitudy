@@ -1,8 +1,6 @@
 package com.example.backend.study.api.service.todo;
 
 
-import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -28,8 +26,6 @@ public class StudyTodoService {
 
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
-    private final StudyInfoRepository studyInfoRepository;
-    private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
 
     // Todo 등록

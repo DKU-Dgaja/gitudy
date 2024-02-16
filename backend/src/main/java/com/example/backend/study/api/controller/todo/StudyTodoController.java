@@ -28,7 +28,7 @@ public class StudyTodoController {
                                            @PathVariable("studyInfoId") Long studyInfoId,
                                            @Valid @RequestBody StudyTodoRequest studyTodoRequest) {
 
-        studyMemberService.validateStudyLeader(user, studyInfoId);
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
         studyTodoService.registerStudyTodo(studyTodoRequest, studyInfoId);
 
