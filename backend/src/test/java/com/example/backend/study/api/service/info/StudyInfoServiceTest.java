@@ -1,74 +1,95 @@
 package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.auth.api.service.auth.AuthService;
-import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.category.info.StudyCategory;
+import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.example.backend.study.api.service.category.info.repository.StudyCategoryRepository;
+import com.example.backend.study.api.service.category.mapping.repository.StudyCategoryMappingRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.web.servlet.MockMvc;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfoRegisterRequest;
-import static org.assertj.core.api.Assertions.assertThat;
+import static com.example.backend.domain.define.study.StudyCategory.StudyCategoryFixture.createDefaultPublicStudyCategory;
+import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_LENGTH;
+import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfoRegisterRequestWithCategory;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyInfoServiceTest extends TestConfig {
-    @Autowired
-    private MockMvc mockMvc;
-
-    @MockBean
-    private AuthService authService;
 
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private JwtService jwtService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Autowired
     private StudyInfoService studyInfoService;
     @Autowired
-    private StudyInfoRepository studyInfoRepository;
+    private StudyCategoryMappingRepository studyCategoryMappingRepository;
+    @Autowired
+    private StudyMemberRepository studyMemberRepository;
+    @Autowired
+    private StudyCategoryRepository studyCategoryRepository;
 
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
-        studyInfoRepository.deleteAllInBatch();
+        studyCategoryMappingRepository.deleteAllInBatch();
+        studyMemberRepository.deleteAllInBatch();
+        studyCategoryRepository.deleteAllInBatch();
     }
 
     @Test
     @DisplayName("StudyInfo 등록 테스트")
-    void testRegisterStudy() {
+    void testRegisterStudy() { //joincode도메인에 넣기
         // given
         User user = userRepository.save(generateAuthUser());
-        StudyInfoRegisterRequest studyInfoRegisterRequest = generateStudyInfoRegisterRequest(user.getId());
 
+        List<StudyCategory> studyCategories = new ArrayList<>();
+        StudyCategory studyCategory1 = createDefaultPublicStudyCategory("알고리즘");
+        StudyCategory studyCategory2 = createDefaultPublicStudyCategory("파이썬");
+
+        studyCategories.add(studyCategory1);
+        studyCategories.add(studyCategory2);
+        studyCategoryRepository.saveAll(studyCategories);
+
+        StudyInfoRegisterRequest studyInfoRegisterRequest = generateStudyInfoRegisterRequestWithCategory(user.getId(), studyCategories);
         // when
         StudyInfoRegisterResponse registeredStudy = studyInfoService.registerStudy(studyInfoRegisterRequest);
+        List<StudyCategoryMapping> studyCategoryMapping = studyCategoryMappingRepository.findAll();
+        List<StudyMember> studyMember = studyMemberRepository.findAll();
 
         // then
-        assertThat(studyInfoRegisterRequest.getUserId()).isEqualTo(registeredStudy.getUserId());
-        assertThat(studyInfoRegisterRequest.getTopic()).isEqualTo(registeredStudy.getTopic());
-        assertThat(studyInfoRegisterRequest.getEndDate()).isEqualTo(registeredStudy.getEndDate());
-        assertThat(studyInfoRegisterRequest.getInfo()).isEqualTo(registeredStudy.getInfo());
-        assertThat(studyInfoRegisterRequest.getStatus()).isEqualTo(registeredStudy.getStatus());
-        assertThat(studyInfoRegisterRequest.getMaximumMember()).isEqualTo(registeredStudy.getMaximumMember());
-        assertThat(studyInfoRegisterRequest.getProfileImageUrl()).isEqualTo(registeredStudy.getProfileImageUrl());
-        assertThat(studyInfoRegisterRequest.getRepositoryInfo()).usingRecursiveComparison().isEqualTo(registeredStudy.getRepositoryInfo());
-        assertThat(studyInfoRegisterRequest.getPeriodType()).isEqualTo(registeredStudy.getPeriodType());
-        assertThat(studyInfoRegisterRequest.getCategoriesId().get(0)).isEqualTo(registeredStudy.getCategoriesId().get(0));
-        assertThat(studyInfoRegisterRequest.getCategoriesId().get(1)).isEqualTo(registeredStudy.getCategoriesId().get(1));
+        // studyCategoryMapping와 studyMember가 잘 저장 되었는지 검증
+        IntStream.range(0, studyCategories.size())
+                .forEach(i -> {
+                    assertEquals(studyCategoryMapping.get(i).getStudyInfoId(), studyMember.get(0).getStudyInfoId());
+                });
+
+        // response가 잘 되었는지 검증
+        assertAll("registeredStudy",
+                () -> assertEquals(studyInfoRegisterRequest.getUserId(), registeredStudy.getUserId()),
+                () -> assertEquals(studyInfoRegisterRequest.getTopic(), registeredStudy.getTopic()),
+                () -> assertEquals(studyInfoRegisterRequest.getEndDate(), registeredStudy.getEndDate()),
+                () -> assertEquals(studyInfoRegisterRequest.getInfo(), registeredStudy.getInfo()),
+                () -> assertEquals(studyInfoRegisterRequest.getStatus(), registeredStudy.getStatus()),
+                () -> assertEquals(studyInfoRegisterRequest.getMaximumMember(), registeredStudy.getMaximumMember()),
+                () -> assertEquals(studyInfoRegisterRequest.getProfileImageUrl(), registeredStudy.getProfileImageUrl()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo(), registeredStudy.getRepositoryInfo()),
+                () -> assertEquals(studyInfoRegisterRequest.getPeriodType(), registeredStudy.getPeriodType()),
+                () -> assertIterableEquals(studyInfoRegisterRequest.getCategoriesId(), registeredStudy.getCategoriesId())
+        );
+
+        // joinCode10자리가 잘 생성되었는지 검증
+        assertEquals(registeredStudy.getJoinCode().length(), JOIN_CODE_LENGTH);
     }
 }
