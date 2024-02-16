@@ -1,10 +1,13 @@
 package com.example.backend.domain.define.study.member.repository;
 
+import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+
+import java.util.List;
 
 import static com.example.backend.domain.define.study.member.QStudyMember.studyMember;
 
@@ -32,5 +35,14 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                         .and(studyMember.userId.eq(userId))
                         .and(studyMember.role.eq(StudyMemberRole.STUDY_LEADER)))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public List<StudyMember> findActiveMembersByStudyInfoId(Long studyInfoId) {
+        return queryFactory
+                .selectFrom(studyMember)
+                .where(studyMember.studyInfoId.eq(studyInfoId)
+                        .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)))
+                .fetch();
     }
 }
