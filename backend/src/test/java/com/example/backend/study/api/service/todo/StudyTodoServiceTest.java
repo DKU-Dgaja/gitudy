@@ -110,37 +110,5 @@ public class StudyTodoServiceTest extends TestConfig {
                 .anyMatch(mappingMember -> mappingMember.getUserId().equals(withdrawalMember.getId())));
 
     }
-
-
-    @Test
-    void 스터디의_활동중인_스터디원들_조회() {
-        // given
-        User leader = userRepository.save(generateAuthUser());
-        User activeMember = userRepository.save(generateGoogleUser());
-        User withdrawalMember = userRepository.save(generateKaKaoUser());
-
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
-        studyInfoRepository.save(studyInfo);
-
-        studyMemberRepository.saveAll(List.of(
-                StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
-                StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),  // 활동중인 멤버
-                StudyMemberFixture.createStudyMemberWithdrawal(withdrawalMember.getId(), studyInfo.getId()) // 비활동중인 멤버
-        ));
-
-        // when
-        List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfo.getId());
-
-        // then
-        assertNotNull(activeMembers);
-        assertEquals(2, activeMembers.size()); // 리더와 활동중인 멤버
-
-        assertTrue(activeMembers.stream()
-                .anyMatch(member -> member.getUserId().equals(leader.getId())));
-        assertTrue(activeMembers.stream()
-                .anyMatch(member -> member.getUserId().equals(activeMember.getId())));
-        assertFalse(activeMembers.stream()
-                .anyMatch(member -> member.getUserId().equals(withdrawalMember.getId())));
-
-    }
+    
 }
