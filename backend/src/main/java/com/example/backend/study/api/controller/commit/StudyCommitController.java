@@ -19,7 +19,7 @@ public class StudyCommitController {
 
     @ApiResponse(responseCode = "200", description = "커밋 상세 페이지 조회 성공",
             content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
-    @GetMapping("{commitId}")
+    @GetMapping("/{commitId}")
     public JsonResult<?> commitDetails(@PathVariable(name = "commitId") Long commitId) {
 
         return JsonResult.successOf(studyCommitService.getCommitDetailsById(commitId));
