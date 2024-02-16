@@ -3,6 +3,7 @@ package com.example.backend.study.api.controller.todo;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 public class StudyTodoController {
 
     private final StudyTodoService studyTodoService;
+    private final StudyMemberService studyMemberService;
 
     // Todo 등록
     @ApiResponse(responseCode = "200", description = "Todo 등록 성공")
@@ -26,7 +28,9 @@ public class StudyTodoController {
                                            @PathVariable("studyInfoId") Long studyInfoId,
                                            @Valid @RequestBody StudyTodoRequest studyTodoRequest) {
 
-        studyTodoService.registerStudyTodo(studyTodoRequest, studyInfoId, user);
+        studyMemberService.validateStudyLeader(user, studyInfoId);
+
+        studyTodoService.registerStudyTodo(studyTodoRequest, studyInfoId);
 
         return JsonResult.successOf("Todo register Success");
     }

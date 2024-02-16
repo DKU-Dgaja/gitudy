@@ -1,9 +1,6 @@
 package com.example.backend.study.api.service.todo;
 
 
-import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.todo.TodoException;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -37,20 +34,8 @@ public class StudyTodoService {
 
     // Todo 등록
     @Transactional
-    public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId, User userPrincipal) {
+    public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId) {
 
-
-        // platformId와 platformType을 이용하여 User 객체 조회
-        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
-            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
-            return new TodoException(ExceptionMessage.USER_NOT_FOUND);
-        });
-
-
-        // 스터디장인지 확인
-        if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
-            throw new TodoException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER);
-        }
 
         // 스터디에 속한 활동중인 스터디원 조회
         List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
