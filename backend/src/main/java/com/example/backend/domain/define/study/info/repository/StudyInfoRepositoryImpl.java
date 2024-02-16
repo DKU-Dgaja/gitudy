@@ -5,6 +5,7 @@ import com.example.backend.study.api.controller.info.response.AllStudyInfoRespon
 import com.example.backend.study.api.controller.info.response.StudyInfoResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -15,11 +16,12 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+
 import static com.example.backend.domain.define.study.info.QStudyInfo.studyInfo;
 
 @Component
 @RequiredArgsConstructor
-public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom{
+public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
@@ -74,12 +76,23 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom{
     @Override
     public List<AllStudyInfoResponse> findStudyInfoListByParameter_CursorPaging(Long userId, Long cursorIdx, Long limit, String sortBy) {
         OrderSpecifier<?> orderSpecifier;
+        BooleanExpression cursorPredicate = null;
+
         if (sortBy.equals("lastCommitDay")) {
             orderSpecifier = studyInfo.lastCommitDay.desc();
+            if (cursorIdx != null) {
+                cursorPredicate = studyInfo.lastCommitDay.loe(JPAExpressions.select(studyInfo.lastCommitDay.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)));
+            }
         } else if (sortBy.equals("score")) {
             orderSpecifier = studyInfo.score.desc();
+            if (cursorIdx != null) {
+                cursorPredicate = studyInfo.score.loe(JPAExpressions.select(studyInfo.score.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)));
+            }
         } else if (sortBy.equals("createdDateTime")) {
             orderSpecifier = studyInfo.createdDateTime.desc();
+            if (cursorIdx != null) {
+                cursorPredicate = studyInfo.createdDateTime.loe(JPAExpressions.select(studyInfo.createdDateTime.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)));
+            }
         } else {
             orderSpecifier = studyInfo.createdDateTime.desc(); // 기본적으로 createdDateTime 내림차순으로 정렬
         }
@@ -105,66 +118,18 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom{
                 .where(studyInfo.userId.eq(userId))
                 .orderBy(orderSpecifier, idOrder); // 여기서 다중 정렬 조건을 적용합니다.
 
-        // cursorIdx가 null이 아닌 경우 커서 기반으로 데이터 가져오도록
-        if (cursorIdx != null) {
-            if (sortBy.equals("lastCommitDay")) {
-                query = query.where(
-                        studyInfo.lastCommitDay.loe(
-                                JPAExpressions
-                                        .select(studyInfo.lastCommitDay.max())
-                                        .from(studyInfo)
-                                        .where(studyInfo.id.eq(cursorIdx))
-                        ).and(
-                                studyInfo.id.lt(cursorIdx).or(
-                                        studyInfo.lastCommitDay.lt(
-                                                JPAExpressions
-                                                        .select(studyInfo.lastCommitDay.max())
-                                                        .from(studyInfo)
-                                                        .where(studyInfo.id.eq(cursorIdx))
-                                        )
-                                )
-                        )
-                );
-            } else if (sortBy.equals("score")) {
-                query = query.where(
-                        studyInfo.score.loe(
-                                JPAExpressions
-                                        .select(studyInfo.score.max())
-                                        .from(studyInfo)
-                                        .where(studyInfo.id.eq(cursorIdx))
-                        ).and(
-                                studyInfo.id.lt(cursorIdx).or(
-                                        studyInfo.score.lt(
-                                                JPAExpressions
-                                                        .select(studyInfo.score.max())
-                                                        .from(studyInfo)
-                                                        .where(studyInfo.id.eq(cursorIdx))
-                                        )
-                                )
-                        )
-                );
-            } else if (sortBy.equals("createdDateTime")) {
-                query = query.where(
-                        studyInfo.createdDateTime.loe(
-                                JPAExpressions
-                                        .select(studyInfo.createdDateTime.max())
-                                        .from(studyInfo)
-                                        .where(studyInfo.id.eq(cursorIdx))
-                        ).and(
-                                studyInfo.id.lt(cursorIdx).or(
-                                        studyInfo.createdDateTime.lt(
-                                                JPAExpressions
-                                                        .select(studyInfo.createdDateTime.max())
-                                                        .from(studyInfo)
-                                                        .where(studyInfo.id.eq(cursorIdx))
-                                        )
-                                )
-                        )
-                );
-            }
+        // cursorPredicate가 null이 아닌 경우 커서 기반으로 데이터 가져오도록
+        if (cursorIdx != null && cursorPredicate != null) {
+            query = query.where(
+                    cursorPredicate.and(
+                            studyInfo.id.lt(cursorIdx).or(
+                                    studyInfo.lastCommitDay.lt(JPAExpressions.select(studyInfo.lastCommitDay.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)))
+                            )
+                    )
+            );
         }
 
         return query.limit(limit).fetch();
-
     }
+
 }
