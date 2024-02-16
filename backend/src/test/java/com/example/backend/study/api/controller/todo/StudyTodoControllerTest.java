@@ -8,13 +8,13 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -33,7 +33,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static reactor.core.publisher.Mono.when;
 
 
 public class StudyTodoControllerTest extends TestConfig {
@@ -65,12 +64,16 @@ public class StudyTodoControllerTest extends TestConfig {
     @MockBean
     private StudyTodoService studyTodoService;
 
+    @MockBean
+    private StudyMemberService studyMemberService;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
         studyTodoRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        studyMemberRepository.deleteAllInBatch();
     }
 
 
@@ -86,12 +89,12 @@ public class StudyTodoControllerTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyMember studyMemberLeader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
-        studyMemberRepository.save(studyMemberLeader);
+        StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
 
         StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest();
 
-        doNothing().when(studyTodoService).registerStudyTodo(any(StudyTodoRequest.class), any(Long.class), any(User.class));
+        doNothing().when(studyMemberService).validateStudyLeader(any(User.class), any(Long.class));
+        doNothing().when(studyTodoService).registerStudyTodo(any(StudyTodoRequest.class), any(Long.class));
 
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo")

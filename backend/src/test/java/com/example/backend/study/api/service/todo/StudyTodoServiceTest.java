@@ -15,6 +15,7 @@ import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoSt
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -42,11 +43,14 @@ public class StudyTodoServiceTest extends TestConfig {
     private StudyTodoService studyTodoService;
 
     @Autowired
+    private StudyMemberService studyMemberService;
+
+    @Autowired
     private UserRepository userRepository;
+
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
-    public final static Long expectedStudyInfoId = 1L;
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
     public final static String expectedTodoLink = "https://www.acmicpc.net/";
@@ -78,14 +82,15 @@ public class StudyTodoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
                 StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),
-                StudyMemberFixture.createInActiveStudyMember(inactiveMember.getId(), studyInfo.getId())
+                StudyMemberFixture.createWithdrawalStudyMember(inactiveMember.getId(), studyInfo.getId())
         ));
 
 
         StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
 
         //when
-        studyTodoService.registerStudyTodo(request, studyInfo.getId(), leader);
+        studyMemberService.validateStudyLeader(leader, studyInfo.getId());
+        studyTodoService.registerStudyTodo(request, studyInfo.getId());
 
         //then
         // StudyTodo
@@ -97,9 +102,11 @@ public class StudyTodoServiceTest extends TestConfig {
 
         List<StudyTodoMapping> mappings = studyTodoMappingRepository.findAll();
         // 활동중인 멤버에게 할당되었는지 확인
-        assertTrue(mappings.stream().anyMatch(mappingMember -> mappingMember.getUserId().equals(activeMember.getId())));
+        assertTrue(mappings.stream()
+                .anyMatch(mappingMember -> mappingMember.getUserId().equals(activeMember.getId())));
         // 비활동중인 멤버에게 할당되지 않았는지 확인
-        assertFalse(mappings.stream().anyMatch(mappingMember -> mappingMember.getUserId().equals(inactiveMember.getId())));
+        assertFalse(mappings.stream()
+                .anyMatch(mappingMember -> mappingMember.getUserId().equals(inactiveMember.getId())));
 
     }
 }
