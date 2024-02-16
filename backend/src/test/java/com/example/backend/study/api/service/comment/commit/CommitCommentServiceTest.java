@@ -47,8 +47,8 @@ class CommitCommentServiceTest extends TestConfig {
         User userB = userRepository.save(User.builder().platformId("B").profileImageUrl("testB").build());
         User userC = userRepository.save(User.builder().platformId("C").profileImageUrl("testC").build());
 
-        StudyCommit commitA = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("1"));
-        StudyCommit commitB = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit("2"));
+        StudyCommit commitA = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userA.getId(), 1L, "1"));
+        StudyCommit commitB = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userB.getId(), 2L, "2"));
 
         commitCommentRepository.saveAll(CommitCommentFixture.createDefaultCommitCommentList(5, userA.getId(), commitA.getId()));
         commitCommentRepository.saveAll(CommitCommentFixture.createDefaultCommitCommentList(5, userB.getId(), commitB.getId()));
