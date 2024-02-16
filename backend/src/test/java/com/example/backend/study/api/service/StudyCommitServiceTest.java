@@ -11,12 +11,8 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.List;
-import java.util.Random;
-
-import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
-import static com.example.backend.domain.define.study.commit.StudyCommitFixture.expectedUserId;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyCommitServiceTest extends TestConfig {
@@ -35,8 +31,11 @@ class StudyCommitServiceTest extends TestConfig {
     @Test
     void 커밋_상세_조회_성공_테스트() {
         // given
+        Long studyId = 1L;
+        Long userId = 1L;
         String commitSha = "123";
-        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(commitSha));
+
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyId, commitSha));
 
         // when
         CommitInfoResponse commitInfoResponse = studyCommitService.getCommitDetailsById(savedCommit.getId());
