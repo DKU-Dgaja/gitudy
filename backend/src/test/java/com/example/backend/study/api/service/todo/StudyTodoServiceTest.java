@@ -147,10 +147,13 @@ public class StudyTodoServiceTest extends TestConfig {
 
         // 활동중인 멤버의 Todo는 삭제되어야 한다.
         assertFalse(studyTodoRepository.existsById(activeMemberTodo.getId()));
-        assertFalse(studyTodoMappingRepository.existsById(activeMemberTodo.getId()));
+        List<StudyTodoMapping> activeMemberMappings = studyTodoMappingRepository.findByTodoId(activeMemberTodo.getId());
+        assertTrue(activeMemberMappings.isEmpty());
+
         // 리더의 Todo는 삭제되지 않아야 한다.
         assertTrue(studyTodoRepository.existsById(leaderTodo.getId()));
-        assertTrue(studyMemberRepository.existsById(leaderTodo.getId()));
+        List<StudyTodoMapping> leaderMappings = studyTodoMappingRepository.findByTodoId(leaderTodo.getId());
+        assertFalse(leaderMappings.isEmpty());
 
     }
 
