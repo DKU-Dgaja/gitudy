@@ -1,6 +1,8 @@
 package com.example.backend.study.api.service.todo;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -133,11 +135,11 @@ public class StudyTodoServiceTest extends TestConfig {
         StudyTodoUpdateRequest request = StudyTodoFixture.updateStudyTodoRequest(updatedTitle, updatedDetail, updatedTodoLink, updatedTodoDate);
 
         // when
-        studyTodoService.updateStudyTodo(request, studyInfo.getId(), studyTodo.getId());
+        studyTodoService.updateStudyTodo(request, studyTodo.getId());
 
         // then
-        StudyTodo updatedTodo = studyTodoRepository.findByIdAndStudyInfoId(studyInfo.getId(), studyTodo.getId()).orElseThrow();
-
+        StudyTodo updatedTodo = studyTodoRepository.findById(studyTodo.getId())
+                .orElseThrow(() -> new TodoException(ExceptionMessage.TODO_NOT_FOUND));
         assertEquals(updatedTitle, updatedTodo.getTitle());
         assertEquals(updatedDetail, updatedTodo.getDetail());
         assertEquals(updatedTodoLink, updatedTodo.getTodoLink());
@@ -147,6 +149,4 @@ public class StudyTodoServiceTest extends TestConfig {
     }
 
 
-
-    
 }

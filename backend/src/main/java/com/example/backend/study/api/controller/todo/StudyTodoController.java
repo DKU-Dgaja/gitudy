@@ -46,7 +46,7 @@ public class StudyTodoController {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
-        studyTodoService.updateStudyTodo(studyTodoUpdateRequest, studyInfoId, todoId);
+        studyTodoService.updateStudyTodo(studyTodoUpdateRequest, todoId);
 
         return JsonResult.successOf("Todo update Success");
     }

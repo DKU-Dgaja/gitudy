@@ -72,20 +72,20 @@ public class StudyTodoService {
 
     // Todo 수정
     @Transactional
-    public void updateStudyTodo(StudyTodoUpdateRequest request, Long studyInfoId, Long todoId) {
+    public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId) {
 
         // To do 조회
-        StudyTodo studyTodo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {},{} : {} <<<<", todoId, studyInfoId, ExceptionMessage.TODO_NOT_FOUND.getText());
+        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND.getText());
             return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
 
         // 기존 To do 업데이트
-       studyTodo.updateStudyTodo(
-               request.getTitle(),
-               request.getDetail(),
-               request.getTodoLink(),
-               request.getTodoDate());
+        studyTodo.updateStudyTodo(
+                request.getTitle(),
+                request.getDetail(),
+                request.getTodoLink(),
+                request.getTodoDate());
 
     }
 

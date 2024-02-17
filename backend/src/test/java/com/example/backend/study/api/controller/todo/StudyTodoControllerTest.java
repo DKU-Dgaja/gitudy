@@ -139,7 +139,8 @@ public class StudyTodoControllerTest extends TestConfig {
 
 
         //when
-        doNothing().when(studyTodoService).updateStudyTodo(updateRequest, studyInfo.getId(), studyTodo.getId());
+        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        doNothing().when(studyTodoService).updateStudyTodo(any(StudyTodoUpdateRequest.class), any(Long.class));
 
         //then
         mockMvc.perform(put("/study/" + studyInfo.getId() + "/" + studyTodo.getId() + "/todo/update")
