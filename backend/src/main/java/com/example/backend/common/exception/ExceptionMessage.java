@@ -49,6 +49,7 @@ public enum ExceptionMessage {
     // TodoExcetpion
     STUDY_INFO_NOT_FOUND("해당 스터디정보를 찾을 수 없습니다."),
     STUDY_MEMBER_NOT_LEADER("스터디장이 아닙니다."),
+    TODO_NOT_FOUND("해당 Todo를 찾을 수 없습니다.")
     ;
     private final String text;
 }

@@ -1,6 +1,9 @@
 package com.example.backend.study.api.service.todo;
 
 
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -9,6 +12,7 @@ import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoSt
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
+import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -64,4 +68,25 @@ public class StudyTodoService {
                 .todoDate(studyTodoRequest.getTodoDate())
                 .build();
     }
+
+
+    // Todo 수정
+    @Transactional
+    public void updateStudyTodo(StudyTodoUpdateRequest request, Long studyInfoId, Long todoId) {
+
+        // To do 조회
+        StudyTodo studyTodo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", todoId, studyInfoId, ExceptionMessage.TODO_NOT_FOUND.getText());
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+
+        // 기존 To do 업데이트
+       studyTodo.updateStudyTodo(
+               request.getTitle(),
+               request.getDetail(),
+               request.getTodoLink(),
+               request.getTodoDate());
+
+    }
+
 }
