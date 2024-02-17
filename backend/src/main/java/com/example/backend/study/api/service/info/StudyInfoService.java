@@ -1,13 +1,17 @@
 package com.example.backend.study.api.service.info;
 
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.study.StudyInfoException;
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
+import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.example.backend.study.api.service.category.mapping.repository.StudyCategoryMappingRepository;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -32,6 +36,10 @@ public class StudyInfoService {
 
     private final StudyCategoryMappingRepository studyCategoryMappingRepository;
 
+    private final StudyMemberService studyMemberService;
+
+    private final StudyMemberRepository studyMemberRepository;
+
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
         // 새로운 스터디 생성
@@ -44,6 +52,33 @@ public class StudyInfoService {
         List<Long> categories = saveStudyCategoryMappings(request, studyInfo);
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
+    }
+
+    // 스터디 삭제
+    @Transactional
+    public boolean deleteStudy(User user, Long studyInfoId) {
+        // 스터디가 있는지 확인
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 유저가 스터디 장이 아닐 경우 예외 발생
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        // 스터디 상태정보 변경
+        studyInfo.updateDeletedStudy();
+        
+        // 스터디 멤버 상태정보 변경
+        updateWithdrawalStudyMember(studyInfoId);
+
+        return true;
+    }
+
+    private void updateWithdrawalStudyMember(Long studyInfoId) {
+        List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfoId);
+        studyMembers.stream()
+                .forEach(StudyMember::updateWithdrawalStudyMember);
     }
 
     // 카테고리 매핑 생성해주는 함수
