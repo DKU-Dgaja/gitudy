@@ -16,6 +16,7 @@ import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoSt
 import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
+import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -110,5 +111,42 @@ public class StudyTodoServiceTest extends TestConfig {
                 .anyMatch(mappingMember -> mappingMember.getUserId().equals(withdrawalMember.getId())));
 
     }
+
+    @Test
+    @DisplayName("Todo 수정 테스트")
+    public void updateTodo() {
+
+        //given
+        User leader = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(studyTodo);
+
+        String updatedTitle = "제목변경";
+        String updatedDetail = "설명변경";
+        String updatedTodoLink = "링크변경";
+        LocalDate updatedTodoDate = LocalDate.now().plusDays(3);
+
+        StudyTodoUpdateRequest request = StudyTodoFixture.updateStudyTodoRequest(updatedTitle, updatedDetail, updatedTodoLink, updatedTodoDate);
+
+        // when
+        studyTodoService.updateStudyTodo(request, studyInfo.getId(), studyTodo.getId());
+
+        // then
+        StudyTodo updatedTodo = studyTodoRepository.findByIdAndStudyInfoId(studyInfo.getId(), studyTodo.getId()).orElseThrow();
+
+        assertEquals(updatedTitle, updatedTodo.getTitle());
+        assertEquals(updatedDetail, updatedTodo.getDetail());
+        assertEquals(updatedTodoLink, updatedTodo.getTodoLink());
+        assertEquals(updatedTodoDate, updatedTodo.getTodoDate());
+
+
+    }
+
+
+
     
 }
