@@ -3,7 +3,6 @@ package com.example.backend.study.api.service.todo;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
