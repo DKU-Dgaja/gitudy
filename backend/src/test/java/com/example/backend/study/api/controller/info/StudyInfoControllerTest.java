@@ -1,16 +1,18 @@
 package com.example.backend.study.api.controller.info;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.category.info.StudyCategory;
+import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.example.backend.study.api.service.category.info.repository.StudyCategoryRepository;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -30,7 +32,9 @@ import static com.example.backend.domain.define.study.StudyCategory.StudyCategor
 import static com.example.backend.domain.define.study.StudyCategory.StudyCategoryFixture.createDefaultPublicStudyCategories;
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -152,5 +156,28 @@ class StudyInfoControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value("maximumMember: must be greater than or equal to 1"))
                 .andDo(print());
+    }
+
+    @Test
+    void 스터디_삭제_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(savedUser.getId()));
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
+        when(studyInfoService.deleteStudy(any(), anyLong())).thenReturn(true);
+
+        // then
+        mockMvc.perform(delete("/studyinfo/" + studyInfo.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"));
     }
 }
