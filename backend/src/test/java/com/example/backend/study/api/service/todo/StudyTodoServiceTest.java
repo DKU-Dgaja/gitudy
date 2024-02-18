@@ -24,7 +24,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
@@ -117,43 +119,42 @@ public class StudyTodoServiceTest extends TestConfig {
     void deleteTodo_Success() {
         // given
         User leader = userRepository.save(generateAuthUser());
-        User activeMember = userRepository.save(generateGoogleUser());
+        User activeMember1 = userRepository.save(generateGoogleUser());
+        User activeMember2 = userRepository.save(generateKaKaoUser());
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
-                StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId())
+                StudyMemberFixture.createDefaultStudyMember(activeMember1.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(activeMember2.getId(), studyInfo.getId())
 
+        ));
+        // 스터디장 To do 생성
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(studyTodo);
+
+        // 활동중인 스터디원들에게 To do 매핑
+        studyTodoMappingRepository.saveAll(List.of(
+                StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), activeMember1.getId()),
+                StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), activeMember2.getId())
         ));
 
 
-        StudyTodo leaderTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        StudyTodo activeMemberTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        studyTodoRepository.save(leaderTodo);
-        studyTodoRepository.save(activeMemberTodo);
-
-        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(leaderTodo.getId(), leader.getId()));
-        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(activeMemberTodo.getId(), activeMember.getId()));
-
         // when
-        studyTodoService.deleteStudyTodo(activeMemberTodo.getId(), studyInfo.getId());  // 활동중인 멤버의 To do 삭제
+        studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
+        studyTodoService.deleteStudyTodo(studyTodo.getId(), studyInfo.getId());  //To do 삭제
 
         // then
         assertThrows(TodoException.class, () -> {
             studyTodoService.deleteStudyTodo(990927L, studyInfo.getId());
         }, "TODO_NOT_FOUND 예외가 발생해야 한다.");
 
-        // 활동중인 멤버의 Todo는 삭제되어야 한다.
-        assertFalse(studyTodoRepository.existsById(activeMemberTodo.getId()));
-        List<StudyTodoMapping> activeMemberMappings = studyTodoMappingRepository.findByTodoId(activeMemberTodo.getId());
-        assertTrue(activeMemberMappings.isEmpty());
-
-        // 리더의 Todo는 삭제되지 않아야 한다.
-        assertTrue(studyTodoRepository.existsById(leaderTodo.getId()));
-        List<StudyTodoMapping> leaderMappings = studyTodoMappingRepository.findByTodoId(leaderTodo.getId());
-        assertFalse(leaderMappings.isEmpty());
+        // 등록된 To do는 삭제, 모든 매핑제거
+        assertFalse(studyTodoRepository.existsById(studyTodo.getId()));
+        List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoId(studyTodo.getId());
+        assertTrue(todoMappings.isEmpty());
 
     }
 

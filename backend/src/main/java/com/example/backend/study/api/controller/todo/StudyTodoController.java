@@ -37,7 +37,7 @@ public class StudyTodoController {
 
     // Todo 삭제
     @ApiResponse(responseCode = "200", description = "Todo 삭제 성공")
-    @DeleteMapping("/{studyInfoId}/{todoId}/todo/delete")
+    @DeleteMapping("/{studyInfoId}/todo/{todoId}")
     public JsonResult<?> deleteStudyTodo(@AuthenticationPrincipal User user,
                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
                                          @PathVariable(name = "todoId") Long todoId) {

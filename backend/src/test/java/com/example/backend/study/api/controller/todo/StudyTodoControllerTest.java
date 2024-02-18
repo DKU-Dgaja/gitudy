@@ -132,7 +132,7 @@ public class StudyTodoControllerTest extends TestConfig {
 
 
         //then
-        mockMvc.perform(delete("/study/" + studyInfo.getId() + "/" + studyTodo.getId() + "/todo/delete")
+        mockMvc.perform(delete("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 .andExpect(status().isOk())
