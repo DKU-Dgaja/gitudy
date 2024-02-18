@@ -74,8 +74,7 @@ public class StudyInfoService {
 
     private void updateWithdrawalStudyMember(Long studyInfoId) {
         List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfoId);
-        studyMembers.stream()
-                .forEach(StudyMember::updateWithdrawalStudyMember);
+        studyMembers.forEach(StudyMember::updateWithdrawalStudyMember);
     }
 
     // 카테고리 매핑 생성해주는 함수
