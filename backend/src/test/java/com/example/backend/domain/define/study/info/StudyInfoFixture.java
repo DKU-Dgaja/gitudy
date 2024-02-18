@@ -5,6 +5,7 @@ import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
+import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -110,6 +111,25 @@ public class StudyInfoFixture {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .categoriesId(categoriesId)
+                .build();
+    }
+
+    // 업데이트 된 StudyInfoUpdateRequest를 카테고리를 파라미터로 받아 생성해주는 함수
+    public static StudyInfoUpdateRequest generateUpdatedStudyInfoUpdateRequestWithCategory(Long userId, List<StudyCategory> studyCategories) {
+        List<Long> categoriesId = getCategoriesId(studyCategories);
+
+        return StudyInfoUpdateRequest.builder()
+                .userId(userId)
+                .topic("Updated : Sample Study")
+                .endDate(LocalDate.now().plusMonths(6)) // 3 -> 6으로 변경
+                .info("Updated : This is a sample study.")
+                .status(StudyStatus.STUDY_PRIVATE) // 공개에서 비공개로 업데이트
+                .maximumMember(10) // 5 -> 10으로 변경
+                .profileImageUrl("Updated : https://example.com/profile.jpg")
+                .notice("Updated : 기한은 일주일입니다!")
+                .repositoryInfo(new RepositoryInfo("Updated : 구영민", "Updated : aaa333", "Updated : BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_NONE) // STUDY_PERIOD_EVERYDAY -> STUDY_PERIOD_NONE
                 .categoriesId(categoriesId)
                 .build();
     }
