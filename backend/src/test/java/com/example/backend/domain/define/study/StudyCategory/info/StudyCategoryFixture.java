@@ -1,4 +1,4 @@
-package com.example.backend.domain.define.study.StudyCategory;
+package com.example.backend.domain.define.study.StudyCategory.info;
 
 import com.example.backend.domain.define.study.category.info.StudyCategory;
 
