@@ -1,9 +1,11 @@
 package com.takseha.presentation.ui.login
 
 import android.content.Intent
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.browser.customtabs.CustomTabsIntent
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.presentation.R
@@ -24,10 +26,10 @@ class SubLoginActivity : AppCompatActivity() {
         binding.kakaoLoginBtn.setOnClickListener {
             viewModel.startLogin("KAKAO")
             viewModel.loginPageUrl.observe(this, Observer {
-                val intent = Intent(this, LoginKakaoActivity::class.java)
-                intent.putExtra("url", it)
                 Log.d("LoginViewModel", "loginPageUrl: $it")
-                startActivity(intent)
+                val intentKakaoLogin: CustomTabsIntent = CustomTabsIntent.Builder()
+                    .build()
+                intentKakaoLogin.launchUrl(this, Uri.parse(it))
             })
         }
         binding.googleLoginBtn.setOnClickListener {
