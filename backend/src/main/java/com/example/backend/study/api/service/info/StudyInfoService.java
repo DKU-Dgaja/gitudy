@@ -56,15 +56,12 @@ public class StudyInfoService {
 
     // 스터디 삭제
     @Transactional
-    public boolean deleteStudy(User user, Long studyInfoId) {
+    public boolean deleteStudy(Long studyInfoId) {
         // 스터디가 있는지 확인
         StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
-
-        // 유저가 스터디 장이 아닐 경우 예외 발생
-        studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
         // 스터디 상태정보 변경
         studyInfo.updateDeletedStudy();

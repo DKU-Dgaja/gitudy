@@ -14,6 +14,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
@@ -33,6 +34,7 @@ import static com.example.backend.domain.define.study.StudyCategory.StudyCategor
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -64,6 +66,8 @@ class StudyInfoControllerTest extends TestConfig {
     private StudyInfoRepository studyInfoRepository;
     @Autowired
     private StudyCategoryRepository studyCategoryRepository;
+    @MockBean
+    private StudyMemberService studyMemberService;
 
     @AfterEach
     void tearDown() {
@@ -169,7 +173,9 @@ class StudyInfoControllerTest extends TestConfig {
 
         // when
         when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
-        when(studyInfoService.deleteStudy(any(), anyLong())).thenReturn(true);
+        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+
+        when(studyInfoService.deleteStudy(anyLong())).thenReturn(true);
 
         // then
         mockMvc.perform(delete("/studyinfo/" + studyInfo.getId())

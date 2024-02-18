@@ -37,8 +37,9 @@ public class StudyInfoController {
     public JsonResult<?> deleteStudy(@AuthenticationPrincipal User user,
                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
         try {
-            authService.findUserInfo(user);
-            studyInfoService.deleteStudy(user, studyInfoId);
+            // 유저가 스터디 장이 아닐 경우 예외 발생
+            studyMemberService.isValidateStudyLeader(user, studyInfoId);
+            studyInfoService.deleteStudy(studyInfoId);
 
         } catch (GitudyException e) {
             return JsonResult.failOf(e.getMessage());

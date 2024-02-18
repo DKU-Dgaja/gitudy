@@ -2,7 +2,6 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
-import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -129,7 +128,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(studyMembers);
 
         // when
-        studyInfoService.deleteStudy(leaderUser, studyInfo.getId());
+        studyInfoService.deleteStudy(studyInfo.getId());
 
 
         // then
@@ -157,20 +156,7 @@ class StudyInfoServiceTest extends TestConfig {
 
         // then
         assertThrows(StudyInfoException.class, () -> {
-            studyInfoService.deleteStudy(user, invalidStudyInfoId);
+            studyInfoService.deleteStudy(invalidStudyInfoId);
         }, "해당 스터디정보를 찾을 수 없습니다.");
-    }
-
-    @Test
-    void 유저가_스터디장이_아닐_경우_스터디_삭제_실패_테스트() {
-        // given
-        User user = userRepository.save(UserFixture.generateAuthUser());
-        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
-        StudyMember studyMember = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), studyInfo.getId()));
-
-        // then
-        assertThrows(MemberException.class, () -> {
-            studyInfoService.deleteStudy(user, studyInfo.getId());
-        }, "스터디장이 아닙니다.");
     }
 }
