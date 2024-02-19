@@ -93,7 +93,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
-        mockMvc.perform(post("/studyinfo/")
+        mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
@@ -123,7 +123,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
-        mockMvc.perform(post("/studyinfo/")
+        mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
@@ -152,7 +152,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
-        mockMvc.perform(post("/studyinfo/")
+        mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
@@ -178,7 +178,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(studyInfoService.deleteStudy(anyLong())).thenReturn(true);
 
         // then
-        mockMvc.perform(delete("/studyinfo/" + studyInfo.getId())
+        mockMvc.perform(delete("/study/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                 )

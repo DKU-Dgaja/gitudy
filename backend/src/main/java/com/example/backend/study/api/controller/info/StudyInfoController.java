@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/studyinfo")
+@RequestMapping("/study")
 public class StudyInfoController {
     private final StudyInfoService studyInfoService;
     private final AuthService authService;
