@@ -1,6 +1,8 @@
 package com.example.backend.study.api.service.todo;
 
 
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -63,5 +65,26 @@ public class StudyTodoService {
                 .todoLink(studyTodoRequest.getTodoLink())
                 .todoDate(studyTodoRequest.getTodoDate())
                 .build();
+    }
+
+
+    // Todo 삭제
+    @Transactional
+    public void deleteStudyTodo(Long todoId, Long studyInfoId) {
+
+
+        // 스터디와 관련된 StudyTodo 조회
+        StudyTodo studyTodo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+
+        // StudyTodoMapping 테이블에서 todoId로 연결된 레코드 삭제
+        studyTodoMappingRepository.deleteByTodoId(studyTodo.getId());
+
+
+        // StudyTodo 테이블에서 해당 todoId에 해당하는 레코드 삭제
+        studyTodoRepository.delete(studyTodo);
+
     }
 }

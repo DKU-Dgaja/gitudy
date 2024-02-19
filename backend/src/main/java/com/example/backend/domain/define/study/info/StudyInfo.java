@@ -105,7 +105,6 @@ public class StudyInfo extends BaseEntity {
         return sb.toString();
     }
 
-
     public void updateStudyInfo(StudyInfoUpdateRequest request) {
         this.userId = request.getUserId();
         this.topic = request.getTopic();
@@ -116,5 +115,9 @@ public class StudyInfo extends BaseEntity {
         this.profileImageUrl = request.getProfileImageUrl();
         this.repositoryInfo = request.getRepositoryInfo();
         this.periodType = request.getPeriodType();
+    }
+    
+    public void updateDeletedStudy() {
+        this.status = StudyStatus.STUDY_DELETED;
     }
 }

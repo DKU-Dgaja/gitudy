@@ -18,6 +18,16 @@ public class UserFixture {
                 .build();
     }
 
+    public static User generateAuthUserByPlatformId(String platformId) {
+        return User.builder()
+                .platformId(platformId)
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
+                .build();
+    }
     public static User generateUNAUTHUser() {
         return User.builder()
                 .platformId("1")

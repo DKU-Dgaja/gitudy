@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.info;
 
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
@@ -33,6 +34,20 @@ public class StudyInfoController {
         return JsonResult.successOf("Study Register Success.");
     }
 
+   @ApiResponse(responseCode = "200", description = "스터디 삭제 성공")
+    @DeleteMapping("/{studyInfoId}")
+    public JsonResult<?> deleteStudy(@AuthenticationPrincipal User user,
+                                     @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        try {
+            // 유저가 스터디 장이 아닐 경우 예외 발생
+            studyMemberService.isValidateStudyLeader(user, studyInfoId);
+            studyInfoService.deleteStudy(studyInfoId);
+
+        } catch (GitudyException e) {
+            return JsonResult.failOf(e.getMessage());
+        }
+        return JsonResult.successOf("Study deleted successfully");
+    }
 
     @ApiResponse(responseCode = "200", description = "스터디 정보 수정 성공")
     @PatchMapping("/{studyInfoId}")

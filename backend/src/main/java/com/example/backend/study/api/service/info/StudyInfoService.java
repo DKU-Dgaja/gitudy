@@ -2,6 +2,8 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
+
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -71,7 +73,25 @@ public class StudyInfoService {
         // 스터디 업데이트
         studyInfo.updateStudyInfo(request);
     }
+  
+    // 스터디 삭제
+    @Transactional
+    public boolean deleteStudy(Long studyInfoId) {
+        // 스터디가 있는지 확인
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
 
+        // 스터디 상태정보 변경
+        studyInfo.updateDeletedStudy();
+        
+        // 스터디 멤버 상태정보 변경
+        updateWithdrawalStudyMember(studyInfoId);
+
+        return true;
+    }
+  
     public UpdateStudyInfoPageResponse updateStudyInfoPage(Long studyInfoId) {
         // Study 조회
         StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
@@ -109,6 +129,11 @@ public class StudyInfoService {
                 .categoriesId(categoriesId)
                 .build();
         return response;
+    }
+
+    private void updateWithdrawalStudyMember(Long studyInfoId) {
+        List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfoId);
+        studyMembers.forEach(StudyMember::updateWithdrawalStudyMember);
     }
 
     // 카테고리 매핑 생성해주는 함수
