@@ -127,7 +127,6 @@ public class StudyInfoFixture {
                 .status(StudyStatus.STUDY_PRIVATE) // 공개에서 비공개로 업데이트
                 .maximumMember(10) // 5 -> 10으로 변경
                 .profileImageUrl("Updated : https://example.com/profile.jpg")
-                .notice("Updated : 기한은 일주일입니다!")
                 .repositoryInfo(new RepositoryInfo("Updated : 구영민", "Updated : aaa333", "Updated : BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_NONE) // STUDY_PERIOD_EVERYDAY -> STUDY_PERIOD_NONE
                 .categoriesId(categoriesId)

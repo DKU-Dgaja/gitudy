@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/studyinfo")
+@RequestMapping("/study")
 public class StudyInfoController {
     private final StudyInfoService studyInfoService;
     private final AuthService authService;
@@ -36,7 +36,7 @@ public class StudyInfoController {
 
 
     @ApiResponse(responseCode = "200", description = "스터디 정보 수정 성공")
-    @PatchMapping("/{studyInfoId}/update")
+    @PatchMapping("/{studyInfoId}")
     public JsonResult<?> updateStudyTodo(@AuthenticationPrincipal User user,
                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
                                          @Valid @RequestBody StudyInfoUpdateRequest studyInfoUpdateRequest) {

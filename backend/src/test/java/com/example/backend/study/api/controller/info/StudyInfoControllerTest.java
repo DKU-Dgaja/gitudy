@@ -93,7 +93,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
-        mockMvc.perform(post("/studyinfo/")
+        mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
@@ -123,7 +123,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
-        mockMvc.perform(post("/studyinfo/")
+        mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
@@ -152,7 +152,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
-        mockMvc.perform(post("/studyinfo/")
+        mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
@@ -185,7 +185,7 @@ class StudyInfoControllerTest extends TestConfig {
         doNothing().when(studyInfoService).updateStudyInfo(studyInfoUpdateRequest, studyInfo.getId());
 
         //then
-        mockMvc.perform(patch("/studyinfo/" + studyInfo.getId() + "/update")
+        mockMvc.perform(patch("/study/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(studyInfoUpdateRequest)))

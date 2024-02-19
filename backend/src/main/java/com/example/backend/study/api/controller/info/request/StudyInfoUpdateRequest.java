@@ -35,8 +35,6 @@ public class StudyInfoUpdateRequest {
 
     private String profileImageUrl;                 // 스터디 프로필 사진
 
-    private String notice;                          // 스터디 공지
-
     private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)

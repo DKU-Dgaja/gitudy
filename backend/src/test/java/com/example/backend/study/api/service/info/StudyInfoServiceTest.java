@@ -131,7 +131,6 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertEquals(studyInfoUpdateRequest.getStatus(), updatedStudyInfo.get().getStatus()),
                 () -> assertEquals(studyInfoUpdateRequest.getMaximumMember(), updatedStudyInfo.get().getMaximumMember()),
                 () -> assertEquals(studyInfoUpdateRequest.getProfileImageUrl(), updatedStudyInfo.get().getProfileImageUrl()),
-                () -> assertEquals(studyInfoUpdateRequest.getNotice(), updatedStudyInfo.get().getNotice()),
                 () -> assertEquals(studyInfoUpdateRequest.getRepositoryInfo().getBranchName(), updatedStudyInfo.get().getRepositoryInfo().getBranchName()),
                 () -> assertEquals(studyInfoUpdateRequest.getRepositoryInfo().getName(), updatedStudyInfo.get().getRepositoryInfo().getName()),
                 () -> assertEquals(studyInfoUpdateRequest.getRepositoryInfo().getOwner(), updatedStudyInfo.get().getRepositoryInfo().getOwner()),

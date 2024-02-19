@@ -114,7 +114,6 @@ public class StudyInfo extends BaseEntity {
         this.status = request.getStatus();
         this.maximumMember = request.getMaximumMember();
         this.profileImageUrl = request.getProfileImageUrl();
-        this.notice = request.getNotice();
         this.repositoryInfo = request.getRepositoryInfo();
         this.periodType = request.getPeriodType();
     }
