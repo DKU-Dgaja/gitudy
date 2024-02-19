@@ -5,6 +5,7 @@ import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
+import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -23,6 +24,7 @@ public class StudyInfoController {
     private final StudyInfoService studyInfoService;
     private final AuthService authService;
     private final StudyMemberService studyMemberService;
+
     @ApiResponse(responseCode = "200", description = "스터디 등록 성공")
     @PostMapping("/")
     public JsonResult<?> registerStudy(@AuthenticationPrincipal User user,
@@ -32,7 +34,7 @@ public class StudyInfoController {
         return JsonResult.successOf("Study Register Success.");
     }
 
-    @ApiResponse(responseCode = "200", description = "스터디 삭제 성공")
+   @ApiResponse(responseCode = "200", description = "스터디 삭제 성공")
     @DeleteMapping("/{studyInfoId}")
     public JsonResult<?> deleteStudy(@AuthenticationPrincipal User user,
                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
@@ -45,5 +47,28 @@ public class StudyInfoController {
             return JsonResult.failOf(e.getMessage());
         }
         return JsonResult.successOf("Study deleted successfully");
+    }
+
+    @ApiResponse(responseCode = "200", description = "스터디 정보 수정 성공")
+    @PatchMapping("/{studyInfoId}")
+    public JsonResult<?> updateStudyInfo(@AuthenticationPrincipal User user,
+                                         @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                         @Valid @RequestBody StudyInfoUpdateRequest studyInfoUpdateRequest) {
+
+        // 리더인지 확인
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyInfoService.updateStudyInfo(studyInfoUpdateRequest, studyInfoId);
+
+        return JsonResult.successOf("StudyInfo update Success");
+    }
+
+    @ApiResponse(responseCode = "200", description = "스터디 정보 수정 페이지 요청 성공")
+    @GetMapping("/{studyInfoId}/update")
+    public JsonResult<?> updateStudyInfoPage(@AuthenticationPrincipal User user,
+                                             @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        // 리더인지 확인
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+        return JsonResult.successOf(studyInfoService.updateStudyInfoPage(studyInfoId));
     }
 }
