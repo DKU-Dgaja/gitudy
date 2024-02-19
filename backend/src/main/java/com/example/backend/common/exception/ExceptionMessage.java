@@ -43,12 +43,13 @@ public enum ExceptionMessage {
     AUTH_NOT_FOUND("계정 정보를 찾을 수 없습니다."),
     AUTH_DELETE_FAIL("계정 삭제에 실패했습니다."),
 
-    // BokmarkException
+    // BookmarkException
     BOOKMARK_DELETE_FAIL("북마크 삭제에 실패했습니다."),
 
-    // TodoExcetpion
+    // TodoException
     STUDY_INFO_NOT_FOUND("해당 스터디정보를 찾을 수 없습니다."),
     STUDY_MEMBER_NOT_LEADER("스터디장이 아닙니다."),
+    TODO_NOT_FOUND("해당 Todo를 찾을 수 없습니다.")
     ;
     private final String text;
 }
