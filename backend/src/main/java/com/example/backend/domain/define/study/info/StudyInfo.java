@@ -103,4 +103,7 @@ public class StudyInfo extends BaseEntity {
         }
         return sb.toString();
     }
+    public void updateDeletedStudy() {
+        this.status = StudyStatus.STUDY_DELETED;
+    }
 }

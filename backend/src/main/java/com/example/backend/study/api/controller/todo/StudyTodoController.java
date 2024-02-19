@@ -49,5 +49,19 @@ public class StudyTodoController {
         studyTodoService.updateStudyTodo(studyTodoUpdateRequest, todoId);
 
         return JsonResult.successOf("Todo update Success");
+}
+  
+    // Todo 삭제
+    @ApiResponse(responseCode = "200", description = "Todo 삭제 성공")
+    @DeleteMapping("/{studyInfoId}/todo/{todoId}")
+    public JsonResult<?> deleteStudyTodo(@AuthenticationPrincipal User user,
+                                         @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                         @PathVariable(name = "todoId") Long todoId) {
+
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyTodoService.deleteStudyTodo(todoId, studyInfoId);
+
+        return JsonResult.successOf("Todo delete Success");
     }
 }

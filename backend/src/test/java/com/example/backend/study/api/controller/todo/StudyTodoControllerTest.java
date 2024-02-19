@@ -32,6 +32,7 @@ import java.util.Map;
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -113,12 +114,10 @@ public class StudyTodoControllerTest extends TestConfig {
 
     }
 
-
     @Test
     public void Todo_수정_테스트() throws Exception {
 
         //given
-
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -153,5 +152,36 @@ public class StudyTodoControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Todo update Success"))
                 .andDo(print());
 
+    }
+  
+   @Test
+    public void Todo_삭제_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(studyTodo);
+
+
+        //when
+        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        doNothing().when(studyTodoService).deleteStudyTodo(any(Long.class), any(Long.class));
+
+
+        //then
+        mockMvc.perform(delete("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("Todo delete Success"))
+                .andDo(print());
     }
 }

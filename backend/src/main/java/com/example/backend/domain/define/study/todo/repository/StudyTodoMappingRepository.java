@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface StudyTodoMappingRepository extends JpaRepository<StudyTodoMapping, Long> {
+    Optional<StudyTodoMapping> deleteByTodoId(Long todoId);
+
+    List<StudyTodoMapping> findByTodoId(Long todoId);
 }
