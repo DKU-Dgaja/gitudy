@@ -38,7 +38,7 @@ public class StudyTodoController {
 
     // Todo 수정
     @ApiResponse(responseCode = "200", description = "Todo 수정 성공")
-    @PutMapping("/{studyInfoId}/todo/{todoId}/update")
+    @PutMapping("/{studyInfoId}/todo/{todoId}")
     public JsonResult<?> updateStudyTodo(@AuthenticationPrincipal User user,
                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
                                          @PathVariable(name = "todoId") Long todoId,

@@ -142,7 +142,7 @@ public class StudyTodoControllerTest extends TestConfig {
         doNothing().when(studyTodoService).updateStudyTodo(any(StudyTodoUpdateRequest.class), any(Long.class));
 
         //then
-        mockMvc.perform(put("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId() + "/update")
+        mockMvc.perform(put("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
