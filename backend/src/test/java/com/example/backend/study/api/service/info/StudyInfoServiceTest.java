@@ -57,8 +57,6 @@ class StudyInfoServiceTest extends TestConfig {
     private StudyMemberRepository studyMemberRepository;
     @Autowired
     private StudyCategoryRepository studyCategoryRepository;
-    @Autowired
-    private StudyInfoRepository studyInfoRepository;
 
     @AfterEach
     void tearDown() {

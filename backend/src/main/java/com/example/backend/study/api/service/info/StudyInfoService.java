@@ -39,7 +39,7 @@ public class StudyInfoService {
 
     private final StudyCategoryMappingRepository studyCategoryMappingRepository;
 
-    private final StudyMemberService studyMemberService;
+    private final StudyMemberRepository studyMemberRepository;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
