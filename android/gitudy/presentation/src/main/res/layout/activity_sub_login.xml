@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="200dp"
+        android:layout_marginTop="250dp"
         android:gravity="center"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
@@ -19,15 +19,15 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="68dp"
-            android:layout_height="68dp"
-            android:src="@drawable/ic_alert_red_c" />
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_alert_gradient_c" />
 
         <TextView
-            style="@style/B1_1"
+            style="@style/B2_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="11dp"
+            android:layout_marginTop="5dp"
             android:gravity="center"
             android:text="추후 Github 계정 연동은\n필수입니다!"
             android:textColor="@color/GS_900" />
