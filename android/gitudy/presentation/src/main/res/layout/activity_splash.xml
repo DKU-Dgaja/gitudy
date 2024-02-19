@@ -7,7 +7,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/WHITE"
+        android:background="@color/BACKGROUND"
         android:padding="22dp"
         tools:context="com.takseha.presentation.ui.SplashActivity">
 
