@@ -1,4 +1,4 @@
-package com.example.backend.study.api.service.category.info.repository;
+package com.example.backend.domain.define.study.category.info.repository;
 
 import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.member.StudyMember;
