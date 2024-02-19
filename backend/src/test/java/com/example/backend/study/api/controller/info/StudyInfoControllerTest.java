@@ -7,13 +7,14 @@ import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.category.info.StudyCategory;
+import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.example.backend.study.api.service.category.info.repository.StudyCategoryRepository;
+import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,8 +37,7 @@ import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -193,6 +193,36 @@ class StudyInfoControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("StudyInfo update Success"))
+                .andDo(print());
+
+    }
+
+    @Test
+    public void 스터디_정보_수정_페이지_요청테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+
+        UpdateStudyInfoPageResponse updateStudyInfoPageResponse = generateUpdateStudyInfoPageResponseWithCategory(studyInfo.getUserId(), studyCategories);
+        //when
+        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyInfoService.updateStudyInfoPage(any(Long.class))).thenReturn(updateStudyInfoPageResponse);
+
+        //then
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                )
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andDo(print());
 
     }

@@ -6,6 +6,7 @@ import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -107,7 +108,7 @@ public class StudyInfoFixture {
                 .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
-                .maximumMember(-1)
+                .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
@@ -133,6 +134,24 @@ public class StudyInfoFixture {
                 .build();
     }
 
+    // 카테고리를 받아 StudyInfoRegisterRequest요청을 생성해주는 함수
+    public static UpdateStudyInfoPageResponse generateUpdateStudyInfoPageResponseWithCategory(Long userId, List<StudyCategory> studyCategories) {
+        List<Long> categoriesId = getCategoriesId(studyCategories);
+
+        return UpdateStudyInfoPageResponse.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .endDate(LocalDate.now().plusMonths(3))
+                .info("This is a sample study.")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .joinCode("ABC123")
+                .maximumMember(5)
+                .profileImageUrl("https://example.com/profile.jpg")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .categoriesId(categoriesId)
+                .build();
+    }
     // 카테고리 id 리스트를 생성해주는 함수
     private static List<Long> getCategoriesId(List<StudyCategory> studyCategories) {
         List<Long> categoriesId = studyCategories.stream()
