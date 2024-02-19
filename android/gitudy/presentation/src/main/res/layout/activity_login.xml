@@ -11,21 +11,21 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="153dp"
-            android:layout_height="29.6dp"
-            android:src="@drawable/logo_gitudy" />
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:src="@drawable/logo_git" />
 
         <TextView
             style="@style/B1_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="11dp"
             android:text="함께 성장하는\n개발자들의 협업 공간"
             android:textColor="@color/GS_900" />
     </LinearLayout>
@@ -34,7 +34,7 @@
         android:id="@+id/githubLoginBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="18dp"
+        android:layout_marginBottom="21dp"
         android:background="@drawable/box_non_stroke_r6_green"
         android:gravity="center"
         app:layout_constraintBottom_toTopOf="@+id/otherLoginBtn"
@@ -64,7 +64,7 @@
         style="@style/B6_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="13dp"
         android:text="다른 계정으로 시작하기"
         android:textColor="@color/GS_500"
         app:layout_constraintBottom_toBottomOf="parent"
