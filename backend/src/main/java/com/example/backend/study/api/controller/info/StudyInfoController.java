@@ -34,10 +34,9 @@ public class StudyInfoController {
     }
 
 
-
     @ApiResponse(responseCode = "200", description = "스터디 정보 수정 성공")
     @PatchMapping("/{studyInfoId}")
-    public JsonResult<?> updateStudyTodo(@AuthenticationPrincipal User user,
+    public JsonResult<?> updateStudyInfo(@AuthenticationPrincipal User user,
                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
                                          @Valid @RequestBody StudyInfoUpdateRequest studyInfoUpdateRequest) {
 
@@ -47,5 +46,14 @@ public class StudyInfoController {
         studyInfoService.updateStudyInfo(studyInfoUpdateRequest, studyInfoId);
 
         return JsonResult.successOf("StudyInfo update Success");
+    }
+
+    @ApiResponse(responseCode = "200", description = "스터디 정보 수정 페이지 요청 성공")
+    @GetMapping("/{studyInfoId}/update")
+    public JsonResult<?> updateStudyInfoPage(@AuthenticationPrincipal User user,
+                                             @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        // 리더인지 확인
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+        return JsonResult.successOf(studyInfoService.updateStudyInfoPage(studyInfoId));
     }
 }

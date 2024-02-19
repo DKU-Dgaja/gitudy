@@ -2,8 +2,8 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
+import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -11,7 +11,7 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.example.backend.study.api.service.category.mapping.repository.StudyCategoryMappingRepository;
+import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,7 +54,6 @@ public class StudyInfoService {
     }
 
 
-
     @Transactional
     public void updateStudyInfo(StudyInfoUpdateRequest request, Long studyInfoId) {
         // Study 조회
@@ -73,6 +72,44 @@ public class StudyInfoService {
         studyInfo.updateStudyInfo(request);
     }
 
+    public UpdateStudyInfoPageResponse updateStudyInfoPage(Long studyInfoId) {
+        // Study 조회
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        List<Long> categoriesId = getCategoriesId(studyInfoId);
+
+        UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoriesId);
+
+        return response;
+    }
+
+    // studyinfoId를 파라미터로 받아 카테고리 id를 생성해주는 함수
+    private List<Long> getCategoriesId(Long studyInfoId) {
+        List<Long> categoriesId = studyCategoryMappingRepository.findByStudyInfoId(studyInfoId)
+                .stream()
+                .map(StudyCategoryMapping::getStudyCategoryId)
+                .collect(Collectors.toList());
+        return categoriesId;
+    }
+
+    private static UpdateStudyInfoPageResponse getUpdateStudyInfoPageResponse(StudyInfo studyInfo, List<Long> categoriesId) {
+        UpdateStudyInfoPageResponse response = UpdateStudyInfoPageResponse.builder()
+                .userId(studyInfo.getUserId())
+                .topic(studyInfo.getTopic())
+                .endDate(studyInfo.getEndDate())
+                .info(studyInfo.getInfo())
+                .status(studyInfo.getStatus())
+                .joinCode(studyInfo.getJoinCode())
+                .maximumMember(studyInfo.getMaximumMember())
+                .profileImageUrl(studyInfo.getProfileImageUrl())
+                .repositoryInfo(studyInfo.getRepositoryInfo())
+                .periodType(studyInfo.getPeriodType())
+                .categoriesId(categoriesId)
+                .build();
+        return response;
+    }
 
     // 카테고리 매핑 생성해주는 함수
     private List<Long> saveStudyCategoryMappings(List<Long> categories, StudyInfo studyInfo) {
