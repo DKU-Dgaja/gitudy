@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.login
 
 import android.content.ComponentName
 import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.util.Log
@@ -49,6 +50,9 @@ class SubLoginActivity : AppCompatActivity() {
 //            val loginIntent: CustomTabsIntent = CustomTabsIntent.Builder()
 //                .build()
 //            loginIntent.launchUrl(this, Uri.parse(it))
+            val intent = Intent(this, LoginWebviewActivity::class.java)
+            intent.putExtra("url", it)
+            startActivity(intent)
         })
     }
 }
