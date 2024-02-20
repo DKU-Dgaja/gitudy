@@ -4,8 +4,11 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -49,8 +52,8 @@ public class StudyTodoController {
         studyTodoService.updateStudyTodo(studyTodoUpdateRequest, todoId);
 
         return JsonResult.successOf("Todo update Success");
-}
-  
+    }
+
     // Todo 삭제
     @ApiResponse(responseCode = "200", description = "Todo 삭제 성공")
     @DeleteMapping("/{studyInfoId}/todo/{todoId}")
@@ -63,5 +66,20 @@ public class StudyTodoController {
         studyTodoService.deleteStudyTodo(todoId, studyInfoId);
 
         return JsonResult.successOf("Todo delete Success");
+    }
+
+
+    // Todo 전체조회
+    @ApiResponse(responseCode = "200", description = "Todo 전체조회 성공", content = @Content(schema = @Schema(implementation = StudyTodoResponse.class)))
+    @GetMapping("/{studyInfoId}/todo")
+    public JsonResult<?> readStudyTodo(@AuthenticationPrincipal User user,
+                                       @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                       @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
+                                       @RequestParam(name = "limit", defaultValue = "3") Long limit) {
+
+        // 스터디 멤버인지 검증
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
+
+        return JsonResult.successOf(studyTodoService.readStudyTodoList(studyInfoId, cursorIdx, limit));
     }
 }

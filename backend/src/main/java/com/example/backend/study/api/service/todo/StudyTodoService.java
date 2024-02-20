@@ -3,15 +3,17 @@ package com.example.backend.study.api.service.todo;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
-import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +32,7 @@ public class StudyTodoService {
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyInfoRepository studyInfoRepository;
 
     // Todo 등록
     @Transactional
@@ -105,5 +108,18 @@ public class StudyTodoService {
         // StudyTodo 테이블에서 해당 todoId에 해당하는 레코드 삭제
         studyTodoRepository.delete(studyTodo);
 
+    }
+
+    // Todo 전체조회
+    public List<StudyTodoResponse> readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
+
+        // 스터디 조회 예외처리
+        studyInfoRepository.findById(studyInfoId).orElseThrow(()->{
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // StudyInfoId로 To do 가져오기
+        return studyTodoRepository.findStudyTodoListByStudyInfoId(studyInfoId, cursorIdx, limit);
     }
 }
