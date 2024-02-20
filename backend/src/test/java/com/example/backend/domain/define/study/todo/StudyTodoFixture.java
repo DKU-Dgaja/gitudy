@@ -4,6 +4,7 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 
 import java.time.LocalDate;
 
@@ -52,6 +53,26 @@ public class StudyTodoFixture {
                 .todoDate(todoDate)
                 .build();
     }
+
+    // 테스트용 To do 조회
+    public static StudyTodoResponse createStudyTodoResponse(Long id, Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
+        return new StudyTodoResponse(id, studyInfoId, title, detail, todoLink, todoDate);
+    }
+
+
+    //테스트용 studyTodo List 생성
+    public static StudyTodo createStudyTodoList(Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
+
+        return StudyTodo.builder()
+                .studyInfoId(studyInfoId)
+                .title(title)
+                .detail(detail)
+                .todoLink(todoLink)
+                .todoDate(todoDate)
+                .build();
+    }
+
+
 
 
 }

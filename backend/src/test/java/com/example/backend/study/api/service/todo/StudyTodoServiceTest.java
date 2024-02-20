@@ -8,17 +8,17 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
-import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,9 +26,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
@@ -62,6 +60,8 @@ public class StudyTodoServiceTest extends TestConfig {
     public final static String expectedTodoLink = "https://www.acmicpc.net/";
     public final static LocalDate expectedTodoDate = LocalDate.now();
     public final static StudyTodoStatus expectedStatus = TODO_INCOMPLETE;
+    public final static Long CursorIdx = null;
+    public final static Long Limit = 3L;
 
     @AfterEach
     void tearDown() {
@@ -115,7 +115,7 @@ public class StudyTodoServiceTest extends TestConfig {
                 .anyMatch(mappingMember -> mappingMember.getUserId().equals(withdrawalMember.getId())));
 
     }
-  
+
     @Test
     @DisplayName("Todo 수정 테스트")
     public void updateTodo() {
@@ -190,4 +190,45 @@ public class StudyTodoServiceTest extends TestConfig {
         assertTrue(todoMappings.isEmpty());
 
     }
+
+    @Test
+    @DisplayName("Todo 전체조회 테스트")
+    void readTodoList_Success() {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(user.getId());
+        studyInfoRepository.save(studyInfo);
+
+        // To do 10개 저장
+        for (int td = 1; td <= 10; td++) {
+            studyTodoRepository.save(StudyTodoFixture.createStudyTodoList(studyInfo.getId(),
+                    expectedTitle + td,
+                    expectedDetail + td,
+                    expectedTodoLink + td,
+                    expectedTodoDate.plusDays(td)
+            ));
+        }
+
+        // when 첫 번째 페이지 조회
+        List<StudyTodoResponse> firstPageTodoList = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit);
+
+        // then 첫 페이지 검증
+        assertNotNull(firstPageTodoList);
+        assertEquals(Limit.intValue(), firstPageTodoList.size()); // 첫 페이지에는 3개의 항목이 있어야 함
+        assertEquals(expectedTitle + "10", firstPageTodoList.get(0).getTitle()); // 마지막에 작성된 To do (최신항목)확인
+        assertEquals(expectedTitle + "8", firstPageTodoList.get(2).getTitle());
+
+        Long newCursorIdx = firstPageTodoList.get(firstPageTodoList.size() - 1).getId(); // 첫 번째 페이지의 마지막 항목Id-1 (=7)
+        // when 두 번째 페이지 조회
+        List<StudyTodoResponse> secondPageTodoList = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx, Limit);
+
+        // then 두 번째 페이지 검증
+        assertNotNull(secondPageTodoList);
+        assertEquals(Limit.intValue(), secondPageTodoList.size());
+        assertEquals(expectedTitle + "7", secondPageTodoList.get(0).getTitle());
+        assertEquals(expectedTitle + "5", secondPageTodoList.get(2).getTitle());
+    }
+
+
 }
