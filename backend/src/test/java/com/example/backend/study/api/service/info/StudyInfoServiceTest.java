@@ -11,7 +11,6 @@ import com.example.backend.domain.define.study.category.info.repository.StudyCat
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
-
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -20,13 +19,15 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberStatus
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -37,14 +38,14 @@ import static com.example.backend.domain.define.study.StudyCategory.info.StudyCa
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.createDefaultPublicStudyCategories;
 import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_LENGTH;
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
-import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfo;
-import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfoRegisterRequestWithCategory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyInfoServiceTest extends TestConfig {
-
+    private final static int DATA_SIZE = 10;
+    private final static Long LIMIT = 10L;
+    private final static String sortBy = "score";
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -109,8 +110,8 @@ class StudyInfoServiceTest extends TestConfig {
         // joinCode 10자리가 잘 생성되었는지 검증
         assertEquals(registeredStudy.getJoinCode().length(), JOIN_CODE_LENGTH);
     }
-    
-  
+
+
     @Test
     void 삭제_성공_테스트() {
         // given
@@ -165,7 +166,7 @@ class StudyInfoServiceTest extends TestConfig {
         }, "해당 스터디정보를 찾을 수 없습니다.");
     }
  
-      @Test
+    @Test
     public void 스터디_수정_테스트() {
         // given
 
@@ -254,5 +255,138 @@ class StudyInfoServiceTest extends TestConfig {
 
         IntStream.range(0, response.getCategoriesId().size())
                 .forEach(i -> assertEquals(savedStudyCategoryMappings.get(i).getStudyCategoryId(), response.getCategoriesId().get(i)));
+    }
+
+    @Test
+    public void 마이스터디_조회_테스트() {
+        // given
+        int expectedResponseSize = 3;
+
+        // 유저 생성
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User other = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        // 스터디 생성
+        List<StudyInfo> studyInfos = new ArrayList<>();
+        StudyInfo savedStudyInfo1 = studyInfoRepository.save(generateStudyInfo(user.getId()));
+        StudyInfo savedStudyInfo2 = studyInfoRepository.save(generateStudyInfo(user.getId()));
+        StudyInfo savedStudyInfo3 = studyInfoRepository.save(generateStudyInfo(user.getId()));
+        StudyInfo otherSavedStudyInfo1 = studyInfoRepository.save(generateStudyInfo(other.getId()));
+        StudyInfo otherSavedStudyInfo2 = studyInfoRepository.save(generateStudyInfo(other.getId()));
+
+        studyInfos.add(savedStudyInfo1);
+        studyInfos.add(savedStudyInfo2);
+        studyInfos.add(savedStudyInfo3);
+        studyInfos.add(otherSavedStudyInfo1);
+        studyInfos.add(otherSavedStudyInfo2);
+        studyInfoRepository.saveAll(studyInfos);
+
+        // when
+        List<MyStudyInfoListResponse> response = studyInfoService.selectMyStudyInfoList(user.getId(), null, LIMIT, sortBy);
+
+        // then
+        assertEquals(expectedResponseSize, response.size());
+    }
+
+    @Test
+    void lastCommitDay_기준_정렬된_마이_스터디_조회_테스트() {
+        // given
+        String sortBy = "lastCommitDay";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfos);
+
+//        System.out.println("---------Before sort by lastCommitDay---------");
+//        for(StudyInfo x: studyInfos){
+//            System.out.println(x.getLastCommitDay());
+//        }
+//        System.out.println("----------------------------------------------");
+
+        // when
+        List<MyStudyInfoListResponse> studyInfoList = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
+
+//        System.out.println("---------After sort by lastCommitDay----------");
+//        for(AllStudyInfoResponse x: studyInfoList){
+//            System.out.println(x.getLastCommitDay());
+//        }
+//        System.out.println("----------------------------------------------");
+
+
+        assertEquals(LIMIT, studyInfoList.size());
+        LocalDate previousCommitDay = null;
+        for (MyStudyInfoListResponse studyInfo : studyInfoList) {
+            LocalDate currentCommitDay = studyInfo.getLastCommitDay();
+            if (previousCommitDay != null) {
+                assertTrue(currentCommitDay.isBefore(previousCommitDay) || currentCommitDay.isEqual(previousCommitDay));
+            }
+            previousCommitDay = currentCommitDay;
+        }
+    }
+
+    @Test
+    void score_기준_정렬된_마이_스터디_조회_테스트() {
+        // given
+        String sortBy = "score";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfos);
+
+//        System.out.println("---------Before sort by Score---------");
+//        for(StudyInfo x: studyInfos){
+//            System.out.println(x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // when
+        List<MyStudyInfoListResponse> studyInfoList = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
+
+//        System.out.println("---------After sort by Score----------");
+//        for(AllStudyInfoResponse x: studyInfoList){
+//            System.out.println(x.getScore());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // then
+        assertEquals(LIMIT, studyInfoList.size());
+
+        int previousScore = Integer.MAX_VALUE;
+        for (MyStudyInfoListResponse studyInfo : studyInfoList) {
+            int currentScore = studyInfo.getScore();
+            assertTrue(currentScore <= previousScore);
+            previousScore = currentScore;
+        }
+    }
+
+    @Test
+    void createdDateTime_기준_정렬된_마이_스터디_조회_테스트() {
+        // given
+        String sortBy = "createdDateTime";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfos);
+
+//        System.out.println("---------Before sort by createdDateTime---------");
+//        for(StudyInfo x: studyInfos){
+//            System.out.println(x.getCreatedDateTime());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // when
+        List<MyStudyInfoListResponse> studyInfoList = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
+
+//        System.out.println("---------After sort by createdDateTime----------");
+//        for(MyStudyInfoListResponse x: studyInfoList){
+//            System.out.println(x.getCreatedDateTime());
+//        }
+//        System.out.println("--------------------------------------");
+
+        // then
+        assertEquals(LIMIT, studyInfoList.size());
+
+        LocalDateTime previousCreatedDateTime = studyInfoList.get(0).getCreatedDateTime();
+        for (MyStudyInfoListResponse studyInfo : studyInfoList) {
+            LocalDateTime currentCreatedDateTime = studyInfo.getCreatedDateTime();
+            assertTrue(currentCreatedDateTime.compareTo(previousCreatedDateTime) <= 0);
+            previousCreatedDateTime = currentCreatedDateTime;
+        }
     }
 }
