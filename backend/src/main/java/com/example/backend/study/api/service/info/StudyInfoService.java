@@ -2,8 +2,6 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
-
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -12,9 +10,9 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-import com.example.backend.study.api.service.member.StudyMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -73,7 +71,7 @@ public class StudyInfoService {
         // 스터디 업데이트
         studyInfo.updateStudyInfo(request);
     }
-  
+
     // 스터디 삭제
     @Transactional
     public boolean deleteStudy(Long studyInfoId) {
@@ -85,13 +83,13 @@ public class StudyInfoService {
 
         // 스터디 상태정보 변경
         studyInfo.updateDeletedStudy();
-        
+
         // 스터디 멤버 상태정보 변경
         updateWithdrawalStudyMember(studyInfoId);
 
         return true;
     }
-  
+
     public UpdateStudyInfoPageResponse updateStudyInfoPage(Long studyInfoId) {
         // Study 조회
         StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
@@ -103,6 +101,11 @@ public class StudyInfoService {
         UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoriesId);
 
         return response;
+    }
+
+    // 정렬된 모든 마이 스터디 조회
+    public List<MyStudyInfoListResponse> selectMyStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy) {
+        return studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
     }
 
     // studyinfoId를 파라미터로 받아 카테고리 id를 생성해주는 함수
