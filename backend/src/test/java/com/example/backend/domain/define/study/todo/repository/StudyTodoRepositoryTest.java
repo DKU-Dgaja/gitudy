@@ -1,11 +1,7 @@
 package com.example.backend.domain.define.study.todo.repository;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.auth.config.fixture.UserFixture;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
