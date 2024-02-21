@@ -13,6 +13,7 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoPageResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -111,7 +112,7 @@ public class StudyTodoService {
     }
 
     // Todo 전체조회
-    public List<StudyTodoResponse> readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
+    public StudyTodoPageResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
         studyInfoRepository.findById(studyInfoId).orElseThrow(()->{
@@ -119,7 +120,19 @@ public class StudyTodoService {
             return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
 
+        List<StudyTodoResponse> todos = studyTodoRepository.findStudyTodoListByStudyInfoId(studyInfoId, cursorIdx, limit);
+        Long nextCursorIdx = setNextCursorIdx(todos);
+
         // StudyInfoId로 To do 가져오기
-        return studyTodoRepository.findStudyTodoListByStudyInfoId(studyInfoId, cursorIdx, limit);
+        return new StudyTodoPageResponse(todos, nextCursorIdx);
+    }
+
+    // To do 조회 다음위치 커서 설정 메서드
+    private Long setNextCursorIdx(List<StudyTodoResponse> todos)
+    {
+        if (!todos.isEmpty()) {
+            return todos.get(todos.size() - 1).getId();
+        }
+        return null; // 비어있으면 null
     }
 }
