@@ -21,13 +21,9 @@ public class StudyTodoRepositoryTest extends TestConfig {
     @Autowired
     private StudyTodoRepository studyTodoRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
     @AfterEach
     void tearDown() {
         studyTodoRepository.deleteAllInBatch();
-        userRepository.deleteAllInBatch();
     }
 
     @Test

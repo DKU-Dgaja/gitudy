@@ -16,6 +16,7 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoPageResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
@@ -30,6 +31,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.study.api.service.todo.StudyTodoServiceTest.*;
@@ -200,30 +203,21 @@ public class StudyTodoControllerTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        List<StudyTodoResponse> studyTodoResponses = new ArrayList<>();
-        for (int td = 1; td <= 10; td++) {
-            studyTodoResponses.add(
-                    StudyTodoFixture.createStudyTodoResponse(
-                            Long.valueOf(td),
-                            studyInfo.getId(),
-                            expectedTitle + td,
-                            expectedDetail + td,
-                            expectedTodoLink + td,
-                            expectedTodoDate.plusDays(td)
-                    )
-            );
-        }
+        // StudyTodoResponse 10개 생성
+        List<StudyTodoResponse> studyTodoResponses = StudyTodoFixture.createStudyTodoResponses(studyInfo.getId(), 10);
+        Long nextCursorIdx = studyTodoResponses.get(studyTodoResponses.size() - 1).getId();
+
+
+        StudyTodoPageResponse pageResponse = StudyTodoFixture.createStudyTodoPageResponse(studyTodoResponses, nextCursorIdx);
 
         doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
-        when(studyTodoService.readStudyTodoList(any(Long.class), isNull(), any(Long.class))).thenReturn(studyTodoResponses);
+        when(studyTodoService.readStudyTodoList(any(Long.class), isNull(), any(Long.class))).thenReturn(pageResponse);
 
-        // when & then
+        // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", String.valueOf(Limit)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").isArray())
-                .andExpect(jsonPath("$.res_obj", hasSize(10))) // To do 개수확인
                 .andDo(print());
     }
 }

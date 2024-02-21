@@ -4,9 +4,12 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoPageResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.example.backend.study.api.service.todo.StudyTodoServiceTest.*;
 
@@ -54,9 +57,26 @@ public class StudyTodoFixture {
                 .build();
     }
 
-    // 테스트용 To do 조회
-    public static StudyTodoResponse createStudyTodoResponse(Long id, Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
-        return new StudyTodoResponse(id, studyInfoId, title, detail, todoLink, todoDate);
+    // 여러 StudyTodoResponse 객체를 생성하여 리스트로 반환
+    public static List<StudyTodoResponse> createStudyTodoResponses(Long studyInfoId, int numberOfResponses) {
+        List<StudyTodoResponse> responses = new ArrayList<>();
+        for (long i = 1; i <= numberOfResponses; i++) {
+            responses.add(StudyTodoResponse.builder()
+                    .id(i)
+                    .studyInfoId(studyInfoId)
+                    .title(expectedTitle + i)
+                    .detail(expectedDetail + i)
+                    .todoLink(expectedTodoLink + i)
+                    .todoDate(expectedTodoDate.plusDays(i))
+                    .build());
+        }
+        return responses;
+    }
+
+
+    // 테스트용 StudyTodoPageResponse 생성
+    public static StudyTodoPageResponse createStudyTodoPageResponse(List<StudyTodoResponse> todos, Long nextCursorIdx) {
+        return new StudyTodoPageResponse(todos, nextCursorIdx);
     }
 
 
@@ -71,8 +91,6 @@ public class StudyTodoFixture {
                 .todoDate(todoDate)
                 .build();
     }
-
-
 
 
 }
