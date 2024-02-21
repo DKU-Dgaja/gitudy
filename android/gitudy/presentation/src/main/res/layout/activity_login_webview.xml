@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.LoginWebviewActivity">
+    tools:context=".ui.login.LoginWebViewActivity">
 
     <WebView
-        android:id="@+id/loginWebview"
+        android:id="@+id/loginWebView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginBottom="130dp" />

@@ -1,15 +1,9 @@
 package com.takseha.presentation.ui.login
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
-import androidx.browser.customtabs.CustomTabsClient
-import androidx.browser.customtabs.CustomTabsIntent
-import androidx.browser.customtabs.CustomTabsServiceConnection
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.presentation.R
@@ -50,7 +44,7 @@ class SubLoginActivity : AppCompatActivity() {
 //            val loginIntent: CustomTabsIntent = CustomTabsIntent.Builder()
 //                .build()
 //            loginIntent.launchUrl(this, Uri.parse(it))
-            val intent = Intent(this, LoginWebviewActivity::class.java)
+            val intent = Intent(this, LoginWebViewActivity::class.java)
             intent.putExtra("url", it)
             startActivity(intent)
         })

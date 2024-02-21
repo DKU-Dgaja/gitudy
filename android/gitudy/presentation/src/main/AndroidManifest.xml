@@ -5,7 +5,7 @@
 
     <application>
         <activity
-            android:name=".ui.login.LoginWebviewActivity"
+            android:name=".ui.login.LoginWebViewActivity"
             android:exported="false" />
         <activity
             android:name=".ui.feed.StudyApplyActivity"
