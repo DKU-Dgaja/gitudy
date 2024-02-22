@@ -91,12 +91,6 @@ public class StudyInfoController {
                                                       @RequestParam(name = "sortBy") String sortBy
     ) {
         authService.authenticate(userId, user);
-        List<MyStudyInfoListResponse> studyInfoList = studyInfoService.selectMyStudyInfoList(userId, cursorIdx, limit, sortBy);
-        MyStudyInfoListAndCursorIdxResponse response = MyStudyInfoListAndCursorIdxResponse.builder()
-                .studyInfoList(studyInfoList)
-                .build();
-        response.setNextCursorIdx();
-
-        return JsonResult.successOf(response);
+        return JsonResult.successOf(studyInfoService.selectMyStudyInfoList(userId, cursorIdx, limit, sortBy));
     }
 }

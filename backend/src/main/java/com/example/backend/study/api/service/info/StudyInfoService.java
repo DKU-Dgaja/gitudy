@@ -10,9 +10,12 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
+import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
+import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -104,8 +107,41 @@ public class StudyInfoService {
     }
 
     // 정렬된 모든 마이 스터디 조회
-    public List<MyStudyInfoListResponse> selectMyStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy) {
-        return studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
+    public MyStudyInfoListAndCursorIdxResponse selectMyStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy) {
+        List<MyStudyInfoListResponse> studyInfoListResponse = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
+
+        MyStudyInfoListAndCursorIdxResponse response = MyStudyInfoListAndCursorIdxResponse.builder()
+                .studyInfoList(studyInfoListResponse)
+                .studyMembersIds(extractStudyMembersIdList(studyInfoListResponse))
+                .studyCategoryMappingResponse(extractStudyCategoryMappingListResponse(studyInfoListResponse))
+                .build();
+        response.setNextCursorIdx();
+
+        return response;
+    }
+    // StudyCategoryMappingResponse 추출 해주는 메소드
+    private List<StudyCategoryMappingListResponse> extractStudyCategoryMappingListResponse(List<MyStudyInfoListResponse> studyInfoListResponse) {
+        return studyInfoListResponse.stream()
+                .flatMap(studyInfo -> getCategoriesId(studyInfo.getId()).stream()
+                        .map(categoryId -> StudyCategoryMappingListResponse.builder()
+                                .studyInfoId(studyInfo.getId())
+                                .studyCategoryId(categoryId)
+                                .build()))
+                .collect(Collectors.toList());
+    }
+
+    // StudyMembersIdList 추출 해주는 메소드
+    private List<StudyMembersIdListResponse> extractStudyMembersIdList(List<MyStudyInfoListResponse> studyInfoListResponse) {
+        return studyInfoListResponse.stream()
+                .flatMap(studyInfo -> {
+                    List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfo.getId());
+                    return studyMembers.stream()
+                            .map(studyMember -> StudyMembersIdListResponse.builder()
+                                    .studyInfoId(studyInfo.getId())
+                                    .userId(studyMember.getUserId())
+                                    .build());
+                })
+                .collect(Collectors.toList());
     }
 
     // studyinfoId를 파라미터로 받아 카테고리 id를 생성해주는 함수
