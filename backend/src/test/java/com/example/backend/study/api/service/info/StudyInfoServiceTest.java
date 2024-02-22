@@ -19,9 +19,12 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberStatus
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
+import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
+import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.IntStream;
@@ -45,7 +49,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudyInfoServiceTest extends TestConfig {
     private final static int DATA_SIZE = 10;
     private final static Long LIMIT = 10L;
-    private final static String sortBy = "score";
+    private final static String SORTBY = "score";
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -267,24 +271,90 @@ class StudyInfoServiceTest extends TestConfig {
         User other = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
         // 스터디 생성
         List<StudyInfo> studyInfos = new ArrayList<>();
-        StudyInfo savedStudyInfo1 = studyInfoRepository.save(generateStudyInfo(user.getId()));
-        StudyInfo savedStudyInfo2 = studyInfoRepository.save(generateStudyInfo(user.getId()));
-        StudyInfo savedStudyInfo3 = studyInfoRepository.save(generateStudyInfo(user.getId()));
-        StudyInfo otherSavedStudyInfo1 = studyInfoRepository.save(generateStudyInfo(other.getId()));
-        StudyInfo otherSavedStudyInfo2 = studyInfoRepository.save(generateStudyInfo(other.getId()));
-
-        studyInfos.add(savedStudyInfo1);
-        studyInfos.add(savedStudyInfo2);
-        studyInfos.add(savedStudyInfo3);
-        studyInfos.add(otherSavedStudyInfo1);
-        studyInfos.add(otherSavedStudyInfo2);
+        studyInfos.add(generateStudyInfo(user.getId()));
+        studyInfos.add(generateStudyInfo(user.getId()));
+        studyInfos.add(generateStudyInfo(user.getId()));
+        studyInfos.add(generateStudyInfo(other.getId()));
+        studyInfos.add(generateStudyInfo(other.getId()));
         studyInfoRepository.saveAll(studyInfos);
 
         // when
-        List<MyStudyInfoListResponse> response = studyInfoService.selectMyStudyInfoList(user.getId(), null, LIMIT, sortBy);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(user.getId(), null, LIMIT, SORTBY);
+
+        // response.getStudyInfoList()를 id순으로 정렬
+        response.getStudyInfoList().sort(Comparator.comparingLong(MyStudyInfoListResponse::getId));
 
         // then
-        assertEquals(expectedResponseSize, response.size());
+        IntStream.range(0, expectedResponseSize)
+                .forEach(i -> {
+                    StudyInfo expected = studyInfos.get(i);
+                    MyStudyInfoListResponse actual = response.getStudyInfoList().get(i);
+
+                    assertAll(
+                            () -> assertEquals(expected.getId(), actual.getId()),
+                            () -> assertEquals(expected.getUserId(), actual.getUserId()),
+                            () -> assertEquals(expected.getTopic(), actual.getTopic()),
+                            () -> assertEquals(expected.getScore(), actual.getScore()),
+                            () -> assertEquals(expected.getInfo(), actual.getInfo()),
+                            () -> assertEquals(expected.getMaximumMember(), actual.getMaximumMember()),
+                            () -> assertEquals(expected.getCurrentMember(), actual.getCurrentMember()),
+                            () -> assertEquals(expected.getLastCommitDay(), actual.getLastCommitDay()),
+                            () -> assertEquals(expected.getProfileImageUrl(), actual.getProfileImageUrl()),
+                            () -> assertEquals(expected.getPeriodType(), actual.getPeriodType())
+                    );
+                });
+    }
+
+    @Test
+    public void 마이스터디_조회_테스트_스터디_카테고리_id_반환_테스트() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
+        List<StudyCategory> studyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
+        List<StudyCategoryMapping> studyCategoryMappings = studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(studyInfo, studyCategories));
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(user.getId(), null, LIMIT, SORTBY);
+        List<StudyCategoryMappingListResponse> studyCategoryMappingResponse = response.getStudyCategoryMappingResponse();
+
+        // then
+        for (int i = 0; i < studyCategoryMappings.size(); i++) {
+            int finalI = i;
+            assertAll(
+                    () -> assertEquals(studyCategoryMappingResponse.get(finalI).getStudyInfoId(), studyInfo.getId()),
+                    () -> assertEquals(studyCategoryMappingResponse.get(finalI).getStudyCategoryId(), studyCategoryMappings.get(finalI).getStudyCategoryId())
+            );
+        }
+    }
+
+
+    @Test
+    public void 마이스터디_조회_테스트_스터디_멤버_id_반환_테스트() {
+        // given
+        User leaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(leaderUser.getId()));
+
+        List<StudyMember> studyMembers = new ArrayList<>();
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(leaderUser.getId(), studyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()));
+        studyMemberRepository.saveAll(studyMembers);
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(leaderUser.getId(), null, LIMIT, SORTBY);
+        List<StudyMembersIdListResponse> studyMembersIds = response.getStudyMembersIds();
+
+        // then
+        for (int i = 0; i < studyMembers.size(); i++) {
+            int finalI = i;
+            assertAll(
+                    () -> assertEquals(studyMembersIds.get(finalI).getStudyInfoId(), studyInfo.getId()),
+                    () -> assertEquals(studyMembersIds.get(finalI).getUserId(), studyMembers.get(finalI).getUserId())
+            );
+        }
     }
 
     @Test
@@ -295,25 +365,12 @@ class StudyInfoServiceTest extends TestConfig {
         List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
 
-//        System.out.println("---------Before sort by lastCommitDay---------");
-//        for(StudyInfo x: studyInfos){
-//            System.out.println(x.getLastCommitDay());
-//        }
-//        System.out.println("----------------------------------------------");
-
         // when
-        List<MyStudyInfoListResponse> studyInfoList = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
 
-//        System.out.println("---------After sort by lastCommitDay----------");
-//        for(AllStudyInfoResponse x: studyInfoList){
-//            System.out.println(x.getLastCommitDay());
-//        }
-//        System.out.println("----------------------------------------------");
-
-
-        assertEquals(LIMIT, studyInfoList.size());
+        assertEquals(LIMIT, response.getStudyInfoList().size());
         LocalDate previousCommitDay = null;
-        for (MyStudyInfoListResponse studyInfo : studyInfoList) {
+        for (MyStudyInfoListResponse studyInfo : response.getStudyInfoList()) {
             LocalDate currentCommitDay = studyInfo.getLastCommitDay();
             if (previousCommitDay != null) {
                 assertTrue(currentCommitDay.isBefore(previousCommitDay) || currentCommitDay.isEqual(previousCommitDay));
@@ -330,26 +387,14 @@ class StudyInfoServiceTest extends TestConfig {
         List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
 
-//        System.out.println("---------Before sort by Score---------");
-//        for(StudyInfo x: studyInfos){
-//            System.out.println(x.getScore());
-//        }
-//        System.out.println("--------------------------------------");
-
         // when
-        List<MyStudyInfoListResponse> studyInfoList = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
-
-//        System.out.println("---------After sort by Score----------");
-//        for(AllStudyInfoResponse x: studyInfoList){
-//            System.out.println(x.getScore());
-//        }
-//        System.out.println("--------------------------------------");
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
 
         // then
-        assertEquals(LIMIT, studyInfoList.size());
+        assertEquals(LIMIT, response.getStudyInfoList().size());
 
         int previousScore = Integer.MAX_VALUE;
-        for (MyStudyInfoListResponse studyInfo : studyInfoList) {
+        for (MyStudyInfoListResponse studyInfo : response.getStudyInfoList()) {
             int currentScore = studyInfo.getScore();
             assertTrue(currentScore <= previousScore);
             previousScore = currentScore;
@@ -364,26 +409,14 @@ class StudyInfoServiceTest extends TestConfig {
         List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
 
-//        System.out.println("---------Before sort by createdDateTime---------");
-//        for(StudyInfo x: studyInfos){
-//            System.out.println(x.getCreatedDateTime());
-//        }
-//        System.out.println("--------------------------------------");
-
         // when
-        List<MyStudyInfoListResponse> studyInfoList = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
-
-//        System.out.println("---------After sort by createdDateTime----------");
-//        for(MyStudyInfoListResponse x: studyInfoList){
-//            System.out.println(x.getCreatedDateTime());
-//        }
-//        System.out.println("--------------------------------------");
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
 
         // then
-        assertEquals(LIMIT, studyInfoList.size());
+        assertEquals(LIMIT, response.getStudyInfoList().size());
 
-        LocalDateTime previousCreatedDateTime = studyInfoList.get(0).getCreatedDateTime();
-        for (MyStudyInfoListResponse studyInfo : studyInfoList) {
+        LocalDateTime previousCreatedDateTime = response.getStudyInfoList().get(0).getCreatedDateTime();
+        for (MyStudyInfoListResponse studyInfo : response.getStudyInfoList()) {
             LocalDateTime currentCreatedDateTime = studyInfo.getCreatedDateTime();
             assertTrue(currentCreatedDateTime.compareTo(previousCreatedDateTime) <= 0);
             previousCreatedDateTime = currentCreatedDateTime;

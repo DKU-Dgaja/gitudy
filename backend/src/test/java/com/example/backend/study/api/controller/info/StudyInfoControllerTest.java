@@ -269,7 +269,7 @@ class StudyInfoControllerTest extends TestConfig {
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
-                .thenReturn(new ArrayList<>());
+                .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
         mockMvc.perform(get("/study/" + user.getId())
@@ -325,7 +325,7 @@ class StudyInfoControllerTest extends TestConfig {
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
-                .thenReturn(new ArrayList<>());
+                .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
         mockMvc.perform(get("/study/" + user.getId())

@@ -6,7 +6,11 @@ import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
+import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
+import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -209,6 +213,23 @@ public class StudyInfoFixture {
                 .notice("Notice")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+    // MyStudyInfoListAndCursorIdxResponse를 생성해주는 함수
+    public static MyStudyInfoListAndCursorIdxResponse generateMyStudyInfoListAndCursorIdxResponse() {
+        List<MyStudyInfoListResponse> studyInfoList = new ArrayList<>();
+
+        List<StudyMembersIdListResponse> studyMembersIds = new ArrayList<>();
+
+        List<StudyCategoryMappingListResponse> studyCategoryMappingResponse = new ArrayList<>();
+
+        Long cursorIdx = 123L;
+
+        return MyStudyInfoListAndCursorIdxResponse.builder()
+                .studyInfoList(studyInfoList)
+                .cursorIdx(cursorIdx)
+                .studyMembersIds(studyMembersIds)
+                .studyCategoryMappingResponse(studyCategoryMappingResponse)
                 .build();
     }
 }
