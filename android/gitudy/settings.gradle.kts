@@ -15,7 +15,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "gitudy"
 include(":app")
-include(":common")
 include(":domain")
 include(":presentation")
 include(":data")
+include(":common")
