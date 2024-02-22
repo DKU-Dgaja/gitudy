@@ -49,7 +49,8 @@ class LoginWebViewActivity : AppCompatActivity() {
                 prefs.savePref(SharedPreferencesKey.LOGIN_REDIRECT_URL, url!!)
                 Log.d("RU", "${prefs.loadPref(SharedPreferencesKey.LOGIN_REDIRECT_URL, "no url")}")
 
-                startActivity(Intent(view!!.context, InputIdActivity::class.java))
+                startActivity(Intent(view!!.context, SocialLoginCompleteActivity::class.java))
+                return true
             }
             return false
         }
