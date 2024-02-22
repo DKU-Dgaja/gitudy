@@ -8,7 +8,7 @@ class SharedPreferences(context: Context){
     fun savePref(spKey: String, spValue: String) {
         prefs.edit().putString(spKey, spValue).apply()
     }
-    fun loadPref(spKey: String, spValue: String): String {
-        return prefs.getString(spKey, spValue).toString()
+    fun loadPref(spKey: String, defValue: String): String {
+        return prefs.getString(spKey, defValue).toString()
     }
 }

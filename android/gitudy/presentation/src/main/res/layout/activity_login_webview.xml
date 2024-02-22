@@ -9,22 +9,6 @@
     <WebView
         android:id="@+id/loginWebView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginBottom="130dp" />
-
-    <Button
-        android:id="@+id/loginCompleteBtn"
-        style="@style/B5_1"
-        android:layout_width="145dp"
-        android:layout_height="55dp"
-        android:layout_marginBottom="48dp"
-        android:background="@drawable/selector_btn_r8_enable"
-        android:enabled="false"
-        android:text="로그인 완료"
-        android:textColor="@drawable/selector_text_color_enable"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        android:layout_height="match_parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

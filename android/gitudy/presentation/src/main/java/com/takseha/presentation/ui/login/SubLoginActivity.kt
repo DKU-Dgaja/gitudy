@@ -41,9 +41,7 @@ class SubLoginActivity : AppCompatActivity() {
         viewModel.startLogin(platformType)
         viewModel.loginPageUrl.observe(this, Observer {
             Log.d("LoginViewModel", "loginPageUrl: $it")
-//            val loginIntent: CustomTabsIntent = CustomTabsIntent.Builder()
-//                .build()
-//            loginIntent.launchUrl(this, Uri.parse(it))
+
             val intent = Intent(this, LoginWebViewActivity::class.java)
             intent.putExtra("url", it)
             startActivity(intent)
