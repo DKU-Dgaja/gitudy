@@ -17,7 +17,6 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,13 +28,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static com.example.backend.study.api.service.todo.StudyTodoServiceTest.Limit;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -210,10 +206,10 @@ public class StudyTodoControllerTest extends TestConfig {
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                .param("cursorIdx", "1")
-                .param("limit", "3"))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "1")
+                        .param("limit", "3"))
 
                 // then
                 .andExpect(status().isOk())
