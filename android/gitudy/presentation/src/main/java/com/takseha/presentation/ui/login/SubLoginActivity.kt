@@ -38,11 +38,11 @@ class SubLoginActivity : AppCompatActivity() {
 
     private fun startLogin(platformType: String) {
         viewModel.startLogin(platformType)
-        viewModel.loginPageUrl.observe(this, Observer {
+        viewModel.loginPageUrl.observe(this) {
             val intent = Intent(this, LoginWebViewActivity::class.java)
             intent.putExtra("url", it)
             intent.putExtra("platformType", platformType)
             startActivity(intent)
-        })
+        }
     }
 }
