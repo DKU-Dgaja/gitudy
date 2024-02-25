@@ -2,6 +2,10 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.category.info.StudyCategory;
+import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -15,14 +19,14 @@ import com.example.backend.study.api.controller.info.response.MyStudyInfoListRes
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
+import com.example.backend.study.api.service.info.response.StudyMemberNameAndProfileImageResponse;
 import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.study.member.constant.StudyMemberRole.STUDY_LEADER;
@@ -42,6 +46,9 @@ public class StudyInfoService {
 
     private final StudyMemberRepository studyMemberRepository;
 
+    private final StudyCategoryRepository studyCategoryRepository;
+
+    private final UserRepository userRepository;
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
         // 새로운 스터디 생성
@@ -110,38 +117,167 @@ public class StudyInfoService {
     public MyStudyInfoListAndCursorIdxResponse selectMyStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy) {
         List<MyStudyInfoListResponse> studyInfoListResponse = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
 
+        // studyInfoIdList 만들기
+        List<Long> studyInfoIdList = getStudyInfoIdList(studyInfoListResponse);
+
+        // 활동중인 StudyMemberList 만들기
+        List<StudyMember> studyMemberList = studyMemberRepository.findActiveStudyMemberListByStudyInfoIdList(studyInfoIdList);
+
+        // studyMemberIdList 만들기
+        List<Long> studyMemberIdList = getStudyMemberIdList(studyMemberList);
+
+        // studyMemberIdList로 UserList를 select하기
+        List<User> userList = userRepository.findUserListByStudyMemberIdList(studyMemberIdList);
+
+        // Map<USER_ID, USER>
+        Map<Long, User> userMap = getUserMap(userList);
+
+        // Map<STUDY_INFO_ID, List<STUDY_MEMBER_ID>>
+        Map<Long, List<StudyMember>> studyMemberMap = getStudyMemberMap(studyMemberList);
+
+        // Map<STUDY_INFO_ID, StudyMemberNameAndProfileImageResponse>
+        Map<Long, List<StudyMemberNameAndProfileImageResponse>> studyUserInfoMap = getStudyUserInfoMap(userMap, studyMemberMap);
+
+
+
+
+        // studyInfoIdList로 StudyCategoryMappingList 생성
+        List<StudyCategoryMapping> studyCategoryMappingList
+                = studyCategoryMappingRepository.findStudyCategoryMappingListByStudyInfoIdList(studyInfoIdList);
+
+        // studyInfoIdList에 존재하는 모든 카테고리 Id 생성
+        List<Long> categoriesId = getCategoryIdWithoutDuplicates(studyCategoryMappingList);
+
+        //  Map<STUDY_CATEGORY_ID, List<STUDY_CATEGORY_NAME>>
+        Map<Long, String> studyCategoryMap = getCategoryNameMap(categoriesId);
+
+        // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>>
+        Map<Long, List<String>> studyCategoryMappingMap = getStudyCategoryMappingMap(studyCategoryMappingList, studyCategoryMap);
+
         MyStudyInfoListAndCursorIdxResponse response = MyStudyInfoListAndCursorIdxResponse.builder()
                 .studyInfoList(studyInfoListResponse)
-                .studyMembersIds(extractStudyMembersIdList(studyInfoListResponse))
-                .studyCategoryMappingResponse(extractStudyCategoryMappingListResponse(studyInfoListResponse))
+                .studyUserInfoMap(studyUserInfoMap)
+                .studyCategoryMappingMap(studyCategoryMappingMap)
                 .build();
         response.setNextCursorIdx();
-
         return response;
     }
-    // StudyCategoryMappingResponse 추출 해주는 메소드
-    private List<StudyCategoryMappingListResponse> extractStudyCategoryMappingListResponse(List<MyStudyInfoListResponse> studyInfoListResponse) {
-        return studyInfoListResponse.stream()
-                .flatMap(studyInfo -> getCategoriesId(studyInfo.getId()).stream()
-                        .map(categoryId -> StudyCategoryMappingListResponse.builder()
-                                .studyInfoId(studyInfo.getId())
-                                .studyCategoryId(categoryId)
-                                .build()))
-                .collect(Collectors.toList());
+
+    // Map<STUDY_INFO_ID, StudyMemberNameAndProfileImageResponse> 생성하는 메소드
+    private static Map<Long, List<StudyMemberNameAndProfileImageResponse>> getStudyUserInfoMap(Map<Long, User> userMap, Map<Long, List<StudyMember>> studyMemberMap) {
+        Map<Long, List<StudyMemberNameAndProfileImageResponse>> studyUserInfoMap = new HashMap<>();
+
+        for (Map.Entry<Long, List<StudyMember>> entry : studyMemberMap.entrySet()) {
+            Long studyId = entry.getKey(); // 스터디 정보 ID 가져오기
+            List<StudyMember> studyMembers = entry.getValue(); // 해당 스터디의 멤버 리스트 가져오기
+
+            List<StudyMemberNameAndProfileImageResponse> usersInStudy = new ArrayList<>();
+            for (StudyMember studyMember : studyMembers) {
+                User user = userMap.get(studyMember.getUserId()); // userMap에서 해당 사용자 ID에 해당하는 User 객체 가져오기
+                if (user != null) {
+                    // StudyMemberNameAndProfileImageResponse 객체 생성 후 리스트에 추가
+                    StudyMemberNameAndProfileImageResponse response = StudyMemberNameAndProfileImageResponse.builder()
+                            .name(user.getName())
+                            .profileImageUrl(user.getProfileImageUrl())
+                            .build();
+                    usersInStudy.add(response);
+                }
+            }
+            studyUserInfoMap.put(studyId, usersInStudy); // 스터디 정보 ID와 해당하는 사용자 리스트를 맵에 추가
+        }
+        return studyUserInfoMap;
     }
 
-    // StudyMembersIdList 추출 해주는 메소드
-    private List<StudyMembersIdListResponse> extractStudyMembersIdList(List<MyStudyInfoListResponse> studyInfoListResponse) {
-        return studyInfoListResponse.stream()
-                .flatMap(studyInfo -> {
-                    List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfo.getId());
-                    return studyMembers.stream()
-                            .map(studyMember -> StudyMembersIdListResponse.builder()
-                                    .studyInfoId(studyInfo.getId())
-                                    .userId(studyMember.getUserId())
-                                    .build());
-                })
-                .collect(Collectors.toList());
+    // Map<STUDY_INFO_ID, List<STUDY_MEMBER_ID>> 생성하는 메소드
+    private static Map<Long, List<StudyMember>> getStudyMemberMap(List<StudyMember> studyMemberList) {
+        Map<Long, List<StudyMember>> studyMemberMap = new HashMap<>();
+
+        for (StudyMember studyMember : studyMemberList) {
+            Long studyId = studyMember.getStudyInfoId();
+
+            if (studyMemberMap.containsKey(studyId)) {
+                List<StudyMember> existingList = studyMemberMap.get(studyId);
+                existingList.add(studyMember);
+                studyMemberMap.put(studyId, existingList);
+            } else {
+                List<StudyMember> newList = new ArrayList<>();
+                newList.add(studyMember);
+                studyMemberMap.put(studyId, newList);
+            }
+        }
+        return studyMemberMap;
+    }
+
+    // Map<USER_ID, USER> 생성하는 메소드
+    private static Map<Long, User> getUserMap(List<User> userList) {
+        Map<Long, User> userMap = new HashMap<>();
+        for (User user : userList) {
+            userMap.put(user.getId(), user);
+        }
+        return userMap;
+    }
+
+    // studyMemberIdList 생성하는 메소드
+    private static List<Long> getStudyMemberIdList(List<StudyMember> studyMemberList) {
+        List<Long> studyMemberIdList = new ArrayList<>();
+        for(int i = 0; i< studyMemberList.size(); i++){
+            studyMemberIdList.add(studyMemberList.get(i).getId());
+        }
+        return studyMemberIdList;
+    }
+
+    // studyInfoIdList 만들어주는 함수
+    private static List<Long> getStudyInfoIdList(List<MyStudyInfoListResponse> studyInfoListResponse) {
+        List<Long> studyInfoIdList = new ArrayList<>();
+        for(MyStudyInfoListResponse myStudyInfoListResponse: studyInfoListResponse){
+            studyInfoIdList.add(myStudyInfoListResponse.getId());
+        }
+        return studyInfoIdList;
+    }
+
+    // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
+    private static Map<Long, List<String>> getStudyCategoryMappingMap(List<StudyCategoryMapping> studyCategoryMappingList, Map<Long, String> studyCategoryMap) {
+        Map<Long, List<String>> studyCategoryMappingMap = new HashMap<>();
+
+        for (StudyCategoryMapping studyCategoryMapping : studyCategoryMappingList) {
+            Long studyId = studyCategoryMapping.getStudyInfoId();
+
+            if (studyCategoryMappingMap.containsKey(studyId)) {
+                List<String> existingList = studyCategoryMappingMap.get(studyId);
+                existingList.add(studyCategoryMap.get(studyCategoryMapping.getStudyCategoryId()));
+                studyCategoryMappingMap.put(studyId, existingList);
+            } else {
+                List<String> newList = new ArrayList<>();
+                newList.add(studyCategoryMap.get(studyCategoryMapping.getStudyCategoryId()));
+                studyCategoryMappingMap.put(studyId, newList);
+            }
+        }
+        return studyCategoryMappingMap;
+    }
+
+    //  Map<STUDY_CATEGORY_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
+    private Map<Long, String> getCategoryNameMap(List<Long> categoriesId) {
+        List<StudyCategory> studyCategoryList = studyCategoryRepository.findStudyCategoryListByCategoryIdList(categoriesId);
+        Map<Long, String> studyCategoryMap = new HashMap<>();
+
+        for (StudyCategory studyCategory : studyCategoryList) {
+            Long categoryId = studyCategory.getId();
+            String categoryName = studyCategory.getName();
+            studyCategoryMap.put(categoryId, categoryName);
+        }
+        return studyCategoryMap;
+    }
+
+    // studyInfoIdList에 존재하는 모든 카테고리 Id 생성 (중복 제거)
+    private static List<Long> getCategoryIdWithoutDuplicates(List<StudyCategoryMapping> studyCategoryMappingList) {
+        List<Long> categoriesId = new ArrayList<>();
+        for(int i = 0; i< studyCategoryMappingList.size(); i++){
+            categoriesId.add(studyCategoryMappingList.get(i).getStudyCategoryId());
+        }
+        // 중복 제거
+        Set<Long> setWithoutDuplicates = new LinkedHashSet<>(categoriesId);
+        List<Long> categoriesIdWithoutDuplicates = new ArrayList<>(setWithoutDuplicates);
+        return categoriesIdWithoutDuplicates;
     }
 
     // studyinfoId를 파라미터로 받아 카테고리 id를 생성해주는 함수
