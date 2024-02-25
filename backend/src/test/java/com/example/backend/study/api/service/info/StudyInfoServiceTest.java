@@ -24,6 +24,7 @@ import com.example.backend.study.api.controller.info.response.MyStudyInfoListRes
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
+import com.example.backend.study.api.service.info.response.StudyMemberNameAndProfileImageResponse;
 import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -31,10 +32,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
@@ -306,34 +304,37 @@ class StudyInfoServiceTest extends TestConfig {
     }
 
     @Test
-    public void 마이스터디_조회_테스트_스터디_카테고리_id_반환_테스트() {
+    public void 마이스터디_조회_테스트_스터디_카테고리_name_반환_테스트() {
         // given
         User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
         StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
         List<StudyCategory> studyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
-        List<StudyCategoryMapping> studyCategoryMappings = studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(studyInfo, studyCategories));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(studyInfo, studyCategories));
 
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(user.getId(), null, LIMIT, SORTBY);
-        List<StudyCategoryMappingListResponse> studyCategoryMappingResponse = response.getStudyCategoryMappingResponse();
+        Map<Long, List<String>> studyCategoryMappingMap = response.getStudyCategoryMappingMap();
 
         // then
-        for (int i = 0; i < studyCategoryMappings.size(); i++) {
-            int finalI = i;
-            assertAll(
-                    () -> assertEquals(studyCategoryMappingResponse.get(finalI).getStudyInfoId(), studyInfo.getId()),
-                    () -> assertEquals(studyCategoryMappingResponse.get(finalI).getStudyCategoryId(), studyCategoryMappings.get(finalI).getStudyCategoryId())
-            );
+        assertEquals(studyCategoryMappingMap.get(studyInfo.getId()).size(), CATEGORY_SIZE);
+        for(int i=0;i<studyCategoryMappingMap.get(studyInfo.getId()).size();i++){
+            assertEquals(studyCategoryMappingMap.get(studyInfo.getId()).get(i), studyCategories.get(i).getName());
         }
     }
 
 
     @Test
-    public void 마이스터디_조회_테스트_스터디_멤버_id_반환_테스트() {
+    public void 마이스터디_조회_테스트_스터디_멤버_정보_반환_테스트() {
         // given
+        int ExpetedMyStudySize = 3;
+        List<User> userList=new ArrayList<>();
         User leaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
         User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
         User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+
+        userList.add(leaderUser);
+        userList.add(user1);
+        userList.add(user2);
 
         StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(leaderUser.getId()));
 
@@ -345,16 +346,14 @@ class StudyInfoServiceTest extends TestConfig {
 
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(leaderUser.getId(), null, LIMIT, SORTBY);
-        List<StudyMembersIdListResponse> studyMembersIds = response.getStudyMembersIds();
+        Map<Long, List<StudyMemberNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
 
-        // then
-        for (int i = 0; i < studyMembers.size(); i++) {
-            int finalI = i;
-            assertAll(
-                    () -> assertEquals(studyMembersIds.get(finalI).getStudyInfoId(), studyInfo.getId()),
-                    () -> assertEquals(studyMembersIds.get(finalI).getUserId(), studyMembers.get(finalI).getUserId())
-            );
+        assertEquals(userList.size(), ExpetedMyStudySize);
+        for(int i=0;i<studyUserInfoMap.get(studyInfo.getId()).size();i++){
+            assertEquals(studyUserInfoMap.get(studyInfo.getId()).get(i).getName(), userList.get(i).getName());
+            assertEquals(studyUserInfoMap.get(studyInfo.getId()).get(i).getProfileImageUrl(), userList.get(i).getProfileImageUrl());
         }
+        // then
     }
 
     @Test

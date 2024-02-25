@@ -10,12 +10,11 @@ import com.example.backend.study.api.controller.info.response.MyStudyInfoListAnd
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
+import com.example.backend.study.api.service.info.response.StudyMemberNameAndProfileImageResponse;
 import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PUBLIC;
@@ -218,18 +217,15 @@ public class StudyInfoFixture {
     // MyStudyInfoListAndCursorIdxResponse를 생성해주는 함수
     public static MyStudyInfoListAndCursorIdxResponse generateMyStudyInfoListAndCursorIdxResponse() {
         List<MyStudyInfoListResponse> studyInfoList = new ArrayList<>();
-
-        List<StudyMembersIdListResponse> studyMembersIds = new ArrayList<>();
-
-        List<StudyCategoryMappingListResponse> studyCategoryMappingResponse = new ArrayList<>();
-
+        Map<Long, List<StudyMemberNameAndProfileImageResponse>> studyUserInfoMap = new HashMap<>();
+        Map<Long, List<String>> studyCategoryMappingMap = new HashMap<>();
         Long cursorIdx = 123L;
 
         return MyStudyInfoListAndCursorIdxResponse.builder()
                 .studyInfoList(studyInfoList)
                 .cursorIdx(cursorIdx)
-                .studyMembersIds(studyMembersIds)
-                .studyCategoryMappingResponse(studyCategoryMappingResponse)
+                .studyUserInfoMap(studyUserInfoMap)
+                .studyCategoryMappingMap(studyCategoryMappingMap)
                 .build();
     }
 }
