@@ -45,4 +45,14 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                         .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)))
                 .fetch();
     }
+
+    @Override
+    public List<StudyMember> findActiveStudyMemberListByStudyInfoIdList(List<Long> studyInfoIdList) {
+
+        return queryFactory
+               .selectFrom(studyMember)
+               .where(studyMember.studyInfoId.in(studyInfoIdList)
+                .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)))
+               .fetch();
+    }
 }

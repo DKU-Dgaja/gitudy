@@ -13,4 +13,7 @@ public interface StudyMemberRepositoryCustom {
 
     // StudyInfoId를 통해 스터디의 모든 멤버들 중에 활동중인 멤버를 조회한다.
     public List<StudyMember> findActiveMembersByStudyInfoId(Long studyInfoId);
+
+    // studyInfoIdList를 통해 스터디들의 모든 멤버를 조회한다.
+    List<StudyMember> findActiveStudyMemberListByStudyInfoIdList(List<Long> studyInfoIdList);
 }
