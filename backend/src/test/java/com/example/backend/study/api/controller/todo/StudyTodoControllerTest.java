@@ -16,7 +16,7 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
-import com.example.backend.study.api.controller.todo.response.StudyTodoPageResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
@@ -28,6 +28,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -199,21 +200,27 @@ public class StudyTodoControllerTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        // StudyTodoResponse 10개 생성
-        List<StudyTodoResponse> studyTodoResponses = StudyTodoFixture.createStudyTodoResponses(studyInfo.getId(), 10);
-        Long nextCursorIdx = studyTodoResponses.get(studyTodoResponses.size() - 1).getId();
-
-
-        StudyTodoPageResponse pageResponse = StudyTodoFixture.createStudyTodoPageResponse(studyTodoResponses, nextCursorIdx);
+        StudyTodoListAndCursorIdxResponse response = StudyTodoListAndCursorIdxResponse.builder()
+                .todoList(new ArrayList<>()) // 비어 있는 Todo 리스트
+                .build();
+        response.setNextCursorIdx();
 
         doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
-        when(studyTodoService.readStudyTodoList(any(Long.class), isNull(), any(Long.class))).thenReturn(pageResponse);
+        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("limit", String.valueOf(Limit)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                .param("cursorIdx", "1")
+                .param("limit", "3"))
+
+                // then
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
+
     }
 }

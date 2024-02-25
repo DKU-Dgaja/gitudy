@@ -18,7 +18,8 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
-import com.example.backend.study.api.controller.todo.response.StudyTodoPageResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,7 +27,9 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
@@ -195,29 +198,73 @@ public class StudyTodoServiceTest extends TestConfig {
     @DisplayName("Todo 전체조회 테스트")
     void readTodoList_Success() {
         // given
-        User user = userRepository.save(generateAuthUser());
+        Random random = new Random();
+        Long cursorIdx = Math.abs(random.nextLong()) + Limit;  // Limit 이상 랜덤값
 
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(user.getId());
+        User leader = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-        // To do 10개 저장
-        for (int td = 1; td <= 10; td++) {
-            studyTodoRepository.save(StudyTodoFixture.createStudyTodoList(studyInfo.getId(),
-                    expectedTitle + td,
-                    expectedDetail + td,
-                    expectedTodoLink + td,
-                    expectedTodoDate.plusDays(td)
-            ));
-        }
+        // 스터디장 To do 생성
+        StudyTodo studyTodo1 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo studyTodo2 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo studyTodo3 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo studyTodo4 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2, studyTodo3, studyTodo4));
 
-        // when 첫 번째 페이지 조회
-        StudyTodoPageResponse todos = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit);
+        // when
+        StudyTodoListAndCursorIdxResponse responses = studyTodoService.readStudyTodoList(studyInfo.getId(), cursorIdx, Limit);
 
         // then
-        assertNotNull(todos);
-        assertEquals(3, todos.getTodos().size());
-        assertNotNull(todos.getNextCursorIdx());
-        assertEquals(expectedTitle + "10", todos.getTodos().get(0).getTitle()); // 최신항목Todo 확인
+        assertNotNull(responses);
+        assertEquals(3, responses.getTodoList().size());
+        assertEquals(studyTodo1.getTitle(), responses.getTodoList().get(0).getTitle());
+        assertEquals(studyTodo2.getTitle(), responses.getTodoList().get(1).getTitle());
+    }
 
+    @Test
+    @DisplayName("Todo 전체조회 커서 기반 페이징 로직 검증")
+    void readTodoList_CursorPaging_Success() {
+        // given
+        User leader = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        // 7개의 스터디 To do 생성 및 저장
+        List<StudyTodo> createdTodos = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            createdTodos.add(StudyTodoFixture.createStudyTodo(studyInfo.getId()));
+        }
+        studyTodoRepository.saveAll(createdTodos);
+
+        // when
+        StudyTodoListAndCursorIdxResponse firstPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit);
+
+
+        // then
+        assertNotNull(firstPageResponse);
+        assertEquals(3, firstPageResponse.getTodoList().size());  // 3개만 가져와야함
+
+
+        // when
+        // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
+        Long newCursorIdx = firstPageResponse.getTodoList().get(firstPageResponse.getTodoList().size() - 1).getId();
+        StudyTodoListAndCursorIdxResponse secondPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx, Limit);
+
+        // then
+        // 두 번째 페이지의 데이터 검증
+        assertNotNull(secondPageResponse);
+        assertEquals(3, secondPageResponse.getTodoList().size());
+
+        // when
+        // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
+        Long newCursorIdx2 = secondPageResponse.getTodoList().get(secondPageResponse.getTodoList().size() - 1).getId();
+        StudyTodoListAndCursorIdxResponse thirdPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx2, Limit);
+
+        // then
+        // 세 번째 페이지의 데이터 검증
+        assertNotNull(thirdPageResponse);
+        assertEquals(1, thirdPageResponse.getTodoList().size());
     }
 }

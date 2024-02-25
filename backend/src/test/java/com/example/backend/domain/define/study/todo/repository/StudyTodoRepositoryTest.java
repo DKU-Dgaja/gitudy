@@ -40,7 +40,7 @@ public class StudyTodoRepositoryTest extends TestConfig {
         }
 
         // when
-        List<StudyTodoResponse> studyTodoResponses = studyTodoRepository.findStudyTodoListByStudyInfoId(studyInfoId, cursorIdx, limit);
+        List<StudyTodoResponse> studyTodoResponses = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
 
         // then
         assertEquals(limit, studyTodoResponses.size());
@@ -66,7 +66,7 @@ public class StudyTodoRepositoryTest extends TestConfig {
         }
 
         // when
-        List<StudyTodoResponse> studyTodoResponses = studyTodoRepository.findStudyTodoListByStudyInfoId(studyInfoId, cursorIdx, limit);
+        List<StudyTodoResponse> studyTodoResponses = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
 
         // then
         assertEquals(limit, studyTodoResponses.size());
