@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/login_agreement_nav"
+    app:startDestination="@id/popupFragment">
+    <fragment
+        android:id="@+id/popupFragment"
+        android:name="com.takseha.presentation.ui.login.PopupFragment"
+        android:label="fragment_agreement_popup"
+        tools:layout="@layout/fragment_agreement_popup" >
+        <action
+            android:id="@+id/action_popupFragment_to_popupDetail1Fragment2"
+            app:destination="@id/popupDetail1Fragment" />
+        <action
+            android:id="@+id/action_popupFragment_to_popupDetail2Fragment2"
+            app:destination="@id/popupDetail2Fragment" />
+        <action
+            android:id="@+id/action_popupFragment_to_popupDetail3Fragment2"
+            app:destination="@id/popupDetail3Fragment" />
+        <action
+            android:id="@+id/action_popupFragment_to_inputIdFragment"
+            app:destination="@id/inputIdFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/popupDetail1Fragment"
+        android:name="com.takseha.presentation.ui.login.PopupDetail1Fragment"
+        android:label="fragment_popup_detail3"
+        tools:layout="@layout/fragment_popup_detail3" >
+        <action
+            android:id="@+id/action_popupDetail1Fragment_to_popupFragment"
+            app:destination="@id/popupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/popupDetail2Fragment"
+        android:name="com.takseha.presentation.ui.login.PopupDetail2Fragment"
+        android:label="fragment_popup_detail2"
+        tools:layout="@layout/fragment_popup_detail2" >
+        <action
+            android:id="@+id/action_popupDetail2Fragment_to_popupFragment"
+            app:destination="@id/popupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/popupDetail3Fragment"
+        android:name="com.takseha.presentation.ui.login.PopupDetail3Fragment"
+        android:label="fragment_popup_detail3"
+        tools:layout="@layout/fragment_popup_detail3" >
+        <action
+            android:id="@+id/action_popupDetail3Fragment_to_popupFragment"
+            app:destination="@id/popupFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inputIdFragment"
+        android:name="com.takseha.presentation.ui.login.InputIdFragment"
+        android:label="fragment_input_id"
+        tools:layout="@layout/fragment_input_id" >
+        <action
+            android:id="@+id/action_inputIdFragment_to_inputNicknameFragment"
+            app:destination="@id/inputNicknameFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/inputNicknameFragment"
+        android:name="com.takseha.presentation.ui.login.InputNicknameFragment"
+        android:label="fragment_input_nickname"
+        tools:layout="@layout/fragment_input_nickname" >
+        <action
+            android:id="@+id/action_inputNicknameFragment_to_loginCompleteFragment2"
+            app:destination="@id/loginCompleteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/loginCompleteFragment"
+        android:name="com.takseha.presentation.ui.login.LoginCompleteFragment"
+        android:label="fragment_login_complete"
+        tools:layout="@layout/fragment_login_complete" />
+</navigation>

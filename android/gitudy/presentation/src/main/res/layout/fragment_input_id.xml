@@ -5,15 +5,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
-    tools:context=".ui.login.InputNicknameActivity">
+    tools:context=".ui.login.InputIdFragment">
 
     <TextView
-        android:id="@+id/inputNicknameDescription1"
+        android:id="@+id/inputIdDescription1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="138dp"
         android:fontFamily="@font/pretendard_semibold"
-        android:text="닉네임을 입력해주세요"
+        android:text="깃허브 아이디를 입력해주세요"
         android:textColor="@color/GS_800"
         android:textSize="26dp"
         app:layout_constraintEnd_toEndOf="parent"
@@ -21,42 +21,31 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
-        android:id="@+id/inputNicknameDescription2"
-        style="@style/B3_3"
+        android:id="@+id/inputIdDescription2"
+        style="@style/B6_3"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="생각이 안나면 이름도 괜찮아요"
-        android:textColor="@color/GS_700"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="커밋을 기록하려면 깃허브 연동이 필요해요.\n@를 제외한 아이디를 입력해주세요."
+        android:textColor="@color/GS_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputNicknameDescription1" />
+        app:layout_constraintTop_toBottomOf="@id/inputIdDescription1" />
 
     <EditText
-        android:id="@+id/inputNicknameEditText"
+        android:id="@+id/inputIdEditText"
         style="@style/B2_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="59dp"
         android:background="@null"
-        android:hint="닉네임 또는 이름"
+        android:hint="\@gittudy"
         android:textColor="@color/BLACK"
         android:textColorHint="@color/GS_300"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputNicknameDescription2" />
-
-    <TextView
-        android:id="@+id/inputNicknameDescription3"
-        style="@style/B5_2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:text="최대 6글자까지 입력 가능해요"
-        android:textColor="@color/GS_500"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/inputNicknameEditText" />
+        app:layout_constraintTop_toBottomOf="@id/inputIdDescription2" />
 
     <Button
         android:id="@+id/confirmBtn"
@@ -69,5 +58,6 @@
         android:text="@string/confirm"
         android:textColor="@drawable/selector_text_color_enable"
         app:layout_constraintBottom_toBottomOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

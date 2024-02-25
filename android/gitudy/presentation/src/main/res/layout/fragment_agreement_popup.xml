@@ -1,25 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="590dp"
-    android:layout_gravity="bottom"
-    android:layout_marginBottom="-20dp"
+    android:layout_height="match_parent"
+    android:background="#8027292E"
     tools:context=".ui.login.PopupFragment">
 
     <androidx.cardview.widget.CardView
+        android:id="@+id/popupCardView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="590dp"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="-20dp"
         android:elevation="50dp"
-        app:cardCornerRadius="16dp">
+        app:cardCornerRadius="16dp"
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center"
+            android:paddingTop="33dp"
             android:layout_marginLeft="22dp"
-            android:layout_marginTop="33dp"
             android:layout_marginRight="22dp"
             android:orientation="vertical">
 
@@ -222,7 +225,6 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:layout_marginBottom="48dp"
                 android:background="@drawable/selector_btn_r6_enable"
                 android:enabled="false"
                 android:text="@string/confirm"
@@ -230,4 +232,4 @@
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-</FrameLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

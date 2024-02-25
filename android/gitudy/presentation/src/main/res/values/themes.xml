@@ -4,6 +4,8 @@
         <item name="android:statusBarColor">@color/WHITE</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:colorBackground">@color/WHITE</item>
+        <item name="android:windowBackground">@color/TRANSPARENT</item>
+        <item name="android:windowIsTranslucent">true</item>
     </style>
 
     <style name="Theme.Gitudy" parent="Base.Theme.Gitudy" />

@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
-    tools:context=".ui.login.InputNicknameActivity">
+    tools:context=".ui.login.InputNicknameFragment">
 
     <TextView
         android:id="@+id/inputNicknameDescription1"
