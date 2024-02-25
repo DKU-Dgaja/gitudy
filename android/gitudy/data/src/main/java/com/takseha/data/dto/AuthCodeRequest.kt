@@ -1,6 +1,6 @@
 package com.takseha.data.dto
 
-data class AllTokensRequest(
+data class AuthCodeRequest(
     val code: String,
     val state: String
 )

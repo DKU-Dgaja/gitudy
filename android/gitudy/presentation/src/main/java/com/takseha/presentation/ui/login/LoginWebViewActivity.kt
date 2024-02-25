@@ -8,10 +8,9 @@ import android.os.Bundle
 import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.takseha.common.model.SharedPreferencesKey
 import com.takseha.common.util.SharedPreferences
+import com.takseha.data.dto.AuthCodeRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
 import com.takseha.presentation.viewmodel.GetTokenViewModel
@@ -48,40 +47,23 @@ class LoginWebViewActivity : AppCompatActivity() {
         setContentView(view)
     }
 
-    private fun saveAllToken(url: String?) {
+    private fun getAuthCode(url: String?): AuthCodeRequest {
         val sanitizer = UrlQuerySanitizer()
         sanitizer.allowUnregisteredParamaters = true;
         sanitizer.parseUrl(url)
 
-        val platformType = intent.getStringExtra("platformType").toString().uppercase()
-        val code = sanitizer.getValue("code")
-        val state = sanitizer.getValue("state")
-
-        Log.d("saveAllToken", "code: $code\nstate: $state")
-
-        viewModel.getAllTokens(platformType, code, state)
-
-        viewModel.accessToken.observe(this, Observer {
-            prefs.savePref(
-                SharedPreferencesKey.ACCESS_TOKEN,
-                it
-            )
-        })
-
-        viewModel.refreshToken.observe(this, Observer {
-            prefs.savePref(
-                SharedPreferencesKey.REFRESH_TOKEN,
-                it
-            )
-        })
+        return AuthCodeRequest(sanitizer.getValue("code"), sanitizer.getValue("state"))
     }
 
     inner class LoginWebViewClient : WebViewClient() {
         override fun shouldOverrideUrlLoading(view: WebView?, url: String?): Boolean {
             if (Uri.parse(url).host == "gitudy.com") {
-                saveAllToken(url)
+                val platformType = intent.getStringExtra("platformType").toString().uppercase()
+                val authCode = getAuthCode(url)
 
-                Log.d("shouldOverrideUrlLoading", "shared pref 저장된 access token: ${prefs.loadPref(SharedPreferencesKey.ACCESS_TOKEN, "0")}\nshared pref 저장된 refresh token: ${prefs.loadPref(SharedPreferencesKey.ACCESS_TOKEN, "0")}")
+                viewModel.saveAllTokens(platformType, authCode.code, authCode.state)
+
+                Log.d("saveAllToken", "code: ${authCode.code}\nstate: ${authCode.state}")
 
                 startActivity(Intent(view!!.context, SocialLoginCompleteActivity::class.java))
                 return true
