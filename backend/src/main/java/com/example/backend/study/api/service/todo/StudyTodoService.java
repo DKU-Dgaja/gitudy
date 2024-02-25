@@ -13,7 +13,7 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
-import com.example.backend.study.api.controller.todo.response.StudyTodoPageResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,6 +34,7 @@ public class StudyTodoService {
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyInfoRepository studyInfoRepository;
+    private final static Long MAX_LIMIT = 10L;
 
     // Todo 등록
     @Transactional
@@ -112,27 +113,26 @@ public class StudyTodoService {
     }
 
     // Todo 전체조회
-    public StudyTodoPageResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
+    public StudyTodoListAndCursorIdxResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        studyInfoRepository.findById(studyInfoId).orElseThrow(()->{
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
             return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
 
-        List<StudyTodoResponse> todos = studyTodoRepository.findStudyTodoListByStudyInfoId(studyInfoId, cursorIdx, limit);
-        Long nextCursorIdx = setNextCursorIdx(todos);
+        limit = Math.min(limit, MAX_LIMIT);
 
-        // StudyInfoId로 To do 가져오기
-        return new StudyTodoPageResponse(todos, nextCursorIdx);
+        List<StudyTodoResponse> studyTodoList = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+
+        StudyTodoListAndCursorIdxResponse response = StudyTodoListAndCursorIdxResponse.builder()
+                .todoList(studyTodoList)
+                .build();
+
+        // 다음 페이지 조회를 위한 cursorIdx 설정
+        response.setNextCursorIdx();
+
+        return response;
     }
 
-    // To do 조회 다음위치 커서 설정 메서드
-    private Long setNextCursorIdx(List<StudyTodoResponse> todos)
-    {
-        if (!todos.isEmpty()) {
-            return todos.get(todos.size() - 1).getId();
-        }
-        return null; // 비어있으면 null
-    }
 }
