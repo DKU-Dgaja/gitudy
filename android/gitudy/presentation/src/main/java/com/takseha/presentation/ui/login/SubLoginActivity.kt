@@ -22,11 +22,13 @@ class SubLoginActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
-        binding.kakaoLoginBtn.setOnClickListener {
-            startLogin("KAKAO")
-        }
-        binding.googleLoginBtn.setOnClickListener {
-            startLogin("GOOGLE")
+        with(binding) {
+            kakaoLoginBtn.setOnClickListener {
+                startLogin("KAKAO")
+            }
+            googleLoginBtn.setOnClickListener {
+                startLogin("GOOGLE")
+            }
         }
     }
 

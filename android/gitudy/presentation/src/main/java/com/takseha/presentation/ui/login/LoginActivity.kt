@@ -20,13 +20,14 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
-        binding.githubLoginBtn.setOnClickListener {
-            startLogin("GITHUB")
+        with(binding) {
+            githubLoginBtn.setOnClickListener {
+                startLogin("GITHUB")
+            }
+            otherLoginBtn.setOnClickListener {
+                startActivity(Intent(baseContext, SubLoginActivity::class.java))
+            }
         }
-        binding.otherLoginBtn.setOnClickListener {
-            startActivity(Intent(this, SubLoginActivity::class.java))
-        }
-
     }
     private fun setBinding() {
         binding = ActivityLoginBinding.inflate(layoutInflater)
