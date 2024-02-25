@@ -16,9 +16,10 @@ class LoginViewModel : ViewModel() {
         get() = _loginPageUrl
 
     fun startLogin(platformType: String) = viewModelScope.launch {
-        val resCode = repository.getAllLoginStartData().resCode
-        val resMsg = repository.getAllLoginStartData().resMsg
-        val loginPages = repository.getAllLoginStartData().resObj
+        val loginResponse = repository.getLoginPage()
+        val resCode = loginResponse.resCode
+        val resMsg = loginResponse.resMsg
+        val loginPages = loginResponse.resObj
 
         Log.d("LoginViewModel", "https status: $resCode, $resMsg")
 

@@ -36,11 +36,13 @@
         android:id="@+id/confirmBtn"
         style="@style/B5_1"
         android:layout_width="match_parent"
-        android:layout_height="63dp"
-        android:background="@drawable/box_non_stroke_r8_green"
-        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box_non_stroke_r6_green"
+        android:paddingTop="18dp"
+        android:paddingBottom="18dp"
         android:text="@string/confirm"
         android:textColor="@color/BLACK"
-        app:layout_constraintBottom_toBottomOf="parent" />
-
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

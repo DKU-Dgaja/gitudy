@@ -24,7 +24,6 @@ class SubLoginActivity : AppCompatActivity() {
 
         binding.kakaoLoginBtn.setOnClickListener {
             startLogin("KAKAO")
-
         }
         binding.googleLoginBtn.setOnClickListener {
 
@@ -40,10 +39,9 @@ class SubLoginActivity : AppCompatActivity() {
     private fun startLogin(platformType: String) {
         viewModel.startLogin(platformType)
         viewModel.loginPageUrl.observe(this, Observer {
-            Log.d("LoginViewModel", "loginPageUrl: $it")
-
             val intent = Intent(this, LoginWebViewActivity::class.java)
             intent.putExtra("url", it)
+            intent.putExtra("platformType", platformType)
             startActivity(intent)
         })
     }

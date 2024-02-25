@@ -12,5 +12,5 @@ interface GitudyApi {
     suspend fun getLoginPage(): LoginResponse
 
     @GET(BuildConfig.TOKEN_API)
-    suspend fun getAllTokens(@Path("socialName") socialName: String, @Query("code") code: String, @Query("state") state: String): TokenResponse
+    suspend fun getAllTokens(@Path("platformType") platformType: String, @Query("code") code: String, @Query("state") state: String): TokenResponse
 }

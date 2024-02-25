@@ -5,5 +5,6 @@ import com.takseha.data.api.RetrofitInstance
 
 class Repository {
     private val client = RetrofitInstance.getInstance().create(GitudyApi::class.java)
-    suspend fun getAllLoginStartData() = client.getAllLoginStartData()
+    suspend fun getLoginPage() = client.getLoginPage()
+    suspend fun getAllTokens(platformType: String, code: String, state: String) = client.getAllTokens(platformType, code, state)
 }
