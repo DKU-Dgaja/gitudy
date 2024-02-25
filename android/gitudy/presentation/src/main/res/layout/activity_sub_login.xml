@@ -4,18 +4,34 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_margin="22dp"
+    android:background="@color/BACKGROUND"
+    android:padding="22dp"
     tools:context=".ui.login.SubLoginActivity">
 
-    <TextView
-        style="@style/B1_1"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="깃허브 계정도 필요합니다!"
-        app:layout_constraintBottom_toTopOf="@+id/kakaoLoginBtn"
+        android:layout_marginTop="250dp"
+        android:gravity="center"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_alert_gradient_c" />
+
+        <TextView
+            style="@style/B2_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="center"
+            android:text="추후 Github 계정 연동은\n필수입니다!"
+            android:textColor="@color/GS_900" />
+    </LinearLayout>
 
     <LinearLayout
         android:id="@+id/kakaoLoginBtn"
@@ -49,7 +65,7 @@
         android:id="@+id/googleLoginBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="74dp"
+        android:layout_marginBottom="48dp"
         android:background="@drawable/box_non_stroke_r6"
         android:backgroundTint="@color/WHITE"
         android:gravity="center"
