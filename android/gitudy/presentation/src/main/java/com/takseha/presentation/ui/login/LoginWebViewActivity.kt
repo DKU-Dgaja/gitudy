@@ -62,6 +62,8 @@ class LoginWebViewActivity : AppCompatActivity() {
         val code = sanitizer.getValue("code")
         val state = sanitizer.getValue("state")
 
+        Log.d("saveAllToken", "code: $code\nstate: $state")
+
         viewModel.getAllTokens(platformType, code, state)
 
         viewModel.accessToken.observe(this, Observer {
