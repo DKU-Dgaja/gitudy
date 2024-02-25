@@ -53,7 +53,7 @@ class LoginWebViewActivity : AppCompatActivity() {
         sanitizer.allowUnregisteredParamaters = true;
         sanitizer.parseUrl(url)
 
-        val platformType = intent.getStringExtra("platformType").toString()
+        val platformType = intent.getStringExtra("platformType").toString().uppercase()
         val code = sanitizer.getValue("code")
         val state = sanitizer.getValue("state")
 
