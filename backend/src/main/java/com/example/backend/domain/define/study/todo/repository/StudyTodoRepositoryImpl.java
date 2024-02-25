@@ -17,7 +17,7 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<StudyTodoResponse> findStudyTodoListByStudyInfoId(Long studyInfoId, Long cursorIdx, Long limit) {
+    public List<StudyTodoResponse> findStudyTodoListByStudyInfoId_CursorPaging(Long studyInfoId, Long cursorIdx, Long limit) {
         // Querydsl 쿼리 생성
         JPAQuery<StudyTodoResponse> query = queryFactory
                 .select(Projections.constructor(StudyTodoResponse.class,
