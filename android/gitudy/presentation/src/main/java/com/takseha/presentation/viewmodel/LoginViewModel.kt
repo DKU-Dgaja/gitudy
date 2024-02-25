@@ -5,18 +5,18 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.repository.Repository
+import com.takseha.data.repository.GitudyRepository
 import kotlinx.coroutines.launch
 
 class LoginViewModel : ViewModel() {
-    private val repository = Repository()
+    private val gitudyRepository = GitudyRepository()
 
     private var _loginPageUrl = MutableLiveData<String>()
     val loginPageUrl : LiveData<String>
         get() = _loginPageUrl
 
     fun startLogin(platformType: String) = viewModelScope.launch {
-        val loginResponse = repository.getLoginPage()
+        val loginResponse = gitudyRepository.getLoginPage()
         val resCode = loginResponse.resCode
         val resMsg = loginResponse.resMsg
         val loginPages = loginResponse.resObj

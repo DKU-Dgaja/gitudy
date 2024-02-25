@@ -12,14 +12,9 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.common.model.SharedPreferencesKey
 import com.takseha.common.util.SharedPreferences
-import com.takseha.data.dto.TokenResponse
-import com.takseha.data.repository.Repository
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
 import com.takseha.presentation.viewmodel.GetTokenViewModel
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
 
 class LoginWebViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginWebviewBinding
