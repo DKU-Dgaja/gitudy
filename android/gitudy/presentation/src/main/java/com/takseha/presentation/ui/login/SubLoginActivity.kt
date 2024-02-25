@@ -26,7 +26,7 @@ class SubLoginActivity : AppCompatActivity() {
             startLogin("KAKAO")
         }
         binding.googleLoginBtn.setOnClickListener {
-
+            startLogin("GOOGLE")
         }
     }
 
