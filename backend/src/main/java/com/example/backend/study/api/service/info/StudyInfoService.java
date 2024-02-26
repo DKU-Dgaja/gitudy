@@ -123,11 +123,11 @@ public class StudyInfoService {
         // 활동중인 StudyMemberList 만들기
         List<StudyMember> studyMemberList = studyMemberRepository.findActiveStudyMemberListByStudyInfoIdList(studyInfoIdList);
 
-        // studyMemberIdList 만들기
-        List<Long> studyMemberIdList = getStudyMemberIdList(studyMemberList);
+        // 스터디 멤버들의 모든 유저 id를 생성하는 메소드
+        List<Long> studyMemberUserIdList = getStudyMemberUserIdList(studyMemberList);
 
         // studyMemberIdList로 UserList를 select하기
-        List<User> userList = userRepository.findUserListByStudyMemberIdList(studyMemberIdList);
+        List<User> userList = userRepository.findUserListByStudyMemberIdList(studyMemberUserIdList);
 
         // Map<USER_ID, USER>
         Map<Long, User> userMap = getUserMap(userList);
@@ -217,11 +217,11 @@ public class StudyInfoService {
         return userMap;
     }
 
-    // studyMemberIdList 생성하는 메소드
-    private static List<Long> getStudyMemberIdList(List<StudyMember> studyMemberList) {
+    // 스터디 멤버들의 모든 유저 id를 생성하는 메소드
+    private static List<Long> getStudyMemberUserIdList(List<StudyMember> studyMemberList) {
         List<Long> studyMemberIdList = new ArrayList<>();
         for(int i = 0; i< studyMemberList.size(); i++){
-            studyMemberIdList.add(studyMemberList.get(i).getId());
+            studyMemberIdList.add(studyMemberList.get(i).getUserId());
         }
         return studyMemberIdList;
     }

@@ -265,19 +265,19 @@ class StudyInfoServiceTest extends TestConfig {
         int expectedResponseSize = 3;
 
         // 유저 생성
-        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
-        User other = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User MyUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
         // 스터디 생성
         List<StudyInfo> studyInfos = new ArrayList<>();
-        studyInfos.add(generateStudyInfo(user.getId()));
-        studyInfos.add(generateStudyInfo(user.getId()));
-        studyInfos.add(generateStudyInfo(user.getId()));
-        studyInfos.add(generateStudyInfo(other.getId()));
-        studyInfos.add(generateStudyInfo(other.getId()));
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(otherUser.getId()));
+        studyInfos.add(generateStudyInfo(otherUser.getId()));
         studyInfoRepository.saveAll(studyInfos);
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(user.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY);
 
         // response.getStudyInfoList()를 id순으로 정렬
         response.getStudyInfoList().sort(Comparator.comparingLong(MyStudyInfoListResponse::getId));
@@ -306,19 +306,27 @@ class StudyInfoServiceTest extends TestConfig {
     @Test
     public void 마이스터디_조회_테스트_스터디_카테고리_name_반환_테스트() {
         // given
-        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
-        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
-        List<StudyCategory> studyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
-        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(studyInfo, studyCategories));
+
+        // My 스터디 생성
+        User myUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        StudyInfo myStudyInfo = studyInfoRepository.save(generateStudyInfo(myUser.getId()));
+        List<StudyCategory> myStudyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(myStudyInfo, myStudyCategories));
+
+        // other 스터디 생성
+        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        StudyInfo otherStudyInfo = studyInfoRepository.save(generateStudyInfo(otherUser.getId()));
+        List<StudyCategory> otherStudyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(otherStudyInfo, otherStudyCategories));
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(user.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myUser.getId(), null, LIMIT, SORTBY);
         Map<Long, List<String>> studyCategoryMappingMap = response.getStudyCategoryMappingMap();
 
         // then
-        assertEquals(studyCategoryMappingMap.get(studyInfo.getId()).size(), CATEGORY_SIZE);
-        for(int i=0;i<studyCategoryMappingMap.get(studyInfo.getId()).size();i++){
-            assertEquals(studyCategoryMappingMap.get(studyInfo.getId()).get(i), studyCategories.get(i).getName());
+        assertEquals(studyCategoryMappingMap.get(myStudyInfo.getId()).size(), CATEGORY_SIZE);
+        for(int i=0;i<studyCategoryMappingMap.get(myStudyInfo.getId()).size();i++){
+            assertEquals(studyCategoryMappingMap.get(myStudyInfo.getId()).get(i), myStudyCategories.get(i).getName());
         }
     }
 
@@ -326,34 +334,46 @@ class StudyInfoServiceTest extends TestConfig {
     @Test
     public void 마이스터디_조회_테스트_스터디_멤버_정보_반환_테스트() {
         // given
-        int ExpetedMyStudySize = 3;
-        List<User> userList=new ArrayList<>();
-        User leaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
-        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
-        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+        int ExpectedMyStudySize = 3;
 
-        userList.add(leaderUser);
-        userList.add(user1);
-        userList.add(user2);
+        List<User> ExpectedUserList=new ArrayList<>();
+        User myLeaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User myUser1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User myUser2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+        ExpectedUserList.add(myLeaderUser);
+        ExpectedUserList.add(myUser1);
+        ExpectedUserList.add(myUser2);
 
-        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(leaderUser.getId()));
+        User otherLeaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("d"));
+        User otherUser1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("e"));
+        User otherUser2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("f"));
 
+        // StudyInfo 생성
+        StudyInfo myStudyInfo = studyInfoRepository.save(generateStudyInfo(myLeaderUser.getId()));
+        StudyInfo OtherStudyInfo = studyInfoRepository.save(generateStudyInfo(otherLeaderUser.getId()));
+
+        // myStudyMember 생성
         List<StudyMember> studyMembers = new ArrayList<>();
-        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(leaderUser.getId(), studyInfo.getId()));
-        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId()));
-        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(myLeaderUser.getId(), myStudyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(myUser1.getId(), myStudyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(myUser2.getId(), myStudyInfo.getId()));
+
+        // otherStudyMember 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(otherLeaderUser.getId(), OtherStudyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(otherUser1.getId(), OtherStudyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(otherUser2.getId(), OtherStudyInfo.getId()));
         studyMemberRepository.saveAll(studyMembers);
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(leaderUser.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myLeaderUser.getId(), null, LIMIT, SORTBY);
         Map<Long, List<StudyMemberNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
 
-        assertEquals(userList.size(), ExpetedMyStudySize);
-        for(int i=0;i<studyUserInfoMap.get(studyInfo.getId()).size();i++){
-            assertEquals(studyUserInfoMap.get(studyInfo.getId()).get(i).getName(), userList.get(i).getName());
-            assertEquals(studyUserInfoMap.get(studyInfo.getId()).get(i).getProfileImageUrl(), userList.get(i).getProfileImageUrl());
-        }
         // then
+        assertEquals(studyUserInfoMap.get(myStudyInfo.getId()).size(), ExpectedMyStudySize);
+        for(int i=0;i<studyUserInfoMap.get(myStudyInfo.getId()).size();i++){
+            assertEquals(studyUserInfoMap.get(myStudyInfo.getId()).get(i).getName(), ExpectedUserList.get(i).getName());
+            assertEquals(studyUserInfoMap.get(myStudyInfo.getId()).get(i).getProfileImageUrl(), ExpectedUserList.get(i).getProfileImageUrl());
+        }
     }
 
     @Test
