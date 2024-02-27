@@ -4,6 +4,7 @@ import com.example.backend.study.api.controller.info.response.MyStudyInfoListRes
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -21,29 +22,21 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
     @Override
     public List<MyStudyInfoListResponse> findMyStudyInfoListByParameter_CursorPaging(Long userId, Long cursorIdx, Long limit, String sortBy) {
         OrderSpecifier<?> orderSpecifier;
-        BooleanExpression cursorPredicate = null;
 
-        if (sortBy.equals("lastCommitDay")) {
-            orderSpecifier = studyInfo.lastCommitDay.desc();
-            if (cursorIdx != null) {
-                cursorPredicate = studyInfo.lastCommitDay.loe(JPAExpressions.select(studyInfo.lastCommitDay.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)));
-            }
-        } else if (sortBy.equals("score")) {
-            orderSpecifier = studyInfo.score.desc();
-            if (cursorIdx != null) {
-                cursorPredicate = studyInfo.score.loe(JPAExpressions.select(studyInfo.score.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)));
-            }
-        } else if (sortBy.equals("createdDateTime")) {
-            orderSpecifier = studyInfo.createdDateTime.desc();
-            if (cursorIdx != null) {
-                cursorPredicate = studyInfo.createdDateTime.loe(JPAExpressions.select(studyInfo.createdDateTime.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)));
-            }
-        } else {
-            orderSpecifier = studyInfo.createdDateTime.desc(); // 기본적으로 createdDateTime 내림차순으로 정렬
+        switch (sortBy) {
+            case "lastCommitDay":
+                orderSpecifier = studyInfo.lastCommitDay.desc();
+                break;
+            case "score":
+                orderSpecifier = studyInfo.score.desc();
+                break;
+            case "createdDateTime":
+            default:
+                orderSpecifier = studyInfo.createdDateTime.desc(); // sortBy가 null 또는 다른 값인 경우 기본적으로 createdDateTime 내림차순으로 정렬
+                break;
         }
 
-        // ID 내림차순으로 정렬
-        OrderSpecifier<Long> idOrder = studyInfo.id.desc();
+        OrderSpecifier<Long> idOrder = studyInfo.id.desc(); // ID 내림차순으로 정렬
 
         JPAQuery<MyStudyInfoListResponse> query = queryFactory
                 .select(Projections.constructor(MyStudyInfoListResponse.class,
@@ -60,20 +53,41 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                         studyInfo.createdDateTime))
                 .from(studyInfo)
                 .where(studyInfo.userId.eq(userId))
-                .orderBy(orderSpecifier, idOrder);
+                .orderBy(orderSpecifier, idOrder); // 다중 정렬 조건 적용
 
-        // cursorPredicate가 null이 아닌 경우 커서 기반으로 데이터 가져오도록
-        if (cursorIdx != null && cursorPredicate != null) {
+        if (cursorIdx != null) {
+            NumberExpression<Integer> maxExpression;
+            NumberExpression<Integer> expression;
+
+            switch (sortBy) {
+                case "lastCommitDay":
+                    maxExpression = studyInfo.lastCommitDay.max().dayOfMonth().castToNum(Integer.class);
+                    expression = studyInfo.lastCommitDay.dayOfMonth().castToNum(Integer.class);
+                    break;
+                case "score":
+                    maxExpression = studyInfo.score.max();
+                    expression = studyInfo.score;
+                    break;
+                case "createdDateTime":
+                default:
+                    maxExpression = studyInfo.createdDateTime.max().dayOfMonth().castToNum(Integer.class);
+                    expression = studyInfo.createdDateTime.dayOfMonth().castToNum(Integer.class);
+                    break;
+            }
             query = query.where(
-                    cursorPredicate.and(
-                            studyInfo.id.lt(cursorIdx).or(
-                                    studyInfo.lastCommitDay.lt(JPAExpressions.select(studyInfo.lastCommitDay.max()).from(studyInfo).where(studyInfo.id.eq(cursorIdx)))
-                            )
-                    )
+                    expression.loe(
+                            JPAExpressions
+                                    .select(maxExpression)
+                                    .from(studyInfo)
+                                    .where(studyInfo.id.eq(cursorIdx))
+                    ).and(studyInfo.id.lt(cursorIdx)
+                            .or(expression.lt(
+                                    JPAExpressions
+                                            .select(maxExpression)
+                                            .from(studyInfo)
+                                            .where(studyInfo.id.eq(cursorIdx)))))
             );
         }
-
         return query.limit(limit).fetch();
     }
-
 }
