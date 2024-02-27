@@ -15,11 +15,13 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
+import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.junit.jupiter.api.Assertions.*;
@@ -90,5 +92,65 @@ class StudyCommentServiceTest extends TestConfig {
         assertThrows(StudyCommentException.class, () -> {
             studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfo.getId());
         }, ExceptionMessage.USER_NOT_STUDY_MEMBER.getText());
+    }
+
+    @Test
+    void StudyComment_수정_테스트() {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        StudyComment savedStudyComment =
+                studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
+        StudyCommentUpdateRequest studyCommentUpdateRequest =
+                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(user.getId());
+
+        // when
+        studyCommentService.updateStudyComment(studyCommentUpdateRequest, savedStudyComment.getId());
+
+        // then
+        Optional<StudyComment> studyComment = studyCommentRepository.findById(savedStudyComment.getId());
+        assertAll(
+                () -> assertEquals(studyComment.get().getStudyInfoId(), studyInfo.getId()),
+                () -> assertEquals(studyComment.get().getUserId(), studyCommentUpdateRequest.getUserId()),
+                () -> assertEquals("ChangedContent", studyCommentUpdateRequest.getContent())
+        );
+    }
+
+    @Test
+    void StudyComment_수정_예외_테스트_댓글이_없음() {
+        // given
+        Long invalidStudyCommentId = 987654L;
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
+        StudyCommentUpdateRequest studyCommentUpdateRequest =
+                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(otherUser.getId());
+
+        // when, then
+        assertThrows(StudyCommentException.class, () -> {
+            studyCommentService.updateStudyComment(studyCommentUpdateRequest, invalidStudyCommentId);
+        }, ExceptionMessage.STUDY_COMMENT_NOT_FOUND.getText());
+    }
+
+    @Test
+    void StudyComment_수정_예외_테스트_댓글_수정_권한_없음() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        StudyComment savedStudyComment =
+                studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
+        StudyCommentUpdateRequest studyCommentUpdateRequest =
+                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(otherUser.getId());
+
+        // when, then
+        assertThrows(StudyCommentException.class, () -> {
+            studyCommentService.updateStudyComment(studyCommentUpdateRequest, savedStudyComment.getId());
+        }, ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
     }
 }
