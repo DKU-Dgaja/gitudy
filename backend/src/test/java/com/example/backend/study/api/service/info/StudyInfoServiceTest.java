@@ -23,9 +23,7 @@ import com.example.backend.study.api.controller.info.response.MyStudyInfoListAnd
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
 import com.example.backend.study.api.service.info.response.StudyMemberNameAndProfileImageResponse;
-import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -440,5 +438,93 @@ class StudyInfoServiceTest extends TestConfig {
             assertTrue(currentCreatedDateTime.compareTo(previousCreatedDateTime) <= 0);
             previousCreatedDateTime = currentCreatedDateTime;
         }
+    }
+
+    @Test
+    void 스코어_정렬로_스터디조회_커서기반_페이지네이션_중복_데이터_누락_제거_테스트() {
+        // [문제]
+        // score: 100
+        // score: 70
+        // score: 50
+        // score: 40
+        // score: 30
+        // score: 30 <- cursorIdx
+        // score: 30
+        // score: 20 <- 여기부터 조회됨
+        // score: 10
+        // score: 5
+        // 중복 데이터 누락 발생!
+
+        // [해결]
+        // score가 30으로 동일한 스터디가 3개가 있을 때 데이터 누락 되면 안되는 테스트
+        // 데이터가 누락 안되게 올바른 cursorIdx가 반환되는지 Test한다.
+
+        // given
+        String sortBy = "score";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> list = new ArrayList<>();
+        StudyInfo score100 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 100);
+        StudyInfo score70 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 70);
+        StudyInfo score50 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 50);
+        StudyInfo score40 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 40);
+        StudyInfo score30_1 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 30);
+        StudyInfo score30_2 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 30);
+        StudyInfo score30_3 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 30);
+        StudyInfo score20 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 20);
+        StudyInfo score10 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 10);
+        StudyInfo score5 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 5);
+
+
+        list.add(score100);list.add(score70);list.add(score50);list.add(score40);list.add(score30_1);
+        list.add(score30_2);list.add(score30_3);list.add(score20);list.add(score10);list.add(score5);
+
+        studyInfoRepository.saveAll(list);
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectMyStudyInfoList(savedUser.getId()
+                , null
+                , LIMIT
+                , sortBy);
+
+        List<MyStudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
+        System.out.println("---------After sort by Score----------");
+        for(MyStudyInfoListResponse x: studyInfoList1){
+            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+        }
+        System.out.println("--------------------------------------");
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response2 = studyInfoService.selectMyStudyInfoList(savedUser.getId()
+                , score50.getId()
+                , 3L
+                , sortBy);
+        List<MyStudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " + score50.getId() + ", limit : 3]");
+        for(MyStudyInfoListResponse x: studyInfoList2){
+            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+        }
+        System.out.println("response ->[cursorIdx : " + response2.getCursorIdx() +"]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response2.getCursorIdx(), score30_2.getId());
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response3 = studyInfoService.selectMyStudyInfoList(savedUser.getId()
+                , response2.getCursorIdx()
+                , 3L
+                , sortBy);
+        List<MyStudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " +response2.getCursorIdx() + ", limit : 3]");
+        for(MyStudyInfoListResponse x: studyInfoList3){
+            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+        }
+        System.out.println("response ->[cursorIdx : " + response3.getCursorIdx() +"]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response3.getCursorIdx(), score10.getId());
     }
 }

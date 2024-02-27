@@ -228,4 +228,31 @@ public class StudyInfoFixture {
                 .studyCategoryMappingMap(studyCategoryMappingMap)
                 .build();
     }
+
+    // 누락 테스트용 스터디 정보 생성 메서드 (Score지정)
+    public static StudyInfo testSortScoreStudyCursorPaginationWithoutMissingData(Long userId, int score) {
+        Random random = new Random();
+
+        // 마지막 커밋 날짜를 현재 날짜를 기준으로 랜덤으로 설정
+        LocalDate now = LocalDate.now();
+        long daysToAdd = random.nextInt(365);
+        LocalDate randomLastCommitDay = now.minusDays(daysToAdd);
+
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .score(score) // 랜덤 스코어 설정
+                .endDate(now.plusMonths(3))
+                .info("info")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .joinCode("ABC123")
+                .maximumMember(5)
+                .currentMember(3)
+                .lastCommitDay(randomLastCommitDay) // 랜덤 마지막 커밋 날짜 설정
+                .profileImageUrl("https://example.com/profile.jpg")
+                .notice("Notice")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
 }
