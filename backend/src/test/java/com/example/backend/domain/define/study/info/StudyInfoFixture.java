@@ -12,6 +12,7 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PRIVATE;
 import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PUBLIC;
 
 public class StudyInfoFixture {
@@ -159,5 +160,14 @@ public class StudyInfoFixture {
                 .map(StudyCategory::getId)
                 .collect(Collectors.toList());
         return categoriesId;
+    }
+
+    // 비공개 스터디 생성 메서드
+    public static StudyInfo createDefaultPrivateStudyInfo(Long userId) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("토픽")
+                .status(STUDY_PRIVATE)
+                .build();
     }
 }
