@@ -1,8 +1,7 @@
 package com.example.backend.domain.define.study.comment.study;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,6 +31,9 @@ public class StudyComment extends BaseEntity {
     public StudyComment(Long studyInfoId, Long userId, String content) {
         this.studyInfoId = studyInfoId;
         this.userId = userId;
+        this.content = content;
+    }
+    public void updateStudyComment(String content) {
         this.content = content;
     }
 }
