@@ -4,28 +4,35 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="22dp"
     tools:context=".ui.login.LoginActivity">
-
     <LinearLayout
+        android:id="@+id/socialLoginCompleteTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="104dp"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
+        android:paddingLeft="22dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="153dp"
-            android:layout_height="29.6dp"
-            android:src="@drawable/logo_gitudy" />
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:src="@drawable/logo_git" />
 
         <TextView
             style="@style/B1_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="22dp"
+            android:layout_marginTop="11dp"
             android:text="함께 성장하는\n개발자들의 협업 공간"
             android:textColor="@color/GS_900" />
     </LinearLayout>
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/loginFragmentContainerView"
+        android:name="androidx.navigation.fragment.NavHostFragment"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/login_nav" />
 </androidx.constraintlayout.widget.ConstraintLayout>

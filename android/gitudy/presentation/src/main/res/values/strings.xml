@@ -53,8 +53,7 @@
     <string name="detail1_body">서비스 이용 약관 내용</string>
     <string name="detail2_body">개인정보 처리 방침 내용</string>
     <string name="detail3_body">본인 인증 서비스 이용 약관 내용</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="agreement">동의</string>
 
     <!-- Strings related to profile -->
     <string name="nickname">대머리깃터디</string>
@@ -62,5 +61,7 @@
     <string name="profile_github_link">www.github.com</string>
     <string name="profile_blog_link">www.naver.com</string>
     <string name="profile_linkedin_link">www.linkedin.com</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

@@ -68,4 +68,8 @@ dependencies {
 
     // androidx webkit
     implementation("androidx.webkit:webkit:1.8.0")
+
+    // navigation
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
 }

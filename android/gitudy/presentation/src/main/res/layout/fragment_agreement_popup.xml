@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#8027292E"
     tools:context=".ui.login.PopupFragment">
 
     <androidx.cardview.widget.CardView
@@ -62,12 +61,14 @@
                 android:padding="20dp">
 
                 <ImageView
+                    android:id="@+id/allAgreeCheckIcon"
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:layout_marginRight="8dp"
                     android:src="@drawable/ic_check_grey_c" />
 
                 <TextView
+                    android:id="@+id/allAgreeCheckText"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pretendard_semibold"
@@ -94,11 +95,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/checkBtn1"
+                    android:button="@null"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_check_grey"
+                    android:background="@drawable/selector_ic_check_checked"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -133,11 +135,12 @@
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintVertical_bias="0.583" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/checkBtn2"
+                    android:button="@null"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_check_grey"
+                    android:background="@drawable/selector_ic_check_checked"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -171,11 +174,12 @@
                     app:layout_constraintStart_toEndOf="@+id/detailTitle2"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/checkBtn3"
+                    android:button="@null"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_check_grey"
+                    android:background="@drawable/selector_ic_check_checked"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -209,11 +213,12 @@
                     app:layout_constraintStart_toEndOf="@+id/detailTitle3"
                     app:layout_constraintTop_toTopOf="parent" />
 
-                <ImageView
+                <CheckBox
                     android:id="@+id/checkBtn4"
+                    android:button="@null"
                     android:layout_width="32dp"
                     android:layout_height="32dp"
-                    android:src="@drawable/ic_check_grey"
+                    android:background="@drawable/selector_ic_check_checked"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
@@ -225,7 +230,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/selector_btn_r6_enable"
+                android:background="@drawable/selector_btn_r8_enable"
                 android:enabled="false"
                 android:text="@string/confirm"
                 android:textColor="@drawable/selector_text_color_enable" />

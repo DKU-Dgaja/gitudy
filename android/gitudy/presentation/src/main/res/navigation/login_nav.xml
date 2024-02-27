@@ -2,21 +2,32 @@
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/login_agreement_nav"
-    app:startDestination="@id/popupFragment">
+    android:id="@+id/login_nav"
+    app:startDestination="@id/popupBackgroundFragment">
+
+    <fragment
+        android:id="@+id/popupBackgroundFragment"
+        android:name="com.takseha.presentation.ui.login.PopupBackgroundFragment"
+        android:label="fragment_popup_background"
+        tools:layout="@layout/fragment_popup_background">
+        <action
+            android:id="@+id/action_popupBackgroundFragment_to_popupFragment"
+            app:destination="@id/popupFragment"
+            app:enterAnim="@anim/vertical_enter"  />
+    </fragment>
     <fragment
         android:id="@+id/popupFragment"
         android:name="com.takseha.presentation.ui.login.PopupFragment"
         android:label="fragment_agreement_popup"
-        tools:layout="@layout/fragment_agreement_popup" >
+        tools:layout="@layout/fragment_agreement_popup">
         <action
-            android:id="@+id/action_popupFragment_to_popupDetail1Fragment2"
+            android:id="@+id/action_popupFragment_to_popupDetail1Fragment"
             app:destination="@id/popupDetail1Fragment" />
         <action
-            android:id="@+id/action_popupFragment_to_popupDetail2Fragment2"
+            android:id="@+id/action_popupFragment_to_popupDetail2Fragment"
             app:destination="@id/popupDetail2Fragment" />
         <action
-            android:id="@+id/action_popupFragment_to_popupDetail3Fragment2"
+            android:id="@+id/action_popupFragment_to_popupDetail3Fragment"
             app:destination="@id/popupDetail3Fragment" />
         <action
             android:id="@+id/action_popupFragment_to_inputIdFragment"
@@ -25,8 +36,8 @@
     <fragment
         android:id="@+id/popupDetail1Fragment"
         android:name="com.takseha.presentation.ui.login.PopupDetail1Fragment"
-        android:label="fragment_popup_detail3"
-        tools:layout="@layout/fragment_popup_detail3" >
+        android:label="fragment_popup_detail1"
+        tools:layout="@layout/fragment_popup_detail1">
         <action
             android:id="@+id/action_popupDetail1Fragment_to_popupFragment"
             app:destination="@id/popupFragment" />
@@ -35,7 +46,7 @@
         android:id="@+id/popupDetail2Fragment"
         android:name="com.takseha.presentation.ui.login.PopupDetail2Fragment"
         android:label="fragment_popup_detail2"
-        tools:layout="@layout/fragment_popup_detail2" >
+        tools:layout="@layout/fragment_popup_detail2">
         <action
             android:id="@+id/action_popupDetail2Fragment_to_popupFragment"
             app:destination="@id/popupFragment" />
@@ -44,7 +55,7 @@
         android:id="@+id/popupDetail3Fragment"
         android:name="com.takseha.presentation.ui.login.PopupDetail3Fragment"
         android:label="fragment_popup_detail3"
-        tools:layout="@layout/fragment_popup_detail3" >
+        tools:layout="@layout/fragment_popup_detail3">
         <action
             android:id="@+id/action_popupDetail3Fragment_to_popupFragment"
             app:destination="@id/popupFragment" />
@@ -53,7 +64,7 @@
         android:id="@+id/inputIdFragment"
         android:name="com.takseha.presentation.ui.login.InputIdFragment"
         android:label="fragment_input_id"
-        tools:layout="@layout/fragment_input_id" >
+        tools:layout="@layout/fragment_input_id">
         <action
             android:id="@+id/action_inputIdFragment_to_inputNicknameFragment"
             app:destination="@id/inputNicknameFragment" />
@@ -62,9 +73,9 @@
         android:id="@+id/inputNicknameFragment"
         android:name="com.takseha.presentation.ui.login.InputNicknameFragment"
         android:label="fragment_input_nickname"
-        tools:layout="@layout/fragment_input_nickname" >
+        tools:layout="@layout/fragment_input_nickname">
         <action
-            android:id="@+id/action_inputNicknameFragment_to_loginCompleteFragment2"
+            android:id="@+id/action_inputNicknameFragment_to_loginCompleteFragment"
             app:destination="@id/loginCompleteFragment" />
     </fragment>
     <fragment
