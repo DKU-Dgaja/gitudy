@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.data.repository.GitudyRepository
 import kotlinx.coroutines.launch
 
-class LoginViewModel : ViewModel() {
+class StartLoginViewModel : ViewModel() {
     private val gitudyRepository = GitudyRepository()
 
     private var _loginPageUrl = MutableLiveData<String>()
