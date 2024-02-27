@@ -18,6 +18,6 @@ public class StudyMembersResponse {
 
     private StudyMemberStatus status; // 스터디 구성원 상태
 
-    private  int score; // 기여도
+    private int score; // 기여도
 
 }

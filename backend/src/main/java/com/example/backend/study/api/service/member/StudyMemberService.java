@@ -3,12 +3,9 @@ package com.example.backend.study.api.service.member;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
-import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -29,7 +26,6 @@ public class StudyMemberService {
 
     private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
-    private final StudyInfoRepository studyInfoRepository;
 
     // 스터디장 검증 메서드
     public void isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
