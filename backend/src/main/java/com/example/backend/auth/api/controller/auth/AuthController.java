@@ -42,6 +42,7 @@ public class AuthController {
     private final LoginStateService loginStateService;
 
 
+    @ApiResponse(responseCode = "200", description = "로그인페이지 요청 성공", content = @Content(schema = @Schema(implementation = AuthLoginPageResponse.class)))
     @GetMapping("/loginPage")
     public JsonResult<List<AuthLoginPageResponse>> loginPage() {
 
@@ -54,6 +55,7 @@ public class AuthController {
         return JsonResult.successOf(loginPages);
     }
 
+    @ApiResponse(responseCode = "200", description = "로그인 요청 성공", content = @Content(schema = @Schema(implementation = AuthLoginResponse.class)))
     @GetMapping("/{platformType}/login")
     public JsonResult<AuthLoginResponse> login(
             @PathVariable("platformType") UserPlatformType platformType,
@@ -70,6 +72,7 @@ public class AuthController {
         return JsonResult.successOf(loginResponse);
     }
 
+    @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     @GetMapping("/logout")
     public JsonResult<?> logout(@RequestHeader(name = "Authorization") String token) {
         List<String> tokens = Arrays.asList(token.split(" "));
@@ -101,6 +104,7 @@ public class AuthController {
         }
     }
 
+    @ApiResponse(responseCode = "200", description = "회원정보 조회 성공", content = @Content(schema = @Schema(implementation = UserInfoResponse.class)))
     @GetMapping("/info")
     public JsonResult<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
 
