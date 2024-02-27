@@ -44,8 +44,10 @@ android {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":common"))
     implementation(project(":domain"))
+    // 임시로 data implementation
+    implementation(project(":data"))
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.appcompat:appcompat:1.6.1")
@@ -61,6 +63,9 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     // hilt
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-android-compiler:2.50")
+
+    // androidx webkit
+    implementation("androidx.webkit:webkit:1.8.0")
 }

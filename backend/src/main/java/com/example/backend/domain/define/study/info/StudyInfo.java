@@ -4,6 +4,7 @@ import com.example.backend.domain.define.BaseEntity;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -103,6 +104,19 @@ public class StudyInfo extends BaseEntity {
         }
         return sb.toString();
     }
+
+    public void updateStudyInfo(StudyInfoUpdateRequest request) {
+        this.userId = request.getUserId();
+        this.topic = request.getTopic();
+        this.endDate = request.getEndDate();
+        this.info = request.getInfo();
+        this.status = request.getStatus();
+        this.maximumMember = request.getMaximumMember();
+        this.profileImageUrl = request.getProfileImageUrl();
+        this.repositoryInfo = request.getRepositoryInfo();
+        this.periodType = request.getPeriodType();
+    }
+    
     public void updateDeletedStudy() {
         this.status = StudyStatus.STUDY_DELETED;
     }

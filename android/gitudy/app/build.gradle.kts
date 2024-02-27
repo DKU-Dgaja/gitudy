@@ -1,3 +1,9 @@
+import java.io.FileInputStream
+import java.util.Properties;
+
+var properties = Properties()
+properties.load(FileInputStream("local.properties"))
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -18,14 +24,19 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        buildConfigField("String", "APP_ID", properties.getProperty("APP_ID"))
+        manifestPlaceholders["APP_ID"] = properties.getProperty("APP_ID")
+    }
+    buildFeatures {
+        buildConfig = true
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             )
         }
     }
@@ -39,7 +50,7 @@ android {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":common"))
     implementation(project(":data"))
     implementation(project(":domain"))
     implementation(project(":presentation"))
@@ -52,9 +63,15 @@ dependencies {
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
 
-    implementation("com.google.dagger:hilt-android:2.44")
-    kapt("com.google.dagger:hilt-android-compiler:2.44")
+    // hilt
+    implementation("com.google.dagger:hilt-android:2.50")
+    kapt("com.google.dagger:hilt-android-compiler:2.50")
+
+    // retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
 
 kapt {
