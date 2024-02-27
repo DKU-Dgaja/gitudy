@@ -52,7 +52,11 @@ public enum ExceptionMessage {
     TODO_NOT_FOUND("해당 Todo를 찾을 수 없습니다."),
 
     // StudyMemberException
-    USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다.")
+    USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
+
+    // StudyCommentException
+    STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),
+    STUDY_COMMENT_NOT_AUTHORIZED("스터디 댓글을 수정할 권한이 없습니다.")
     ;
     private final String text;
 }
