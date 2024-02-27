@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.comment.study;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.comment.study.StudyCommentException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -88,6 +89,6 @@ class StudyCommentServiceTest extends TestConfig {
         // then
         assertThrows(StudyCommentException.class, () -> {
             studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfo.getId());
-        }, "해당 스터디원을 찾을 수 없습니다.");
+        }, ExceptionMessage.USER_NOT_STUDY_MEMBER.getText());
     }
 }
