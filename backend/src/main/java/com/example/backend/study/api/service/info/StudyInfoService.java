@@ -7,6 +7,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -182,4 +183,17 @@ public class StudyInfoService {
                 .build();
         return studyInfoRepository.save(studyInfo);
     }
+
+    // 스터디 상태 확인 메서드
+    public StudyStatus isValidateStudyStatus(Long studyInfoId) {
+
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() ->{
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        return studyInfo.getStatus();
+
+    }
+
 }
