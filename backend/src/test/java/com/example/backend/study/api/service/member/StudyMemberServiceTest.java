@@ -7,6 +7,7 @@ import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -64,8 +65,8 @@ public class StudyMemberServiceTest extends TestConfig {
         // then
         assertNotNull(responses);
         assertEquals(3, responses.size());
-        assertEquals(leader.getId(), responses.get(0).getUserId());
-        assertEquals(withdrawalMember.getId(), responses.get(2).getUserId());
+        assertEquals(StudyMemberStatus.STUDY_ACTIVE, responses.get(0).getStatus());
+        assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, responses.get(2).getStatus());
     }
 
 }
