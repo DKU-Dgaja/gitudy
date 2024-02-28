@@ -6,6 +6,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.commit.response.CommitInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.service.commit.StudyCommitService;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -23,8 +24,7 @@ import java.util.List;
 @RequestMapping("/commits")
 public class StudyCommitController {
     private final StudyCommitService studyCommitService;
-
-
+    private final StudyMemberService studyMemberService;
     private final AuthService authService;
 
     @ApiResponse(responseCode = "200",
@@ -53,7 +53,11 @@ public class StudyCommitController {
     @ApiResponse(responseCode = "200", description = "커밋 상세 페이지 조회 성공",
             content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @GetMapping("/{commitId}")
-    public JsonResult<?> commitDetails(@PathVariable(name = "commitId") Long commitId) {
+    public JsonResult<?> commitDetails(@AuthenticationPrincipal User user,
+                                       @RequestParam(name = "studyId") Long studyId,
+                                       @PathVariable(name = "commitId") Long commitId) {
+
+        studyMemberService.isValidateStudyMember(user, studyId);
 
         return JsonResult.successOf(studyCommitService.getCommitDetailsById(commitId));
     }
