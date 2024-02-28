@@ -5,8 +5,8 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
-import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.service.comment.study.StudyCommentService;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/study")
 public class StudyCommentController {
     private final StudyCommentService studyCommentService;
+
     private final AuthService authService;
+
+    private final StudyMemberService studyMemberService;
 
     @ApiResponse(responseCode = "200", description = "스터디 댓글 등록 성공")
     @PostMapping("/{studyInfoId}/comment")
@@ -43,5 +46,16 @@ public class StudyCommentController {
         studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyCommentId);
 
         return JsonResult.successOf("StudyComment update Success");
+    }
+    @ApiResponse(responseCode = "200", description = "스터디 댓글 삭제 성공")
+    @DeleteMapping("/{studyInfoId}/comment/{studyCommentId}")
+    public JsonResult<?> deleteStudyComment(@AuthenticationPrincipal User user,
+                                     @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                     @PathVariable(name = "studyCommentId") Long studyCommentId
+    ) {
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
+        studyCommentService.deleteStudyComment(user, studyInfoId, studyCommentId);
+
+        return JsonResult.successOf("StudyComment deleted successfully");
     }
 }

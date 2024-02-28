@@ -3,19 +3,18 @@ package com.example.backend.study.api.service.comment.study;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.comment.study.StudyCommentException;
 import com.example.backend.common.exception.study.StudyInfoException;
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.comment.study.StudyComment;
 import com.example.backend.domain.define.study.comment.study.repository.StudyCommentRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
-import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -23,7 +22,12 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyCommentService {
     private final StudyCommentRepository studyCommentRepository;
+
     private final StudyMemberRepository studyMemberRepository;
+
+    private final StudyInfoRepository studyInfoRepository;
+
+    private final StudyMemberService studyMemberService;
 
     @Transactional
     public void registerStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId) {
@@ -54,6 +58,27 @@ public class StudyCommentService {
         studyComment.updateStudyComment(request.getContent());
     }
 
+    @Transactional
+    public void deleteStudyComment(User user, Long studyInfoId, Long studyCommentId) {
+        // StudyComment 조회
+        StudyComment studyComment = studyCommentRepository.findById(studyCommentId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyCommentId, ExceptionMessage.STUDY_COMMENT_NOT_FOUND.getText());
+            return new StudyCommentException(ExceptionMessage.STUDY_COMMENT_NOT_FOUND);
+        });
+
+        // 스터디가 있는지 확인
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 유저가 스터디 장이거나 댓글 작성자인지 검증
+        if(!studyMemberService.isTrueStudyLeader(user, studyInfoId) && user.getId() != studyComment.getUserId()){
+            log.warn(">>>> {} : {} <<<<", user.getId(), ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
+            throw new StudyCommentException(ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED);
+        }
+        studyCommentRepository.deleteById(studyCommentId);
+    }
     // StudyComment 생성 로직
     private StudyComment createStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId) {
         return StudyComment.builder()
