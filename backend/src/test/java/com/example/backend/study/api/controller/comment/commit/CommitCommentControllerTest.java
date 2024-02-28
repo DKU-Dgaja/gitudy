@@ -8,6 +8,7 @@ import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;
 import com.example.backend.study.api.service.comment.commit.CommitCommentService;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -19,6 +20,7 @@ import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
@@ -33,6 +35,9 @@ class CommitCommentControllerTest extends TestConfig {
     @MockBean
     private CommitCommentService commitCommentService;
 
+    @MockBean
+    private StudyMemberService studyMemberService;
+
     @Autowired
     private JwtService jwtService;
 
@@ -46,11 +51,14 @@ class CommitCommentControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
+        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
         when(commitCommentService.getCommitCommentsList(any(Long.class))).thenReturn(List.of(CommitCommentInfoResponse.builder().studyCommitId(commitId).build()));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("studyInfoId", "1"))
+
 
                 // then
                 .andExpect(status().isOk())
@@ -71,11 +79,13 @@ class CommitCommentControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
+        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
         when(commitCommentService.getCommitCommentsList(any(Long.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("studyInfoId", "1"))
 
                 // then
                 .andExpect(status().isOk())

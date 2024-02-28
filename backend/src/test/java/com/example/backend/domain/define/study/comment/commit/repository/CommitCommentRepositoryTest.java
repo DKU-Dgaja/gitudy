@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.study.comment.commit.repository;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.comment.commit.CommitCommentFixture;
@@ -13,7 +12,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SuppressWarnings("NonAsciiCharacters")
 class CommitCommentRepositoryTest extends TestConfig {
@@ -49,9 +49,9 @@ class CommitCommentRepositoryTest extends TestConfig {
 
         // then
         for (CommitCommentInfoResponse c : response) {
-            System.out.println("c.getId() = " + c.getId());
-            System.out.println("c.getStudyCommitId() = " + c.getStudyCommitId());
-            System.out.println("c.getUserInfoResponse().getUserId() = " + c.getUserInfoResponse().getUserId());
+//            System.out.println("c.getId() = " + c.getId());
+//            System.out.println("c.getStudyCommitId() = " + c.getStudyCommitId());
+//            System.out.println("c.getUserInfoResponse().getUserId() = " + c.getUserInfoResponse().getUserId());
             assertEquals(commitId, c.getStudyCommitId());
             assertNotNull(c.getUserInfoResponse().getUserId());
         }
