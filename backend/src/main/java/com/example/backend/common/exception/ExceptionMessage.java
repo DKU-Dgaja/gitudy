@@ -45,7 +45,7 @@ public enum ExceptionMessage {
 
     // CommitException
     COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),
-    
+
     // BookmarkException
     BOOKMARK_DELETE_FAIL("북마크 삭제에 실패했습니다."),
 
