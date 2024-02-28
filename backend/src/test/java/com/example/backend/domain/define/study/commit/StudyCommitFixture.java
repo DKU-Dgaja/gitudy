@@ -1,11 +1,8 @@
 package com.example.backend.domain.define.study.commit;
 
-import com.example.backend.domain.define.study.commit.constant.CommitStatus;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import static com.example.backend.domain.define.study.commit.constant.CommitStatus.COMMIT_APPROVAL;
