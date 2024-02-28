@@ -1,6 +1,7 @@
 package com.example.backend.domain.define.study.member.repository;
 
 import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 
 import java.util.List;
 
@@ -13,4 +14,7 @@ public interface StudyMemberRepositoryCustom {
 
     // StudyInfoId를 통해 스터디의 모든 멤버들 중에 활동중인 멤버를 조회한다.
     public List<StudyMember> findActiveMembersByStudyInfoId(Long studyInfoId);
+
+    // StudyInfoId를 통해 스터디의 모든 멤버들을 기여도별로 정렬하여 조회한다.
+    public List<StudyMembersResponse> findStudyMembersByStudyInfoIdOrderByScore(Long studyInfoId);
 }
