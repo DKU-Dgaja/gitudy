@@ -63,7 +63,7 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                 .from(studyMember)
                 .join(user).on(user.id.eq(studyMember.userId))
                 .where(studyMember.studyInfoId.eq(studyInfoId))
-                .orderBy(studyMember.score.desc()) // 기여도별 내림차순
+                .orderBy(studyMember.score.desc(), studyMember.userId.asc()) // 기여도별 내림차순, 동일 점수 시 사용자Id 오름차순
                 .fetch();
     }
 }

@@ -17,7 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class StudyMemberServiceTest extends TestConfig {
 
@@ -48,15 +49,17 @@ public class StudyMemberServiceTest extends TestConfig {
         User leader = UserFixture.generatePlatfomIdAndNameAndProfile("1", "이정우", "이정우프로필사진");
         User activeMember1 = UserFixture.generatePlatfomIdAndNameAndProfile("2", "구영민", "구영민프로필사진");
         User activeMember2 = UserFixture.generatePlatfomIdAndNameAndProfile("3", "이주성", "이주성프로필사진");
-        userRepository.saveAll(List.of(leader, activeMember1, activeMember2));
+        User activeMember3 = UserFixture.generatePlatfomIdAndNameAndProfile("4", "탁세하", "탁세하프로필사진");
+        userRepository.saveAll(List.of(leader, activeMember1, activeMember2, activeMember3));
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMembersByScore(leader.getId(), studyInfo.getId(), 77),
-                StudyMemberFixture.createStudyMembersByScore(activeMember1.getId(), studyInfo.getId(), 99),
-                StudyMemberFixture.createStudyMembersByScore(activeMember2.getId(), studyInfo.getId(), 88)
+                StudyMemberFixture.createStudyMembersByScore(activeMember1.getId(), studyInfo.getId(), 77),
+                StudyMemberFixture.createStudyMembersByScore(activeMember2.getId(), studyInfo.getId(), 99),
+                StudyMemberFixture.createStudyMembersByScore(activeMember3.getId(), studyInfo.getId(), 88)
         ));
 
 
@@ -65,14 +68,19 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // then
         assertNotNull(responses);
-        assertEquals(3, responses.size());
+        assertEquals(4, responses.size());
+
+        assertEquals(99, responses.get(0).getScore());
+        assertEquals("이주성", responses.get(0).getName());
+
+        assertEquals(88, responses.get(1).getScore());
+        assertEquals("탁세하", responses.get(1).getName());
+
         assertEquals(77, responses.get(2).getScore());
         assertEquals("이정우", responses.get(2).getName());
 
-        assertEquals(99, responses.get(0).getScore());
-        assertEquals("구영민", responses.get(0).getName());
+        assertEquals(77, responses.get(3).getScore());
+        assertEquals("구영민", responses.get(3).getName());  // 점수 동일시 userId 낮은순
 
-        assertEquals(88, responses.get(1).getScore());
-        assertEquals("이주성", responses.get(1).getName());
     }
 }
