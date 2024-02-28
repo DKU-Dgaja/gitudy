@@ -3,6 +3,7 @@ package com.example.backend.study.api.service.member;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
+import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
@@ -65,7 +66,7 @@ public class StudyMemberService {
         // 스터디 조회 예외처리
         studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
 
         return studyMemberRepository.findStudyMembersByStudyInfoIdOrderByScore(studyInfoId);
