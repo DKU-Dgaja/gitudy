@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -42,29 +44,7 @@ public class StudyMemberController {
         // 스터디 상태 확인
         StudyStatus studyStatus = studyInfoService.isValidateStudyStatus(studyInfoId);
 
-        // 공개 스터디인 경우
-        if (studyStatus == StudyStatus.STUDY_PUBLIC) {
-
-            return JsonResult.successOf(studyMemberService.readStudyMembers(studyInfoId));
-
-        } else if (studyStatus == StudyStatus.STUDY_PRIVATE) { // 비공개 스터디인 경우
-
-            try {
-                // 스터디원인지 확인
-                studyMemberService.isValidateStudyMember(user, studyInfoId);
-            } catch (GitudyException e) {
-
-                // 스터디원이 아니고 비공개 스터디인 경우
-                return JsonResult.failOf("해당 스터디원이 아닙니다.");
-            }
-
-            // 비공개 스터디이지만 스터디원인 경우
-            return JsonResult.successOf(studyMemberService.readStudyMembers(studyInfoId));
-
-        } else { // 삭제 스터디인 경우
-
-            return JsonResult.failOf("해당 스터디는 삭제되었습니다.");
-        }
+        return JsonResult.successOf(studyMemberService.readStudyMembers(studyInfoId, studyStatus, user));
 
     }
 }

@@ -5,6 +5,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
@@ -60,7 +61,7 @@ public class StudyMemberServiceTest extends TestConfig {
         ));
 
         // when
-        List<StudyMembersResponse> responses = studyMemberService.readStudyMembers(studyInfo.getId());
+        List<StudyMembersResponse> responses = studyMemberService.readStudyMembers(studyInfo.getId(), StudyStatus.STUDY_PRIVATE, leader);
 
         // then
         assertNotNull(responses);

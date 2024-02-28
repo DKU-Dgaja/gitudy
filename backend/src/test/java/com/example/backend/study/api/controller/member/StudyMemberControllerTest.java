@@ -9,6 +9,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -78,7 +79,7 @@ public class StudyMemberControllerTest extends TestConfig {
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyInfoService.isValidateStudyStatus(any(Long.class))).thenReturn(studyInfo.getStatus());
-        when(studyMemberService.readStudyMembers(any(Long.class))).thenReturn(new ArrayList<>());
+        when(studyMemberService.readStudyMembers(any(Long.class), any(StudyStatus.class), any(User.class))).thenReturn(new ArrayList<>());
 
 
         // when

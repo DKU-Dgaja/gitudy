@@ -53,7 +53,8 @@ public enum ExceptionMessage {
     TODO_NOT_FOUND("해당 Todo를 찾을 수 없습니다."),
 
     // StudyMemberException
-    USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다.")
+    USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
+    STUDY_NOT_FOUND("해당 스터디는 삭제되었습니다.")
     ;
     private final String text;
 }

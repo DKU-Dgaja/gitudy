@@ -2,10 +2,12 @@ package com.example.backend.study.api.service.member;
 
 
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -15,7 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -60,12 +64,36 @@ public class StudyMemberService {
 
 
     // 스터디에 속한 스터디원들 조회
-    public List<StudyMembersResponse> readStudyMembers(Long studyInfoId) {
+    public List<StudyMembersResponse> readStudyMembers(Long studyInfoId, StudyStatus studyStatus, User user) {
 
         List<StudyMember> studyMembers = studyMemberRepository.findByStudyInfoId(studyInfoId);
 
-        // 스터디 멤버 정보를 StudyMembersResponse DTO로 변환
-        return studyMembers.stream()
+        // 공개 스터디인 경우
+        if (studyStatus == StudyStatus.STUDY_PUBLIC) {
+            return studyMembers.stream()
+                    .map(member -> StudyMembersResponse.builder()
+                            .userId(member.getId())
+                            .role(member.getRole())
+                            .status(member.getStatus())
+                            .score(member.getScore())
+                            .build())
+                    .collect(Collectors.toList());
+
+        } else if (studyStatus == StudyStatus.STUDY_PRIVATE) // 비공개 스터디인 경우
+        {
+            try {
+                // 스터디원인지 확인
+                isValidateStudyMember(user, studyInfoId);
+
+            } catch (GitudyException e) {
+
+                // 비공개 스터디이고 스터디원이 아닐때
+                log.warn(">>>> {},{} : {} <<<<", studyInfoId, user.getId(), ExceptionMessage.STUDY_NOT_MEMBER.getText());
+                throw new MemberException(ExceptionMessage.STUDY_NOT_MEMBER);
+            }
+
+            // 비공개 스터디이지만 스터디원인 경우
+            return studyMembers.stream()
                 .map(member -> StudyMembersResponse.builder()
                         .userId(member.getId())
                         .role(member.getRole())
@@ -73,6 +101,23 @@ public class StudyMemberService {
                         .score(member.getScore())
                         .build())
                 .collect(Collectors.toList());
+
+        } else { // 삭제 스터디인 경우
+
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_NOT_FOUND.getText());
+            throw new MemberException(ExceptionMessage.STUDY_NOT_FOUND);
+        }
+
+    }
+
+
+    // Map<USER_ID, USER> 생성하는 메소드
+    private static Map<Long, User> getUserMap(List<User> userList) {
+        Map<Long, User> userMap = new HashMap<>();
+        for (User user : userList) {
+            userMap.put(user.getId(), user);
+        }
+        return userMap;
     }
 
 
