@@ -7,10 +7,13 @@ import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -50,6 +53,13 @@ public class StudyMemberService {
         if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
             throw new MemberException(ExceptionMessage.STUDY_NOT_MEMBER);
         }
+    }
+
+
+    // 스터디에 속한 스터디원 조회 (기여도별)
+    public List<StudyMembersResponse> readStudyMembers(Long studyInfoId) {
+
+        return studyMemberRepository.findStudyMembersByStudyInfoIdOrderByScore(studyInfoId);
     }
 
 }
