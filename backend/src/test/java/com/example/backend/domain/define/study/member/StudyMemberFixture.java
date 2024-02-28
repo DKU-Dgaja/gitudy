@@ -44,5 +44,16 @@ public class StudyMemberFixture {
                 .build();
     }
 
+    // 테스트용 스코어 스터디원 생성 메서드
+    public static StudyMember createStudyMembersByScore(Long userId, Long studyInfoId, int score) {
+        return StudyMember.builder()
+                .userId(userId)
+                .studyInfoId(studyInfoId)
+                .score(score)
+                .role(StudyMemberRole.STUDY_MEMBER)
+                .status(StudyMemberStatus.STUDY_ACTIVE)
+                .build();
+    }
+
 
 }
