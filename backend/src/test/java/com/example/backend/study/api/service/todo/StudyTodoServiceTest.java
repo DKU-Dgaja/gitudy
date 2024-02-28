@@ -248,7 +248,7 @@ public class StudyTodoServiceTest extends TestConfig {
 
         // when
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
-        Long newCursorIdx = firstPageResponse.getTodoList().get(firstPageResponse.getTodoList().size() - 1).getId();
+        Long newCursorIdx = firstPageResponse.getCursorIdx();
         StudyTodoListAndCursorIdxResponse secondPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx, Limit);
 
         // then
@@ -258,7 +258,7 @@ public class StudyTodoServiceTest extends TestConfig {
 
         // when
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
-        Long newCursorIdx2 = secondPageResponse.getTodoList().get(secondPageResponse.getTodoList().size() - 1).getId();
+        Long newCursorIdx2 = secondPageResponse.getCursorIdx();
         StudyTodoListAndCursorIdxResponse thirdPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx2, Limit);
 
         // then
