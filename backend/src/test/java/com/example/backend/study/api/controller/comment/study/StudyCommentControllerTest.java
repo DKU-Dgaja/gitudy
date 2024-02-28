@@ -8,11 +8,14 @@ import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.comment.StudyCommentFixture;
+import com.example.backend.domain.define.study.comment.study.StudyComment;
+import com.example.backend.domain.define.study.comment.study.repository.StudyCommentRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
+import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
 import com.example.backend.study.api.service.comment.study.StudyCommentService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -28,6 +31,7 @@ import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUs
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -55,10 +59,14 @@ class StudyCommentControllerTest extends TestConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private StudyCommentRepository studyCommentRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        studyCommentRepository.deleteAllInBatch();
     }
 
     @Test
@@ -89,6 +97,35 @@ class StudyCommentControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("StudyComment register Success"))
                 .andDo(print());
+    }
+    @Test
+    public void Study_Comment_Update_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
 
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        StudyComment studyComment =
+                studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(savedUser.getId(), studyInfo.getId()));
+        StudyCommentUpdateRequest studyCommentUpdateRequest =
+                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(savedUser.getId());
+
+        //when
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(studyCommentService).updateStudyComment(any(StudyCommentUpdateRequest.class), any(Long.class));
+
+        //then
+        mockMvc.perform(patch("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .content(objectMapper.writeValueAsString(studyCommentUpdateRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("StudyComment update Success"))
+                .andDo(print());
     }
 }
