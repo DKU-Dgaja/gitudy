@@ -266,4 +266,56 @@ public class StudyTodoServiceTest extends TestConfig {
         assertNotNull(thirdPageResponse);
         assertEquals(1, thirdPageResponse.getTodoList().size());
     }
+
+    @Test
+    @DisplayName("다른 스터디의 Todo와 섞여있을 때, 특정 스터디의 Todo만 조회 확인 테스트")
+    void readTodoList_difStudy() {
+        // given
+        User leader1 = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo1 = StudyInfoFixture.createDefaultPublicStudyInfo(leader1.getId());
+        studyInfoRepository.save(studyInfo1);
+
+        User leader2 = userRepository.save(generateGoogleUser());
+        StudyInfo studyInfo2 = StudyInfoFixture.createDefaultPublicStudyInfo(leader2.getId());
+        studyInfoRepository.save(studyInfo2);
+
+        // 1번 스터디와 2번 스터디의 To do 생성 저장
+        List<StudyTodo> createdStudy1Todos = new ArrayList<>();
+        List<StudyTodo> createdStudy2Todos = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            createdStudy1Todos.add(StudyTodoFixture.createStudyTodoWithTitle(studyInfo1.getId(), "1번 투두 제목" + i));
+            createdStudy2Todos.add(StudyTodoFixture.createStudyTodoWithTitle(studyInfo2.getId(), "2번 투두 제목" + i));
+        }
+
+        // 두 리스트 합치기
+        List<StudyTodo> allTodos = new ArrayList<>();
+        allTodos.addAll(createdStudy1Todos);
+        allTodos.addAll(createdStudy2Todos);
+
+        // 합친 리스트 저장
+        studyTodoRepository.saveAll(allTodos);
+
+        // when
+        StudyTodoListAndCursorIdxResponse responseForStudy1 = studyTodoService.readStudyTodoList(studyInfo1.getId(), CursorIdx, Limit);
+
+        // then
+        assertNotNull(responseForStudy1);
+        assertEquals(Limit.intValue(), responseForStudy1.getTodoList().size());
+
+        responseForStudy1.getTodoList().forEach(todo ->
+          assertTrue(todo.getTitle().contains("1번 투두 제목"), "모든 투두 항목은 '1번 투두 제목' 을 포함해야 한다"));
+
+
+        // when
+        StudyTodoListAndCursorIdxResponse responseForStudy2 = studyTodoService.readStudyTodoList(studyInfo2.getId(), CursorIdx, Limit);
+
+        // then
+        assertNotNull(responseForStudy2);
+        assertEquals(Limit.intValue(), responseForStudy2.getTodoList().size());
+
+        responseForStudy2.getTodoList().forEach(todo ->
+                assertTrue(todo.getTitle().contains("2번 투두 제목"), "모든 투두 항목은 '2번 투두 제목' 을 포함해야 한다"));
+
+    }
+
 }
