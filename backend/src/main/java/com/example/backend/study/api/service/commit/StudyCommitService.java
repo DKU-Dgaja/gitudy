@@ -10,11 +10,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StudyCommitService {
+    private final static Long MAX_LIMIT = 50L;
 
     private final StudyCommitRepository studyCommitRepository;
 
@@ -25,5 +28,12 @@ public class StudyCommitService {
         });
 
         return CommitInfoResponse.of(commit);
+    }
+
+    public List<CommitInfoResponse> selectUserCommitList(Long userId, Long studyId, Long cursorIdx, Long limit) {
+
+        limit = Math.min(limit, MAX_LIMIT);
+
+        return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, studyId, cursorIdx, limit);
     }
 }

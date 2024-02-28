@@ -135,7 +135,7 @@ class AuthControllerTest extends TestConfig {
         mockMvc.perform(
                         post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(JsonMapper.builder().build().writeValueAsString(request)))
+                                .content(objectMapper.writeValueAsString(request)))
                 .andDo(result -> {
                     System.out.println(result.getResponse().getContentAsString());
                 })
@@ -160,7 +160,7 @@ class AuthControllerTest extends TestConfig {
         mockMvc.perform(
                         post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .content(JsonMapper.builder().build().writeValueAsString(request)))
+                                .content(objectMapper.writeValueAsString(request)))
                 // .andExpect(status().isBadRequest());
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))

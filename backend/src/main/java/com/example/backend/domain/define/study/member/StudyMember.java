@@ -49,4 +49,7 @@ public class StudyMember extends BaseEntity {
         this.status = status;
         this.score = score;
     }
+    public void updateWithdrawalStudyMember(){
+        this.status=StudyMemberStatus.STUDY_WITHDRAWAL;
+    }
 }
