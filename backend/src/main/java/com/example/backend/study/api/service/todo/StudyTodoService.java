@@ -3,15 +3,18 @@ package com.example.backend.study.api.service.todo;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
-import com.example.backend.domain.define.study.todo.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,6 +33,8 @@ public class StudyTodoService {
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyInfoRepository studyInfoRepository;
+    private final static Long MAX_LIMIT = 10L;
 
     // Todo 등록
     @Transactional
@@ -106,4 +111,28 @@ public class StudyTodoService {
         studyTodoRepository.delete(studyTodo);
 
     }
+
+    // Todo 전체조회
+    public StudyTodoListAndCursorIdxResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
+
+        // 스터디 조회 예외처리
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        limit = Math.min(limit, MAX_LIMIT);
+
+        List<StudyTodoResponse> studyTodoList = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+
+        StudyTodoListAndCursorIdxResponse response = StudyTodoListAndCursorIdxResponse.builder()
+                .todoList(studyTodoList)
+                .build();
+
+        // 다음 페이지 조회를 위한 cursorIdx 설정
+        response.setNextCursorIdx();
+
+        return response;
+    }
+
 }

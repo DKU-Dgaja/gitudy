@@ -53,5 +53,29 @@ public class StudyTodoFixture {
                 .build();
     }
 
+    //테스트용 studyTodo List 생성
+    public static StudyTodo createStudyTodoList(Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
 
+        return StudyTodo.builder()
+                .studyInfoId(studyInfoId)
+                .title(title)
+                .detail(detail)
+                .todoLink(todoLink)
+                .todoDate(todoDate)
+                .build();
+    }
+
+    // 테스트용 studyTodo List 제목+스터디Id
+    // StudyTodo 객체를 생성하는 메서드에 상세 설명을 추가하여 오버로드
+    public static StudyTodo createStudyTodoWithTitle(Long studyInfoId, String title) {
+        return StudyTodo.builder()
+                .studyInfoId(studyInfoId)
+                .title(title) // 테스트를 위한 기본 값 설정
+                .detail(expectedDetail) // 파라미터로 전달받은 상세 설명 사용
+                .todoLink(expectedTodoLink) // 테스트를 위한 기본 값 설정
+                .todoDate(expectedTodoDate) // 현재 날짜로 설정
+                .build();
+
+
+    }
 }

@@ -37,4 +37,19 @@ public class StudyMemberService {
 
     }
 
+    // 스터디 멤버인지 검증
+    public void isValidateStudyMember(User userPrincipal, Long studyInfoId) {
+
+        // platformId와 platformType을 이용하여 User 객체 조회
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
+        // 스터디 멤버인지확인
+        if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
+            throw new MemberException(ExceptionMessage.STUDY_NOT_MEMBER);
+        }
+    }
+
 }
