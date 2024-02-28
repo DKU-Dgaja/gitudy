@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/BACKGROUND"
     tools:context=".ui.login.InputIdActivity">
 
     <TextView
@@ -58,12 +59,12 @@
         app:layout_constraintTop_toBottomOf="@+id/inputNicknameEditText" />
 
     <Button
-        android:enabled="false"
         android:id="@+id/confirmBtn"
         style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="63dp"
         android:background="@drawable/selector_btn_r0_enable"
+        android:enabled="false"
         android:gravity="center"
         android:text="@string/confirm"
         android:textColor="@drawable/selector_text_color_enable"

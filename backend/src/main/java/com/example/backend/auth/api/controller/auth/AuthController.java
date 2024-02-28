@@ -11,7 +11,6 @@ import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;

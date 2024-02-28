@@ -4,6 +4,7 @@ import com.example.backend.domain.define.BaseEntity;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -12,13 +13,18 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.security.SecureRandom;
 import java.time.LocalDate;
+import java.util.Random;
 
 @Getter
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity(name = "STUDY_INFO")
 public class StudyInfo extends BaseEntity {
+    private static final String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    public static final int JOIN_CODE_LENGTH = 10;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "STUDY_INFO_ID")
@@ -80,7 +86,7 @@ public class StudyInfo extends BaseEntity {
         this.endDate = endDate;
         this.info = info;
         this.status = status;
-        this.joinCode = joinCode;
+        this.joinCode = generateRandomString(JOIN_CODE_LENGTH);
         this.maximumMember = maximumMember;
         this.currentMember = currentMember;
         this.lastCommitDay = lastCommitDay;
@@ -88,5 +94,30 @@ public class StudyInfo extends BaseEntity {
         this.notice = notice;
         this.repositoryInfo = repositoryInfo;
         this.periodType = periodType;
+    }
+
+    private String generateRandomString(int length) {
+        Random random = new SecureRandom();
+        StringBuilder sb = new StringBuilder(length);
+        for (int i = 0; i < length; i++) {
+            sb.append(CHARACTERS.charAt(random.nextInt(CHARACTERS.length())));
+        }
+        return sb.toString();
+    }
+
+    public void updateStudyInfo(StudyInfoUpdateRequest request) {
+        this.userId = request.getUserId();
+        this.topic = request.getTopic();
+        this.endDate = request.getEndDate();
+        this.info = request.getInfo();
+        this.status = request.getStatus();
+        this.maximumMember = request.getMaximumMember();
+        this.profileImageUrl = request.getProfileImageUrl();
+        this.repositoryInfo = request.getRepositoryInfo();
+        this.periodType = request.getPeriodType();
+    }
+    
+    public void updateDeletedStudy() {
+        this.status = StudyStatus.STUDY_DELETED;
     }
 }
