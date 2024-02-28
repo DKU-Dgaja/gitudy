@@ -33,13 +33,13 @@ public class StudyCommitController {
     @GetMapping("/user/{userId}")
     public JsonResult<?> userCommitList(@AuthenticationPrincipal User user,
                                         @PathVariable(name = "userId") Long userId,
-                                        @RequestParam(name = "studyId", required = false) Long studyId,
+                                        @RequestParam(name = "studyInfoId", required = false) Long studyInfoId,
                                         @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
                                         @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "20") Long limit) {
 
         authService.authenticate(userId, user);
 
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, studyId, cursorIdx, limit);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, studyInfoId, cursorIdx, limit);
 
         CommitInfoListAndCursorIdxResponse response = CommitInfoListAndCursorIdxResponse.builder()
                 .commitInfoList(commitInfoList)
@@ -54,10 +54,10 @@ public class StudyCommitController {
             content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @GetMapping("/{commitId}")
     public JsonResult<?> commitDetails(@AuthenticationPrincipal User user,
-                                       @RequestParam(name = "studyId") Long studyId,
+                                       @RequestParam(name = "studyInfoId") Long studyInfoId,
                                        @PathVariable(name = "commitId") Long commitId) {
 
-        studyMemberService.isValidateStudyMember(user, studyId);
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
 
         return JsonResult.successOf(studyCommitService.getCommitDetailsById(commitId));
     }

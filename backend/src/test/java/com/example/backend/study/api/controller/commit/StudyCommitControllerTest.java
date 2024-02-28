@@ -11,6 +11,7 @@ import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.service.commit.StudyCommitService;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -38,6 +39,9 @@ class StudyCommitControllerTest extends TestConfig {
 
     @MockBean
     private StudyCommitService studyCommitService;
+
+    @MockBean
+    private StudyMemberService studyMemberService;
 
     @Autowired
     private JwtService jwtService;
@@ -138,11 +142,13 @@ class StudyCommitControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
+        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
         when(studyCommitService.getCommitDetailsById(any(Long.class))).thenReturn(CommitInfoResponse.builder().commitSHA(commitSha).build());
 
         // when
         mockMvc.perform(get("/commits/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .param("studyInfoId", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
@@ -163,11 +169,13 @@ class StudyCommitControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
+        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
         when(studyCommitService.getCommitDetailsById(any(Long.class))).thenThrow(new CommitException(ExceptionMessage.COMMIT_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/commits/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
+                        .param("studyInfoId", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
