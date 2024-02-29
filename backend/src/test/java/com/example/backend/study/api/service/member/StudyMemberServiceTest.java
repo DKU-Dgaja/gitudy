@@ -199,4 +199,32 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
     }
+
+    @Test
+    @DisplayName("스터디원 탈퇴 테스트")
+    public void withdrawalMember() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        User user2 = UserFixture.generateKaKaoUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1, user2));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember1));
+
+        // when
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, studyMember.get().getStatus());
+    }
+
+    
 }
