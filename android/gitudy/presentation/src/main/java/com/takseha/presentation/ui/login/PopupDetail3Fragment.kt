@@ -30,12 +30,7 @@ class PopupDetail3Fragment : Fragment() {
 
         with(binding) {
             backBtn.setOnClickListener {
-                it.findNavController().navigate(R.id.action_popupDetail3Fragment_to_popupFragment)
-            }
-            agreeBtn.setOnClickListener {
-                val bundle = Bundle()
-                bundle.putString("IsChecked", "detail3")
-                it.findNavController().navigate(R.id.action_popupDetail3Fragment_to_popupFragment, bundle)
+                it.findNavController().popBackStack()
             }
         }
     }

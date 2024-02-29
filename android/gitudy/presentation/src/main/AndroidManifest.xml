@@ -55,7 +55,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.AgreementActivity"
+            android:name=".ui.login.PopupAgreementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity

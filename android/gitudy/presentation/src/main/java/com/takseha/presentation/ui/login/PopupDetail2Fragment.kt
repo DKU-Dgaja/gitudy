@@ -12,9 +12,9 @@ import com.takseha.presentation.databinding.FragmentPopupDetail2Binding
 class PopupDetail2Fragment : Fragment() {
     private var _binding : FragmentPopupDetail2Binding? = null
     private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(
@@ -30,12 +30,7 @@ class PopupDetail2Fragment : Fragment() {
 
         with(binding) {
             backBtn.setOnClickListener {
-                it.findNavController().navigate(R.id.action_popupDetail2Fragment_to_popupFragment)
-            }
-            agreeBtn.setOnClickListener {
-                val bundle = Bundle()
-                bundle.putString("IsChecked", "detail2")
-                it.findNavController().navigate(R.id.action_popupDetail2Fragment_to_popupFragment, bundle)
+                it.findNavController().popBackStack()
             }
         }
     }

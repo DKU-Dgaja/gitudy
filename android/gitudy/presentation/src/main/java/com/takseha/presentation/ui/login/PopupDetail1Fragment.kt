@@ -13,9 +13,9 @@ import com.takseha.presentation.databinding.FragmentPopupDetail1Binding
 class PopupDetail1Fragment : Fragment() {
     private var _binding : FragmentPopupDetail1Binding? = null
     private val binding get() = _binding!!
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Log.d("PopupDetail1Fragment", "oncreate 성공")
     }
 
     override fun onCreateView(
@@ -24,7 +24,6 @@ class PopupDetail1Fragment : Fragment() {
     ): View? {
         _binding = FragmentPopupDetail1Binding.inflate(inflater, container, false)
         return binding.root
-        Log.d("PopupDetail1Fragment", "onCreateView 성공")
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -33,11 +32,6 @@ class PopupDetail1Fragment : Fragment() {
         with(binding) {
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
-            }
-            agreeBtn.setOnClickListener {
-                val bundle = Bundle()
-                bundle.putString("IsChecked", "detail1")
-                it.findNavController().navigate(R.id.action_popupDetail1Fragment_to_popupFragment, bundle)
             }
         }
     }

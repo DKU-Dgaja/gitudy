@@ -17,9 +17,9 @@
     </fragment>
     <fragment
         android:id="@+id/popupFragment"
-        android:name="com.takseha.presentation.ui.login.PopupFragment"
+        android:name="com.takseha.presentation.ui.login.PopupAgreementFragment"
         android:label="fragment_agreement_popup"
-        tools:layout="@layout/fragment_agreement_popup">
+        tools:layout="@layout/fragment_popup_agreement">
         <action
             android:id="@+id/action_popupFragment_to_popupDetail1Fragment"
             app:destination="@id/popupDetail1Fragment"
