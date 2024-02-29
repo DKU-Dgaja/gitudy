@@ -27,6 +27,9 @@ public class StudyCommit extends BaseEntity {
     @Column(name = "STUDY_INFO_ID", nullable = false)
     private Long studyInfoId;                   // 스터디 ID
 
+    @Column(name = "STUDY_TODO_ID", nullable = false)
+    private Long studyTodoId;                   // 투두 정보
+
     @Column(name = "USER_ID", nullable = false)
     private Long userId;                        // 사용자 정보
 
@@ -52,8 +55,9 @@ public class StudyCommit extends BaseEntity {
     private LikeCount likeCount;                // 커밋 좋아요
 
     @Builder
-    public StudyCommit(Long studyInfoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason) {
+    public StudyCommit(Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason) {
         this.studyInfoId = studyInfoId;
+        this.studyTodoId = studyTodoId;
         this.userId = userId;
         this.commitSHA = commitSHA;
         this.message = message;

@@ -12,6 +12,7 @@ import java.time.LocalDate;
 public class CommitInfoResponse {
     private Long id;              // 커밋 아이디
     private Long studyInfoId;     // 스터디 정보 아이디
+    private Long studyTodoId;     // 스터디 투두 아이디
     private Long userId;          // 사용자 아이디
     private String commitSHA;     // 커밋 식별자 SHA 값
     private String message;       // 커밋 메시지
@@ -21,9 +22,10 @@ public class CommitInfoResponse {
     private LikeCount likeCount;  // 커밋 좋아요 수
 
     @Builder
-    public CommitInfoResponse(Long id, Long studyInfoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason, LikeCount likeCount) {
+    public CommitInfoResponse(Long id, Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason, LikeCount likeCount) {
         this.id = id;
         this.studyInfoId = studyInfoId;
+        this.studyTodoId = studyTodoId;
         this.userId = userId;
         this.commitSHA = commitSHA;
         this.message = message;
@@ -37,6 +39,7 @@ public class CommitInfoResponse {
         return CommitInfoResponse.builder()
                 .id(commit.getId())
                 .studyInfoId(commit.getStudyInfoId())
+                .studyTodoId(commit.getStudyTodoId())
                 .userId(commit.getUserId())
                 .commitSHA(commit.getCommitSHA())
                 .message(commit.getMessage())

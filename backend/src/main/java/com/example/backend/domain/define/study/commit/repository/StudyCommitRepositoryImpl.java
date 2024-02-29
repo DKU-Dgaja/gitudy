@@ -23,6 +23,7 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
                 .select(Projections.constructor(CommitInfoResponse.class,
                         studyCommit.id,
                         studyCommit.studyInfoId,
+                        studyCommit.studyTodoId,
                         studyCommit.userId,
                         studyCommit.commitSHA,
                         studyCommit.message,

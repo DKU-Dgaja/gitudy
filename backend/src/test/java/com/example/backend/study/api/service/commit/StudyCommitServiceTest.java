@@ -42,7 +42,7 @@ class StudyCommitServiceTest extends TestConfig {
 
         Set<Integer> usedValues = new HashSet<>();
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, usedValues);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, 1L, usedValues);
         studyCommitRepository.saveAll(commitList);
 
         // when
@@ -66,7 +66,7 @@ class StudyCommitServiceTest extends TestConfig {
         // given
         Set<Integer> usedValues = new HashSet<>();
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, usedValues);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, 1L, usedValues);
         studyCommitRepository.saveAll(commitList);
 
         // when
@@ -84,9 +84,10 @@ class StudyCommitServiceTest extends TestConfig {
         // given
         Long studyId = 1L;
         Long userId = 1L;
+        Long studyTodoId = 1L;
         String commitSha = "123";
 
-        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyId, commitSha));
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyId, studyTodoId, commitSha));
 
         // when
         CommitInfoResponse commitInfoResponse = studyCommitService.getCommitDetailsById(savedCommit.getId());
