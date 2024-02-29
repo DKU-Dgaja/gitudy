@@ -6,18 +6,18 @@ import android.os.Bundle
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginBinding
-import com.takseha.presentation.viewmodel.StartLoginViewModel
+import com.takseha.presentation.viewmodel.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
-    private lateinit var viewModel: StartLoginViewModel
+    private lateinit var viewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         setBinding()
 
-        viewModel = ViewModelProvider(this)[StartLoginViewModel::class.java]
+        viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
         with(binding) {
             githubLoginBtn.setOnClickListener {

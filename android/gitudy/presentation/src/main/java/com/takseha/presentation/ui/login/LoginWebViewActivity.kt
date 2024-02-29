@@ -9,22 +9,21 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModelProvider
-import com.takseha.common.util.SharedPreferences
 import com.takseha.data.dto.AuthCodeRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
-import com.takseha.presentation.viewmodel.GetTokenViewModel
+import com.takseha.presentation.viewmodel.LoginWebViewViewModel
 
 class LoginWebViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginWebviewBinding
-    private lateinit var viewModel: GetTokenViewModel
+    private lateinit var viewModel: LoginWebViewViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_webview)
         setBinding()
 
-        viewModel = ViewModelProvider(this)[GetTokenViewModel::class.java]
+        viewModel = ViewModelProvider(this)[LoginWebViewViewModel::class.java]
 
         binding.loginWebView.run {
             webViewClient = LoginWebViewClient()

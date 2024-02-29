@@ -13,7 +13,7 @@
         <action
             android:id="@+id/action_popupBackgroundFragment_to_popupFragment"
             app:destination="@id/popupFragment"
-            app:enterAnim="@anim/vertical_enter"  />
+            app:enterAnim="@anim/vertical_enter" />
     </fragment>
     <fragment
         android:id="@+id/popupFragment"
@@ -22,16 +22,20 @@
         tools:layout="@layout/fragment_agreement_popup">
         <action
             android:id="@+id/action_popupFragment_to_popupDetail1Fragment"
-            app:destination="@id/popupDetail1Fragment" />
+            app:destination="@id/popupDetail1Fragment"
+            app:launchSingleTop="true" />
         <action
             android:id="@+id/action_popupFragment_to_popupDetail2Fragment"
-            app:destination="@id/popupDetail2Fragment" />
+            app:destination="@id/popupDetail2Fragment"
+            app:launchSingleTop="true" />
         <action
             android:id="@+id/action_popupFragment_to_popupDetail3Fragment"
-            app:destination="@id/popupDetail3Fragment" />
+            app:destination="@id/popupDetail3Fragment"
+            app:launchSingleTop="true" />
         <action
             android:id="@+id/action_popupFragment_to_inputIdFragment"
-            app:destination="@id/inputIdFragment" />
+            app:destination="@id/inputIdFragment"
+            app:launchSingleTop="true" />
     </fragment>
     <fragment
         android:id="@+id/popupDetail1Fragment"

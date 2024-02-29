@@ -10,7 +10,7 @@ import com.takseha.data.repository.GitudyRepository
 import kotlinx.coroutines.launch
 
 // viewModel에서 context 참조 필요한 경우 AndroidViewModel(application) 상속!
-class GetTokenViewModel(application: Application) : AndroidViewModel(application) {
+class LoginWebViewViewModel(application: Application) : AndroidViewModel(application) {
     private val gitudyRepository = GitudyRepository()
     private lateinit var prefs: SharedPreferences
 
