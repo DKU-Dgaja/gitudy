@@ -11,9 +11,10 @@ public class StudyCommitFixture {
     private static final int MAX_VALUE = 1000; // 최대값 설정
 
     // 테스트용 스터디 커밋 생성 메서드
-    public static StudyCommit createDefaultStudyCommit(Long userId, Long studyInfoId, String commitSHA) {
+    public static StudyCommit createDefaultStudyCommit(Long userId, Long studyInfoId, Long studyTodoId, String commitSHA) {
         return StudyCommit.builder()
                 .studyInfoId(studyInfoId)
+                .studyTodoId(studyTodoId)
                 .userId(userId)
                 .commitSHA(commitSHA)
                 .message("메세지")
@@ -39,14 +40,14 @@ public class StudyCommitFixture {
     }
 
     // 테스트용 스터디 커밋 목록 생성 메서드
-    public static List<StudyCommit> createDefaultStudyCommitList(int count, Long userId, Long studyInfoId, Set<Integer> usedValues) {
+    public static List<StudyCommit> createDefaultStudyCommitList(int count, Long userId, Long studyInfoId, Long studyTodoId, Set<Integer> usedValues) {
         List<StudyCommit> studyCommits = new ArrayList<>();
 
         for (int i = 1; i <= count; i++) {
             int randomValue = generateUniqueRandomValue(usedValues);
             usedValues.add(randomValue);
 
-            studyCommits.add(createDefaultStudyCommit(userId, studyInfoId, Integer.toString(randomValue)));
+            studyCommits.add(createDefaultStudyCommit(userId, studyInfoId, studyTodoId, Integer.toString(randomValue)));
         }
         return studyCommits;
     }

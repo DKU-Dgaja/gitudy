@@ -38,7 +38,7 @@ class StudyCommitRepositoryTest extends TestConfig {
 
         Set<Integer> usedValues = new HashSet<>();
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, usedValues);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, 1L, usedValues);
         studyCommitRepository.saveAll(commitList);
 
         // when
@@ -59,7 +59,7 @@ class StudyCommitRepositoryTest extends TestConfig {
         // given
         Set<Integer> usedValues = new HashSet<>();
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, usedValues);
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, 1L, usedValues);
         studyCommitRepository.saveAll(commitList);
 
         // when
@@ -78,16 +78,19 @@ class StudyCommitRepositoryTest extends TestConfig {
         Long userId = 1L;
         Long algoStudyId = 1L;
         Long javaStudyId = 2L;
+        Long algoStudyTodoId = 1L;
+        Long javaStudyTodoId = 2L;
+
 //        Random random = new Random();
 //        Long cursorIdx = random.nextLong(DATA_SIZE * 5) + 1L;
         Long cursorIdx = null;
 
         Set<Integer> usedValues = new HashSet<>();
 
-        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, algoStudyId, usedValues));
-        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, javaStudyId, usedValues));
-        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, algoStudyId, usedValues));
-        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, javaStudyId, usedValues));
+        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, algoStudyId, algoStudyTodoId, usedValues));
+        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, javaStudyId, javaStudyTodoId, usedValues));
+        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, algoStudyId, algoStudyTodoId, usedValues));
+        studyCommitRepository.saveAll(createDefaultStudyCommitList(DATA_SIZE, userId, javaStudyId, javaStudyTodoId, usedValues));
 
         var commitList = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, algoStudyId, cursorIdx, LIMIT);
         var commitList2 = studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, javaStudyId, cursorIdx, LIMIT);
