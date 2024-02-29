@@ -63,7 +63,8 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                 ))
                 .from(studyMember)
                 .join(user).on(user.id.eq(studyMember.userId))
-                .where(studyMember.studyInfoId.eq(studyInfoId));
+                .where(studyMember.studyInfoId.eq(studyInfoId)
+                    .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)));
 
         if (orderByScore) {
             query = query.orderBy(studyMember.score.desc(), studyMember.userId.asc()); // 기여도별 내림차순, 동일 점수 시 사용자 ID 오름차순

@@ -27,10 +27,9 @@ public class StudyMemberController {
     @GetMapping("/{studyInfoId}")
     public JsonResult<?> readStudyMembers(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                          @RequestParam(name = "userId") Long userId,
                                           @RequestParam(name = "orderByScore", defaultValue = "false") boolean orderByScore) {
 
-        authService.authenticate(userId, user);
+        authService.findUserInfo(user);
 
         return JsonResult.successOf(studyMemberService.readStudyMembers(studyInfoId, orderByScore));
     }
