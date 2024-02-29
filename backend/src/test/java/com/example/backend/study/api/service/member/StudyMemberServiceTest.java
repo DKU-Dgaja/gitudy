@@ -7,7 +7,9 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -16,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -168,4 +171,32 @@ public class StudyMemberServiceTest extends TestConfig {
 
     }
 
+
+    @Test
+    @DisplayName("스터디원 강퇴 테스트")
+    public void resignStudyMember() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        User user2 = UserFixture.generateKaKaoUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1, user2));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        StudyMember activeMember2 = StudyMemberFixture.createStudyMemberResigned(user2.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember1, activeMember2));
+
+        // when
+        studyMemberService.resignStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
+
+    }
 }
