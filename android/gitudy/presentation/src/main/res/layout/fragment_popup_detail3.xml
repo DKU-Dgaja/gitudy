@@ -49,14 +49,4 @@
             android:text="@string/detail3_body" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/agreeBtn"
-        style="@style/B5_1"
-        android:layout_width="match_parent"
-        android:layout_height="97dp"
-        android:background="@drawable/selector_btn_r0_enable"
-        android:text="@string/agreement"
-        android:textColor="@drawable/selector_text_color_enable"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
