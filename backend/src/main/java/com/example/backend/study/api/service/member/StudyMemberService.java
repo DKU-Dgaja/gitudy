@@ -88,4 +88,21 @@ public class StudyMemberService {
         resignMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_RESIGNED);
     }
 
+
+    // 스터디원 탈퇴 메서드
+    @Transactional
+    public void withdrawalStudyMember(Long studyInfoId, Long userId) {
+
+        // 탈퇴 스터디원 조회
+        StudyMember withdrawalMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, userId).orElseThrow(()->{
+            log.warn(">>>> {} : {} <<<<",userId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        });
+
+        // 탈퇴 스터디원 상태 메서드
+        withdrawalMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_WITHDRAWAL);
+
+    }
+
+
 }

@@ -49,5 +49,20 @@ public class StudyMemberController {
         return JsonResult.successOf("Resign Member Success");
     }
 
+    // 스터디 탈퇴
+    @ApiResponse(responseCode = "200", description = "스터디 탈퇴 성공")
+    @PatchMapping("/{studyInfoId}/withdrawal")
+    public JsonResult<?> withdrawalStudyMember(@AuthenticationPrincipal User user,
+                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                               @RequestParam(name = "userId") Long userId) {
+
+        // 스터디멤버 검증
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
+
+        studyMemberService.withdrawalStudyMember(studyInfoId, userId);
+
+        return JsonResult.successOf("Withdrawal Member Success");
+    }
+
 
 }
