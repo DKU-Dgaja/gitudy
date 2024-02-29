@@ -73,7 +73,7 @@ class AuthControllerTest extends TestConfig {
 
         // when
         mockMvc.perform(
-                        get("/auth/logout")
+                        post("/auth/logout")
                                 .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
 
@@ -99,7 +99,7 @@ class AuthControllerTest extends TestConfig {
 
 
         // when
-        mockMvc.perform(get("/auth/logout")
+        mockMvc.perform(post("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
@@ -111,7 +111,7 @@ class AuthControllerTest extends TestConfig {
     @Test
     @DisplayName("로그아웃 실패 테스트 - 잘못된 Header로 요청시 에러 발생")
     void logoutWhenInvalidHeader() throws Exception {
-        mockMvc.perform(get("/auth/logout")
+        mockMvc.perform(post("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, "INVALID HEADER"))
                 .andExpect(status().isOk())
