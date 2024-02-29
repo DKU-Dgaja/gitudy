@@ -61,7 +61,7 @@ public class StudyMemberService {
 
 
     // 스터디에 속한 스터디원 조회 (기여도별)
-    public List<StudyMembersResponse> readStudyMembers(Long studyInfoId) {
+    public List<StudyMembersResponse> readStudyMembers(Long studyInfoId, boolean orderByScore) {
 
         // 스터디 조회 예외처리
         studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
@@ -69,7 +69,7 @@ public class StudyMemberService {
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
 
-        return studyMemberRepository.findStudyMembersByStudyInfoIdOrderByScore(studyInfoId);
+        return studyMemberRepository.findStudyMembersByStudyInfoIdOrderByScore(studyInfoId, orderByScore);
     }
 
 }
