@@ -18,7 +18,6 @@ import com.takseha.presentation.viewmodel.GetTokenViewModel
 class LoginWebViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginWebviewBinding
     private lateinit var viewModel: GetTokenViewModel
-    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,7 +25,6 @@ class LoginWebViewActivity : AppCompatActivity() {
         setBinding()
 
         viewModel = ViewModelProvider(this)[GetTokenViewModel::class.java]
-        prefs = SharedPreferences(applicationContext)
 
         binding.loginWebView.run {
             webViewClient = LoginWebViewClient()
