@@ -5,6 +5,7 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.querydsl.core.types.Projections;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -50,8 +51,8 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
     }
 
     @Override
-    public List<StudyMembersResponse> findStudyMembersByStudyInfoIdOrderByScore(Long studyInfoId) {
-        return queryFactory
+    public List<StudyMembersResponse> findStudyMembersByStudyInfoIdOrderByScore(Long studyInfoId, boolean orderByScore) {
+        JPAQuery<StudyMembersResponse> query = queryFactory
                 .select(Projections.constructor(StudyMembersResponse.class,
                         studyMember.userId,
                         studyMember.role,
@@ -59,11 +60,17 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                         studyMember.score,
                         user.name,
                         user.profileImageUrl
-                        ))
+                ))
                 .from(studyMember)
                 .join(user).on(user.id.eq(studyMember.userId))
-                .where(studyMember.studyInfoId.eq(studyInfoId))
-                .orderBy(studyMember.score.desc(), studyMember.userId.asc()) // 기여도별 내림차순, 동일 점수 시 사용자Id 오름차순
-                .fetch();
+                .where(studyMember.studyInfoId.eq(studyInfoId));
+
+        if (orderByScore) {
+            query = query.orderBy(studyMember.score.desc(), studyMember.userId.asc()); // 기여도별 내림차순, 동일 점수 시 사용자 ID 오름차순
+        } else {
+            query = query.orderBy(studyMember.userId.asc()); // 사용자 Id 오름차순 (가입순)
+        }
+        return query.fetch();
+
     }
 }
