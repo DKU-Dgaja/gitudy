@@ -72,7 +72,7 @@ public class StudyMemberControllerTest extends TestConfig {
         studyInfoRepository.save(studyInfo);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyMemberService.readStudyMembers(any(Long.class))).thenReturn(new ArrayList<>());
+        when(studyMemberService.readStudyMembers(any(Long.class), any(boolean.class))).thenReturn(new ArrayList<>());
 
 
         //when , then

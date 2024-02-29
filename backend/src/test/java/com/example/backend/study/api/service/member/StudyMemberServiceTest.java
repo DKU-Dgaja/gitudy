@@ -44,8 +44,10 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Test
     @DisplayName("스터디에 속한 스터디원 조회(기여도별) 테스트")
-    public void readStudyMembers() {
+    public void readStudyMembers_score() {
         // given
+        boolean orderByScore = true;
+
         User leader = UserFixture.generatePlatfomIdAndNameAndProfile("1", "이정우", "이정우프로필사진");
         User activeMember1 = UserFixture.generatePlatfomIdAndNameAndProfile("2", "구영민", "구영민프로필사진");
         User activeMember2 = UserFixture.generatePlatfomIdAndNameAndProfile("3", "이주성", "이주성프로필사진");
@@ -64,7 +66,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
 
         // when
-        List<StudyMembersResponse> responses = studyMemberService.readStudyMembers(studyInfo.getId());
+        List<StudyMembersResponse> responses = studyMemberService.readStudyMembers(studyInfo.getId(), orderByScore);
 
         // then
         assertNotNull(responses);
@@ -81,6 +83,49 @@ public class StudyMemberServiceTest extends TestConfig {
 
         assertEquals(77, responses.get(3).getScore());
         assertEquals("구영민", responses.get(3).getName());  // 점수 동일시 userId 낮은순
+
+    }
+
+    @Test
+    @DisplayName("스터디에 속한 스터디원 조회(가입순) 테스트")
+    public void readStudyMembers_userId() {
+        // given
+        boolean orderByScore = false;
+
+        User leader = UserFixture.generatePlatfomIdAndNameAndProfile("1", "이정우", "이정우프로필사진");
+        User activeMember1 = UserFixture.generatePlatfomIdAndNameAndProfile("2", "구영민", "구영민프로필사진");
+        User activeMember2 = UserFixture.generatePlatfomIdAndNameAndProfile("3", "이주성", "이주성프로필사진");
+        User activeMember3 = UserFixture.generatePlatfomIdAndNameAndProfile("4", "탁세하", "탁세하프로필사진");
+        userRepository.saveAll(List.of(leader, activeMember1, activeMember2, activeMember3));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        studyMemberRepository.saveAll(List.of(
+                StudyMemberFixture.createStudyMembersByScore(leader.getId(), studyInfo.getId(), 77),
+                StudyMemberFixture.createStudyMembersByScore(activeMember1.getId(), studyInfo.getId(), 77),
+                StudyMemberFixture.createStudyMembersByScore(activeMember2.getId(), studyInfo.getId(), 99),
+                StudyMemberFixture.createStudyMembersByScore(activeMember3.getId(), studyInfo.getId(), 88)
+        ));
+
+        // when
+        List<StudyMembersResponse> responses = studyMemberService.readStudyMembers(studyInfo.getId(), orderByScore);
+
+        // then
+        assertNotNull(responses);
+        assertEquals(4, responses.size());
+
+        assertEquals(77, responses.get(0).getScore());
+        assertEquals("이정우", responses.get(0).getName());
+
+        assertEquals(77, responses.get(1).getScore());
+        assertEquals("구영민", responses.get(1).getName());
+
+        assertEquals(99, responses.get(2).getScore());
+        assertEquals("이주성", responses.get(2).getName());
+
+        assertEquals(88, responses.get(3).getScore());
+        assertEquals("탁세하", responses.get(3).getName());
 
     }
 }
