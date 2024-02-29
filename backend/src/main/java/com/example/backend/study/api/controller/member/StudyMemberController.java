@@ -33,4 +33,21 @@ public class StudyMemberController {
 
         return JsonResult.successOf(studyMemberService.readStudyMembers(studyInfoId, orderByScore));
     }
+
+    // 스터디원 강퇴
+    @ApiResponse(responseCode = "200", description = "스터디원 강퇴 성공")
+    @PatchMapping("/{studyInfoId}/resign")
+    public JsonResult<?> resignStudyMember(@AuthenticationPrincipal User user,
+                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                           @RequestParam(name = "resignUserId") Long resignUserId) {
+
+        // 스터디장 검증
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyMemberService.resignStudyMember(studyInfoId, resignUserId);
+
+        return JsonResult.successOf("Resign Member Success");
+    }
+
+
 }

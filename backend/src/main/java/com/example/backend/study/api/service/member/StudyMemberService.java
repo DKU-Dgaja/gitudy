@@ -8,6 +8,8 @@ import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import lombok.RequiredArgsConstructor;
@@ -69,6 +71,21 @@ public class StudyMemberService {
         });
 
         return studyMemberRepository.findStudyMembersByStudyInfoIdOrderByScore(studyInfoId, orderByScore);
+    }
+
+
+    // 스터디원 강퇴 메서드
+    @Transactional
+    public void resignStudyMember(Long studyInfoId, Long resignUserId) {
+
+        // 강퇴시킬 스터디원 조회
+        StudyMember resignMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, resignUserId).orElseThrow(()->{
+            log.warn(">>>> {} : {} <<<<",resignUserId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        });
+
+        // 강퇴 스터디원 상태 업데이트
+        resignMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_RESIGNED);
     }
 
 }
