@@ -28,6 +28,7 @@ public class UserFixture {
                 .profileImageUrl("프로필이미지")
                 .build();
     }
+
     public static User generateUNAUTHUser() {
         return User.builder()
                 .platformId("1")
@@ -67,6 +68,18 @@ public class UserFixture {
                 .platformType(GITHUB)
                 .name("이름")
                 .profileImageUrl("프로필이미지")
+                .build();
+    }
+
+    // 테스트용 스터디원 조회(플랫폼Id,이름,프로필사진)
+    public static User generatePlatfomIdAndNameAndProfile(String platformId, String name, String profileImageUrl) {
+        return User.builder()
+                .platformId(platformId)
+                .platformType(GOOGLE)
+                .role(USER)
+                .name(name)
+                .profileImageUrl(profileImageUrl)
+                .githubId("구글아이디")
                 .build();
     }
 }
