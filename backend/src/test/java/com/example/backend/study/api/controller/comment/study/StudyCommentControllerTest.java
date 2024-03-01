@@ -17,6 +17,7 @@ import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
 import com.example.backend.study.api.service.comment.study.StudyCommentService;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -31,8 +32,7 @@ import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUs
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -61,6 +61,9 @@ class StudyCommentControllerTest extends TestConfig {
 
     @Autowired
     private StudyCommentRepository studyCommentRepository;
+
+    @MockBean
+    private StudyMemberService studyMemberService;
 
     @AfterEach
     void tearDown() {
@@ -126,6 +129,32 @@ class StudyCommentControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("StudyComment update Success"))
+                .andDo(print());
+    }
+    @Test
+    public void Study_Comment_삭제_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        StudyComment studyComment =
+                studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(savedUser.getId(), studyInfo.getId()));
+
+        //when
+        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
+        doNothing().when(studyCommentService).deleteStudyComment(any(User.class), any(Long.class), any(Long.class));
+        //then
+        mockMvc.perform(delete("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("StudyComment deleted successfully"))
                 .andDo(print());
     }
 }

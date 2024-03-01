@@ -40,7 +40,11 @@ public class StudyMemberService {
         if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
             throw new MemberException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER);
         }
+    }
 
+    // 스터디장 확인 메서드
+    public boolean isTrueStudyLeader(User user, Long studyInfoId) {
+        return studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfoId);
     }
 
     // 스터디 멤버인지 검증

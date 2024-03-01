@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -151,6 +152,68 @@ class StudyCommentServiceTest extends TestConfig {
         // when, then
         assertThrows(StudyCommentException.class, () -> {
             studyCommentService.updateStudyComment(studyCommentUpdateRequest, savedStudyComment.getId());
+        }, ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
+    }
+    @Test
+    void 자신의_댓글_삭제_성공_테스트() {
+        // given
+        User leader = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(leader.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), studyInfo.getId()));
+
+        StudyComment savedStudyComment =
+                studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
+
+        // when
+        studyCommentService.deleteStudyComment(user, studyInfo.getId(), savedStudyComment.getId());
+
+        // then
+        Optional<StudyComment> deletedComment = studyCommentRepository.findById(savedStudyComment.getId());
+        assertThat(deletedComment).isEmpty();
+    }
+
+    @Test
+    void 스터디장이_다른_스터디원_댓글_삭제_StudyComment_삭제_성공_테스트() {
+        // given
+        User leader = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(leader.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), studyInfo.getId()));
+
+        StudyComment savedStudyComment =
+                studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
+
+        // when
+        studyCommentService.deleteStudyComment(leader, studyInfo.getId(), savedStudyComment.getId());
+
+        // then
+        Optional<StudyComment> deletedComment = studyCommentRepository.findById(savedStudyComment.getId());
+        assertThat(deletedComment).isEmpty();
+    }
+
+    @Test
+    void 삭제_권한_없는_유저가_다른_유저의_댓글_삭제_실패_테스트() {
+        // given
+        User leader = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(leader.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()));
+
+        StudyComment savedStudyComment =
+                studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user1.getId(), studyInfo.getId()));
+
+        // when, then
+        assertThrows(StudyCommentException.class, () -> {
+            studyCommentService.deleteStudyComment(user2, studyInfo.getId(), savedStudyComment.getId());
         }, ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
     }
 }
