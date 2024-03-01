@@ -70,25 +70,20 @@ public class StudyCommentController {
     @ApiResponse(responseCode = "200",
             description = "스터디 댓글 조회 성공",
             content = @Content(schema = @Schema(implementation = StudyCommentListAndCursorIdxResponse.class)))
-    @GetMapping("/{studyInfoId}/comment/{userId}")
+    @GetMapping("/{studyInfoId}/comments")
     public JsonResult<?> StudyCommentList(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                          @PathVariable(name = "userId") Long userId,
                                           @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
-        List<StudyCommentResponse> StudyCommentList = studyCommentService.selectStudyCommentList(userId, cursorIdx, limit);
+        List<StudyCommentResponse> StudyCommentList = studyCommentService.selectStudyCommentList(studyInfoId, cursorIdx, limit);
 
-        // 다음 cursorIdx
-        Long nextCursorIdx = 0L;
-        if (!StudyCommentList.isEmpty()) {
-            nextCursorIdx = StudyCommentList.get(StudyCommentList.size() - 1).getId();
-        }
-
-        return JsonResult.successOf(StudyCommentListAndCursorIdxResponse.builder()
+        StudyCommentListAndCursorIdxResponse response = (StudyCommentListAndCursorIdxResponse.builder()
                 .studyCommentList(StudyCommentList)
-                .cursorIdx(nextCursorIdx)
                 .build());
+        response.getNextCursorIdx();
+
+        return JsonResult.successOf(response);
     }
 }

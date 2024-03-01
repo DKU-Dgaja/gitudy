@@ -3,6 +3,7 @@ package com.example.backend.domain.define.study.comment.study.repository;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.domain.define.study.comment.study.StudyComment;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
+import com.example.backend.study.api.service.comment.study.response.UserInfoForStudyCommentResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -13,6 +14,7 @@ import java.util.List;
 
 import static com.example.backend.domain.define.account.user.QUser.user;
 import static com.example.backend.domain.define.study.comment.study.QStudyComment.studyComment;
+import static javax.management.Query.eq;
 
 @Component
 @RequiredArgsConstructor
@@ -20,7 +22,7 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom{
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<StudyCommentResponse> findStudyCommentListByUserIdJoinStudyInfo(Long userId, Long cursorIdx, Long limit) {
+    public List<StudyCommentResponse> findStudyCommentListByStudyInfoIdJoinUser(Long studyId, Long cursorIdx, Long limit) {
         JPAQuery<StudyCommentResponse> query = jpaQueryFactory
                 .select(Projections.constructor(
                         StudyCommentResponse.class,
@@ -28,20 +30,15 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom{
                         studyComment.studyInfoId,
                         studyComment.userId,
                         Projections.constructor(
-                                UserInfoResponse.class,
+                                UserInfoForStudyCommentResponse.class,
                                 user.id,
-                                user.role,
-                                user.githubId,
                                 user.name,
-                                user.profileImageUrl,
-                                user.pushAlarmYn,
-                                user.profilePublicYn,
-                                user.score,
-                                user.point
+                                user.profileImageUrl
                         )
                 ))
                 .from(studyComment)
                 .join(user).on(user.id.eq(studyComment.userId))
+                .where(studyComment.studyInfoId.eq(studyId))
                 .orderBy(studyComment.id.desc());
 
         // cursorIdx가 null이 아닌 경우 커서 기반으로 데이터 가져오도록

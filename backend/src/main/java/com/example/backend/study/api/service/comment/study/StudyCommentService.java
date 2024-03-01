@@ -92,8 +92,8 @@ public class StudyCommentService {
         }
         studyCommentRepository.deleteById(studyCommentId);
     }
-    public List<StudyCommentResponse> selectStudyCommentList(Long userId, Long cursorIdx, Long limit) {
-        return studyCommentRepository.findStudyCommentListByUserIdJoinStudyInfo(userId, cursorIdx, limit);
+    public List<StudyCommentResponse> selectStudyCommentList(Long studyInfoId, Long cursorIdx, Long limit) {
+        return studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(studyInfoId, cursorIdx, limit);
     }
 
     // StudyComment 생성 로직
