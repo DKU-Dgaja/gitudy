@@ -35,4 +35,8 @@ public class CommitComment extends BaseEntity {
         this.userId = userId;
         this.content = content;
     }
+
+    public void updateComment(String content) {
+        this.content = content;
+    }
 }

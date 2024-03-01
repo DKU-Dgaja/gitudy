@@ -57,4 +57,25 @@ public class CommitCommentController {
 
     }
 
+    @ApiResponse(responseCode = "200", description = "커밋 댓글 수정 성공")
+    @PostMapping("/{commitId}/comments/{commentId}")
+    public JsonResult<?> updateCommitComment(@AuthenticationPrincipal User user,
+                                             @PathVariable(name = "commitId") Long commitId,
+                                             @PathVariable(name = "commentId") Long commentId,
+                                             @Valid @RequestBody AddCommitCommentRequest request) {
+
+        try {
+            // 활동중인 스터디원인지 판단
+            UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
+
+            // 댓글 수정
+            commitCommentService.updateCommitComment(userInfo.getUserId(), commentId, request);
+
+            return JsonResult.successOf("댓글 수정에 성공하였습니다.");
+
+        } catch (GitudyException e) {
+            return JsonResult.failOf(e.getMessage());
+        }
+    }
+
 }

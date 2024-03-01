@@ -173,7 +173,8 @@ class StudyInfoControllerTest extends TestConfig {
 
         // when
         when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
 
         when(studyInfoService.deleteStudy(anyLong())).thenReturn(true);
 
@@ -206,7 +207,8 @@ class StudyInfoControllerTest extends TestConfig {
 
 
         //when
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
         doNothing().when(studyInfoService).updateStudyInfo(studyInfoUpdateRequest, studyInfo.getId());
 
         //then
@@ -237,7 +239,8 @@ class StudyInfoControllerTest extends TestConfig {
 
         UpdateStudyInfoPageResponse updateStudyInfoPageResponse = generateUpdateStudyInfoPageResponseWithCategory(studyInfo.getUserId(), studyCategories);
         //when
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
         when(studyInfoService.updateStudyInfoPage(any(Long.class))).thenReturn(updateStudyInfoPageResponse);
 
         //then
