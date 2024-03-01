@@ -11,6 +11,11 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.domain.define.study.todo.StudyTodoFixture;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +25,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StudyMemberServiceTest extends TestConfig {
 
@@ -37,11 +41,19 @@ public class StudyMemberServiceTest extends TestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
+    @Autowired
+    private StudyTodoMappingRepository studyTodoMappingRepository;
+
+    @Autowired
+    private StudyTodoRepository studyTodoRepository;
+
     @AfterEach
     void tearDown() {
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
+        studyTodoMappingRepository.deleteAllInBatch();
+        studyTodoRepository.deleteAllInBatch();
     }
 
 
@@ -224,6 +236,83 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // then
         assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, studyMember.get().getStatus());
+    }
+
+
+    @Test
+    @DisplayName("스터디원 강퇴 테스트 - Todo mappings 함께 삭제 테스트")
+    public void resignStudyMember_todo() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember));
+
+        StudyTodo studyTodo1 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo studyTodo2 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2));
+
+        // activeMember 에게 to do 할당
+        StudyTodoMapping studyTodoMapping1 = StudyTodoFixture.createStudyTodoMapping(studyTodo1.getId(), activeMember.getUserId());
+        StudyTodoMapping studyTodoMapping2 = StudyTodoFixture.createStudyTodoMapping(studyTodo2.getId(), activeMember.getUserId());
+        studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2));
+
+
+        // when
+        studyMemberService.resignStudyMember(studyInfo.getId(), activeMember.getUserId());
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember.getUserId());
+        List<StudyTodoMapping> studyTodoMappings = studyTodoMappingRepository.findByUserId(activeMember.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
+        assertTrue(studyTodoMappings.isEmpty());  // To do mapping 삭제 확인
+
+    }
+
+    @Test
+    @DisplayName("스터디원 탈퇴 테스트 - Todo mappings 함께 삭제 테스트")
+    public void withdrawalStudyMember_todo() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember));
+
+        StudyTodo studyTodo1 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        StudyTodo studyTodo2 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2));
+
+        // activeMember 에게 to do 할당
+        StudyTodoMapping studyTodoMapping1 = StudyTodoFixture.createStudyTodoMapping(studyTodo1.getId(), activeMember.getUserId());
+        StudyTodoMapping studyTodoMapping2 = StudyTodoFixture.createStudyTodoMapping(studyTodo2.getId(), activeMember.getUserId());
+        studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2));
+
+
+        // when
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember.getUserId());
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember.getUserId());
+        List<StudyTodoMapping> studyTodoMappings = studyTodoMappingRepository.findByUserId(activeMember.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, studyMember.get().getStatus());
+        assertTrue(studyTodoMappings.isEmpty());  // To do mapping 삭제 확인
+
     }
 
     
