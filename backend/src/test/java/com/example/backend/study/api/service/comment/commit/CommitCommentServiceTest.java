@@ -4,11 +4,13 @@ import com.example.backend.auth.TestConfig;
 import com.example.backend.common.exception.commit.CommitException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.comment.commit.CommitComment;
 import com.example.backend.domain.define.study.comment.commit.CommitCommentFixture;
 import com.example.backend.domain.define.study.comment.commit.repository.CommitCommentRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.study.api.controller.comment.commit.request.AddCommitCommentRequest;
 import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -78,5 +80,23 @@ class CommitCommentServiceTest extends TestConfig {
         assertThrows(CommitException.class, () -> {
             commitCommentService.getCommitCommentsList(commitID);
         });
+    }
+
+
+    @Test
+    void 커밋_댓글_저장_테스트() {
+        // given
+        Long userId = 1L;
+        Long commitId = 1L;
+        String content = "testtesttest";
+
+        AddCommitCommentRequest request = AddCommitCommentRequest.builder().content(content).build();
+
+        // when
+        commitCommentService.addCommitComment(userId, commitId, request);
+        CommitComment findCommitComment = commitCommentRepository.findById(commitId).get();
+
+        assertEquals(userId, findCommitComment.getUserId());
+        assertEquals(content, findCommitComment.getContent());
     }
 }
