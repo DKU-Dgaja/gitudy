@@ -175,7 +175,7 @@ class StudyCommentControllerTest extends TestConfig {
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comment/"+user.getId())
+        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -207,7 +207,7 @@ class StudyCommentControllerTest extends TestConfig {
 
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comment/"+user.getId())
+        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -231,7 +231,7 @@ class StudyCommentControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comment/"+user.getId())
+        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")

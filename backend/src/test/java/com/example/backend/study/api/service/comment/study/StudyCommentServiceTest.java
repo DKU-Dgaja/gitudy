@@ -232,7 +232,7 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(user.getId(), cursorIdx, LIMIT);
+        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
 
         for (StudyCommentResponse comment : studyCommentListResponse) {
             assertTrue(comment.getId() < cursorIdx);
@@ -251,7 +251,7 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(user.getId(), cursorIdx, LIMIT);
+        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
 
         for (StudyCommentResponse comment : studyCommentListResponse) {
             assertTrue(comment.getId() < cursorIdx);
@@ -268,7 +268,7 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(user.getId(), null, LIMIT);
+        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), null, LIMIT);
 
         assertEquals(LIMIT, studyCommentListResponse.size());
     }
@@ -288,9 +288,39 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study.getId()));
 
         // when
-        List<StudyCommentResponse> studyCommentResponse = studyCommentService.selectStudyCommentList(userB.getId(),  null, LIMIT);
+        List<StudyCommentResponse> studyCommentResponse = studyCommentService.selectStudyCommentList(study.getId(),  null, LIMIT);
 
         // then
         assertEquals(expectedSize, studyCommentResponse.size());
+    }
+
+    @Test
+    void 특정_스터디_댓글들_조회_성공_테스트() {
+        // given
+        int expectedStudy1CommentSize = 4;
+        int expectedStudy2CommentSize = 3;
+
+        User userA = userRepository.save(UserFixture.generateAuthUserByPlatformId("A"));
+        User userB = userRepository.save(UserFixture.generateAuthUserByPlatformId("B"));
+        User userC = userRepository.save(UserFixture.generateAuthUserByPlatformId("C"));
+        StudyInfo study1 = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(userA.getId()));
+        StudyInfo study2 = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(userA.getId()));
+
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userA.getId(), study1.getId()));
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userB.getId(), study1.getId()));
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study1.getId()));
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study1.getId()));
+
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userA.getId(), study2.getId()));
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userB.getId(), study2.getId()));
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study2.getId()));
+
+        // when
+        List<StudyCommentResponse> studyCommentResponse1 = studyCommentService.selectStudyCommentList(study1.getId(),  null, LIMIT);
+        List<StudyCommentResponse> studyCommentResponse2 = studyCommentService.selectStudyCommentList(study2.getId(),  null, LIMIT);
+
+        // then
+        assertEquals(expectedStudy1CommentSize, studyCommentResponse1.size());
+        assertEquals(expectedStudy2CommentSize, studyCommentResponse2.size());
     }
 }

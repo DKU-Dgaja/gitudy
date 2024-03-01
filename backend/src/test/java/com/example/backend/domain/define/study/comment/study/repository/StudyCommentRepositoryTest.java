@@ -50,13 +50,12 @@ class StudyCommentRepositoryTest extends TestConfig {
         studyCommentRepository.saveAll(StudyCommentList);
 
         // when
-        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByUserIdJoinStudyInfo(user.getId(), cursorIdx, LIMIT);
+        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(study.getId(), cursorIdx, LIMIT);
 
         // then
         for (StudyCommentResponse b : StudyCommentListResponse) {
             assertTrue(b.getId() < cursorIdx);
             assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
-            assertEquals(user.getGithubId(), b.getUserInfoResponse().getGithubId());
         }
     }
 
@@ -71,13 +70,12 @@ class StudyCommentRepositoryTest extends TestConfig {
         studyCommentRepository.saveAll(StudyCommentList);
 
         // when
-        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByUserIdJoinStudyInfo(user.getId(), null, LIMIT);
+        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(study.getId(), null, LIMIT);
 
         // then
         assertEquals(LIMIT, StudyCommentListResponse.size());
         for (StudyCommentResponse b : StudyCommentListResponse) {
             assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
-            assertEquals(user.getGithubId(), b.getUserInfoResponse().getGithubId());
         }
     }
 }
