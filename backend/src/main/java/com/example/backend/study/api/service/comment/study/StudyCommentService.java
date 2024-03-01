@@ -12,11 +12,14 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -89,6 +92,10 @@ public class StudyCommentService {
         }
         studyCommentRepository.deleteById(studyCommentId);
     }
+    public List<StudyCommentResponse> selectStudyCommentList(Long userId, Long cursorIdx, Long limit) {
+        return studyCommentRepository.findStudyCommentListByUserIdJoinStudyInfo(userId, cursorIdx, limit);
+    }
+
     // StudyComment 생성 로직
     private StudyComment createStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId) {
         return StudyComment.builder()
