@@ -16,6 +16,7 @@ import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyCommentServiceTest extends TestConfig {
+    private final static int DATA_SIZE = 10;
+    private final static Long LIMIT = 5L;
     @Autowired
     private StudyCommentRepository studyCommentRepository;
 
@@ -215,5 +218,79 @@ class StudyCommentServiceTest extends TestConfig {
         assertThrows(StudyCommentException.class, () -> {
             studyCommentService.deleteStudyComment(user2, studyInfo.getId(), savedStudyComment.getId());
         }, ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
+    }
+
+    @Test
+    void 커서가_null이_아닌_경우_스터디_댓글_리스트_조회_테스트_1() {
+        // given
+        Long cursorIdx = 5L;
+
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+
+        List<StudyComment> studyCommentList = StudyCommentFixture.createDefaultStudyCommentList(DATA_SIZE, user.getId(), study.getId());
+        studyCommentRepository.saveAll(studyCommentList);
+
+        // when
+        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(user.getId(), cursorIdx, LIMIT);
+
+        for (StudyCommentResponse comment : studyCommentListResponse) {
+            assertTrue(comment.getId() < cursorIdx);
+        }
+    }
+
+    @Test
+    void 커서가_null이_아닌_경우_스터디_댓글_리스트_조회_테스트_2() {
+        // given
+        Long cursorIdx = 15L;
+
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+
+        List<StudyComment> studyCommentList = StudyCommentFixture.createDefaultStudyCommentList(DATA_SIZE, user.getId(), study.getId());
+        studyCommentRepository.saveAll(studyCommentList);
+
+        // when
+        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(user.getId(), cursorIdx, LIMIT);
+
+        for (StudyCommentResponse comment : studyCommentListResponse) {
+            assertTrue(comment.getId() < cursorIdx);
+        }
+    }
+
+    @Test
+    void 커서가_null인_경우_마이_스터디_댓글_리스트_조회_테스트() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+
+        List<StudyComment> studyCommentList = StudyCommentFixture.createDefaultStudyCommentList(DATA_SIZE, user.getId(), study.getId());
+        studyCommentRepository.saveAll(studyCommentList);
+
+        // when
+        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(user.getId(), null, LIMIT);
+
+        assertEquals(LIMIT, studyCommentListResponse.size());
+    }
+
+    @Test
+    void 스터디에_여러_사용자_댓글을_단_후_동작_테스트() {
+        // given
+        int expectedSize = 3;
+
+        User userA = userRepository.save(UserFixture.generateAuthUserByPlatformId("A"));
+        User userB = userRepository.save(UserFixture.generateAuthUserByPlatformId("B"));
+        User userC = userRepository.save(UserFixture.generateAuthUserByPlatformId("C"));
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(userA.getId()));
+
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userA.getId(), study.getId()));
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userB.getId(), study.getId()));
+        studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study.getId()));
+
+        // when
+        List<StudyCommentResponse> studyCommentResponse = studyCommentService.selectStudyCommentList(userB.getId(),  null, LIMIT);
+
+        // then
+        assertEquals(expectedSize, studyCommentResponse.size());
     }
 }
