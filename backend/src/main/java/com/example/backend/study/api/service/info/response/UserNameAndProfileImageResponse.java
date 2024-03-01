@@ -9,9 +9,10 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class StudyMemberNameAndProfileImageResponse {
+public class UserNameAndProfileImageResponse {
+    private Long id;
 
     private String name;                        // 이름
-    private String profileImageUrl;             // 사용자 ID
 
+    private String profileImageUrl;             // 사용자 ID
 }
