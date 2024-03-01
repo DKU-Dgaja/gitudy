@@ -64,18 +64,29 @@ public class CommitCommentController {
                                              @PathVariable(name = "commentId") Long commentId,
                                              @Valid @RequestBody AddCommitCommentRequest request) {
 
-        try {
-            // 활동중인 스터디원인지 판단
-            UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
+        // 활동중인 스터디원인지 판단
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
 
-            // 댓글 수정
-            commitCommentService.updateCommitComment(userInfo.getUserId(), commentId, request);
+        // 댓글 수정
+        commitCommentService.updateCommitComment(userInfo.getUserId(), commentId, request);
 
-            return JsonResult.successOf("댓글 수정에 성공하였습니다.");
+        return JsonResult.successOf("댓글 수정에 성공하였습니다.");
+    }
 
-        } catch (GitudyException e) {
-            return JsonResult.failOf(e.getMessage());
-        }
+
+    @ApiResponse(responseCode = "200", description = "커밋 댓글 삭제 성공")
+    @DeleteMapping("/{commitId}/comments/{commentId}")
+    public JsonResult<?> deleteCommitComment(@AuthenticationPrincipal User user,
+                                             @PathVariable(name = "commitId") Long commitId,
+                                             @PathVariable(name = "commentId") Long commentId) {
+
+        // 활동중인 스터디원인지 판단
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
+
+        // 댓글 삭제
+        commitCommentService.deleteCommitComment(userInfo.getUserId(), commentId);
+
+        return JsonResult.successOf("댓글 삭제에 성공하였습니다.");
     }
 
 }

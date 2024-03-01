@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.comment.commit;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.commit.CommitException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -144,5 +145,38 @@ class CommitCommentServiceTest extends TestConfig {
         assertThrows(CommitException.class, () -> {
             commitCommentService.updateCommitComment(userB.getId(), saveComment.getId(), request);
         });
+    }
+
+    @Test
+    void 커밋_주인이_커밋_삭제를_시도해_성공하는_테스트() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), 1L, 1L, "SHA"));
+
+        var saveComment = commitCommentRepository.save(CommitCommentFixture.createDefaultCommitComment(user.getId(), commit.getId()));
+
+        // when
+        commitCommentService.deleteCommitComment(user.getId(), saveComment.getId());
+        CommitComment comment = commitCommentRepository.findById(saveComment.getId()).orElse(null);
+
+        // then
+        assertNull(comment);
+    }
+
+    @Test
+    void 커밋_주인이_아닌_사람이_커밋_삭제_시도해_실패하는_테스트() {
+        // given
+        User userA = userRepository.save(UserFixture.generateAuthUser());
+        User userB = userRepository.save(UserFixture.generateGoogleUser());
+        StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userA.getId(), 1L, 1L, "SHA"));
+
+        var saveComment = commitCommentRepository.save(CommitCommentFixture.createDefaultCommitComment(commit.getUserId(), commit.getId()));
+
+        // when
+        CommitException e = assertThrows(CommitException.class, () -> {
+            commitCommentService.deleteCommitComment(userB.getId(), saveComment.getId());
+        });
+        assertEquals(e.getMessage(), ExceptionMessage.COMMIT_COMMENT_PERMISSION_DENIED.getText());
+
     }
 }
