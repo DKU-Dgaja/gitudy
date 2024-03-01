@@ -13,7 +13,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.example.backend.domain.define.account.user.QUser.user;
 import static com.example.backend.domain.define.study.info.QStudyInfo.studyInfo;
+import static com.example.backend.domain.define.study.member.QStudyMember.studyMember;
 
 @Component
 @RequiredArgsConstructor
@@ -52,7 +54,8 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                         studyInfo.periodType,
                         studyInfo.createdDateTime))
                 .from(studyInfo)
-                .where(studyInfo.userId.eq(userId))
+                .innerJoin(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
+                .where(studyMember.userId.eq(userId))
                 .orderBy(orderSpecifier, idOrder); // 다중 정렬 조건 적용
 
         if (cursorIdx != null) {

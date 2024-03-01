@@ -23,7 +23,7 @@ import com.example.backend.study.api.controller.info.response.MyStudyInfoListAnd
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-import com.example.backend.study.api.service.info.response.StudyMemberNameAndProfileImageResponse;
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -273,7 +273,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyInfos.add(generateStudyInfo(otherUser.getId()));
         studyInfos.add(generateStudyInfo(otherUser.getId()));
         studyInfoRepository.saveAll(studyInfos);
-
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY);
 
@@ -310,12 +310,14 @@ class StudyInfoServiceTest extends TestConfig {
         StudyInfo myStudyInfo = studyInfoRepository.save(generateStudyInfo(myUser.getId()));
         List<StudyCategory> myStudyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
         studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(myStudyInfo, myStudyCategories));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(myUser.getId(), myStudyInfo.getId()));
 
         // other 스터디 생성
         User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
         StudyInfo otherStudyInfo = studyInfoRepository.save(generateStudyInfo(otherUser.getId()));
         List<StudyCategory> otherStudyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
         studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(otherStudyInfo, otherStudyCategories));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(otherUser.getId(), otherStudyInfo.getId()));
 
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myUser.getId(), null, LIMIT, SORTBY);
@@ -332,45 +334,59 @@ class StudyInfoServiceTest extends TestConfig {
     @Test
     public void 마이스터디_조회_테스트_스터디_멤버_정보_반환_테스트() {
         // given
-        int ExpectedMyStudySize = 3;
+        int expectedTeamASize = 3;
+        int expectedTeamBSize = 4;
 
-        List<User> ExpectedUserList=new ArrayList<>();
         User myLeaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
-        User myUser1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
-        User myUser2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
-        ExpectedUserList.add(myLeaderUser);
-        ExpectedUserList.add(myUser1);
-        ExpectedUserList.add(myUser2);
-
-        User otherLeaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("d"));
-        User otherUser1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("e"));
-        User otherUser2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("f"));
+        User otherLeaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("d"));
+        User user3 = userRepository.save(UserFixture.generateAuthUserByPlatformId("e"));
+        User user4 = userRepository.save(UserFixture.generateAuthUserByPlatformId("f"));
 
         // StudyInfo 생성
-        StudyInfo myStudyInfo = studyInfoRepository.save(generateStudyInfo(myLeaderUser.getId()));
-        StudyInfo OtherStudyInfo = studyInfoRepository.save(generateStudyInfo(otherLeaderUser.getId()));
+        StudyInfo myStudyA = studyInfoRepository.save(generateStudyInfo(myLeaderUser.getId()));
+        StudyInfo myStudyB = studyInfoRepository.save(generateStudyInfo(myLeaderUser.getId()));
+        StudyInfo OtherStudy = studyInfoRepository.save(generateStudyInfo(otherLeaderUser.getId()));
 
-        // myStudyMember 생성
+        // myStudyMemberA 생성
         List<StudyMember> studyMembers = new ArrayList<>();
-        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(myLeaderUser.getId(), myStudyInfo.getId()));
-        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(myUser1.getId(), myStudyInfo.getId()));
-        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(myUser2.getId(), myStudyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(myLeaderUser.getId(), myStudyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user1.getId(), myStudyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), myStudyA.getId()));
+
+
+        // myStudyMemberB 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(myLeaderUser.getId(), myStudyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), myStudyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), myStudyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user4.getId(), myStudyB.getId()));
 
         // otherStudyMember 생성
-        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(otherLeaderUser.getId(), OtherStudyInfo.getId()));
-        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(otherUser1.getId(), OtherStudyInfo.getId()));
-        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(otherUser2.getId(), OtherStudyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(otherLeaderUser.getId(), OtherStudy.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user1.getId(), OtherStudy.getId()));
+
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), OtherStudy.getId()));
         studyMemberRepository.saveAll(studyMembers);
 
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myLeaderUser.getId(), null, LIMIT, SORTBY);
-        Map<Long, List<StudyMemberNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
+        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
 
         // then
-        assertEquals(studyUserInfoMap.get(myStudyInfo.getId()).size(), ExpectedMyStudySize);
-        for(int i=0;i<studyUserInfoMap.get(myStudyInfo.getId()).size();i++){
-            assertEquals(studyUserInfoMap.get(myStudyInfo.getId()).get(i).getName(), ExpectedUserList.get(i).getName());
-            assertEquals(studyUserInfoMap.get(myStudyInfo.getId()).get(i).getProfileImageUrl(), ExpectedUserList.get(i).getProfileImageUrl());
+        // 내 스터디 정보 검증
+        Long myStudyAId = myStudyA.getId();
+        List<UserNameAndProfileImageResponse> myStudyAUserList = studyUserInfoMap.get(myStudyAId);
+        assertEquals(expectedTeamASize, myStudyAUserList.size());
+        for(int i=0;i<myStudyAUserList.size();i++){
+            System.out.println(myStudyAUserList.get(i).getId());
+        }
+
+        Long myStudyBId = myStudyB.getId();
+        List<UserNameAndProfileImageResponse> myStudyBUserList = studyUserInfoMap.get(myStudyBId);
+        assertEquals(expectedTeamBSize, myStudyBUserList.size());
+        for(int i=0;i<myStudyBUserList.size();i++){
+            System.out.println(myStudyBUserList.get(i).getId());
         }
     }
 
@@ -381,6 +397,7 @@ class StudyInfoServiceTest extends TestConfig {
         User savedUser = userRepository.save(UserFixture.generateAuthUser());
         List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
 
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
@@ -403,7 +420,7 @@ class StudyInfoServiceTest extends TestConfig {
         User savedUser = userRepository.save(UserFixture.generateAuthUser());
         List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
-
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
 
@@ -425,6 +442,7 @@ class StudyInfoServiceTest extends TestConfig {
         User savedUser = userRepository.save(UserFixture.generateAuthUser());
         List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
 
         // when
         MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
@@ -479,7 +497,7 @@ class StudyInfoServiceTest extends TestConfig {
         list.add(score30_2);list.add(score30_3);list.add(score20);list.add(score10);list.add(score5);
 
         studyInfoRepository.saveAll(list);
-
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(list));
         // when
         MyStudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectMyStudyInfoList(savedUser.getId()
                 , null

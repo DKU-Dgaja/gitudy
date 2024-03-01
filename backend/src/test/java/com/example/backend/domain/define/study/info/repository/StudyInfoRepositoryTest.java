@@ -6,6 +6,9 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -28,10 +31,14 @@ class StudyInfoRepositoryTest extends TestConfig {
     @Autowired
     UserRepository userRepository;
 
+    @Autowired
+    StudyMemberRepository studyMemberRepository;
+
     @AfterEach
     void tearDown() {
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
+        studyMemberRepository.deleteAllInBatch();
     }
 
     @Test
@@ -40,6 +47,8 @@ class StudyInfoRepositoryTest extends TestConfig {
         User savedUser = userRepository.save(UserFixture.generateAuthUser());
         List<StudyInfo> studyInfos = createDefaultStudyInfoList(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
+
 
         // when
         List<MyStudyInfoListResponse> studyInfoList = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy);
