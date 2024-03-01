@@ -304,13 +304,20 @@ class StudyInfoServiceTest extends TestConfig {
     @Test
     public void 마이스터디_조회_테스트_스터디_카테고리_name_반환_테스트() {
         // given
-
-        // My 스터디 생성
+        int expectedTeamACategorySize = 4;
+        int expectedTeamBCategorySize = 3;
+        // My 스터디 A 생성
         User myUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
-        StudyInfo myStudyInfo = studyInfoRepository.save(generateStudyInfo(myUser.getId()));
-        List<StudyCategory> myStudyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
-        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(myStudyInfo, myStudyCategories));
-        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(myUser.getId(), myStudyInfo.getId()));
+        StudyInfo myStudyA = studyInfoRepository.save(generateStudyInfo(myUser.getId()));
+        List<StudyCategory> myStudyCategoriesA = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(expectedTeamACategorySize));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(myStudyA, myStudyCategoriesA));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(myUser.getId(), myStudyA.getId()));
+
+        // My 스터디 B 생성
+        StudyInfo myStudyB = studyInfoRepository.save(generateStudyInfo(myUser.getId()));
+        List<StudyCategory> myStudyCategoriesB = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(expectedTeamBCategorySize));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(myStudyB, myStudyCategoriesB));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(myUser.getId(), myStudyB.getId()));
 
         // other 스터디 생성
         User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
@@ -324,9 +331,17 @@ class StudyInfoServiceTest extends TestConfig {
         Map<Long, List<String>> studyCategoryMappingMap = response.getStudyCategoryMappingMap();
 
         // then
-        assertEquals(studyCategoryMappingMap.get(myStudyInfo.getId()).size(), CATEGORY_SIZE);
-        for(int i=0;i<studyCategoryMappingMap.get(myStudyInfo.getId()).size();i++){
-            assertEquals(studyCategoryMappingMap.get(myStudyInfo.getId()).get(i), myStudyCategories.get(i).getName());
+        assertEquals(studyCategoryMappingMap.size(), 2);
+        // My 스터디 A 검증
+        assertEquals(studyCategoryMappingMap.get(myStudyA.getId()).size(), expectedTeamACategorySize);
+        for(int i = 0 ;i < studyCategoryMappingMap.get(myStudyA.getId()).size(); i ++){
+            assertEquals(studyCategoryMappingMap.get(myStudyA.getId()).get(i), myStudyCategoriesA.get(expectedTeamACategorySize - i - 1).getName());
+        }
+
+        // My 스터디 B 검증
+        assertEquals(studyCategoryMappingMap.get(myStudyB.getId()).size(), expectedTeamBCategorySize);
+        for(int i = 0; i < studyCategoryMappingMap.get(myStudyB.getId()).size(); i++){
+            assertEquals(studyCategoryMappingMap.get(myStudyB.getId()).get(i), myStudyCategoriesB.get(expectedTeamBCategorySize - i - 1).getName());
         }
     }
 
@@ -378,16 +393,16 @@ class StudyInfoServiceTest extends TestConfig {
         Long myStudyAId = myStudyA.getId();
         List<UserNameAndProfileImageResponse> myStudyAUserList = studyUserInfoMap.get(myStudyAId);
         assertEquals(expectedTeamASize, myStudyAUserList.size());
-        for(int i=0;i<myStudyAUserList.size();i++){
-            System.out.println(myStudyAUserList.get(i).getId());
-        }
+//        for(int i=0;i<myStudyAUserList.size();i++){
+//            System.out.println(myStudyAUserList.get(i).getId());
+//        }
 
         Long myStudyBId = myStudyB.getId();
         List<UserNameAndProfileImageResponse> myStudyBUserList = studyUserInfoMap.get(myStudyBId);
         assertEquals(expectedTeamBSize, myStudyBUserList.size());
-        for(int i=0;i<myStudyBUserList.size();i++){
-            System.out.println(myStudyBUserList.get(i).getId());
-        }
+//        for(int i=0;i<myStudyBUserList.size();i++){
+//            System.out.println(myStudyBUserList.get(i).getId());
+//        }
     }
 
     @Test

@@ -9,9 +9,7 @@ import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequ
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-import com.example.backend.study.api.service.info.response.StudyCategoryMappingListResponse;
-import com.example.backend.study.api.service.info.response.StudyMemberNameAndProfileImageResponse;
-import com.example.backend.study.api.service.info.response.StudyMembersIdListResponse;
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -217,7 +215,7 @@ public class StudyInfoFixture {
     // MyStudyInfoListAndCursorIdxResponse를 생성해주는 함수
     public static MyStudyInfoListAndCursorIdxResponse generateMyStudyInfoListAndCursorIdxResponse() {
         List<MyStudyInfoListResponse> studyInfoList = new ArrayList<>();
-        Map<Long, List<StudyMemberNameAndProfileImageResponse>> studyUserInfoMap = new HashMap<>();
+        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = new HashMap<>();
         Map<Long, List<String>> studyCategoryMappingMap = new HashMap<>();
         Long cursorIdx = 123L;
 
