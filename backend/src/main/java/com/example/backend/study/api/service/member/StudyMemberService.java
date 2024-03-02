@@ -11,8 +11,8 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +31,7 @@ public class StudyMemberService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyInfoRepository studyInfoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
+    private final StudyTodoRepository studyTodoRepository;
 
     // 스터디장 검증 메서드
     public void isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
@@ -90,9 +91,8 @@ public class StudyMemberService {
         // 강퇴 스터디원 상태 업데이트
         resignMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_RESIGNED);
 
-        // To do mapping 삭제
-        studyTodoMappingRepository.deleteAll(readStudyTodoMapping(resignUserId));
-
+        // 강퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
+        studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, resignUserId);
     }
 
 
@@ -109,17 +109,9 @@ public class StudyMemberService {
         // 탈퇴 스터디원 상태 메서드
         withdrawalMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_WITHDRAWAL);
 
-        // To do mapping 삭제
-        studyTodoMappingRepository.deleteAll(readStudyTodoMapping(userId));
+        // 탈퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
+        studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, userId);
 
     }
-
-
-    // userId로 To do mapping 확인 메서드
-    private List<StudyTodoMapping> readStudyTodoMapping(Long userId) {
-
-        return studyTodoMappingRepository.findByUserId(userId);
-    }
-
 
 }
