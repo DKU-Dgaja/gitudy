@@ -22,8 +22,7 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField("String", "LOGIN_PAGE_API", properties.getProperty("LOGIN_PAGE_API"))
-        buildConfigField("String", "LOGIN_API", properties.getProperty("LOGIN_API"))
+        buildConfigField("String", "GITUDY_BASE_URL", properties.getProperty("GITUDY_BASE_URL"))
     }
     buildFeatures {
         buildConfig = true
