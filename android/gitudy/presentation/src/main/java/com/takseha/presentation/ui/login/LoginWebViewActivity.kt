@@ -9,7 +9,7 @@ import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModelProvider
-import com.takseha.data.dto.AuthCodeRequest
+import com.takseha.data.dto.LoginRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
 import com.takseha.presentation.viewmodel.LoginWebViewViewModel
@@ -44,12 +44,12 @@ class LoginWebViewActivity : AppCompatActivity() {
         setContentView(view)
     }
 
-    private fun getAuthCode(url: String?): AuthCodeRequest {
+    private fun getAuthCode(url: String?): LoginRequest {
         val sanitizer = UrlQuerySanitizer()
         sanitizer.allowUnregisteredParamaters = true;
         sanitizer.parseUrl(url)
 
-        return AuthCodeRequest(sanitizer.getValue("code"), sanitizer.getValue("state"))
+        return LoginRequest(sanitizer.getValue("code"), sanitizer.getValue("state"))
     }
 
     inner class LoginWebViewClient : WebViewClient() {

@@ -23,7 +23,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         buildConfigField("String", "LOGIN_PAGE_API", properties.getProperty("LOGIN_PAGE_API"))
-        buildConfigField("String", "TOKEN_API", properties.getProperty("TOKEN_API"))
+        buildConfigField("String", "LOGIN_API", properties.getProperty("LOGIN_API"))
     }
     buildFeatures {
         buildConfig = true

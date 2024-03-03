@@ -9,12 +9,14 @@ data class LoginResponse(
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")
-    val resObj: List<LoginPageInfo>
+    val tokenInfo: TokenInfo
 )
 
-data class LoginPageInfo(
-    @SerializedName("platform_type")
-    val platformType: String,
-    @SerializedName("url")
-    val url: String
+data class TokenInfo(
+    @SerializedName("access_token")
+    val accessToken: String,
+    @SerializedName("refresh_token")
+    val refreshToken: String,
+    @SerializedName("role")
+    val role: String
 )

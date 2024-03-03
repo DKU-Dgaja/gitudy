@@ -1,16 +1,16 @@
 package com.takseha.data.api
 
 import com.takseha.data.BuildConfig
+import com.takseha.data.dto.LoginPageResponse
 import com.takseha.data.dto.LoginResponse
-import com.takseha.data.dto.TokenResponse
 import retrofit2.http.GET
 import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GitudyApi {
     @GET(BuildConfig.LOGIN_PAGE_API)
-    suspend fun getLoginPage(): LoginResponse
+    suspend fun getLoginPage(): LoginPageResponse
 
-    @GET(BuildConfig.TOKEN_API)
-    suspend fun getAllTokens(@Path("platformType") platformType: String, @Query("code") code: String, @Query("state") state: String): TokenResponse
+    @GET(BuildConfig.LOGIN_API)
+    suspend fun getAllTokens(@Path("platformType") platformType: String, @Query("code") code: String, @Query("state") state: String): LoginResponse
 }
