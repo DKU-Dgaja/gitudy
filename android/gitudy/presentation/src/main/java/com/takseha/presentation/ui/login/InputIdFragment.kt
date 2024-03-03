@@ -1,15 +1,23 @@
 package com.takseha.presentation.ui.login
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.findNavController
+import com.takseha.common.model.SharedPreferencesKey
+import com.takseha.common.util.SharedPreferences
+import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputIdBinding
 
 class InputIdFragment : Fragment() {
     private var _binding: FragmentInputIdBinding? = null
     private val binding get() = _binding!!
+    private lateinit var prefs: SharedPreferences
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -25,8 +33,34 @@ class InputIdFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        prefs = SharedPreferences(requireActivity().applicationContext)
+
         with(binding) {
-            inputIdEditText.text
+            inputIdEditText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?, start: Int, count: Int, after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    confirmBtn.isEnabled = inputIdEditText.length() > 0
+                }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+            confirmBtn.setOnClickListener {
+                prefs.savePref(
+                    SharedPreferencesKey.GITHUB_ID,
+                    inputIdEditText.text.toString()
+                )
+                Log.d(
+                    "InputIdFragment",
+                    "githubId: ${prefs.loadPref(SharedPreferencesKey.GITHUB_ID, "0")}"
+                )
+                it.findNavController()
+                    .navigate(R.id.action_inputIdFragment_to_inputNicknameFragment)
+            }
         }
     }
 

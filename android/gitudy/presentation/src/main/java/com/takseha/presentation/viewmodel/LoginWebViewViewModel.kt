@@ -17,7 +17,7 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
     fun saveAllTokens(platformType: String, code: String, state: String) = viewModelScope.launch {
         prefs = SharedPreferences(getApplication())
 
-        val tokenResponse = gitudyRepository.getAllTokens(platformType, code, state)
+        val tokenResponse = gitudyRepository.getLoginTokens(platformType, code, state)
         val resCode = tokenResponse.resCode
         val resMsg = tokenResponse.resMsg
         val allTokens = tokenResponse.tokenInfo
