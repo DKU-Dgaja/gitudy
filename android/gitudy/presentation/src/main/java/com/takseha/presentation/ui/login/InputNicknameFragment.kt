@@ -1,60 +1,103 @@
 package com.takseha.presentation.ui.login
 
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.navigation.findNavController
+import com.google.android.material.snackbar.Snackbar
+import com.takseha.common.model.SharedPreferencesKey
+import com.takseha.common.util.SharedPreferences
 import com.takseha.presentation.R
+import com.takseha.presentation.databinding.FragmentInputNicknameBinding
+import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [InputNicknameFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class InputNicknameFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentInputNicknameBinding? = null
+    private val binding get() = _binding!!
+    private lateinit var prefs: SharedPreferences
+    private val maxLength = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_input_nickname, container, false)
+        _binding = FragmentInputNicknameBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment InputNicknameFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            InputNicknameFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        prefs = SharedPreferences(requireActivity().applicationContext)
+
+        with(binding) {
+            inputNicknameEditText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    var nicknameLength = inputNicknameEditText.length()
+
+                    if (nicknameLength > 0) {
+                        val nicknameLengthText = getString(R.string.text_length)
+                        val snackBarText = getString(R.string.alert_text_length)
+
+                        confirmBtn.isEnabled = true
+                        nicknameLengthWithMax.text = String.format(nicknameLengthText, nicknameLength, maxLength)
+                        if (nicknameLength > maxLength) {
+                            confirmBtn.isEnabled = false
+                            nicknameLengthWithMax.setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_RED))
+                            makeSnackBar(String.format(snackBarText, maxLength)).apply {
+                                anchorView = confirmBtn
+                            }.show()
+                        }
+                    }
                 }
+
+                override fun afterTextChanged(s: Editable?) {}
+            })
+
+            confirmBtn.setOnClickListener {
+                prefs.savePref(
+                    SharedPreferencesKey.GITUDY_NAME,
+                    inputNicknameEditText.text.toString()
+                )
+                Log.d(
+                    "InputNicknameFragment",
+                    "gitudyName: ${prefs.loadPref(SharedPreferencesKey.GITUDY_NAME, "0")}"
+                )
+
             }
+        }
+    }
+
+    private fun makeSnackBar(message: String): Snackbar {
+        val snackBar = Snackbar.make(requireView(), "Red SnackBar", Snackbar.LENGTH_SHORT)
+        val binding = LayoutSnackbarRedBinding.inflate(layoutInflater)
+
+        @Suppress("RestrictedApi")
+        val snackBarLayout = snackBar.view as Snackbar.SnackbarLayout
+
+        with(snackBarLayout) {
+            removeAllViews()
+            setPadding(22, 0, 22, 20)
+            setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.TRANSPARENT))
+            addView(binding.root, 0)
+        }
+
+        with(binding) {
+            snackBarText.text = message
+        }
+
+        return snackBar
     }
 }

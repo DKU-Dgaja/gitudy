@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">gitudy</string>
+    <string name="app_name">Gitudy</string>
 
     <!-- Strings related to common -->
     <string name="confirm">확인</string>
@@ -15,8 +15,14 @@
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
 
 
+    <!-- Strings related to alert -->
+    <string name="alert_text_length">%d자 이하로 입력해주세요.</string>
+    <string name="alert_text_emoji">특수기호 및 이모티콘 입력은 불가해요.</string>
+
+
     <!-- Strings related to home -->
     <string name="home_my_rank">활동점수 %d점  |  랭킹 %d위</string>
+
 
     <!-- Strings related to study -->
     <string name="study_my_cnt">마이스터디  %d</string>
@@ -55,13 +61,12 @@
     <string name="detail3_body">본인 인증 서비스 이용 약관 내용</string>
     <string name="agreement">동의</string>
 
+
     <!-- Strings related to profile -->
     <string name="nickname">대머리깃터디</string>
     <string name="github_id">\@boldgitudy</string>
     <string name="profile_github_link">www.github.com</string>
     <string name="profile_blog_link">www.naver.com</string>
     <string name="profile_linkedin_link">www.linkedin.com</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
