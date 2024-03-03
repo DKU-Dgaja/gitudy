@@ -21,7 +21,6 @@ public enum ExceptionMessage {
     REFRESHTOKEN_NOT_EXIST("Refresh Token이 존재하지 않습니다."),
     REFRESHTOKEN_INVALID("유효하지 않은 Refresh Token 입니다."),
 
-
     // OAuthException
     OAUTH_INVALID_TOKEN_URL("token URL이 올바르지 않습니다."),
     OAUTH_INVALID_ACCESS_TOKEN("access_token이 올바르지 않습니다."),
@@ -34,6 +33,7 @@ public enum ExceptionMessage {
   
     // AuthException
     UNAUTHORIZED_AUTHORITY("현재 요청한 작업을 수행할 권한이 없습니다."),
+
     // UserException
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
 
@@ -45,6 +45,8 @@ public enum ExceptionMessage {
 
     // CommitException
     COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),
+    COMMIT_COMMENT_NOT_FOUND("커밋 댓글 정보를 찾을 수 없습니다."),
+    COMMIT_COMMENT_PERMISSION_DENIED("커밋 댓글 정보를 변경할 권한이 없습니다."),
 
     // BookmarkException
     BOOKMARK_DELETE_FAIL("북마크 삭제에 실패했습니다."),

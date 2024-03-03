@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.member;
 
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.study.StudyInfoException;
@@ -28,7 +29,7 @@ public class StudyMemberService {
     private final StudyInfoRepository studyInfoRepository;
 
     // 스터디장 검증 메서드
-    public void isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
+    public UserInfoResponse isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
 
         // platformId와 platformType을 이용하여 User 객체 조회
         User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
@@ -40,6 +41,8 @@ public class StudyMemberService {
         if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
             throw new MemberException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER);
         }
+
+        return UserInfoResponse.of(user);
     }
 
     // 스터디장 확인 메서드
@@ -48,7 +51,7 @@ public class StudyMemberService {
     }
 
     // 스터디 멤버인지 검증
-    public void isValidateStudyMember(User userPrincipal, Long studyInfoId) {
+    public UserInfoResponse isValidateStudyMember(User userPrincipal, Long studyInfoId) {
 
         // platformId와 platformType을 이용하여 User 객체 조회
         User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
@@ -60,6 +63,8 @@ public class StudyMemberService {
         if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
             throw new MemberException(ExceptionMessage.STUDY_NOT_MEMBER);
         }
+
+        return UserInfoResponse.of(user);
     }
 
 

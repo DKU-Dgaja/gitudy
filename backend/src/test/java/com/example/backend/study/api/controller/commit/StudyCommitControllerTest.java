@@ -142,7 +142,8 @@ class StudyCommitControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(user));
         when(studyCommitService.getCommitDetailsById(any(Long.class))).thenReturn(CommitInfoResponse.builder().commitSHA(commitSha).build());
 
         // when
@@ -169,7 +170,8 @@ class StudyCommitControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(user));
         when(studyCommitService.getCommitDetailsById(any(Long.class))).thenThrow(new CommitException(ExceptionMessage.COMMIT_NOT_FOUND));
 
         // when

@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.todo;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
@@ -98,7 +99,8 @@ public class StudyTodoControllerTest extends TestConfig {
 
         StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest();
 
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
         doNothing().when(studyTodoService).registerStudyTodo(any(StudyTodoRequest.class), any(Long.class));
 
         //when , then
@@ -138,7 +140,8 @@ public class StudyTodoControllerTest extends TestConfig {
 
 
         //when
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
         doNothing().when(studyTodoService).updateStudyTodo(any(StudyTodoUpdateRequest.class), any(Long.class));
 
         //then
@@ -170,7 +173,8 @@ public class StudyTodoControllerTest extends TestConfig {
 
 
         //when
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
         doNothing().when(studyTodoService).deleteStudyTodo(any(Long.class), any(Long.class));
 
 
@@ -201,7 +205,8 @@ public class StudyTodoControllerTest extends TestConfig {
                 .build();
         response.setNextCursorIdx();
 
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
         when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
