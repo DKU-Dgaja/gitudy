@@ -18,6 +18,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
 import com.example.backend.study.api.service.comment.study.StudyCommentService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -28,7 +29,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
@@ -169,10 +169,12 @@ class StudyCommentControllerTest extends TestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
+        StudyCommentListAndCursorIdxResponse response
+                = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyCommentService.selectStudyCommentList(any(Long.class), any(Long.class), any(Long.class)))
-                .thenReturn(new ArrayList<>());
+                .thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")

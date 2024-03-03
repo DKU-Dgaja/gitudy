@@ -3,6 +3,9 @@ package com.example.backend.domain.define.study.comment;
 import com.example.backend.domain.define.study.comment.study.StudyComment;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
+import com.example.backend.study.api.service.comment.study.response.UserInfoForStudyCommentResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,6 +39,31 @@ public class StudyCommentFixture {
         return StudyCommentUpdateRequest.builder()
                 .userId(userId)
                 .content("ChangedContent")
+                .build();
+    }
+    public static StudyCommentResponse createDefaultStudyCommentResponse(Long userId, Long studyInfoId) {
+        return StudyCommentResponse.builder()
+                .studyInfoId(studyInfoId)
+                .userId(userId)
+                .userInfoResponse(createDefaultUserInfoResponse(userId))
+                .build();
+    }
+    public static StudyCommentListAndCursorIdxResponse generateStudyCommentListAndCursorIdxResponse(Long userId, Long studyInfoId) {
+        Long cursorIdx = 5L;
+        List<StudyCommentResponse> comments = new ArrayList<>();
+        for (int i = 1; i <= 5; i++) {
+            comments.add(createDefaultStudyCommentResponse(userId, studyInfoId));
+        }
+        return StudyCommentListAndCursorIdxResponse.builder()
+                .studyCommentList(comments)
+                .cursorIdx(cursorIdx)
+                .build();
+    }
+    public static UserInfoForStudyCommentResponse createDefaultUserInfoResponse(Long userId) {
+        return UserInfoForStudyCommentResponse.builder()
+                .userId(userId)
+                .name("user")
+                .profileImageUrl("profileImageUrl")
                 .build();
     }
 }

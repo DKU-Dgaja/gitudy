@@ -16,6 +16,7 @@ import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -232,9 +233,9 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
 
-        for (StudyCommentResponse comment : studyCommentListResponse) {
+        for (StudyCommentResponse comment : studyCommentListResponse.getStudyCommentList()) {
             assertTrue(comment.getId() < cursorIdx);
         }
     }
@@ -251,9 +252,9 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
 
-        for (StudyCommentResponse comment : studyCommentListResponse) {
+        for (StudyCommentResponse comment : studyCommentListResponse.getStudyCommentList()) {
             assertTrue(comment.getId() < cursorIdx);
         }
     }
@@ -268,9 +269,9 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        List<StudyCommentResponse> studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), null, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), null, LIMIT);
 
-        assertEquals(LIMIT, studyCommentListResponse.size());
+        assertEquals(LIMIT, studyCommentListResponse.getStudyCommentList().size());
     }
 
     @Test
@@ -288,10 +289,10 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study.getId()));
 
         // when
-        List<StudyCommentResponse> studyCommentResponse = studyCommentService.selectStudyCommentList(study.getId(),  null, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentResponse = studyCommentService.selectStudyCommentList(study.getId(),  null, LIMIT);
 
         // then
-        assertEquals(expectedSize, studyCommentResponse.size());
+        assertEquals(expectedSize, studyCommentResponse.getStudyCommentList().size());
     }
 
     @Test
@@ -316,11 +317,11 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study2.getId()));
 
         // when
-        List<StudyCommentResponse> studyCommentResponse1 = studyCommentService.selectStudyCommentList(study1.getId(),  null, LIMIT);
-        List<StudyCommentResponse> studyCommentResponse2 = studyCommentService.selectStudyCommentList(study2.getId(),  null, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentResponse1 = studyCommentService.selectStudyCommentList(study1.getId(),  null, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentResponse2 = studyCommentService.selectStudyCommentList(study2.getId(),  null, LIMIT);
 
         // then
-        assertEquals(expectedStudy1CommentSize, studyCommentResponse1.size());
-        assertEquals(expectedStudy2CommentSize, studyCommentResponse2.size());
+        assertEquals(expectedStudy1CommentSize, studyCommentResponse1.getStudyCommentList().size());
+        assertEquals(expectedStudy2CommentSize, studyCommentResponse2.getStudyCommentList().size());
     }
 }

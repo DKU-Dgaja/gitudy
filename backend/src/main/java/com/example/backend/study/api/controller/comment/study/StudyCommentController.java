@@ -77,12 +77,7 @@ public class StudyCommentController {
                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
-        List<StudyCommentResponse> StudyCommentList = studyCommentService.selectStudyCommentList(studyInfoId, cursorIdx, limit);
-
-        StudyCommentListAndCursorIdxResponse response = (StudyCommentListAndCursorIdxResponse.builder()
-                .studyCommentList(StudyCommentList)
-                .build());
-        response.getNextCursorIdx();
+        StudyCommentListAndCursorIdxResponse response = studyCommentService.selectStudyCommentList(studyInfoId, cursorIdx, limit);
 
         return JsonResult.successOf(response);
     }

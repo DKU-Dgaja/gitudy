@@ -12,6 +12,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import lombok.RequiredArgsConstructor;
@@ -92,8 +93,14 @@ public class StudyCommentService {
         }
         studyCommentRepository.deleteById(studyCommentId);
     }
-    public List<StudyCommentResponse> selectStudyCommentList(Long studyInfoId, Long cursorIdx, Long limit) {
-        return studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(studyInfoId, cursorIdx, limit);
+    public StudyCommentListAndCursorIdxResponse selectStudyCommentList(Long studyInfoId, Long cursorIdx, Long limit) {
+        List<StudyCommentResponse> studyCommentResponseList =
+                studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(studyInfoId, cursorIdx, limit);
+        StudyCommentListAndCursorIdxResponse response = (StudyCommentListAndCursorIdxResponse.builder()
+                .studyCommentList(studyCommentResponseList)
+                .build());
+        response.getNextCursorIdx();
+        return response;
     }
 
     // StudyComment 생성 로직
