@@ -66,9 +66,9 @@ class StudyInfoRepositoryTest extends TestConfig {
         Random random = new Random();
         Long cursorIdx = random.nextLong(LIMIT) + 1L;
 
-        List<StudyInfo> studyInfoList = createDefaultStudyInfoList(DATA_SIZE, savedUser.getId());
-        studyInfoRepository.saveAll(studyInfoList);
-
+        List<StudyInfo> studyInfos = createDefaultStudyInfoList(DATA_SIZE, savedUser.getId());
+        studyInfoRepository.saveAll(studyInfos);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
         List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy);
 
@@ -84,11 +84,13 @@ class StudyInfoRepositoryTest extends TestConfig {
         Long cursorIdx = 15L;
 
         User user = userRepository.save(UserFixture.generateAuthUser());
-        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
 
-        List<StudyInfo> studyInfoList = createDefaultStudyInfoList(DATA_SIZE, user.getId());
-        studyInfoRepository.saveAll(studyInfoList);
-
+        List<StudyInfo> studyInfos1 = createDefaultStudyInfoList(DATA_SIZE, user.getId());
+        List<StudyInfo> studyInfos2 = createDefaultStudyInfoList(DATA_SIZE, user.getId());
+        studyInfoRepository.saveAll(studyInfos1);
+        studyInfoRepository.saveAll(studyInfos2);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos1));
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos2));
         // when
         List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(user.getId(), cursorIdx, LIMIT, sortBy);
 
@@ -106,15 +108,15 @@ class StudyInfoRepositoryTest extends TestConfig {
         Random random = new Random();
         Long cursorIdx = random.nextLong(LIMIT) + 1L;
 
-        List<StudyInfo> studyInfos = createDefaultStudyInfoList(DATA_SIZE, savedUser.getId());
+        List<StudyInfo> studyInfos = StudyInfoFixture.createDefaultcreateDefaultStudyInfoRandomScoreAndLastCommitDayList(DATA_SIZE, savedUser.getId());
         studyInfoRepository.saveAll(studyInfos);
-
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
-        List<MyStudyInfoListResponse> studyInfoList = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy);
+        List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy);
 
         // then
         int previousScore = Integer.MAX_VALUE;
-        for (MyStudyInfoListResponse studyInfo : studyInfoList) {
+        for (MyStudyInfoListResponse studyInfo : studyInfoPage) {
             int currentScore = studyInfo.getScore();
             assertTrue(currentScore <= previousScore);
             previousScore = currentScore;

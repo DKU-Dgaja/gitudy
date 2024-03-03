@@ -253,4 +253,12 @@ public class StudyInfoFixture {
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .build();
     }
+    // 테스트용 스터디 정보 리스트 생성 메서드 (Score와 LastCommitDay는 랜덤 값으로 생성)
+    public static List<StudyInfo> createDefaultcreateDefaultStudyInfoRandomScoreAndLastCommitDayList(int count, Long userId) {
+        List<StudyInfo> studyInfos = new ArrayList<>();
+        for (int i = 1; i <= count; i++) {
+            studyInfos.add(createDefaultStudyInfoRandomScoreAndLastCommitDay(userId));
+        }
+        return studyInfos;
+    }
 }
