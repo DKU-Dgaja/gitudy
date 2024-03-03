@@ -36,7 +36,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="21dp"
-        android:background="@drawable/box_non_stroke_r6_green"
+        android:background="@drawable/box_non_stroke_r8_green"
         android:drawableLeft="@drawable/ic_login_github"
         android:drawableTint="@color/GS_900"
         android:padding="18dp"
