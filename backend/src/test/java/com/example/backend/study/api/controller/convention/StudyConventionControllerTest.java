@@ -6,10 +6,7 @@ import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.convention.StudyConventionFixture;
-import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.service.convention.StudyConventionService;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -31,6 +28,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+@SuppressWarnings("NonAsciiCharacters")
 public class StudyConventionControllerTest extends TestConfig {
 
     @Autowired
