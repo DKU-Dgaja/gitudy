@@ -76,8 +76,8 @@ public class StudyConventionControllerTest extends TestConfig {
         //when , then
         mockMvc.perform(post("/convention/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("studyInfoId", "1")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -101,8 +101,8 @@ public class StudyConventionControllerTest extends TestConfig {
         //when , then
         mockMvc.perform(post("/convention/")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .param("studyInfoId", "2")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("studyInfoId", "1")
                         .content(objectMapper.writeValueAsString(StudyConventionRequest.builder()
                                 .name(inValidName)
                                 .content("정규식")
