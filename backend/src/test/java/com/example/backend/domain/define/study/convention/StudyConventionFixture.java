@@ -5,8 +5,9 @@ import com.example.backend.study.api.controller.convention.request.StudyConventi
 public class StudyConventionFixture {
 
     // 테스트용 컨벤션 등록
-    public static StudyConventionRequest generateStudyConventionRequest() {
+    public static StudyConventionRequest generateStudyConventionRequest(Long studyInfoId) {
         return StudyConventionRequest.builder()
+                .studyInfoId(studyInfoId)
                 .name("컨벤션")
                 .description("설명")
                 .content("정규식")

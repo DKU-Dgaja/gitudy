@@ -6,6 +6,8 @@ import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.convention.StudyConventionFixture;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.service.convention.StudyConventionService;
@@ -68,15 +70,17 @@ public class StudyConventionControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
-        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest();
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest(studyInfo.getId());
 
         doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
-        doNothing().when(studyConventionService).registerStudyConvention(any(StudyConventionRequest.class), any(Long.class));
+        doNothing().when(studyConventionService).registerStudyConvention(any(StudyConventionRequest.class));
 
         //when , then
         mockMvc.perform(post("/convention/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("studyInfoId", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -101,7 +105,6 @@ public class StudyConventionControllerTest extends TestConfig {
         //when , then
         mockMvc.perform(post("/convention/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("studyInfoId", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(StudyConventionRequest.builder()
                                 .name(inValidName)
