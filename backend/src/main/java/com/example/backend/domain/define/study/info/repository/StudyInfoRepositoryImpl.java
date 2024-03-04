@@ -59,19 +59,22 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                 .orderBy(orderSpecifier, idOrder); // 다중 정렬 조건 적용
 
         if (cursorIdx != null) {
-            NumberExpression<Integer> maxExpression;
             NumberExpression<Integer> expression;
 
             switch (sortBy) {
                 case "lastCommitDay":
-                    expression = studyInfo.lastCommitDay.dayOfMonth().castToNum(Integer.class);
+                    expression = studyInfo.lastCommitDay.year().multiply(10000)
+                            .add(studyInfo.lastCommitDay.month().multiply(100))
+                            .add(studyInfo.lastCommitDay.dayOfMonth());
                     break;
                 case "score":
                     expression = studyInfo.score;
                     break;
                 case "createdDateTime":
                 default:
-                    expression = studyInfo.createdDateTime.dayOfMonth().castToNum(Integer.class);
+                    expression = studyInfo.createdDateTime.year().multiply(10000)
+                            .add(studyInfo.createdDateTime.month().multiply(100))
+                            .add(studyInfo.createdDateTime.dayOfMonth());
                     break;
             }
 

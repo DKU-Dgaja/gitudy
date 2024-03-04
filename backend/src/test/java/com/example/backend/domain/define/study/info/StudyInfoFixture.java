@@ -12,6 +12,7 @@ import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPag
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -247,6 +248,28 @@ public class StudyInfoFixture {
                 .maximumMember(5)
                 .currentMember(3)
                 .lastCommitDay(randomLastCommitDay) // 랜덤 마지막 커밋 날짜 설정
+                .profileImageUrl("https://example.com/profile.jpg")
+                .notice("Notice")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+
+    // 누락 테스트용 스터디 정보 생성 메서드 (Score지정)
+    public static StudyInfo testSortLastCommitDayStudyCursorPaginationWithoutMissingData(Long userId, LocalDate lastCommitDay) {
+        LocalDate now = LocalDate.now();
+
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .score(100)
+                .endDate(now.plusMonths(3))
+                .info("info")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .joinCode("ABC123")
+                .maximumMember(5)
+                .currentMember(3)
+                .lastCommitDay(lastCommitDay) // 랜덤 마지막 커밋 날짜 설정
                 .profileImageUrl("https://example.com/profile.jpg")
                 .notice("Notice")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))

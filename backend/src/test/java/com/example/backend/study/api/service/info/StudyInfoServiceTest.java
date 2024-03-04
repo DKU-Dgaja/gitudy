@@ -165,7 +165,7 @@ class StudyInfoServiceTest extends TestConfig {
             studyInfoService.deleteStudy(invalidStudyInfoId);
         }, "해당 스터디정보를 찾을 수 없습니다.");
     }
- 
+
     @Test
     public void 스터디_수정_테스트() {
         // given
@@ -334,13 +334,13 @@ class StudyInfoServiceTest extends TestConfig {
         assertEquals(studyCategoryMappingMap.size(), 2);
         // My 스터디 A 검증
         assertEquals(studyCategoryMappingMap.get(myStudyA.getId()).size(), expectedTeamACategorySize);
-        for(int i = 0 ;i < studyCategoryMappingMap.get(myStudyA.getId()).size(); i ++){
+        for (int i = 0; i < studyCategoryMappingMap.get(myStudyA.getId()).size(); i++) {
             assertEquals(studyCategoryMappingMap.get(myStudyA.getId()).get(i), myStudyCategoriesA.get(expectedTeamACategorySize - i - 1).getName());
         }
 
         // My 스터디 B 검증
         assertEquals(studyCategoryMappingMap.get(myStudyB.getId()).size(), expectedTeamBCategorySize);
-        for(int i = 0; i < studyCategoryMappingMap.get(myStudyB.getId()).size(); i++){
+        for (int i = 0; i < studyCategoryMappingMap.get(myStudyB.getId()).size(); i++) {
             assertEquals(studyCategoryMappingMap.get(myStudyB.getId()).get(i), myStudyCategoriesB.get(expectedTeamBCategorySize - i - 1).getName());
         }
     }
@@ -559,5 +559,77 @@ class StudyInfoServiceTest extends TestConfig {
 
         // then
         assertEquals(response3.getCursorIdx(), score10.getId());
+    }
+    @Test
+    void 마지막_커밋_정렬로_스터디조회_커서기반_페이지네이션_중복_데이터_누락_제거_테스트() {
+        // [문제]
+        // 중복 데이터 누락 발생!
+
+        // [해결]
+        // lastCommitDay가 동일한 스터디가 여러 개 있을 때 데이터 누락이 발생하지 않는지 테스트
+        // 데이터가 누락되지 않게 올바른 cursorIdx가 반환되는지 테스트
+
+        // given
+        String sortBy = "lastCommitDay";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> list = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+
+        // 시간을 조정하여 스터디 정보 생성
+        StudyInfo studyInfo1 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate);
+        StudyInfo studyInfo2 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(1));
+        StudyInfo studyInfo3 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(2));
+        StudyInfo studyInfo4 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(3));
+        StudyInfo studyInfo5 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(4));
+        StudyInfo studyInfo6 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(4));
+        StudyInfo studyInfo7 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(4));
+        StudyInfo studyInfo8 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(5));
+        StudyInfo studyInfo9 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(6));
+        StudyInfo studyInfo10 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(7));
+
+        list.add(studyInfo1); list.add(studyInfo2); list.add(studyInfo3); list.add(studyInfo4); list.add(studyInfo5);
+        list.add(studyInfo6); list.add(studyInfo7); list.add(studyInfo8); list.add(studyInfo9); list.add(studyInfo10);
+
+        studyInfoRepository.saveAll(list);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(list));
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
+        List<MyStudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
+        System.out.println("---------lastCommitDay 기준으로 정렬 후----------");
+        for (MyStudyInfoListResponse x : studyInfoList1) {
+            System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
+        }
+        System.out.println("--------------------------------------");
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response2
+                = studyInfoService.selectMyStudyInfoList(savedUser.getId(), studyInfo3.getId(), 3L, sortBy);
+        List<MyStudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " + studyInfo3.getId() + ", limit : 3]");
+        for (MyStudyInfoListResponse x : studyInfoList2) {
+            System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
+        }
+        System.out.println("response ->[cursorIdx : " + response2.getCursorIdx() + "]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response2.getCursorIdx(), studyInfo6.getId());
+
+        // when
+        MyStudyInfoListAndCursorIdxResponse response3
+                = studyInfoService.selectMyStudyInfoList(savedUser.getId(), response2.getCursorIdx(), 3L, sortBy);
+        List<MyStudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " + response2.getCursorIdx() + ", limit : 3]");
+        for (MyStudyInfoListResponse x : studyInfoList3) {
+            System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
+        }
+        System.out.println("response ->[cursorIdx : " + response3.getCursorIdx() + "]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response3.getCursorIdx(), studyInfo9.getId());
     }
 }
