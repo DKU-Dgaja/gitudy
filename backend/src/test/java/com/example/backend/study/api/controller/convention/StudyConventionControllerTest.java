@@ -45,9 +45,6 @@ public class StudyConventionControllerTest extends TestConfig {
     @Autowired
     private StudyInfoRepository studyInfoRepository;
 
-    @Autowired
-    private StudyMemberRepository studyMemberRepository;
-
     @MockBean
     private StudyMemberService studyMemberService;
 
@@ -62,7 +59,6 @@ public class StudyConventionControllerTest extends TestConfig {
     void tearDown() {
         userRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
-        studyMemberRepository.deleteAllInBatch();
     }
 
     @Test
@@ -73,9 +69,6 @@ public class StudyConventionControllerTest extends TestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
-
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
-        studyInfoRepository.save(studyInfo);
 
         StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest();
 
@@ -106,9 +99,6 @@ public class StudyConventionControllerTest extends TestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
-
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
-        studyInfoRepository.save(studyInfo);
 
         //when , then
         mockMvc.perform(post("/convention/")
