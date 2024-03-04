@@ -83,9 +83,10 @@ public class StudyConventionControllerTest extends TestConfig {
         doNothing().when(studyConventionService).registerStudyConvention(any(StudyConventionRequest.class), any(Long.class));
 
         //when , then
-        mockMvc.perform(post("/convention/" + studyInfo.getId())
+        mockMvc.perform(post("/convention/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("studyInfoId", String.valueOf(studyInfo.getId()))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -110,9 +111,10 @@ public class StudyConventionControllerTest extends TestConfig {
         studyInfoRepository.save(studyInfo);
 
         //when , then
-        mockMvc.perform(post("/convention/" + studyInfo.getId())
+        mockMvc.perform(post("/convention/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("studyInfoId", String.valueOf(studyInfo.getId()))
                         .content(objectMapper.writeValueAsString(StudyConventionRequest.builder()
                                 .name(inValidName)
                                 .content("정규식")
