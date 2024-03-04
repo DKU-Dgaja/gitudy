@@ -101,7 +101,7 @@ public class StudyConventionControllerTest extends TestConfig {
         //when , then
         mockMvc.perform(post("/convention/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("studyInfoId", "2")
+                        .param("studyInfoId", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(StudyConventionRequest.builder()
                                 .name(inValidName)
