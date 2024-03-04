@@ -61,7 +61,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/commits/user/" + userId)
+        mockMvc.perform(get("/commit/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -90,7 +90,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/commits/user/" + userId)
+        mockMvc.perform(get("/commit/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -118,7 +118,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/commits/user/" + userId)
+        mockMvc.perform(get("/commit/user/" + userId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "-1")
@@ -147,9 +147,8 @@ class StudyCommitControllerTest extends TestConfig {
         when(studyCommitService.getCommitDetailsById(any(Long.class))).thenReturn(CommitInfoResponse.builder().commitSHA(commitSha).build());
 
         // when
-        mockMvc.perform(get("/commits/" + commitId)
+        mockMvc.perform(get("/study/" + 1L + "/commit/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("studyInfoId", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
@@ -175,7 +174,7 @@ class StudyCommitControllerTest extends TestConfig {
         when(studyCommitService.getCommitDetailsById(any(Long.class))).thenThrow(new CommitException(ExceptionMessage.COMMIT_NOT_FOUND));
 
         // when
-        mockMvc.perform(get("/commits/" + commitId)
+        mockMvc.perform(get("/study/" + 1L + "/commit/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
