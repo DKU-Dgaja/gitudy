@@ -25,12 +25,12 @@ public class StudyConventionController {
     @ApiResponse(responseCode = "200", description = "컨벤션 등록 성공")
     @PostMapping("/")
     public JsonResult<?> registerStudyConvention(@AuthenticationPrincipal User user,
-                                                 @RequestParam(name = "studyInfoId") Long studyInfoId,
                                                  @Valid @RequestBody StudyConventionRequest studyConventionRequest) {
 
-        studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
-        studyConventionService.registerStudyConvention(studyConventionRequest, studyInfoId);
+        studyMemberService.isValidateStudyLeader(user, studyConventionRequest.getStudyInfoId());
+
+        studyConventionService.registerStudyConvention(studyConventionRequest);
 
         return JsonResult.successOf("StudyConvention register Success");
     }

@@ -20,11 +20,11 @@ public class StudyConventionService {
 
     // 컨벤션 등록
     @Transactional
-    public void registerStudyConvention(StudyConventionRequest request, Long studyInfoId) {
+    public void registerStudyConvention(StudyConventionRequest request) {
 
         // 컨벤션 저장
         studyConventionRepository.save(StudyConvention.builder()
-                .studyInfoId(studyInfoId)
+                .studyInfoId(request.getStudyInfoId())
                 .name(request.getName())
                 .description(request.getDescription())
                 .content(request.getContent())

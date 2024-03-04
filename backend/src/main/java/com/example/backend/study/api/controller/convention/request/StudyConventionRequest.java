@@ -14,6 +14,8 @@ import lombok.NoArgsConstructor;
 @Builder
 public class StudyConventionRequest {
 
+    private Long studyInfoId; // 스터디 Id
+
     @NotBlank(message = "컨벤션 이름은 공백일 수 없습니다.")
     @Size(max = 20, message = "이름 20자 이내")
     private String name;   // 컨벤션 이름
