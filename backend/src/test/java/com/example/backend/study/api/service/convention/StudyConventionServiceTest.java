@@ -3,6 +3,7 @@ package com.example.backend.study.api.service.convention;
 import com.example.backend.auth.TestConfig;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.convention.ConventionException;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
@@ -23,7 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StudyConventionServiceTest extends TestConfig {
 
@@ -107,5 +108,34 @@ public class StudyConventionServiceTest extends TestConfig {
         assertEquals("컨벤션 수정", updateConvention.getName());
         assertEquals("설명 수정", updateConvention.getDescription());
         assertEquals("정규식 수정", updateConvention.getContent());
+    }
+
+    @Test
+    @DisplayName("컨벤션 삭제 테스트")
+    public void deleteStudyConvention() {
+
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
+        studyMemberRepository.save(leader);
+
+        StudyConvention studyConvention = StudyConventionFixture.createStudyDefaultConvention(studyInfo.getId());
+        studyConventionRepository.save(studyConvention);
+
+
+        //when
+        studyMemberService.isValidateStudyLeader(savedUser, studyInfo.getId());
+        studyConventionService.deleteStudyConvention(studyConvention.getId());
+
+        // then
+        assertThrows(ConventionException.class, () -> {
+            studyConventionService.deleteStudyConvention(studyConvention.getId());
+        }, "CONVENTION_NOT_FOUND 예외가 발생해야 한다.");
+
+        assertFalse(studyConventionRepository.existsById(studyConvention.getId()));
     }
 }
