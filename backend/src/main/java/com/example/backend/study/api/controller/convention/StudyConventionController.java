@@ -3,6 +3,7 @@ package com.example.backend.study.api.controller.convention;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
+import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.service.convention.StudyConventionService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -34,5 +35,20 @@ public class StudyConventionController {
         studyConventionService.registerStudyConvention(studyConventionRequest, studyInfoId);
 
         return JsonResult.successOf("StudyConvention register Success");
+    }
+
+
+    @ApiResponse(responseCode = "200", description = "컨벤션 수정 성공")
+    @PutMapping("/{studyInfoId}/convention/{conventionId}")
+    public JsonResult<?> updateStudyConvention(@AuthenticationPrincipal User user,
+                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                               @PathVariable(name = "conventionId") Long conventionId,
+                                               @Valid @RequestBody StudyConventionUpdateRequest studyConventionUpdateRequest) {
+
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyConventionService.updateStudyConvention(studyConventionUpdateRequest, conventionId);
+
+        return JsonResult.successOf("StudyConvention update Success");
     }
 }

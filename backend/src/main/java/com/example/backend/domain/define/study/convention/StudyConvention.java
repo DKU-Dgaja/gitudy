@@ -41,4 +41,11 @@ public class StudyConvention extends BaseEntity {
         this.content = content;
         this.isActive = isActive;
     }
+
+    public void updateConvention(String name, String description, String content, boolean isActive) {
+        this.name = name;
+        this.description = description;
+        this.content = content;
+        this.isActive = isActive;
+    }
 }
