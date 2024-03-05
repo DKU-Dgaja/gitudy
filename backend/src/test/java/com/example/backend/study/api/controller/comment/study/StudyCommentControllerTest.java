@@ -202,9 +202,10 @@ class StudyCommentControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
-                .thenReturn(UserInfoResponse.of(user));
-        
+        doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
+                .when(studyMemberService)
+                .isValidateStudyMember(any(User.class), any(Long.class));
+
         // when
         mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
                         .contentType(MediaType.APPLICATION_JSON)
