@@ -107,7 +107,7 @@ public class StudyMemberControllerTest extends TestConfig {
         StudyMember studyMember = StudyMemberFixture.createDefaultStudyMember(member.getId(), studyInfo.getId());
         studyMemberRepository.save(studyMember);
 
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(leader));
         doNothing().when(studyMemberService).resignStudyMember(any(Long.class), any(Long.class));
 
         //when , then
@@ -140,7 +140,7 @@ public class StudyMemberControllerTest extends TestConfig {
         StudyMember studyMember = StudyMemberFixture.createDefaultStudyMember(member.getId(), studyInfo.getId());
         studyMemberRepository.save(studyMember);
 
-        doNothing().when(studyMemberService).isValidateStudyMember(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(member));
         doNothing().when(studyMemberService).resignStudyMember(any(Long.class), any(Long.class));
 
         //when , then
