@@ -63,11 +63,11 @@ public class StudyConventionServiceTest extends TestConfig {
         StudyMember leader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
         studyMemberRepository.save(leader);
 
-        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest(studyInfo.getId());
+        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest();
 
         //when
         studyMemberService.isValidateStudyLeader(savedUser, studyInfo.getId());
-        studyConventionService.registerStudyConvention(request);
+        studyConventionService.registerStudyConvention(request, studyInfo.getId());
         StudyConvention findConvention = studyConventionRepository.findByStudyInfoId(studyInfo.getId());
 
         //then

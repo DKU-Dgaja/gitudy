@@ -75,13 +75,13 @@ public class StudyConventionControllerTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest(studyInfo.getId());
+        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest();
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyConventionService).registerStudyConvention(any(StudyConventionRequest.class));
+        doNothing().when(studyConventionService).registerStudyConvention(any(StudyConventionRequest.class), any(Long.class));
 
         //when , then
-        mockMvc.perform(post("/convention/")
+        mockMvc.perform(post("/study/" + studyInfo.getId() + "/convention")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(request)))
@@ -104,8 +104,11 @@ public class StudyConventionControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
         //when , then
-        mockMvc.perform(post("/convention/")
+        mockMvc.perform(post("/study/" + studyInfo.getId() + "/convention")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(StudyConventionRequest.builder()

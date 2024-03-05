@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/convention")
+@RequestMapping("/study")
 public class StudyConventionController {
 
     private final StudyConventionService studyConventionService;
@@ -23,14 +23,15 @@ public class StudyConventionController {
 
 
     @ApiResponse(responseCode = "200", description = "컨벤션 등록 성공")
-    @PostMapping("/")
+    @PostMapping("/{studyInfoId}/convention")
     public JsonResult<?> registerStudyConvention(@AuthenticationPrincipal User user,
+                                                 @PathVariable(name = "studyInfoId") Long studyInfoId,
                                                  @Valid @RequestBody StudyConventionRequest studyConventionRequest) {
 
 
-        studyMemberService.isValidateStudyLeader(user, studyConventionRequest.getStudyInfoId());
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
-        studyConventionService.registerStudyConvention(studyConventionRequest);
+        studyConventionService.registerStudyConvention(studyConventionRequest, studyInfoId);
 
         return JsonResult.successOf("StudyConvention register Success");
     }
