@@ -12,4 +12,6 @@ public interface StudyTodoMappingRepository extends JpaRepository<StudyTodoMappi
     Optional<StudyTodoMapping> deleteByTodoId(Long todoId);
 
     List<StudyTodoMapping> findByTodoId(Long todoId);
+
+    List<StudyTodoMapping> findByUserId(Long userId);
 }

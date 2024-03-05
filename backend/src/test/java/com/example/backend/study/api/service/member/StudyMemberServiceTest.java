@@ -7,18 +7,26 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.domain.define.study.todo.StudyTodoFixture;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StudyMemberServiceTest extends TestConfig {
 
@@ -34,11 +42,19 @@ public class StudyMemberServiceTest extends TestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
+    @Autowired
+    private StudyTodoMappingRepository studyTodoMappingRepository;
+
+    @Autowired
+    private StudyTodoRepository studyTodoRepository;
+
     @AfterEach
     void tearDown() {
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
+        studyTodoMappingRepository.deleteAllInBatch();
+        studyTodoRepository.deleteAllInBatch();
     }
 
 
@@ -168,4 +184,159 @@ public class StudyMemberServiceTest extends TestConfig {
 
     }
 
+
+    @Test
+    @DisplayName("스터디원 강퇴 테스트")
+    public void resignStudyMember() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        User user2 = UserFixture.generateKaKaoUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1, user2));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        StudyMember activeMember2 = StudyMemberFixture.createStudyMemberResigned(user2.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember1, activeMember2));
+
+        // when
+        studyMemberService.resignStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
+
+    }
+
+    @Test
+    @DisplayName("스터디원 탈퇴 테스트")
+    public void withdrawalMember() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        User user2 = UserFixture.generateKaKaoUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1, user2));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember1));
+
+        // when
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, studyMember.get().getStatus());
+    }
+
+
+    @Test
+    @DisplayName("스터디원 강퇴 테스트 - Todo mappings 함께 삭제 테스트")
+    public void resignStudyMember_todo() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember));
+
+        // 현재 날짜 이후로 설정된 To do (마감기한 지나지 않은 To do)
+        StudyTodo futureTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(3));
+        StudyTodo futureTodo2 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(5));
+        // 현재 날짜 이전으로 설정된 To do (마감기한 지난 To do)
+        StudyTodo pastTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().minusDays(3));
+        studyTodoRepository.saveAll(List.of(futureTodo1, futureTodo2, pastTodo1));
+
+        // activeMember에게 할당된 to do: 2개는 미래, 1개는 과거
+        StudyTodoMapping mappingFuture1 = StudyTodoFixture.createStudyTodoMapping(futureTodo1.getId(), activeMember.getUserId());
+        StudyTodoMapping mappingFuture2 = StudyTodoFixture.createStudyTodoMapping(futureTodo2.getId(), activeMember.getUserId());
+        StudyTodoMapping mappingPast1 = StudyTodoFixture.createCompleteStudyTodoMapping(pastTodo1.getId(), activeMember.getUserId());
+        studyTodoMappingRepository.saveAll(List.of(mappingFuture1, mappingFuture2, mappingPast1));
+
+        // when
+        studyMemberService.resignStudyMember(studyInfo.getId(), activeMember.getUserId());
+        Optional<StudyMember> resignedMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember.getUserId());
+        List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByUserId(activeMember.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_RESIGNED, resignedMember.get().getStatus());
+
+        // 마감 기한이 지난 To do는 삭제x
+        assertTrue(todoMappings.stream()
+                .anyMatch(mapping -> mapping.getId().equals(mappingPast1.getId())));
+
+        // 마감 기한이 지나지 않은 To do 삭제되어야 함
+        assertFalse(todoMappings.stream()
+                .anyMatch(mapping -> mapping.getId().equals(mappingFuture1.getId())));
+        assertFalse(todoMappings.stream()
+                .anyMatch(mapping -> mapping.getId().equals(mappingFuture2.getId())));
+    }
+
+
+    @Test
+    @DisplayName("스터디원 탈퇴 테스트 - Todo mappings 함께 삭제 테스트")
+    public void withdrawalStudyMember_todo() {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember));
+
+        // 현재 날짜 이후로 설정된 To do (마감기한 지나지 않은 To do)
+        StudyTodo futureTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(3));
+        StudyTodo futureTodo2 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(5));
+        // 현재 날짜 이전으로 설정된 To do (마감기한 지난 To do)
+        StudyTodo pastTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().minusDays(3));
+        studyTodoRepository.saveAll(List.of(futureTodo1, futureTodo2, pastTodo1));
+
+        // activeMember에게 할당된 to do: 2개는 미래, 1개는 과거
+        StudyTodoMapping mappingFuture1 = StudyTodoFixture.createStudyTodoMapping(futureTodo1.getId(), activeMember.getUserId());
+        StudyTodoMapping mappingFuture2 = StudyTodoFixture.createStudyTodoMapping(futureTodo2.getId(), activeMember.getUserId());
+        StudyTodoMapping mappingPast1 = StudyTodoFixture.createCompleteStudyTodoMapping(pastTodo1.getId(), activeMember.getUserId());
+        studyTodoMappingRepository.saveAll(List.of(mappingFuture1, mappingFuture2, mappingPast1));
+
+        // when
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember.getUserId());
+        Optional<StudyMember> withdrawalMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember.getUserId());
+        List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByUserId(activeMember.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, withdrawalMember.get().getStatus());
+
+        // 마감 기한이 지난 To do는 삭제x
+        assertTrue(todoMappings.stream()
+                .anyMatch(mapping -> mapping.getId().equals(mappingPast1.getId())));
+
+        // 마감 기한이 지나지 않은 To do 삭제되어야 함
+        assertFalse(todoMappings.stream()
+                .anyMatch(mapping -> mapping.getId().equals(mappingFuture1.getId())));
+        assertFalse(todoMappings.stream()
+                .anyMatch(mapping -> mapping.getId().equals(mappingFuture2.getId())));
+
+    }
 }
