@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.convention;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
@@ -25,6 +26,7 @@ import java.util.Map;
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -75,7 +77,7 @@ public class StudyConventionControllerTest extends TestConfig {
 
         StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest(studyInfo.getId());
 
-        doNothing().when(studyMemberService).isValidateStudyLeader(any(User.class), any(Long.class));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
         doNothing().when(studyConventionService).registerStudyConvention(any(StudyConventionRequest.class));
 
         //when , then
