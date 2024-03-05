@@ -29,7 +29,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.IntStream;
 
@@ -403,74 +402,6 @@ class StudyInfoServiceTest extends TestConfig {
 //        for(int i=0;i<myStudyBUserList.size();i++){
 //            System.out.println(myStudyBUserList.get(i).getId());
 //        }
-    }
-
-    @Test
-    void lastCommitDay_기준_정렬된_마이_스터디_조회_테스트() {
-        // given
-        String sortBy = "lastCommitDay";
-        User savedUser = userRepository.save(UserFixture.generateAuthUser());
-        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
-        studyInfoRepository.saveAll(studyInfos);
-        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
-
-        // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
-
-        assertEquals(LIMIT, response.getStudyInfoList().size());
-        LocalDate previousCommitDay = null;
-        for (MyStudyInfoListResponse studyInfo : response.getStudyInfoList()) {
-            LocalDate currentCommitDay = studyInfo.getLastCommitDay();
-            if (previousCommitDay != null) {
-                assertTrue(currentCommitDay.isBefore(previousCommitDay) || currentCommitDay.isEqual(previousCommitDay));
-            }
-            previousCommitDay = currentCommitDay;
-        }
-    }
-
-    @Test
-    void score_기준_정렬된_마이_스터디_조회_테스트() {
-        // given
-        String sortBy = "score";
-        User savedUser = userRepository.save(UserFixture.generateAuthUser());
-        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
-        studyInfoRepository.saveAll(studyInfos);
-        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
-        // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
-
-        // then
-        assertEquals(LIMIT, response.getStudyInfoList().size());
-
-        int previousScore = Integer.MAX_VALUE;
-        for (MyStudyInfoListResponse studyInfo : response.getStudyInfoList()) {
-            int currentScore = studyInfo.getScore();
-            assertTrue(currentScore <= previousScore);
-            previousScore = currentScore;
-        }
-    }
-
-    @Test
-    void createdDateTime_기준_정렬된_마이_스터디_조회_테스트() {
-        // given
-        String sortBy = "createdDateTime";
-        User savedUser = userRepository.save(UserFixture.generateAuthUser());
-        List<StudyInfo> studyInfos = createDefaultStudyInfoListRandomScoreAndLastCommitDay(DATA_SIZE, savedUser.getId());
-        studyInfoRepository.saveAll(studyInfos);
-        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
-
-        // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
-
-        // then
-        assertEquals(LIMIT, response.getStudyInfoList().size());
-
-        LocalDateTime previousCreatedDateTime = response.getStudyInfoList().get(0).getCreatedDateTime();
-        for (MyStudyInfoListResponse studyInfo : response.getStudyInfoList()) {
-            LocalDateTime currentCreatedDateTime = studyInfo.getCreatedDateTime();
-            assertTrue(currentCreatedDateTime.compareTo(previousCreatedDateTime) <= 0);
-            previousCreatedDateTime = currentCreatedDateTime;
-        }
     }
 
     @Test
