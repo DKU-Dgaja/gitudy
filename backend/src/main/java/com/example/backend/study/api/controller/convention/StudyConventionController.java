@@ -51,4 +51,17 @@ public class StudyConventionController {
 
         return JsonResult.successOf("StudyConvention update Success");
     }
+
+    @ApiResponse(responseCode = "200", description = "컨벤션 삭제 성공")
+    @DeleteMapping("/{studyInfoId}/convention/{conventionId}")
+    public JsonResult<?> deleteStudyConvention(@AuthenticationPrincipal User user,
+                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                               @PathVariable(name = "conventionId") Long conventionId) {
+
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyConventionService.deleteStudyConvention(conventionId);
+
+        return JsonResult.successOf("StudyConvention delete Success");
+    }
 }

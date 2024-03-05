@@ -53,4 +53,17 @@ public class StudyConventionService {
                 request.isActive());
     }
 
+    // 컨벤션 삭제
+    @Transactional
+    public void deleteStudyConvention(Long conventionId) {
+
+        // Convention 조회
+        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
+            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
+        });
+
+        studyConventionRepository.delete(studyConvention);
+    }
+
 }
