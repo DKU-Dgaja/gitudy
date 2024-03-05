@@ -63,6 +63,14 @@ public enum ExceptionMessage {
     // StudyCommentException
     STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),
     STUDY_COMMENT_NOT_AUTHORIZED("스터디 댓글을 수정할 권한이 없습니다."),
+
+    // GithubApiException
+    GITHUB_API_CONNECTION_ERROR("Github Api 통신에 실패했습니다."),
+    GITHUB_API_GET_REPOSITORY_ERROR("Repository 정보를 불러오는 데에 실패했습니다."),
+    GITHUB_API_CREATE_ISSUE_ERROR("Issue 생성에 실패했습니다."),
+    GITHUB_API_CREATE_TODO_INFO("레포지토리 Todo 파일 생성에 실패했습니다."),
+    GITHUB_API_GET_COMMITS_ERROR("특정 폴더의 커밋들을 불러오는데 실패했습니다."),
+
     ;
     private final String text;
 }
