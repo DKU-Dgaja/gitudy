@@ -66,10 +66,13 @@ public enum ExceptionMessage {
 
     // GithubApiException
     GITHUB_API_CONNECTION_ERROR("Github Api 통신에 실패했습니다."),
+    GITHUB_API_CREATE_REPOSITORY_ERROR("Repository 생성에 실패했습니다."),
+    GITHUB_API_DELETE_REPOSITORY_ERROR("Repository 삭제에 실패했습니다."),
     GITHUB_API_GET_REPOSITORY_ERROR("Repository 정보를 불러오는 데에 실패했습니다."),
     GITHUB_API_CREATE_ISSUE_ERROR("Issue 생성에 실패했습니다."),
     GITHUB_API_CREATE_TODO_INFO("레포지토리 Todo 파일 생성에 실패했습니다."),
     GITHUB_API_GET_COMMITS_ERROR("특정 폴더의 커밋들을 불러오는데 실패했습니다."),
+    GITHUB_API_GET_COMMIT_ERROR("커밋을 불러오는데 실패했습니다."),
     GITHUB_API_DELETE_FILE_ERROR("특정 폴더의 파일을 삭제하는데 실패했습니다."),
 
     ;

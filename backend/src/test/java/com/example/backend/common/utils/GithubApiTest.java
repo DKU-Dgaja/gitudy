@@ -10,6 +10,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.service.commit.response.GithubCommitResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHCommit;
@@ -51,7 +52,6 @@ class GithubApiTest extends TestConfig {
 //    @Test
 //    void 깃허브_API_통신_통합_테스트() throws IOException {
 //        // given
-//        int expectedCommitCount = 1;
 //
 //        User user = userRepository.save(UserFixture.generateAuthUser());
 //        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
@@ -74,15 +74,12 @@ class GithubApiTest extends TestConfig {
 //        List<GHCommit> commits = githubApi.getCommitsForFolder(repo, path);
 //
 //        // then
-//        assertEquals(expectedCommitCount, commits.size());
 //        assertEquals("TODO(" + todo.getTitle() + ")가 생성되었습니다.", commits.get(0).getCommitShortInfo().getMessage());
 //    }
 
 //    @Test
 //    void 깃허브_API_파일_삭제_테스트() throws IOException {
 //        // given
-//        int expectedCommitCount = 2;
-//
 //        StudyTodo todo = StudyTodo.builder()
 //                .title("삭제 테스트")
 //                .todoLink("삭제 테스트 링크")
@@ -105,10 +102,17 @@ class GithubApiTest extends TestConfig {
 //        String deletePath = githubApi.deleteTodoFolder(repo, todo);
 //
 //        // 생성한 폴더의 커밋 리스트 조회
-//        List<GHCommit> commits = githubApi.getCommitsForFolder(repo, deletePath);
+//        List<GithubCommitResponse> commits = githubApi.getCommitsForFolder(repo, deletePath);
 //
-//        // then
-//        assertEquals(expectedCommitCount, commits.size());
+//        for (var commit : commits) {
+//            System.out.println("===============");
+//            System.out.println("commit.getMessage() = " + commit.getMessage());
+//            System.out.println("commit.getAuthorName() = " + commit.getAuthorName());
+//            System.out.println("commit.getSha() = " + commit.getSha());
+//            System.out.println("commit.getCommitDate() = " + commit.getCommitDate());
+//            System.out.println("===============");
+//
+//        }
 //    }
 
 }

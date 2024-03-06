@@ -1,6 +1,7 @@
 package com.example.backend.common.exception;
 
 import com.example.backend.common.response.JsonResult;
+import io.jsonwebtoken.io.IOException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -39,8 +40,14 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(IOException.class)
+    public JsonResult handleIOException(IOException e) {
+        return JsonResult.failOf("파일 처리 중 문제가 발생했습니다: " + e.getMessage());
+    }
+
+
     @ExceptionHandler(Exception.class)
-    public JsonResult<Exception> exception(Exception e) {
+    public JsonResult exception(Exception e) {
         return JsonResult.failOf(e.getMessage());
     }
 }

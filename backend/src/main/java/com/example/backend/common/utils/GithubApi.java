@@ -2,7 +2,9 @@ package com.example.backend.common.utils;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.study.api.service.commit.response.GithubCommitResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.*;
 import org.springframework.stereotype.Component;
@@ -20,7 +22,6 @@ public class GithubApi {
             GitHub github = new GitHubBuilder().withOAuthToken(token).build();
             github.checkApiUrlValidity();
             log.info(">>>> [ 깃허브 api 연결에 성공하였습니다. ] <<<<");
-
 
             return github;
 
@@ -75,7 +76,6 @@ public class GithubApi {
         String filePath = folderPath + "/" + fileName;
         String commitMessage = "TODO(" + todo.getTitle() + ") 폴더가 삭제되었습니다.";
 
-
         try {
             repo.getFileContent(filePath)
                     .delete(commitMessage);
@@ -92,25 +92,20 @@ public class GithubApi {
 
 
     // 레포지토리 특정 폴더의 커밋 리스트 불러오기
-    public List<GHCommit> getCommitsForFolder(GHRepository repo, String folderPath) {
+    public List<GithubCommitResponse> getCommitsForFolder(GHRepository repo, String folderPath) {
         // 특정 폴더의 커밋 리스트를 가져오는 로직 추가
         List<GHCommit> commits = repo.queryCommits().path(folderPath).list().asList();
         log.info(">>>> [ '{}' 폴더의 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", folderPath);
 
-        return commits;
+        return commits.stream()
+                .map(commit -> {
+                    try {
+                        return GithubCommitResponse.of(commit);
+                    } catch (IOException e) {
+                        log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
+                        throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
+                    }
+                })
+                .toList();
     }
-
-
-    // 레포지토리에 이슈 생성
-    public GHIssue createIssue(GHRepository repo, String title, String description) {
-        try {
-            return repo.createIssue(title)
-                    .body(description)
-                    .create();
-        } catch (IOException e) {
-            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_CREATE_ISSUE_ERROR.getText(), e.getMessage());
-            throw new GithubApiException(ExceptionMessage.GITHUB_API_CREATE_ISSUE_ERROR);
-        }
-    }
-
 }
