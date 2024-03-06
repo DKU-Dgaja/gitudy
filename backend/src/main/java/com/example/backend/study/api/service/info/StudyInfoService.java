@@ -2,8 +2,8 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
-
-import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -12,9 +12,8 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-import com.example.backend.study.api.service.member.StudyMemberService;
+import com.example.backend.study.api.controller.info.response.*;
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.study.member.constant.StudyMemberRole.STUDY_LEADER;
@@ -41,6 +41,9 @@ public class StudyInfoService {
 
     private final StudyMemberRepository studyMemberRepository;
 
+    private final StudyCategoryRepository studyCategoryRepository;
+
+    private final UserRepository userRepository;
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
         // 새로운 스터디 생성
@@ -73,7 +76,7 @@ public class StudyInfoService {
         // 스터디 업데이트
         studyInfo.updateStudyInfo(request);
     }
-  
+
     // 스터디 삭제
     @Transactional
     public boolean deleteStudy(Long studyInfoId) {
@@ -85,13 +88,13 @@ public class StudyInfoService {
 
         // 스터디 상태정보 변경
         studyInfo.updateDeletedStudy();
-        
+
         // 스터디 멤버 상태정보 변경
         updateWithdrawalStudyMember(studyInfoId);
 
         return true;
     }
-  
+
     public UpdateStudyInfoPageResponse updateStudyInfoPage(Long studyInfoId) {
         // Study 조회
         StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
@@ -103,6 +106,59 @@ public class StudyInfoService {
         UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoriesId);
 
         return response;
+    }
+
+    // 정렬된 모든 마이 스터디 조회
+    public MyStudyInfoListAndCursorIdxResponse selectMyStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy) {
+        List<MyStudyInfoListResponse> studyInfoListResponse = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
+        List<Long> studyInfoIdList = getStudyInfoIdList(studyInfoListResponse);
+
+
+        // Map<STUDY_INFO_ID, List<UserNameAndProfileImageResponse>>
+        List<StudyMemberWithUserInfoResponse> studyMemberWithUserInfoResponses
+                = studyMemberRepository.findStudyMemberListByStudyInfoListJoinUserInfo(studyInfoIdList);
+        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = getStudyUserInfoMap(studyMemberWithUserInfoResponses);
+
+
+        // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>>
+        List<CategoryResponseWithStudyId> categoryResponseWithStudyIdList
+                = studyCategoryMappingRepository.findCategoryListByStudyInfoListJoinCategoryMapping(studyInfoIdList);
+        Map<Long, List<String>> studyCategoryMappingMap = getStudyCategoryMappingMap(categoryResponseWithStudyIdList);
+
+
+        MyStudyInfoListAndCursorIdxResponse response = MyStudyInfoListAndCursorIdxResponse.builder()
+                .studyInfoList(studyInfoListResponse)
+                .studyUserInfoMap(studyUserInfoMap)
+                .studyCategoryMappingMap(studyCategoryMappingMap)
+                .build();
+        response.setNextCursorIdx();
+        return response;
+    }
+
+    // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
+    private static Map<Long, List<String>> getStudyCategoryMappingMap(List<CategoryResponseWithStudyId> categoryResponseWithStudyIdList) {
+        return categoryResponseWithStudyIdList.stream()
+                .collect(Collectors.groupingBy(
+                        CategoryResponseWithStudyId::getStudyInfoId,
+                        Collectors.mapping(CategoryResponseWithStudyId::getName, Collectors.toList())
+                ));
+    }
+
+
+    // Map<STUDY_INFO_ID, List<UserNameAndProfileImageResponse>> 생성 해주는 함수
+    public Map<Long, List<UserNameAndProfileImageResponse>> getStudyUserInfoMap(List<StudyMemberWithUserInfoResponse> studyMemberWithUserInfoResponses) {
+        return studyMemberWithUserInfoResponses.stream()
+                .collect(Collectors.groupingBy(
+                        StudyMemberWithUserInfoResponse::getStudyInfoId,
+                        Collectors.mapping(StudyMemberWithUserInfoResponse::getUserNameAndProfileImageResponseList, Collectors.toList())
+                ));
+    }
+
+    // studyInfoIdList 만들어주는 함수
+    private static List<Long> getStudyInfoIdList(List<MyStudyInfoListResponse> studyInfoListResponse) {
+        return studyInfoListResponse.stream()
+                .map(MyStudyInfoListResponse::getId)
+                .collect(Collectors.toList());
     }
 
     // studyinfoId를 파라미터로 받아 카테고리 id를 생성해주는 함수

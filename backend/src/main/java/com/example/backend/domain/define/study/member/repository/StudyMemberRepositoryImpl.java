@@ -3,7 +3,9 @@ package com.example.backend.domain.define.study.member.repository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.study.api.controller.info.response.StudyMemberWithUserInfoResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -64,7 +66,7 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                 .from(studyMember)
                 .join(user).on(user.id.eq(studyMember.userId))
                 .where(studyMember.studyInfoId.eq(studyInfoId)
-                    .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)));
+                        .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)));
 
         if (orderByScore) {
             query = query.orderBy(studyMember.score.desc(), studyMember.userId.asc()); // 기여도별 내림차순, 동일 점수 시 사용자 ID 오름차순
@@ -72,6 +74,26 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
             query = query.orderBy(studyMember.userId.asc()); // 사용자 Id 오름차순 (가입순)
         }
         return query.fetch();
+    }
 
+    @Override
+    public List<StudyMemberWithUserInfoResponse> findStudyMemberListByStudyInfoListJoinUserInfo(List<Long> studyInfoIdList) {
+        JPAQuery<StudyMemberWithUserInfoResponse> query = queryFactory
+                .select(Projections.constructor(
+                        StudyMemberWithUserInfoResponse.class,
+                        studyMember.studyInfoId,
+                        Projections.constructor(
+                                UserNameAndProfileImageResponse.class,
+                                user.id,
+                                user.name,
+                                user.profileImageUrl
+                        )
+                ))
+                .from(studyMember)
+                .join(user).on(user.id.eq(studyMember.userId))
+                .where(studyMember.studyInfoId.in(studyInfoIdList)
+                        .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)))
+                .orderBy(studyMember.id.desc());
+        return query.fetch();
     }
 }
