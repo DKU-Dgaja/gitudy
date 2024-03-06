@@ -120,7 +120,7 @@ class StudyCommentControllerTest extends TestConfig {
 
         //when
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyCommentService).updateStudyComment(any(StudyCommentUpdateRequest.class), any(Long.class));
+        doNothing().when(studyCommentService).updateStudyComment(any(StudyCommentUpdateRequest.class), any(Long.class), any(Long.class));
 
         //then
         mockMvc.perform(patch("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())

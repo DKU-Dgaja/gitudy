@@ -112,7 +112,7 @@ class StudyCommentServiceTest extends TestConfig {
                 StudyCommentFixture.createDefaultStudyCommentUpdateRequest(user.getId());
 
         // when
-        studyCommentService.updateStudyComment(studyCommentUpdateRequest, savedStudyComment.getId());
+        studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(),savedStudyComment.getId());
 
         // then
         Optional<StudyComment> studyComment = studyCommentRepository.findById(savedStudyComment.getId());
@@ -137,7 +137,7 @@ class StudyCommentServiceTest extends TestConfig {
 
         // when, then
         assertThrows(StudyCommentException.class, () -> {
-            studyCommentService.updateStudyComment(studyCommentUpdateRequest, invalidStudyCommentId);
+            studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(), invalidStudyCommentId);
         }, ExceptionMessage.STUDY_COMMENT_NOT_FOUND.getText());
     }
 
@@ -155,7 +155,7 @@ class StudyCommentServiceTest extends TestConfig {
 
         // when, then
         assertThrows(StudyCommentException.class, () -> {
-            studyCommentService.updateStudyComment(studyCommentUpdateRequest, savedStudyComment.getId());
+            studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(), savedStudyComment.getId());
         }, ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
     }
     @Test

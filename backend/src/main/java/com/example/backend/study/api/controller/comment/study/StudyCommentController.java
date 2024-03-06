@@ -51,7 +51,7 @@ public class StudyCommentController {
                                          @PathVariable(name = "studyCommentId") Long studyCommentId,
                                          @Valid @RequestBody StudyCommentUpdateRequest studyCommentUpdateRequest) {
         authService.authenticate(studyCommentUpdateRequest.getUserId(), user);
-        studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyCommentId);
+        studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfoId, studyCommentId);
 
         return JsonResult.successOf("StudyComment update Success");
     }

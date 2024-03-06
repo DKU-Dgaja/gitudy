@@ -52,8 +52,14 @@ public class StudyCommentService {
     }
 
     @Transactional
-    public void updateStudyComment(StudyCommentUpdateRequest request, Long studyCommentId) {
-        // StudyComment 조회
+    public void updateStudyComment(StudyCommentUpdateRequest request,Long studyInfoId, Long studyCommentId) {
+        // 스터디 조회
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 댓글 조회
         StudyComment studyComment = studyCommentRepository.findById(studyCommentId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyCommentId, ExceptionMessage.STUDY_COMMENT_NOT_FOUND.getText());
             return new StudyCommentException(ExceptionMessage.STUDY_COMMENT_NOT_FOUND);
