@@ -5,11 +5,13 @@ import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.*;
+import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.util.List;
 
 @Slf4j
+@Component
 public class GithubApi {
 
     // 깃허브 통신을 위한 커넥션 생성
@@ -39,10 +41,11 @@ public class GithubApi {
     }
 
     // 레포지토리에 폴더 + Info 파일 생성
-    public String createFolder(GHRepository repo, StudyTodo todo) {
-        String folderPath = todo.getTitle();
+    public String createTodoFolder(GHRepository repo, StudyTodo todo) {
+        String folderPath = todo.getId() + ") " + todo.getTitle();
         String fileName = todo.getTitle() + ": " + todo.getTodoDate() + ".md";
-        String commitMessage = "TODO(" + todo.getTitle() + ")가 생성되었습니다.";
+        String filePath = folderPath + "/" + fileName;
+        String commitMessage = "TODO(" + todo.getTitle() + ") 전용 폴더입니다.";
         String content = "## 이름: " + todo.getTitle() + "\n"
                 + "### 설명: " + todo.getDetail() + "\n"
                 + "### 참고 링크: " + todo.getTodoLink() + "\n"
@@ -50,20 +53,43 @@ public class GithubApi {
 
         try {
             repo.createContent()
-                    .path(folderPath + "/" + fileName)
+                    .path(filePath)
                     .content(content)
                     .message(commitMessage)
                     .commit();
 
             log.info(">>>> [ '{}' 생성이 완료되었습니다. ] <<<<", folderPath + "/" + fileName);
 
-            return folderPath;
+            return filePath;
 
         } catch (IOException e) {
             log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_CREATE_TODO_INFO.getText(), e.getMessage());
             throw new GithubApiException(ExceptionMessage.GITHUB_API_CREATE_TODO_INFO);
         }
     }
+
+    // 레포지토리의 폴더(파일) 삭제
+    public String deleteTodoFolder(GHRepository repo, StudyTodo todo) {
+        String folderPath = todo.getId() + ") " + todo.getTitle();
+        String fileName = todo.getTitle() + ": " + todo.getTodoDate() + ".md";
+        String filePath = folderPath + "/" + fileName;
+        String commitMessage = "TODO(" + todo.getTitle() + ") 폴더가 삭제되었습니다.";
+
+
+        try {
+            repo.getFileContent(filePath)
+                    .delete(commitMessage);
+
+            log.info(">>>> [ '{}' 삭제가 완료되었습니다. ] <<<<", folderPath + "/" + fileName);
+
+            return filePath;
+
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_DELETE_FILE_ERROR.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_DELETE_FILE_ERROR);
+        }
+    }
+
 
     // 레포지토리 특정 폴더의 커밋 리스트 불러오기
     public List<GHCommit> getCommitsForFolder(GHRepository repo, String folderPath) {
@@ -75,7 +101,7 @@ public class GithubApi {
     }
 
 
-        // 레포지토리에 이슈 생성
+    // 레포지토리에 이슈 생성
     public GHIssue createIssue(GHRepository repo, String title, String description) {
         try {
             return repo.createIssue(title)
