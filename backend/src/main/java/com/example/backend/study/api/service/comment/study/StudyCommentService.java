@@ -94,6 +94,12 @@ public class StudyCommentService {
         studyCommentRepository.deleteById(studyCommentId);
     }
     public StudyCommentListAndCursorIdxResponse selectStudyCommentList(Long studyInfoId, Long cursorIdx, Long limit) {
+        // 스터디가 있는지 확인
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
         List<StudyCommentResponse> studyCommentResponseList =
                 studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(studyInfoId, cursorIdx, limit);
         StudyCommentListAndCursorIdxResponse response = (StudyCommentListAndCursorIdxResponse.builder()
