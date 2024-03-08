@@ -63,6 +63,9 @@ public enum ExceptionMessage {
     // StudyCommentException
     STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),
     STUDY_COMMENT_NOT_AUTHORIZED("스터디 댓글을 수정할 권한이 없습니다."),
+
+    // StudyConventionException
+    CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다.")
     ;
     private final String text;
 }

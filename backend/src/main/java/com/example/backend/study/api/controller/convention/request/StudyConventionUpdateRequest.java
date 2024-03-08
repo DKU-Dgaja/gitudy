@@ -9,10 +9,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class StudyConventionRequest {
+public class StudyConventionUpdateRequest {
 
     @NotBlank(message = "컨벤션 이름은 공백일 수 없습니다.")
     @Size(max = 20, message = "이름 20자 이내")

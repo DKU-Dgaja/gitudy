@@ -1,6 +1,8 @@
 package com.example.backend.study.api.service.convention;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
@@ -13,6 +15,7 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
+import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -20,7 +23,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class StudyConventionServiceTest extends TestConfig {
 
@@ -63,11 +66,11 @@ public class StudyConventionServiceTest extends TestConfig {
         StudyMember leader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
         studyMemberRepository.save(leader);
 
-        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest(studyInfo.getId());
+        StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest();
 
         //when
         studyMemberService.isValidateStudyLeader(savedUser, studyInfo.getId());
-        studyConventionService.registerStudyConvention(request);
+        studyConventionService.registerStudyConvention(request, studyInfo.getId());
         StudyConvention findConvention = studyConventionRepository.findByStudyInfoId(studyInfo.getId());
 
         //then
@@ -75,5 +78,63 @@ public class StudyConventionServiceTest extends TestConfig {
         assertEquals("설명", findConvention.getDescription());
         assertEquals("정규식", findConvention.getContent());
 
+    }
+
+    @Test
+    @DisplayName("컨벤션 수정 테스트")
+    public void updateStudyConvention() {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
+        studyMemberRepository.save(leader);
+
+        StudyConvention studyConvention = StudyConventionFixture.createStudyDefaultConvention(studyInfo.getId());
+        studyConventionRepository.save(studyConvention);
+
+        StudyConventionUpdateRequest updateRequest = StudyConventionFixture.generateStudyConventionUpdateRequest();
+
+        //when
+        studyMemberService.isValidateStudyLeader(savedUser, studyInfo.getId());
+        studyConventionService.updateStudyConvention(updateRequest, studyConvention.getId());
+        StudyConvention updateConvention = studyConventionRepository.findById(studyConvention.getId())
+                .orElseThrow(() -> new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND));
+
+        //then
+        assertEquals("컨벤션 수정", updateConvention.getName());
+        assertEquals("설명 수정", updateConvention.getDescription());
+        assertEquals("정규식 수정", updateConvention.getContent());
+    }
+
+    @Test
+    @DisplayName("컨벤션 삭제 테스트")
+    public void deleteStudyConvention() {
+
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
+        studyMemberRepository.save(leader);
+
+        StudyConvention studyConvention = StudyConventionFixture.createStudyDefaultConvention(studyInfo.getId());
+        studyConventionRepository.save(studyConvention);
+
+
+        //when
+        studyMemberService.isValidateStudyLeader(savedUser, studyInfo.getId());
+        studyConventionService.deleteStudyConvention(studyConvention.getId());
+
+        // then
+        assertThrows(ConventionException.class, () -> {
+            studyConventionService.deleteStudyConvention(studyConvention.getId());
+        }, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
+
+        assertFalse(studyConventionRepository.existsById(studyConvention.getId()));
     }
 }

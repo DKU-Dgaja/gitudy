@@ -184,7 +184,7 @@ public class StudyTodoServiceTest extends TestConfig {
         // then
         assertThrows(TodoException.class, () -> {
             studyTodoService.deleteStudyTodo(990927L, studyInfo.getId());
-        }, "TODO_NOT_FOUND 예외가 발생해야 한다.");
+        }, ExceptionMessage.TODO_NOT_FOUND.getText());
 
         // 등록된 To do는 삭제, 모든 매핑제거
         assertFalse(studyTodoRepository.existsById(studyTodo.getId()));
@@ -303,7 +303,7 @@ public class StudyTodoServiceTest extends TestConfig {
         assertEquals(Limit.intValue(), responseForStudy1.getTodoList().size());
 
         responseForStudy1.getTodoList().forEach(todo ->
-          assertTrue(todo.getTitle().contains("1번 투두 제목"), "모든 투두 항목은 '1번 투두 제목' 을 포함해야 한다"));
+                assertTrue(todo.getTitle().contains("1번 투두 제목"), "모든 투두 항목은 '1번 투두 제목' 을 포함해야 한다"));
 
 
         // when
