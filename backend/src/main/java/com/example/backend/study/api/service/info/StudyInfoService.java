@@ -108,7 +108,7 @@ public class StudyInfoService {
         return response;
     }
 
-    // 정렬된 모든 마이 스터디 조회
+    // 정렬된 마이 스터디 조회
     public MyStudyInfoListAndCursorIdxResponse selectMyStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy) {
         List<MyStudyInfoListResponse> studyInfoListResponse = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
         List<Long> studyInfoIdList = getStudyInfoIdList(studyInfoListResponse);
@@ -135,6 +135,32 @@ public class StudyInfoService {
         return response;
     }
 
+    // 정렬된 모든 스터디 조회
+    public MyStudyInfoListAndCursorIdxResponse selectStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy) {
+        List<MyStudyInfoListResponse> studyInfoListResponse = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy);
+        List<Long> studyInfoIdList = getStudyInfoIdList(studyInfoListResponse);
+
+
+        // Map<STUDY_INFO_ID, List<UserNameAndProfileImageResponse>>
+        List<StudyMemberWithUserInfoResponse> studyMemberWithUserInfoResponses
+                = studyMemberRepository.findStudyMemberListByStudyInfoListJoinUserInfo(studyInfoIdList);
+        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = getStudyUserInfoMap(studyMemberWithUserInfoResponses);
+
+
+        // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>>
+        List<CategoryResponseWithStudyId> categoryResponseWithStudyIdList
+                = studyCategoryMappingRepository.findCategoryListByStudyInfoListJoinCategoryMapping(studyInfoIdList);
+        Map<Long, List<String>> studyCategoryMappingMap = getStudyCategoryMappingMap(categoryResponseWithStudyIdList);
+
+
+        MyStudyInfoListAndCursorIdxResponse response = MyStudyInfoListAndCursorIdxResponse.builder()
+                .studyInfoList(studyInfoListResponse)
+                .studyUserInfoMap(studyUserInfoMap)
+                .studyCategoryMappingMap(studyCategoryMappingMap)
+                .build();
+        response.setNextCursorIdx();
+        return response;
+    }
     // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
     private static Map<Long, List<String>> getStudyCategoryMappingMap(List<CategoryResponseWithStudyId> categoryResponseWithStudyIdList) {
         return categoryResponseWithStudyIdList.stream()
