@@ -137,4 +137,33 @@ public class StudyConventionServiceTest extends TestConfig {
 
         assertFalse(studyConventionRepository.existsById(studyConvention.getId()));
     }
+
+    @Test
+    @DisplayName("컨벤션 단일 조회 테스트")
+    public void readStudyConvention() {
+
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember member = StudyMemberFixture.createDefaultStudyMember(savedUser.getId(), studyInfo.getId());
+        studyMemberRepository.save(member);
+
+        StudyConvention studyConvention = StudyConventionFixture.createStudyDefaultConvention(studyInfo.getId());
+        studyConventionRepository.save(studyConvention);
+
+        //when
+        studyMemberService.isValidateStudyMember(savedUser, studyInfo.getId());
+        studyConventionService.readStudyConvention(studyConvention.getId());
+
+        //then
+        assertEquals("컨벤션", studyConvention.getName());
+        assertEquals("설명", studyConvention.getDescription());
+        assertEquals("정규식", studyConvention.getContent());
+        assertEquals(studyInfo.getId(), studyConvention.getStudyInfoId());
+        assertTrue(studyConvention.isActive());
+
+    }
 }

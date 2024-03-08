@@ -7,6 +7,7 @@ import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
+import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -64,6 +65,18 @@ public class StudyConventionService {
         });
 
         studyConventionRepository.delete(studyConvention);
+    }
+
+    // 컨벤션 단일 조회
+    public StudyConventionResponse readStudyConvention(Long conventionId) {
+
+        // Convention 조회
+        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
+            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
+        });
+
+        return StudyConventionResponse.of(studyConvention);
     }
 
 }

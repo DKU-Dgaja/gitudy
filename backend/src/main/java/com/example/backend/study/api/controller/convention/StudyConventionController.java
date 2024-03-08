@@ -4,8 +4,11 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
+import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.example.backend.study.api.service.convention.StudyConventionService;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,5 +66,16 @@ public class StudyConventionController {
         studyConventionService.deleteStudyConvention(conventionId);
 
         return JsonResult.successOf("StudyConvention delete Success");
+    }
+
+    @ApiResponse(responseCode = "200", description = "컨벤션 조회 성공", content = @Content(schema = @Schema(implementation = StudyConventionResponse.class)))
+    @GetMapping("/{studyInfoId}/convention/{conventionId}")
+    public JsonResult<?> readStudyConvention(@AuthenticationPrincipal User user,
+                                             @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                             @PathVariable(name = "conventionId") Long conventionId) {
+
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
+
+        return JsonResult.successOf(studyConventionService.readStudyConvention(conventionId));
     }
 }
