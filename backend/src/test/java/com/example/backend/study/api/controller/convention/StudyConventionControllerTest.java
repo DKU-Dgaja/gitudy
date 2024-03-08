@@ -14,6 +14,7 @@ import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
+import com.example.backend.study.api.controller.convention.response.StudyConventionListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.example.backend.study.api.service.convention.StudyConventionService;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -25,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.ArrayList;
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
@@ -263,6 +265,43 @@ public class StudyConventionControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj.name").value(response.getName()))
+                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andDo(print());
+    }
+
+    @Test
+    public void Convention_전체_조회_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyConvention studyConvention = StudyConventionFixture.createStudyDefaultConvention(studyInfo.getId());
+        studyConventionRepository.save(studyConvention);
+
+        StudyConventionListAndCursorIdxResponse response = StudyConventionListAndCursorIdxResponse.builder()
+                .studyConventionList(new ArrayList<>())  // 비어 있는 convention 리스트
+                .build();
+        response.setNextCursorIdx();
+
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
+        when(studyConventionService.readStudyConventionList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("cursorIdx","1")
+                        .param("limit","1")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
     }
