@@ -12,8 +12,6 @@ import com.example.backend.domain.define.study.convention.repository.StudyConven
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.todo.StudyTodoFixture;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.service.convention.StudyConventionService;

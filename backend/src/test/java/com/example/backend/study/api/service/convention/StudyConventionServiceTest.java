@@ -3,7 +3,6 @@ package com.example.backend.study.api.service.convention;
 import com.example.backend.auth.TestConfig;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.convention.ConventionException;
-import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
@@ -134,7 +133,7 @@ public class StudyConventionServiceTest extends TestConfig {
         // then
         assertThrows(ConventionException.class, () -> {
             studyConventionService.deleteStudyConvention(studyConvention.getId());
-        }, "CONVENTION_NOT_FOUND 예외가 발생해야 한다.");
+        }, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
 
         assertFalse(studyConventionRepository.existsById(studyConvention.getId()));
     }
