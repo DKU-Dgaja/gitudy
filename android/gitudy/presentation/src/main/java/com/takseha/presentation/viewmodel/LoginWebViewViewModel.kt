@@ -33,13 +33,8 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
                 SPKey.REFRESH_TOKEN,
                 allTokens.refreshToken
             )
-            prefs.savePref(
-                SPKey.ROLE,
-                allTokens.role
-            )
             Log.d("GetTokenViewModel", "shared pref 저장된 access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\n"
-                    + "shared pref 저장된 refresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}\n"
-                    + "shared pref 저장된 role: ${prefs.loadPref(SPKey.ROLE, "0")}")
+                    + "shared pref 저장된 refresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}")
         } else {
             Log.e("GetTokenViewModel", "https status error: $resCode, $resMsg")
         }
