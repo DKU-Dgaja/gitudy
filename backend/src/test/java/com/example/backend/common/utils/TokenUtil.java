@@ -11,7 +11,7 @@ import static com.example.backend.domain.define.account.user.constant.UserRole.U
 public class TokenUtil {
     public static Map<String, String> createTokenMap(User user) {
         Map<String, String> map = new HashMap<>();
-        map.put("role", String.valueOf(USER));
+        map.put("role", String.valueOf(user.getRole()));
         map.put("platformId", user.getPlatformId());
         map.put("platformType", String.valueOf(GITHUB));
         return map;

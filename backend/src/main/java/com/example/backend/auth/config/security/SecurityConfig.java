@@ -23,14 +23,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorizeHttpRequest ->
                                 authorizeHttpRequest
-                                        // UnAuth Area
-                                        .requestMatchers("/auth/**").permitAll()
                                         // Swagger 추가
                                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                         // register
                                         .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
                                         // update
-                                        .requestMatchers("/auth/update").hasAnyAuthority("AUTH")
+                                        .requestMatchers("/auth/update").hasAnyAuthority("USER", "ADMIN")
+                                        // UnAuth Area
+                                        .requestMatchers("/auth/**").permitAll()
                                         // Others
                                         .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )

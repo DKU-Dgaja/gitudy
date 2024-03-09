@@ -150,8 +150,8 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthServiceLoginResponse register(AuthServiceRegisterRequest request) {
-        User findUser = userRepository.findByPlatformIdAndPlatformType(request.getPlatformId(),request.getPlatformType()).orElseThrow(() -> {
+    public AuthServiceLoginResponse register(AuthServiceRegisterRequest request, User user) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElseThrow(() -> {
             // UNAUTH인 토큰을 받고 회원 탈퇴 후 그 토큰으로 회원가입 요청시 예외 처리
             log.warn(">>>> User Not Exist : {}", ExceptionMessage.AUTH_INVALID_REGISTER.getText());
             throw new AuthException(ExceptionMessage.AUTH_INVALID_REGISTER);
@@ -164,7 +164,7 @@ public class AuthService {
         }
 
         // 회원가입 정보 DB 반영
-        findUser.updateRegister(request.getRole(), request.getName(), request.getGithubId());
+        findUser.updateRegister(request.getName(), request.getGithubId());
 
         // JWT Access Token, Refresh Token 재발급
         JwtToken tokens = createJwtToken(findUser);

@@ -130,30 +130,26 @@ class AuthServiceTest extends TestConfig {
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
         String githubId = "test@github.com";
+
         // UNAUTH 사용자 저장
-        User unauthUser = User.builder()
+        User unauthUser = userRepository.save(User.builder()
                 .role(UserRole.UNAUTH)
                 .platformId(platformId)
                 .platformType(platformType)
                 .name(name)
                 .profileImageUrl(profileImageUrl)
-                .build();
+                .build());
 
-        User findUser = userRepository.save(unauthUser);
-
-        // 회원가입 요청 생성 (CENTER)
+        // 회원가입 요청 생성
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(USER)
-                .platformId(platformId)
-                .platformType(platformType)
                 .githubId(githubId)
                 .name(name)
                 .build();
 
         // when
-        AuthServiceLoginResponse response = authService.register(request);
+        AuthServiceLoginResponse response = authService.register(request, unauthUser);
 
-        User savedUser = userRepository.findByPlatformIdAndPlatformType(request.getPlatformId(), request.getPlatformType()).orElse(null);
+        User savedUser = userRepository.findByPlatformIdAndPlatformType(unauthUser.getPlatformId(), unauthUser.getPlatformType()).orElse(null);
         boolean tokenValid = jwtService.isTokenValid(response.getAccessToken(), savedUser.getUsername());   // 발행한 토큰 검증
 
 
@@ -183,16 +179,13 @@ class AuthServiceTest extends TestConfig {
 
         // 회원가입 요청 생성
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(USER)
-                .platformId(platformId)
-                .platformType(platformType)
                 .name(name)
                 .githubId(githubId)
                 .build();
 
         // then
         assertThrows(RuntimeException.class, () -> {
-            authService.register(request);
+            authService.register(request, user);
         });
     }
     @Test

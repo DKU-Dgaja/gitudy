@@ -123,11 +123,13 @@ class AuthControllerTest extends TestConfig {
     @DisplayName("회원가입 성공 테스트")
     void registerSuccessTest() throws Exception {
         // given
+        User savedUser = userRepository.save(generateUNAUTHUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
         // 유효성 검사 통과하는 request
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(UserRole.USER)
-                .platformId("1234")
-                .platformType(UserPlatformType.KAKAO)
                 .name("구영민")
                 .githubId("test@1234")
                 .build();
@@ -135,6 +137,7 @@ class AuthControllerTest extends TestConfig {
         mockMvc.perform(
                         post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                                 .content(objectMapper.writeValueAsString(request)))
                 .andDo(result -> {
                     System.out.println(result.getResponse().getContentAsString());
@@ -148,11 +151,13 @@ class AuthControllerTest extends TestConfig {
     @DisplayName("잘못된 형식의 깃허브 이메일이면 회원가입 실패")
     void registerFailTest() throws Exception {
         // given
+        User savedUser = userRepository.save(generateUNAUTHUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
         // 유효성 검사 실패하는 request
         AuthRegisterRequest request = AuthRegisterRequest.builder()
-                .role(UserRole.USER) // userRole null
-                .platformId("1234")
-                .platformType(UserPlatformType.KAKAO)
                 .name("구영민")
                 .githubId("test1234") // 잘못된 형식의 email
                 .build();
@@ -160,6 +165,7 @@ class AuthControllerTest extends TestConfig {
         mockMvc.perform(
                         post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                                 .content(objectMapper.writeValueAsString(request)))
                 // .andExpect(status().isBadRequest());
                 .andExpect(status().isOk())
@@ -170,38 +176,13 @@ class AuthControllerTest extends TestConfig {
     @Test
     @DisplayName("올바른 사용자의 토큰으로 사용자 계정 탈퇴 요청을 하면, 계정이 삭제된다.")
     void validUserTokenRequestWithDrawThenUserDelete() throws Exception {
-        String platformId = "12345";
-        UserRole role = UserRole.UNAUTH;
-        UserPlatformType userPlatformType = UserPlatformType.KAKAO;
-        String name = "구영민";
-        String profileImageURL = "google.co.kr";
-        String githubId = "1234@github.com";
-
-        // given
-        User user = User.builder()
-                .platformId(platformId)
-                .platformType(UserPlatformType.KAKAO)
-                .name(name)
-                .profileImageUrl(profileImageURL)
-                .role(role)
-                .build();
-        User savedUser = userRepository.saveAndFlush(user);
-        HashMap<String, String> map = new HashMap<>();
-
-        map.put("role", String.valueOf(role));
-        map.put("platformId", platformId);
-        map.put("platformType", String.valueOf(userPlatformType));
-        AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(UserRole.USER)
-                .platformId(user.getPlatformId())
-                .platformType(user.getPlatformType())
-                .githubId(githubId)
-                .build();
-
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
-        when(authService.register(request)).thenReturn(AuthServiceLoginResponse.builder()
+        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthServiceLoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .role(UserRole.USER)
@@ -209,6 +190,7 @@ class AuthControllerTest extends TestConfig {
         );
 
         doNothing().when(authService).userDelete(any(String.class));
+
         // when
         mockMvc.perform(post("/auth/delete")
                         .contentType(MediaType.APPLICATION_JSON)

@@ -120,10 +120,10 @@ public class AuthController {
 
     @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthServiceLoginResponse.class)))
     @PostMapping("/register")
-    public JsonResult<?> register(
-            @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
+    public JsonResult<?> register(@AuthenticationPrincipal User user,
+                                  @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
 
-        AuthServiceLoginResponse registerResponse = authService.register(AuthServiceRegisterRequest.of(request));
+        AuthServiceLoginResponse registerResponse = authService.register(AuthServiceRegisterRequest.of(request), user);
 
         return JsonResult.successOf(registerResponse);
     }
@@ -166,8 +166,8 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "푸시 알림 여부 수정 요청 성공")
     @GetMapping("/update/pushAlarmYn/{userId}/{pushAlarmEnable}")
     public JsonResult<?> updatePushAlarmYn(@AuthenticationPrincipal User user,
-                                    @PathVariable(name = "userId") Long userId,
-                                    @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
+                                           @PathVariable(name = "userId") Long userId,
+                                           @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
 
         // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
         authService.authenticate(userId, user);
