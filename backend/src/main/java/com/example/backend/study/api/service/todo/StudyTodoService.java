@@ -2,7 +2,9 @@ package com.example.backend.study.api.service.todo;
 
 
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -15,6 +17,7 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,30 +31,27 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StudyTodoService {
-
-
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyInfoRepository studyInfoRepository;
+    private final GithubApiService githubApiService;
+
     private final static Long MAX_LIMIT = 10L;
 
     // Todo 등록
     @Transactional
     public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId) {
-
-
         // 스터디에 속한 활동중인 스터디원 조회
         List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
-        StudyTodo studyTodo = createStudyTodo(studyTodoRequest, studyInfoId);
-        studyTodoRepository.save(studyTodo);
+        StudyTodo todo = studyTodoRepository.save(createStudyTodo(studyTodoRequest, studyInfoId));
 
         // 활동중인 스터디원에게만 TO DO 할당
         List<StudyTodoMapping> todoMappings = studyActiveMembers.stream()
                 .map(activeMember -> StudyTodoMapping.builder()
                         .userId(activeMember.getUserId())
-                        .todoId(studyTodo.getId())
+                        .todoId(todo.getId())
                         .status(StudyTodoStatus.TODO_INCOMPLETE) // 기본 상태
                         .build())
                 .collect(Collectors.toList());
@@ -59,7 +59,13 @@ public class StudyTodoService {
         // 한 번의 쿼리로 모든 매핑 저장
         studyTodoMappingRepository.saveAll(todoMappings);
 
-
+        // 레포지토리에 투두 폴더와 투두 정보 파일 생성
+        StudyInfo study = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", ExceptionMessage.STUDY_INFO_NOT_FOUND.getText(), studyInfoId);
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        githubApiService.createTodoFolder(study.getRepositoryInfo(), todo);
+        
     }
 
     // StudyTodo 생성 로직
@@ -76,7 +82,7 @@ public class StudyTodoService {
 
     // Todo 수정
     @Transactional
-    public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId) {
+    public void updateStudyTodo(StudyTodoUpdateRequest request, Long studyInfoId, Long todoId) {
 
         // To do 조회
         StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() -> {
@@ -84,12 +90,22 @@ public class StudyTodoService {
             return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
 
+        // 업데이트하기 전 레포지토리의 투두 삭제
+        StudyInfo study = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", ExceptionMessage.STUDY_INFO_NOT_FOUND.getText(), studyInfoId);
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        githubApiService.deleteTodoFolder(study.getRepositoryInfo(), studyTodo);
+
         // 기존 To do 업데이트
         studyTodo.updateStudyTodo(
                 request.getTitle(),
                 request.getDetail(),
                 request.getTodoLink(),
                 request.getTodoDate());
+
+        // 업데이트 후 레포지토리에 투두 생성
+        githubApiService.createTodoFolder(study.getRepositoryInfo(), studyTodo);
 
     }
 
@@ -109,6 +125,13 @@ public class StudyTodoService {
 
         // StudyTodo 테이블에서 해당 todoId에 해당하는 레코드 삭제
         studyTodoRepository.delete(studyTodo);
+
+        // 레포지토리 투두 삭제
+        StudyInfo study = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", ExceptionMessage.STUDY_INFO_NOT_FOUND.getText(), studyInfoId);
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        githubApiService.deleteTodoFolder(study.getRepositoryInfo(), studyTodo);
 
     }
 

@@ -139,7 +139,7 @@ public class StudyTodoServiceTest extends TestConfig {
         StudyTodoUpdateRequest request = StudyTodoFixture.updateStudyTodoRequest(updatedTitle, updatedDetail, updatedTodoLink, updatedTodoDate);
 
         // when
-        studyTodoService.updateStudyTodo(request, studyTodo.getId());
+        studyTodoService.updateStudyTodo(request, studyInfo.getId(), studyTodo.getId());
 
         // then
         StudyTodo updatedTodo = studyTodoRepository.findById(studyTodo.getId())

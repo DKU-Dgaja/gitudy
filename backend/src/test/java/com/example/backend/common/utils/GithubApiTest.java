@@ -124,7 +124,7 @@ class GithubApiTest extends TestConfig {
 //        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
 //
 //        StudyTodoUpdateRequest request = StudyTodoUpdateRequest.builder()
-//                .title("테스트")
+//                .title("백준 1234번 풀기")
 //                .todoLink("테스트 링크 수정")
 //                .detail("테스트 디테일 수정")
 //                .todoDate(LocalDate.now().plusDays(5))
