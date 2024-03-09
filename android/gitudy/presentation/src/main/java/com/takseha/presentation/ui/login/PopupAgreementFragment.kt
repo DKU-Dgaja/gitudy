@@ -83,7 +83,7 @@ class PopupAgreementFragment : Fragment() {
             }
 
             confirmBtn.setOnClickListener {
-                it.findNavController().navigate(R.id.action_popupFragment_to_inputIdFragment)
+                it.findNavController().navigate(R.id.action_popupFragment_to_inputNicknameFragment)
             }
         }
     }

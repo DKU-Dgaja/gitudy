@@ -75,7 +75,8 @@ class InputNicknameFragment : Fragment() {
                     "InputNicknameFragment",
                     "gitudyName: ${prefs.loadPref(SharedPreferencesKey.GITUDY_NAME, "0")}"
                 )
-
+                it.findNavController()
+                    .navigate(R.id.action_inputNicknameFragment_to_inputIdFragment)
             }
         }
     }

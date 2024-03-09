@@ -33,9 +33,8 @@
             app:destination="@id/popupDetail3Fragment"
             app:launchSingleTop="true" />
         <action
-            android:id="@+id/action_popupFragment_to_inputIdFragment"
-            app:destination="@id/inputIdFragment"
-            app:launchSingleTop="true" />
+            android:id="@+id/action_popupFragment_to_inputNicknameFragment"
+            app:destination="@id/inputNicknameFragment" />
     </fragment>
     <fragment
         android:id="@+id/popupDetail1Fragment"
@@ -70,8 +69,8 @@
         android:label="fragment_input_id"
         tools:layout="@layout/fragment_input_id">
         <action
-            android:id="@+id/action_inputIdFragment_to_inputNicknameFragment"
-            app:destination="@id/inputNicknameFragment" />
+            android:id="@+id/action_inputIdFragment_to_loginCompleteFragment"
+            app:destination="@id/loginCompleteFragment" />
     </fragment>
     <fragment
         android:id="@+id/inputNicknameFragment"
@@ -79,8 +78,8 @@
         android:label="fragment_input_nickname"
         tools:layout="@layout/fragment_input_nickname">
         <action
-            android:id="@+id/action_inputNicknameFragment_to_loginCompleteFragment"
-            app:destination="@id/loginCompleteFragment" />
+            android:id="@+id/action_inputNicknameFragment_to_inputIdFragment"
+            app:destination="@id/inputIdFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginCompleteFragment"

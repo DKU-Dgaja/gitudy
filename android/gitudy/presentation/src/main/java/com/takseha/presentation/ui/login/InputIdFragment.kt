@@ -55,8 +55,7 @@ class InputIdFragment : Fragment() {
                     "InputIdFragment",
                     "githubId: ${prefs.loadPref(SharedPreferencesKey.GITHUB_ID, "0")}"
                 )
-                it.findNavController()
-                    .navigate(R.id.action_inputIdFragment_to_inputNicknameFragment)
+
             }
         }
     }
