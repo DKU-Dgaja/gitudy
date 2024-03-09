@@ -8,6 +8,7 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
+import com.example.backend.auth.api.service.auth.response.AuthServiceRegisterResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -182,10 +183,9 @@ class AuthControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
-        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthServiceLoginResponse.builder()
+        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthServiceRegisterResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
-                .role(UserRole.USER)
                 .build()
         );
 

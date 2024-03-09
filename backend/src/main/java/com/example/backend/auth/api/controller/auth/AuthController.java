@@ -7,6 +7,7 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
+import com.example.backend.auth.api.service.auth.response.AuthServiceRegisterResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
@@ -123,7 +124,7 @@ public class AuthController {
     public JsonResult<?> register(@AuthenticationPrincipal User user,
                                   @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
 
-        AuthServiceLoginResponse registerResponse = authService.register(AuthServiceRegisterRequest.of(request), user);
+        AuthServiceRegisterResponse registerResponse = authService.register(AuthServiceRegisterRequest.of(request), user);
 
         return JsonResult.successOf(registerResponse);
     }
