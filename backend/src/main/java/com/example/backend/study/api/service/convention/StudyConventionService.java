@@ -5,12 +5,17 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
+import com.example.backend.study.api.controller.convention.response.StudyConventionListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -20,6 +25,8 @@ public class StudyConventionService {
 
 
     private final StudyConventionRepository studyConventionRepository;
+    private final StudyInfoRepository studyInfoRepository;
+    private final static Long MAX_LIMIT = 10L;
 
     // 컨벤션 등록
     @Transactional
@@ -64,6 +71,42 @@ public class StudyConventionService {
         });
 
         studyConventionRepository.delete(studyConvention);
+    }
+
+    // 컨벤션 단일 조회
+    public StudyConventionResponse readStudyConvention(Long conventionId) {
+
+        // Convention 조회
+        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
+            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
+        });
+
+        return StudyConventionResponse.of(studyConvention);
+    }
+
+    // 컨벤션 전체 조회
+    public StudyConventionListAndCursorIdxResponse readStudyConventionList(Long studyInfoId, Long cursorIdx, Long limit) {
+
+        // 스터디 조회 예외처리
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new ConventionException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        limit = Math.min(limit, MAX_LIMIT);
+
+        List<StudyConventionResponse> studyConventionList = studyConventionRepository.findStudyConventionListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+
+        StudyConventionListAndCursorIdxResponse response = StudyConventionListAndCursorIdxResponse.builder()
+                .studyConventionList(studyConventionList)
+                .build();
+
+        response.setNextCursorIdx();
+
+        return response;
+
+
     }
 
 }
