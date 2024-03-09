@@ -4,7 +4,7 @@ import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.common.model.SharedPreferencesKey
+import com.takseha.common.model.SPKey
 import com.takseha.common.util.SharedPreferences
 import com.takseha.data.repository.GitudyRepository
 import kotlinx.coroutines.launch
@@ -26,20 +26,20 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
 
         if (resCode == 200 && resMsg == "OK") {
             prefs.savePref(
-                SharedPreferencesKey.ACCESS_TOKEN,
+                SPKey.ACCESS_TOKEN,
                 allTokens.accessToken
             )
             prefs.savePref(
-                SharedPreferencesKey.REFRESH_TOKEN,
+                SPKey.REFRESH_TOKEN,
                 allTokens.refreshToken
             )
             prefs.savePref(
-                SharedPreferencesKey.ROLE,
+                SPKey.ROLE,
                 allTokens.role
             )
-            Log.d("GetTokenViewModel", "shared pref 저장된 access token: ${prefs.loadPref(SharedPreferencesKey.ACCESS_TOKEN, "0")}\n"
-                    + "shared pref 저장된 refresh token: ${prefs.loadPref(SharedPreferencesKey.REFRESH_TOKEN, "0")}\n"
-                    + "shared pref 저장된 role: ${prefs.loadPref(SharedPreferencesKey.ROLE, "0")}")
+            Log.d("GetTokenViewModel", "shared pref 저장된 access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\n"
+                    + "shared pref 저장된 refresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}\n"
+                    + "shared pref 저장된 role: ${prefs.loadPref(SPKey.ROLE, "0")}")
         } else {
             Log.e("GetTokenViewModel", "https status error: $resCode, $resMsg")
         }

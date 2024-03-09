@@ -11,7 +11,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
-import com.takseha.common.model.SharedPreferencesKey
+import com.takseha.common.model.SPKey
 import com.takseha.common.util.SharedPreferences
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputNicknameBinding
@@ -46,11 +46,10 @@ class InputNicknameFragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     var nicknameLength = inputNicknameEditText.length()
+                    val nicknameLengthText = getString(R.string.text_length)
+                    val snackBarText = getString(R.string.alert_text_length)
 
                     if (nicknameLength > 0) {
-                        val nicknameLengthText = getString(R.string.text_length)
-                        val snackBarText = getString(R.string.alert_text_length)
-
                         confirmBtn.isEnabled = true
                         nicknameLengthWithMax.text = String.format(nicknameLengthText, nicknameLength, maxLength)
                         if (nicknameLength > maxLength) {
@@ -59,7 +58,13 @@ class InputNicknameFragment : Fragment() {
                             makeSnackBar(String.format(snackBarText, maxLength)).apply {
                                 anchorView = confirmBtn
                             }.show()
+                        } else {
+                            confirmBtn.isEnabled = true
+                            nicknameLengthWithMax.setTextColor(ContextCompat.getColor(requireContext(), R.color.GS_500))
                         }
+                    } else {
+                        confirmBtn.isEnabled = false
+                        nicknameLengthWithMax.text = String.format(nicknameLengthText, nicknameLength, maxLength)
                     }
                 }
 
@@ -68,12 +73,12 @@ class InputNicknameFragment : Fragment() {
 
             confirmBtn.setOnClickListener {
                 prefs.savePref(
-                    SharedPreferencesKey.GITUDY_NAME,
+                    SPKey.GITUDY_NAME,
                     inputNicknameEditText.text.toString()
                 )
                 Log.d(
                     "InputNicknameFragment",
-                    "gitudyName: ${prefs.loadPref(SharedPreferencesKey.GITUDY_NAME, "0")}"
+                    "gitudyName: ${prefs.loadPref(SPKey.GITUDY_NAME, "0")}"
                 )
                 it.findNavController()
                     .navigate(R.id.action_inputNicknameFragment_to_inputIdFragment)

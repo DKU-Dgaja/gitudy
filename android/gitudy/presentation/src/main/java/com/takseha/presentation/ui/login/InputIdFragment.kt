@@ -8,10 +8,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.navigation.findNavController
-import com.takseha.common.model.SharedPreferencesKey
+import com.takseha.common.model.SPKey
 import com.takseha.common.util.SharedPreferences
-import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputIdBinding
 
 class InputIdFragment : Fragment() {
@@ -48,12 +46,12 @@ class InputIdFragment : Fragment() {
             })
             confirmBtn.setOnClickListener {
                 prefs.savePref(
-                    SharedPreferencesKey.GITHUB_ID,
+                    SPKey.GITHUB_ID,
                     inputIdEditText.text.toString()
                 )
                 Log.d(
                     "InputIdFragment",
-                    "githubId: ${prefs.loadPref(SharedPreferencesKey.GITHUB_ID, "0")}"
+                    "githubId: ${prefs.loadPref(SPKey.GITHUB_ID, "0")}"
                 )
 
             }
