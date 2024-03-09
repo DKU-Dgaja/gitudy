@@ -10,6 +10,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.service.commit.response.GithubCommitResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -113,6 +114,37 @@ class GithubApiTest extends TestConfig {
 //            System.out.println("===============");
 //
 //        }
+//    }
+
+//    @Test
+//    void 깃허브_API_파일_수정_테스트() throws IOException {
+//        // given
+//        User user = userRepository.save(UserFixture.generateAuthUser());
+//        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+//        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
+//
+//        StudyTodoUpdateRequest request = StudyTodoUpdateRequest.builder()
+//                .title("테스트")
+//                .todoLink("테스트 링크 수정")
+//                .detail("테스트 디테일 수정")
+//                .todoDate(LocalDate.now().plusDays(5))
+//                .build();
+//
+//        String owner = "jusung-c";
+//        String repository = "Github-Api-Test";
+//
+//        // 깃허브 api 통신 연결
+//        GithubApi githubApi = new GithubApi();
+//        GitHub gitHub = githubApi.connectGithub(token);
+//
+//        // 레포지토리 조회
+//        GHRepository repo = githubApi.getRepository(gitHub, owner, repository);
+//
+//        // 생성
+//        githubApi.createTodoFolder(repo, todo);
+//
+//        // 수정
+//        githubApi.updateTodoFolder(repo, todo, request);
 //    }
 
 }

@@ -2,11 +2,14 @@ package com.example.backend.common.utils;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.service.commit.response.GithubCommitResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.kohsuke.github.*;
+import org.kohsuke.github.GHCommit;
+import org.kohsuke.github.GHRepository;
+import org.kohsuke.github.GitHub;
+import org.kohsuke.github.GitHubBuilder;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -74,13 +77,13 @@ public class GithubApi {
         String folderPath = todo.getId() + ") " + todo.getTitle();
         String fileName = todo.getTitle() + ": " + todo.getTodoDate() + ".md";
         String filePath = folderPath + "/" + fileName;
-        String commitMessage = "TODO(" + todo.getTitle() + ") 폴더가 삭제되었습니다.";
+        String commitMessage = "TODO(" + todo.getTitle() + ")폴더가 삭제되었습니다.";
 
         try {
             repo.getFileContent(filePath)
                     .delete(commitMessage);
 
-            log.info(">>>> [ '{}' 삭제가 완료되었습니다. ] <<<<", folderPath + "/" + fileName);
+            log.info(">>>> [ '{}' 삭제가 완료되었습니다. ] <<<<", filePath);
 
             return filePath;
 
@@ -107,5 +110,44 @@ public class GithubApi {
                     }
                 })
                 .toList();
+    }
+
+    public void updateTodoFolder(GHRepository repo, StudyTodo prevTodo, StudyTodoUpdateRequest updateTodo) {
+
+        // prevTodo의 제목과 updateTodo의 제목이 같은 경우는 파일의 내용만 변경해주면 됨
+        // 제목이 변경된 경우는 기존의 폴더의 파일들을 새로 옮겨줘야 함
+
+        String folderPath = prevTodo.getId() + ") " + prevTodo.getTitle();
+
+        String updateName = prevTodo.getTitle() + ": " + updateTodo.getTodoDate() + ".md";
+        String deleteName = prevTodo.getTitle() + ": " + prevTodo.getTodoDate() + ".md";
+
+        String updatePath = folderPath + "/" + updateName;
+        String deletePath = folderPath + "/" + deleteName;
+
+        String updateCommitMessage = "TODO(" + updateTodo.getTitle() + ")가 수정되었습니다.";
+        String deleteCommitMessage = "TODO(" + prevTodo.getTitle() + ")가 삭제되었습니다.";
+
+        String updateContent = "## 이름: " + updateTodo.getTitle() + "\n"
+                + "### 설명: " + updateTodo.getDetail() + "\n"
+                + "### 참고 링크: " + updateTodo.getTodoLink() + "\n"
+                + "### 마감일: " + updateTodo.getTodoDate() + "\n";
+
+        try {
+            repo.createContent()
+                    .path(updatePath)
+                    .content(updateContent)
+                    .message(updateCommitMessage)
+                    .commit();
+
+            repo.getFileContent(deletePath)
+                    .delete(deleteCommitMessage);
+
+            log.info(">>>> [ '{}' 수정이 완료되었습니다. ] <<<<", updatePath);
+
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_UPDATE_ERROR, e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_UPDATE_ERROR);
+        }
     }
 }
