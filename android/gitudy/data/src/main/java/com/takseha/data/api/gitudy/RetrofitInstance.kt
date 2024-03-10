@@ -1,4 +1,4 @@
-package com.takseha.data.api
+package com.takseha.data.api.gitudy
 
 import com.takseha.data.BuildConfig
 import retrofit2.Retrofit

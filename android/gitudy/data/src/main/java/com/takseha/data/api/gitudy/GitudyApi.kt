@@ -1,11 +1,12 @@
-package com.takseha.data.api
+package com.takseha.data.api.gitudy
 
-import com.takseha.data.dto.LoginPageResponse
-import com.takseha.data.dto.LoginResponse
-import com.takseha.data.dto.RegisterRequest
-import com.takseha.data.dto.RegisterResponse
+import com.takseha.data.dto.login.login.LoginPageResponse
+import com.takseha.data.dto.login.login.LoginResponse
+import com.takseha.data.dto.login.register.RegisterRequest
+import com.takseha.data.dto.login.register.RegisterResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -23,6 +24,7 @@ interface GitudyApi {
 
     @POST("/auth/register")
     suspend fun getRegisterTokens(
+        @Header("Authorization") bearerToken: String,
         @Body request: RegisterRequest
     ): RegisterResponse
 }
