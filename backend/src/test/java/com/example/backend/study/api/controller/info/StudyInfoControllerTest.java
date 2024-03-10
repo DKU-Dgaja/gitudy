@@ -271,7 +271,7 @@ class StudyInfoControllerTest extends TestConfig {
 
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
+        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -281,6 +281,7 @@ class StudyInfoControllerTest extends TestConfig {
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
+                        .param("myStudy", "true")
                 )
                 // then
                 .andExpect(status().isOk())
@@ -308,6 +309,7 @@ class StudyInfoControllerTest extends TestConfig {
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
+                        .param("myStudy", "true")
                 )
                 // then
                 .andExpect(status().isOk())
@@ -327,7 +329,7 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
+        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -337,6 +339,7 @@ class StudyInfoControllerTest extends TestConfig {
                         .param("limit", "10")
                         .param("cursorIdx", "-1")
                         .param("sortBy", "score")
+                        .param("myStudy", "true")
                 )
                 // then
                 .andExpect(status().isOk())
@@ -355,16 +358,17 @@ class StudyInfoControllerTest extends TestConfig {
 
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
+        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
-        mockMvc.perform(get("/study/" + user.getId() + "/all")
+        mockMvc.perform(get("/study/" + user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
+                        .param("myStudy", "false")
                 )
                 // then
                 .andExpect(status().isOk())
@@ -385,12 +389,13 @@ class StudyInfoControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/study/" + user.getId() + "/all")
+        mockMvc.perform(get("/study/" + user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
+                        .param("myStudy", "false")
                 )
                 // then
                 .andExpect(status().isOk())
@@ -409,16 +414,17 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
+        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
-        mockMvc.perform(get("/study/" + user.getId() + "/all")
+        mockMvc.perform(get("/study/" + user.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
                         .param("cursorIdx", "-1")
                         .param("sortBy", "score")
+                        .param("myStudy", "false")
                 )
                 // then
                 .andExpect(status().isOk())

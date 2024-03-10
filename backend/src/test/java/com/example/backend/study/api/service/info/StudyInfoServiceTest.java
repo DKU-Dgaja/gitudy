@@ -274,7 +274,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyInfoRepository.saveAll(studyInfos);
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY, true);
 
         // response.getStudyInfoList()를 id순으로 정렬
         response.getStudyInfoList().sort(Comparator.comparingLong(MyStudyInfoListResponse::getId));
@@ -326,7 +326,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(otherUser.getId(), otherStudyInfo.getId()));
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myUser.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myUser.getId(), null, LIMIT, SORTBY, true);
         Map<Long, List<String>> studyCategoryMappingMap = response.getStudyCategoryMappingMap();
 
         // then
@@ -384,7 +384,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(studyMembers);
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myLeaderUser.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(myLeaderUser.getId(), null, LIMIT, SORTBY, true);
         Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
 
         // then
@@ -448,7 +448,8 @@ class StudyInfoServiceTest extends TestConfig {
         MyStudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectMyStudyInfoList(savedUser.getId()
                 , null
                 , LIMIT
-                , sortBy);
+                , sortBy
+                , true);
 
         List<MyStudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
         System.out.println("---------After sort by Score----------");
@@ -461,7 +462,8 @@ class StudyInfoServiceTest extends TestConfig {
         MyStudyInfoListAndCursorIdxResponse response2 = studyInfoService.selectMyStudyInfoList(savedUser.getId()
                 , score50.getId()
                 , 3L
-                , sortBy);
+                , sortBy
+                , true);
         List<MyStudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " + score50.getId() + ", limit : 3]");
@@ -478,7 +480,8 @@ class StudyInfoServiceTest extends TestConfig {
         MyStudyInfoListAndCursorIdxResponse response3 = studyInfoService.selectMyStudyInfoList(savedUser.getId()
                 , response2.getCursorIdx()
                 , 3L
-                , sortBy);
+                , sortBy
+                , true);
         List<MyStudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " +response2.getCursorIdx() + ", limit : 3]");
@@ -525,7 +528,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(list));
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy);
+        MyStudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectMyStudyInfoList(savedUser.getId(), null, LIMIT, sortBy, true);
         List<MyStudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
         System.out.println("---------lastCommitDay 기준으로 정렬 후----------");
         for (MyStudyInfoListResponse x : studyInfoList1) {
@@ -535,7 +538,7 @@ class StudyInfoServiceTest extends TestConfig {
 
         // when
         MyStudyInfoListAndCursorIdxResponse response2
-                = studyInfoService.selectMyStudyInfoList(savedUser.getId(), studyInfo3.getId(), 3L, sortBy);
+                = studyInfoService.selectMyStudyInfoList(savedUser.getId(), studyInfo3.getId(), 3L, sortBy, true);
         List<MyStudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " + studyInfo3.getId() + ", limit : 3]");
@@ -550,7 +553,7 @@ class StudyInfoServiceTest extends TestConfig {
 
         // when
         MyStudyInfoListAndCursorIdxResponse response3
-                = studyInfoService.selectMyStudyInfoList(savedUser.getId(), response2.getCursorIdx(), 3L, sortBy);
+                = studyInfoService.selectMyStudyInfoList(savedUser.getId(), response2.getCursorIdx(), 3L, sortBy, true);
         List<MyStudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " + response2.getCursorIdx() + ", limit : 3]");
@@ -583,7 +586,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyInfoRepository.saveAll(studyInfos);
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY, false);
 
         // response.getStudyInfoList()를 id순으로 정렬
         response.getStudyInfoList().sort(Comparator.comparingLong(MyStudyInfoListResponse::getId));
@@ -639,7 +642,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userC.getId(), studyC.getId()));
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(userA.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(userA.getId(), null, LIMIT, SORTBY, false);
         Map<Long, List<String>> studyCategoryMappingMap = response.getStudyCategoryMappingMap();
 
         // then
@@ -704,7 +707,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.saveAll(studyMembers);
 
         // when
-        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(user1.getId(), null, LIMIT, SORTBY);
+        MyStudyInfoListAndCursorIdxResponse response = studyInfoService.selectMyStudyInfoList(user1.getId(), null, LIMIT, SORTBY, false);
         Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
 
         // then
