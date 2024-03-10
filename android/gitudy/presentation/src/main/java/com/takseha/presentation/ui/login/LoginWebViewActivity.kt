@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModelProvider
-import com.takseha.data.dto.login.login.LoginRequest
+import com.takseha.data.dto.auth.login.LoginRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
 import com.takseha.presentation.viewmodel.LoginWebViewViewModel

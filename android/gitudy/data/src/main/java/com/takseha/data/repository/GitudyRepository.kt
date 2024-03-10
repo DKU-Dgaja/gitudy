@@ -1,8 +1,8 @@
 package com.takseha.data.repository
 
-import com.takseha.data.api.GitudyApi
-import com.takseha.data.api.RetrofitInstance
-import com.takseha.data.dto.RegisterRequest
+import com.takseha.data.api.gitudy.GitudyApi
+import com.takseha.data.api.gitudy.RetrofitInstance
+import com.takseha.data.dto.auth.register.RegisterRequest
 
 class GitudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyApi::class.java)
@@ -13,6 +13,7 @@ class GitudyRepository {
         state: String
     ) = client.getLoginTokens(platformType, code, state)
     suspend fun getRegisterTokens(
+        bearerToken: String,
         request: RegisterRequest
-    ) = client.getRegisterTokens(request)
+    ) = client.getRegisterTokens(bearerToken, request)
 }

@@ -1,9 +1,9 @@
 package com.takseha.data.api.gitudy
 
-import com.takseha.data.dto.login.login.LoginPageResponse
-import com.takseha.data.dto.login.login.LoginResponse
-import com.takseha.data.dto.login.register.RegisterRequest
-import com.takseha.data.dto.login.register.RegisterResponse
+import com.takseha.data.dto.auth.login.LoginPageResponse
+import com.takseha.data.dto.auth.login.LoginResponse
+import com.takseha.data.dto.auth.register.RegisterRequest
+import com.takseha.data.dto.auth.register.RegisterResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
