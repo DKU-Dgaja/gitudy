@@ -28,7 +28,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="12dp"
         android:gravity="center"
-        android:text="커밋을 기록하려면 깃허브 연동이 필요해요.\n@를 제외한 아이디를 입력해주세요."
+        android:text="커밋을 기록하려면 깃허브 연동이 필요해요.\n정확한 아이디를 입력해주세요."
         android:textColor="@color/GS_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -39,17 +39,41 @@
         style="@style/B2_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingLeft="22dp"
         android:layout_marginTop="59dp"
-        android:paddingRight="22dp"
         android:background="@null"
         android:gravity="center"
-        android:hint="\@gittudy"
+        android:hint="gittudy"
+        android:paddingLeft="22dp"
+        android:paddingRight="22dp"
         android:textColor="@color/BLACK"
         android:textColorHint="@color/GS_300"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/inputIdDescription2" />
+
+    <TextView
+        android:id="@+id/idCheckText"
+        style="@style/B5_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputIdEditText" />
+
+    <Button
+        android:id="@+id/isIdOkBtn"
+        style="@style/B7_2"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="65dp"
+        android:background="@drawable/selector_btn_r6_enable"
+        android:enabled="false"
+        android:text="@string/confirm"
+        android:textColor="@drawable/selector_text_color_enable"
+        app:layout_constraintStart_toEndOf="@+id/inputIdEditText"
+        app:layout_constraintTop_toBottomOf="@+id/inputIdDescription2" />
 
     <Button
         android:id="@+id/confirmBtn"

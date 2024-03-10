@@ -23,6 +23,7 @@ android {
         consumerProguardFiles("consumer-rules.pro")
 
         buildConfigField("String", "GITUDY_BASE_URL", properties.getProperty("GITUDY_BASE_URL"))
+        buildConfigField("String", "GITHUB_BASE_URL", properties.getProperty("GITHUB_BASE_URL"))
     }
     buildFeatures {
         buildConfig = true
