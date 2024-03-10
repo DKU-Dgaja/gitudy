@@ -6,7 +6,6 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -20,8 +19,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -79,32 +76,19 @@ public class StudyInfoController {
         return JsonResult.successOf(studyInfoService.updateStudyInfoPage(studyInfoId));
     }
 
-    // 마이 스터디 조회
-    @ApiResponse(responseCode = "200", description = "마이 스터디 조회 성공", content = @Content(schema = @Schema(implementation =
-                    MyStudyInfoListResponse.class)))
+    // 스터디 조회
+    @ApiResponse(responseCode = "200", description = "스터디 조회 성공", content = @Content(schema = @Schema(implementation =
+            MyStudyInfoListResponse.class)))
     @GetMapping("/{userId}")
     public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
-                                                      @PathVariable(name = "userId") Long userId,
-                                                      @Min(value = 0, message = "Cursor index cannot be negative")
-                                                      @RequestParam(name = "cursorIdx") Long cursorIdx,
-                                                      @RequestParam(name = "limit") Long limit,
-                                                      @RequestParam(name = "sortBy") String sortBy
+                                                    @PathVariable(name = "userId") Long userId,
+                                                    @Min(value = 0, message = "Cursor index cannot be negative")
+                                                    @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                                    @RequestParam(name = "limit") Long limit,
+                                                    @RequestParam(name = "sortBy") String sortBy,
+                                                    @RequestParam(name = "myStudy") boolean myStudy
     ) {
         authService.authenticate(userId, user);
-        return JsonResult.successOf(studyInfoService.selectMyStudyInfoList(userId, cursorIdx, limit, sortBy));
-    }
-    // 전체 스터디 조회
-    @ApiResponse(responseCode = "200", description = "전체 스터디 조회 성공", content = @Content(schema = @Schema(implementation =
-            MyStudyInfoListResponse.class)))
-    @GetMapping("/{userId}/all")
-    public JsonResult<?> StudyInfoListByParameter(@AuthenticationPrincipal User user,
-                                                      @PathVariable(name = "userId") Long userId,
-                                                      @Min(value = 0, message = "Cursor index cannot be negative")
-                                                      @RequestParam(name = "cursorIdx") Long cursorIdx,
-                                                      @RequestParam(name = "limit") Long limit,
-                                                      @RequestParam(name = "sortBy") String sortBy
-    ) {
-        authService.authenticate(userId, user);
-        return JsonResult.successOf(studyInfoService.selectStudyInfoList(userId, cursorIdx, limit, sortBy));
+        return JsonResult.successOf(studyInfoService.selectMyStudyInfoList(userId, cursorIdx, limit, sortBy, myStudy));
     }
 }
