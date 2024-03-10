@@ -123,4 +123,29 @@ public class StudyMemberService {
 
     }
 
+
+    // 스터디 가입 메서드
+    @Transactional
+    public void applyStudyMember(User userPrincipal, Long studyInfoId) {
+
+        // platformId와 platformType을 이용하여 User 객체 조회
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
+        // 스터디 멤버인지확인
+        if (studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
+            throw new MemberException(ExceptionMessage.STUDY_ALREADY_MEMBER);
+        }
+
+        // '스터디 승인 대기중인 유저' 로 생성
+        StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getId());
+        studyMemberRepository.save(studyMember);
+
+        /*
+             해당 스터디장에게 알림 메서드 추가되어야함  -> 유저의 이름등등을 보여주기위해 파라미터로 user 객체 가져옴
+         */
+    }
+
 }

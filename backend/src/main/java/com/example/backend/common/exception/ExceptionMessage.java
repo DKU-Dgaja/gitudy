@@ -59,6 +59,7 @@ public enum ExceptionMessage {
 
     // StudyMemberException
     USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
+    STUDY_ALREADY_MEMBER("이미 해당 스터디의 멤버 입니다."),
 
     // StudyCommentException
     STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),

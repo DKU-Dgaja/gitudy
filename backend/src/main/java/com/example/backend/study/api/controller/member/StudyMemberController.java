@@ -64,5 +64,18 @@ public class StudyMemberController {
         return JsonResult.successOf("Withdrawal Member Success");
     }
 
+    // 스터디 가입 신청
+    @ApiResponse(responseCode = "200", description = "스터디 가입 신청 성공")
+    @PostMapping("/{studyInfoId}/apply")
+    public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
+                                          @PathVariable(name = "studyInfoId") Long studyInfoId) {
+
+        authService.findUserInfo(user);
+
+        studyMemberService.applyStudyMember(user, studyInfoId);
+
+        return JsonResult.successOf("Apply StudyMember Success");
+    }
+
 
 }
