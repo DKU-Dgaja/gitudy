@@ -4,7 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import com.takseha.data.dto.Role
+import com.takseha.data.dto.login.login.Role
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivitySocialLoginCompleteBinding
 import com.takseha.presentation.ui.home.MainHomeActivity
@@ -19,8 +19,8 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
 
         binding.confirmBtn.setOnClickListener {
             val role = intent.getStringExtra("role").toString()
-            controlRegisterView(role)
             Log.d("SocialLoginCompleteActivity", "role: $role")
+            controlRegisterView(role)
         }
     }
 

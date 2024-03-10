@@ -42,7 +42,13 @@ class InputNicknameFragment : Fragment() {
 
         with(binding) {
             inputNicknameEditText.addTextChangedListener(object : TextWatcher {
-                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     var nicknameLength = inputNicknameEditText.length()
@@ -51,20 +57,32 @@ class InputNicknameFragment : Fragment() {
 
                     if (nicknameLength > 0) {
                         confirmBtn.isEnabled = true
-                        nicknameLengthWithMax.text = String.format(nicknameLengthText, nicknameLength, maxLength)
+                        nicknameLengthWithMax.text =
+                            String.format(nicknameLengthText, nicknameLength, maxLength)
                         if (nicknameLength > maxLength) {
                             confirmBtn.isEnabled = false
-                            nicknameLengthWithMax.setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_RED))
+                            nicknameLengthWithMax.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_RED
+                                )
+                            )
                             makeSnackBar(String.format(snackBarText, maxLength)).apply {
                                 anchorView = confirmBtn
                             }.show()
                         } else {
                             confirmBtn.isEnabled = true
-                            nicknameLengthWithMax.setTextColor(ContextCompat.getColor(requireContext(), R.color.GS_500))
+                            nicknameLengthWithMax.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.GS_500
+                                )
+                            )
                         }
                     } else {
                         confirmBtn.isEnabled = false
-                        nicknameLengthWithMax.text = String.format(nicknameLengthText, nicknameLength, maxLength)
+                        nicknameLengthWithMax.text =
+                            String.format(nicknameLengthText, nicknameLength, maxLength)
                     }
                 }
 
@@ -105,5 +123,10 @@ class InputNicknameFragment : Fragment() {
         }
 
         return snackBar
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

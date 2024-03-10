@@ -1,20 +1,16 @@
 package com.takseha.presentation.ui.login
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.net.UrlQuerySanitizer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModelProvider
-import com.takseha.data.dto.LoginRequest
-import com.takseha.data.dto.Role
+import com.takseha.data.dto.login.login.LoginRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
-import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.LoginWebViewViewModel
 
 class LoginWebViewActivity : AppCompatActivity() {
@@ -67,6 +63,7 @@ class LoginWebViewActivity : AppCompatActivity() {
                     intent.putExtra("role", it)
                     startActivity(intent)
                 }
+
                 return true
             }
             return false

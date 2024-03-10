@@ -4,6 +4,7 @@ import com.takseha.data.dto.login.login.LoginPageResponse
 import com.takseha.data.dto.login.login.LoginResponse
 import com.takseha.data.dto.login.register.RegisterRequest
 import com.takseha.data.dto.login.register.RegisterResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -13,18 +14,18 @@ import retrofit2.http.Query
 
 interface GitudyApi {
     @GET("/auth/loginPage")
-    suspend fun getLoginPage(): LoginPageResponse
+    suspend fun getLoginPage(): Response<LoginPageResponse>
 
     @GET("/auth/{platformType}/login")
     suspend fun getLoginTokens(
         @Path("platformType") platformType: String,
         @Query("code") code: String,
         @Query("state") state: String
-    ): LoginResponse
+    ): Response<LoginResponse>
 
     @POST("/auth/register")
     suspend fun getRegisterTokens(
         @Header("Authorization") bearerToken: String,
         @Body request: RegisterRequest
-    ): RegisterResponse
+    ): Response<RegisterResponse>
 }

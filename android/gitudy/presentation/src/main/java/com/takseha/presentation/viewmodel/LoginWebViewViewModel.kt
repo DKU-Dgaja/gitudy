@@ -8,7 +8,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
-import com.takseha.data.dto.Role
 import com.takseha.data.repository.GitudyRepository
 import kotlinx.coroutines.launch
 
@@ -25,27 +24,31 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
         prefs = SP(getApplication())
 
         val tokenResponse = gitudyRepository.getLoginTokens(platformType, code, state)
-        val resCode = tokenResponse.resCode
-        val resMsg = tokenResponse.resMsg
-        val allTokens = tokenResponse.tokenInfo
 
-        Log.d("GetTokenViewModel", "https status: $resCode, $resMsg")
+        if (tokenResponse.isSuccessful) {
+            val resCode = tokenResponse.body()!!.resCode
+            val resMsg = tokenResponse.body()!!.resMsg
+            val allTokens = tokenResponse.body()!!.tokenInfo
 
-        if (resCode == 200 && resMsg == "OK") {
-            prefs.savePref(
-                SPKey.ACCESS_TOKEN,
-                allTokens.accessToken
-            )
-            prefs.savePref(
-                SPKey.REFRESH_TOKEN,
-                allTokens.refreshToken
-            )
-            _role.value = allTokens.role
-
-            Log.d("GetTokenViewModel", "shared pref 저장된 access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\n"
-                    + "shared pref 저장된 refresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}")
+            if (resCode == 200 && resMsg == "OK") {
+                prefs.savePref(
+                    SPKey.ACCESS_TOKEN,
+                    allTokens.accessToken
+                )
+                prefs.savePref(
+                    SPKey.REFRESH_TOKEN,
+                    allTokens.refreshToken
+                )
+                _role.value = allTokens.role
+                Log.d("LoginWebViewViewModel", "role: ${role.value}")
+                Log.d("LoginWebViewViewModel", "https status: $resCode, $resMsg")
+                Log.d("LoginWebViewViewModel", "shared pref 저장된 access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\n"
+                        + "shared pref 저장된 refresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}")
+            } else {
+                Log.e("LoginWebViewViewModel", "https status error: $resCode, $resMsg")
+            }
         } else {
-            Log.e("GetTokenViewModel", "https status error: $resCode, $resMsg")
+            Log.e("LoginWebViewViewModel", "status: ${tokenResponse.code()}, message: ${tokenResponse.message()}")
         }
     }
 }
