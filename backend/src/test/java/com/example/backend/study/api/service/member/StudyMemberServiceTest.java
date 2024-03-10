@@ -1,6 +1,8 @@
 package com.example.backend.study.api.service.member;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -47,6 +49,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Autowired
     private StudyTodoRepository studyTodoRepository;
+
+    @Autowired
+    private AuthService authService;
 
     @AfterEach
     void tearDown() {
@@ -352,8 +357,10 @@ public class StudyMemberServiceTest extends TestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
         // when
-        studyMemberService.applyStudyMember(user1, studyInfo.getId());
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId());
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
 
         // then

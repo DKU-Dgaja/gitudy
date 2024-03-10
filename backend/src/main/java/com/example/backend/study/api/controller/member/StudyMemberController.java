@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.member;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -70,9 +71,9 @@ public class StudyMemberController {
     public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
-        authService.findUserInfo(user);
+        UserInfoResponse userInfo = authService.findUserInfo(user);
 
-        studyMemberService.applyStudyMember(user, studyInfoId);
+        studyMemberService.applyStudyMember(userInfo, studyInfoId);
 
         return JsonResult.successOf("Apply StudyMember Success");
     }

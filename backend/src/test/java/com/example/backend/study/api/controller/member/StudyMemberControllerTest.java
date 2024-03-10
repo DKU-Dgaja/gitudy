@@ -167,7 +167,7 @@ public class StudyMemberControllerTest extends TestConfig {
         studyInfoRepository.save(studyInfo);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyMemberService).applyStudyMember(any(User.class), any(Long.class));
+        doNothing().when(studyMemberService).applyStudyMember(any(UserInfoResponse.class), any(Long.class));
 
         //when , then
         mockMvc.perform(post("/member/" + studyInfo.getId() + "/apply")
