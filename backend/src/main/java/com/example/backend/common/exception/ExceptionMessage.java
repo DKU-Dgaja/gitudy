@@ -76,6 +76,9 @@ public enum ExceptionMessage {
     GITHUB_API_DELETE_FILE_ERROR("특정 폴더의 파일을 삭제하는데 실패했습니다."),
     GITHUB_API_UPDATE_ERROR("특정 폴더의 파일을 수정하는데 실패했습니다."),
 
+
+    // StudyConventionException
+    CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다.")
     ;
     private final String text;
 }

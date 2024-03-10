@@ -12,11 +12,15 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Slf4j
 @Service
@@ -48,8 +52,14 @@ public class StudyCommentService {
     }
 
     @Transactional
-    public void updateStudyComment(StudyCommentUpdateRequest request, Long studyCommentId) {
-        // StudyComment 조회
+    public void updateStudyComment(StudyCommentUpdateRequest request,Long studyInfoId, Long studyCommentId) {
+        // 스터디 조회
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 댓글 조회
         StudyComment studyComment = studyCommentRepository.findById(studyCommentId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyCommentId, ExceptionMessage.STUDY_COMMENT_NOT_FOUND.getText());
             return new StudyCommentException(ExceptionMessage.STUDY_COMMENT_NOT_FOUND);
@@ -89,6 +99,22 @@ public class StudyCommentService {
         }
         studyCommentRepository.deleteById(studyCommentId);
     }
+    public StudyCommentListAndCursorIdxResponse selectStudyCommentList(Long studyInfoId, Long cursorIdx, Long limit) {
+        // 스터디가 있는지 확인
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        List<StudyCommentResponse> studyCommentResponseList =
+                studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(studyInfoId, cursorIdx, limit);
+        StudyCommentListAndCursorIdxResponse response = (StudyCommentListAndCursorIdxResponse.builder()
+                .studyCommentList(studyCommentResponseList)
+                .build());
+        response.getNextCursorIdx();
+        return response;
+    }
+
     // StudyComment 생성 로직
     private StudyComment createStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId) {
         return StudyComment.builder()

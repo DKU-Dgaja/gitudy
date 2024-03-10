@@ -1,7 +1,11 @@
 package com.example.backend.domain.define.study.member;
 
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class StudyMemberFixture {
     // 테스트용 스터디장 생성 메서드
@@ -66,4 +70,20 @@ public class StudyMemberFixture {
                 .build();
     }
 
+    // 테스트용 스터디 멤버 생성 메서드
+    public static List<StudyMember> createDefaultStudyMemberList(List<StudyInfo> studyInfos) {
+        List<StudyMember> studyMembers = new ArrayList<>();
+        for (StudyInfo studyInfo : studyInfos) {
+            // 각 스터디 정보에 대해 스터디원을 생성하여 리스트에 추가
+            StudyMember studyMember = StudyMember.builder()
+                    .studyInfoId(studyInfo.getId())
+                    .userId(studyInfo.getUserId())
+                    .role(StudyMemberRole.STUDY_MEMBER)
+                    .status(StudyMemberStatus.STUDY_ACTIVE)
+                    .score(0)
+                    .build();
+            studyMembers.add(studyMember);
+        }
+        return studyMembers;
+    }
 }

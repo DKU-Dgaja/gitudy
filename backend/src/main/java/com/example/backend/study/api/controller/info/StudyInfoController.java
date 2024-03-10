@@ -6,11 +6,15 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -34,7 +38,7 @@ public class StudyInfoController {
         return JsonResult.successOf("Study Register Success.");
     }
 
-   @ApiResponse(responseCode = "200", description = "스터디 삭제 성공")
+    @ApiResponse(responseCode = "200", description = "스터디 삭제 성공")
     @DeleteMapping("/{studyInfoId}")
     public JsonResult<?> deleteStudy(@AuthenticationPrincipal User user,
                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
@@ -70,5 +74,21 @@ public class StudyInfoController {
         // 리더인지 확인
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
         return JsonResult.successOf(studyInfoService.updateStudyInfoPage(studyInfoId));
+    }
+
+    // 스터디 조회
+    @ApiResponse(responseCode = "200", description = "스터디 조회 성공", content = @Content(schema = @Schema(implementation =
+            StudyInfoListResponse.class)))
+    @GetMapping("/{userId}")
+    public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
+                                                    @PathVariable(name = "userId") Long userId,
+                                                    @Min(value = 0, message = "Cursor index cannot be negative")
+                                                    @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                                    @RequestParam(name = "limit", defaultValue = "20") Long limit,
+                                                    @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
+                                                    @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
+    ) {
+        authService.authenticate(userId, user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoList(userId, cursorIdx, limit, sortBy, myStudy));
     }
 }

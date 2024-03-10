@@ -11,7 +11,6 @@ import com.example.backend.domain.define.study.category.info.repository.StudyCat
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
-
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -20,16 +19,17 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberStatus
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
 import java.util.stream.IntStream;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
@@ -37,14 +37,14 @@ import static com.example.backend.domain.define.study.StudyCategory.info.StudyCa
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.createDefaultPublicStudyCategories;
 import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_LENGTH;
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
-import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfo;
-import static com.example.backend.domain.define.study.info.StudyInfoFixture.generateStudyInfoRegisterRequestWithCategory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyInfoServiceTest extends TestConfig {
-
+    private final static int DATA_SIZE = 10;
+    private final static Long LIMIT = 10L;
+    private final static String SORTBY = "score";
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -109,8 +109,8 @@ class StudyInfoServiceTest extends TestConfig {
         // joinCode 10자리가 잘 생성되었는지 검증
         assertEquals(registeredStudy.getJoinCode().length(), JOIN_CODE_LENGTH);
     }
-    
-  
+
+
     @Test
     void 삭제_성공_테스트() {
         // given
@@ -164,8 +164,8 @@ class StudyInfoServiceTest extends TestConfig {
             studyInfoService.deleteStudy(invalidStudyInfoId);
         }, "해당 스터디정보를 찾을 수 없습니다.");
     }
- 
-      @Test
+
+    @Test
     public void 스터디_수정_테스트() {
         // given
 
@@ -254,5 +254,485 @@ class StudyInfoServiceTest extends TestConfig {
 
         IntStream.range(0, response.getCategoriesId().size())
                 .forEach(i -> assertEquals(savedStudyCategoryMappings.get(i).getStudyCategoryId(), response.getCategoriesId().get(i)));
+    }
+
+    @Test
+    public void 마이스터디_조회_테스트() {
+        // given
+        int expectedResponseSize = 3;
+
+        // 유저 생성
+        User MyUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        // 스터디 생성
+        List<StudyInfo> studyInfos = new ArrayList<>();
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(otherUser.getId()));
+        studyInfos.add(generateStudyInfo(otherUser.getId()));
+        studyInfoRepository.saveAll(studyInfos);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY, true);
+
+        // response.getStudyInfoList()를 id순으로 정렬
+        response.getStudyInfoList().sort(Comparator.comparingLong(StudyInfoListResponse::getId));
+
+        // then
+        IntStream.range(0, expectedResponseSize)
+                .forEach(i -> {
+                    StudyInfo expected = studyInfos.get(i);
+                    StudyInfoListResponse actual = response.getStudyInfoList().get(i);
+
+                    assertAll(
+                            () -> assertEquals(expected.getId(), actual.getId()),
+                            () -> assertEquals(expected.getUserId(), actual.getUserId()),
+                            () -> assertEquals(expected.getTopic(), actual.getTopic()),
+                            () -> assertEquals(expected.getScore(), actual.getScore()),
+                            () -> assertEquals(expected.getInfo(), actual.getInfo()),
+                            () -> assertEquals(expected.getMaximumMember(), actual.getMaximumMember()),
+                            () -> assertEquals(expected.getCurrentMember(), actual.getCurrentMember()),
+                            () -> assertEquals(expected.getLastCommitDay(), actual.getLastCommitDay()),
+                            () -> assertEquals(expected.getProfileImageUrl(), actual.getProfileImageUrl()),
+                            () -> assertEquals(expected.getPeriodType(), actual.getPeriodType())
+                    );
+                });
+    }
+
+    @Test
+    public void 마이스터디_조회_테스트_스터디_카테고리_name_반환_테스트() {
+        // given
+        int expectedTeamACategorySize = 4;
+        int expectedTeamBCategorySize = 3;
+        // My 스터디 A 생성
+        User myUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        StudyInfo myStudyA = studyInfoRepository.save(generateStudyInfo(myUser.getId()));
+        List<StudyCategory> myStudyCategoriesA = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(expectedTeamACategorySize));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(myStudyA, myStudyCategoriesA));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(myUser.getId(), myStudyA.getId()));
+
+        // My 스터디 B 생성
+        StudyInfo myStudyB = studyInfoRepository.save(generateStudyInfo(myUser.getId()));
+        List<StudyCategory> myStudyCategoriesB = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(expectedTeamBCategorySize));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(myStudyB, myStudyCategoriesB));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(myUser.getId(), myStudyB.getId()));
+
+        // other 스터디 생성
+        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        StudyInfo otherStudyInfo = studyInfoRepository.save(generateStudyInfo(otherUser.getId()));
+        List<StudyCategory> otherStudyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(otherStudyInfo, otherStudyCategories));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(otherUser.getId(), otherStudyInfo.getId()));
+
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(myUser.getId(), null, LIMIT, SORTBY, true);
+        Map<Long, List<String>> studyCategoryMappingMap = response.getStudyCategoryMappingMap();
+
+        // then
+        assertEquals(studyCategoryMappingMap.size(), 2);
+        // My 스터디 A 검증
+        assertEquals(studyCategoryMappingMap.get(myStudyA.getId()).size(), expectedTeamACategorySize);
+        for (int i = 0; i < studyCategoryMappingMap.get(myStudyA.getId()).size(); i++) {
+            assertEquals(studyCategoryMappingMap.get(myStudyA.getId()).get(i), myStudyCategoriesA.get(expectedTeamACategorySize - i - 1).getName());
+        }
+
+        // My 스터디 B 검증
+        assertEquals(studyCategoryMappingMap.get(myStudyB.getId()).size(), expectedTeamBCategorySize);
+        for (int i = 0; i < studyCategoryMappingMap.get(myStudyB.getId()).size(); i++) {
+            assertEquals(studyCategoryMappingMap.get(myStudyB.getId()).get(i), myStudyCategoriesB.get(expectedTeamBCategorySize - i - 1).getName());
+        }
+    }
+
+
+    @Test
+    public void 마이스터디_조회_테스트_스터디_멤버_정보_반환_테스트() {
+        // given
+        int expectedTeamASize = 3;
+        int expectedTeamBSize = 4;
+
+        User myLeaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User otherLeaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("d"));
+        User user3 = userRepository.save(UserFixture.generateAuthUserByPlatformId("e"));
+        User user4 = userRepository.save(UserFixture.generateAuthUserByPlatformId("f"));
+
+        // StudyInfo 생성
+        StudyInfo myStudyA = studyInfoRepository.save(generateStudyInfo(myLeaderUser.getId()));
+        StudyInfo myStudyB = studyInfoRepository.save(generateStudyInfo(myLeaderUser.getId()));
+        StudyInfo OtherStudy = studyInfoRepository.save(generateStudyInfo(otherLeaderUser.getId()));
+
+        // myStudyMemberA 생성
+        List<StudyMember> studyMembers = new ArrayList<>();
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(myLeaderUser.getId(), myStudyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user1.getId(), myStudyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), myStudyA.getId()));
+
+
+        // myStudyMemberB 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(myLeaderUser.getId(), myStudyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), myStudyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), myStudyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user4.getId(), myStudyB.getId()));
+
+        // otherStudyMember 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(otherLeaderUser.getId(), OtherStudy.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user1.getId(), OtherStudy.getId()));
+
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), OtherStudy.getId()));
+        studyMemberRepository.saveAll(studyMembers);
+
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(myLeaderUser.getId(), null, LIMIT, SORTBY, true);
+        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
+
+        // then
+        // 내 스터디 정보 검증
+        Long myStudyAId = myStudyA.getId();
+        List<UserNameAndProfileImageResponse> myStudyAUserList = studyUserInfoMap.get(myStudyAId);
+        assertEquals(expectedTeamASize, myStudyAUserList.size());
+//        for(int i=0;i<myStudyAUserList.size();i++){
+//            System.out.println(myStudyAUserList.get(i).getId());
+//        }
+
+        Long myStudyBId = myStudyB.getId();
+        List<UserNameAndProfileImageResponse> myStudyBUserList = studyUserInfoMap.get(myStudyBId);
+        assertEquals(expectedTeamBSize, myStudyBUserList.size());
+//        for(int i=0;i<myStudyBUserList.size();i++){
+//            System.out.println(myStudyBUserList.get(i).getId());
+//        }
+    }
+
+    @Test
+    void 스코어_정렬로_스터디조회_커서기반_페이지네이션_중복_데이터_누락_제거_테스트() {
+        // [문제]
+        // score: 100
+        // score: 70
+        // score: 50
+        // score: 40
+        // score: 30
+        // score: 30 <- cursorIdx
+        // score: 30
+        // score: 20 <- 여기부터 조회됨
+        // score: 10
+        // score: 5
+        // 중복 데이터 누락 발생!
+
+        // [해결]
+        // score가 30으로 동일한 스터디가 3개가 있을 때 데이터 누락 되면 안되는 테스트
+        // 데이터가 누락 안되게 올바른 cursorIdx가 반환되는지 Test한다.
+
+        // given
+        String sortBy = "score";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> list = new ArrayList<>();
+        StudyInfo score100 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 100);
+        StudyInfo score70 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 70);
+        StudyInfo score50 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 50);
+        StudyInfo score40 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 40);
+        StudyInfo score30_1 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 30);
+        StudyInfo score30_2 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 30);
+        StudyInfo score30_3 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 30);
+        StudyInfo score20 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 20);
+        StudyInfo score10 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 10);
+        StudyInfo score5 = testSortScoreStudyCursorPaginationWithoutMissingData(savedUser.getId(), 5);
+
+
+        list.add(score100);list.add(score70);list.add(score50);list.add(score40);list.add(score30_1);
+        list.add(score30_2);list.add(score30_3);list.add(score20);list.add(score10);list.add(score5);
+
+        studyInfoRepository.saveAll(list);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(list));
+        // when
+        StudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectStudyInfoList(savedUser.getId()
+                , null
+                , LIMIT
+                , sortBy
+                , true);
+
+        List<StudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
+        System.out.println("---------After sort by Score----------");
+        for(StudyInfoListResponse x: studyInfoList1){
+            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+        }
+        System.out.println("--------------------------------------");
+
+        // when
+        StudyInfoListAndCursorIdxResponse response2 = studyInfoService.selectStudyInfoList(savedUser.getId()
+                , score50.getId()
+                , 3L
+                , sortBy
+                , true);
+        List<StudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " + score50.getId() + ", limit : 3]");
+        for(StudyInfoListResponse x: studyInfoList2){
+            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+        }
+        System.out.println("response ->[cursorIdx : " + response2.getCursorIdx() +"]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response2.getCursorIdx(), score30_2.getId());
+
+        // when
+        StudyInfoListAndCursorIdxResponse response3 = studyInfoService.selectStudyInfoList(savedUser.getId()
+                , response2.getCursorIdx()
+                , 3L
+                , sortBy
+                , true);
+        List<StudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " +response2.getCursorIdx() + ", limit : 3]");
+        for(StudyInfoListResponse x: studyInfoList3){
+            System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
+        }
+        System.out.println("response ->[cursorIdx : " + response3.getCursorIdx() +"]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response3.getCursorIdx(), score10.getId());
+    }
+    @Test
+    void 마지막_커밋_정렬로_스터디조회_커서기반_페이지네이션_중복_데이터_누락_제거_테스트() {
+        // [문제]
+        // 중복 데이터 누락 발생!
+
+        // [해결]
+        // lastCommitDay가 동일한 스터디가 여러 개 있을 때 데이터 누락이 발생하지 않는지 테스트
+        // 데이터가 누락되지 않게 올바른 cursorIdx가 반환되는지 테스트
+
+        // given
+        String sortBy = "lastCommitDay";
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyInfo> list = new ArrayList<>();
+        LocalDate currentDate = LocalDate.now();
+
+        // 시간을 조정하여 스터디 정보 생성
+        StudyInfo studyInfo1 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate);
+        StudyInfo studyInfo2 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(1));
+        StudyInfo studyInfo3 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(2));
+        StudyInfo studyInfo4 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(3));
+        StudyInfo studyInfo5 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(4));
+        StudyInfo studyInfo6 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(4));
+        StudyInfo studyInfo7 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(4));
+        StudyInfo studyInfo8 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(5));
+        StudyInfo studyInfo9 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(6));
+        StudyInfo studyInfo10 = testSortLastCommitDayStudyCursorPaginationWithoutMissingData(savedUser.getId(), currentDate.minusDays(7));
+
+        list.add(studyInfo1); list.add(studyInfo2); list.add(studyInfo3); list.add(studyInfo4); list.add(studyInfo5);
+        list.add(studyInfo6); list.add(studyInfo7); list.add(studyInfo8); list.add(studyInfo9); list.add(studyInfo10);
+
+        studyInfoRepository.saveAll(list);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(list));
+
+        // when
+        StudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectStudyInfoList(savedUser.getId(), null, LIMIT, sortBy, true);
+        List<StudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
+        System.out.println("---------lastCommitDay 기준으로 정렬 후----------");
+        for (StudyInfoListResponse x : studyInfoList1) {
+            System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
+        }
+        System.out.println("--------------------------------------");
+
+        // when
+        StudyInfoListAndCursorIdxResponse response2
+                = studyInfoService.selectStudyInfoList(savedUser.getId(), studyInfo3.getId(), 3L, sortBy, true);
+        List<StudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " + studyInfo3.getId() + ", limit : 3]");
+        for (StudyInfoListResponse x : studyInfoList2) {
+            System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
+        }
+        System.out.println("response ->[cursorIdx : " + response2.getCursorIdx() + "]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response2.getCursorIdx(), studyInfo6.getId());
+
+        // when
+        StudyInfoListAndCursorIdxResponse response3
+                = studyInfoService.selectStudyInfoList(savedUser.getId(), response2.getCursorIdx(), 3L, sortBy, true);
+        List<StudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
+        System.out.println("-------------------------------------------");
+        System.out.println("request ->[cursorIdx : " + response2.getCursorIdx() + ", limit : 3]");
+        for (StudyInfoListResponse x : studyInfoList3) {
+            System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
+        }
+        System.out.println("response ->[cursorIdx : " + response3.getCursorIdx() + "]");
+        System.out.println("--------------------------------------------");
+
+        // then
+        assertEquals(response3.getCursorIdx(), studyInfo9.getId());
+    }
+
+
+    @Test
+    public void 전체_스터디_조회_테스트() {
+        // given
+        int expectedResponseSize = 5;
+
+        // 유저 생성
+        User MyUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        // 스터디 생성
+        List<StudyInfo> studyInfos = new ArrayList<>();
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(MyUser.getId()));
+        studyInfos.add(generateStudyInfo(otherUser.getId()));
+        studyInfos.add(generateStudyInfo(otherUser.getId()));
+        studyInfoRepository.saveAll(studyInfos);
+        studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY, false);
+
+        // response.getStudyInfoList()를 id순으로 정렬
+        response.getStudyInfoList().sort(Comparator.comparingLong(StudyInfoListResponse::getId));
+
+        // then
+        IntStream.range(0, expectedResponseSize)
+                .forEach(i -> {
+                    StudyInfo expected = studyInfos.get(i);
+                    StudyInfoListResponse actual = response.getStudyInfoList().get(i);
+
+                    assertAll(
+                            () -> assertEquals(expected.getId(), actual.getId()),
+                            () -> assertEquals(expected.getUserId(), actual.getUserId()),
+                            () -> assertEquals(expected.getTopic(), actual.getTopic()),
+                            () -> assertEquals(expected.getScore(), actual.getScore()),
+                            () -> assertEquals(expected.getInfo(), actual.getInfo()),
+                            () -> assertEquals(expected.getMaximumMember(), actual.getMaximumMember()),
+                            () -> assertEquals(expected.getCurrentMember(), actual.getCurrentMember()),
+                            () -> assertEquals(expected.getLastCommitDay(), actual.getLastCommitDay()),
+                            () -> assertEquals(expected.getProfileImageUrl(), actual.getProfileImageUrl()),
+                            () -> assertEquals(expected.getPeriodType(), actual.getPeriodType())
+                    );
+                });
+    }
+
+    @Test
+    public void 전체_스터디_조회_테스트_스터디_카테고리_name_반환_테스트() {
+        // given
+        int expectedTeamACategorySize = 4;
+        int expectedTeamBCategorySize = 3;
+        int expectedTeamCCategorySize = 2;
+        int expectedStudySize = 3;
+
+        // 스터디 A 생성
+        User userA = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        StudyInfo studyA = studyInfoRepository.save(generateStudyInfo(userA.getId()));
+        List<StudyCategory> studyCategoriesA = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(expectedTeamACategorySize));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(studyA, studyCategoriesA));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userA.getId(), studyA.getId()));
+
+        // 스터디 B 생성
+        User userB = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        StudyInfo studyB = studyInfoRepository.save(generateStudyInfo(userB.getId()));
+        List<StudyCategory> myStudyCategoriesB = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(expectedTeamBCategorySize));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(studyB, myStudyCategoriesB));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userB.getId(), studyB.getId()));
+
+        // 스터디 C 생성
+        User userC = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+        StudyInfo studyC = studyInfoRepository.save(generateStudyInfo(userC.getId()));
+        List<StudyCategory> myStudyCategoriesC = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(expectedTeamCCategorySize));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(studyC, myStudyCategoriesC));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userC.getId(), studyC.getId()));
+
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(userA.getId(), null, LIMIT, SORTBY, false);
+        Map<Long, List<String>> studyCategoryMappingMap = response.getStudyCategoryMappingMap();
+
+        // then
+        assertEquals(studyCategoryMappingMap.size(), expectedStudySize);
+        // 스터디 A 검증
+        assertEquals(studyCategoryMappingMap.get(studyA.getId()).size(), expectedTeamACategorySize);
+        for (int i = 0; i < studyCategoryMappingMap.get(studyA.getId()).size(); i++) {
+            assertEquals(studyCategoryMappingMap.get(studyA.getId()).get(i), studyCategoriesA.get(expectedTeamACategorySize - i - 1).getName());
+        }
+
+        // 스터디 B 검증
+        assertEquals(studyCategoryMappingMap.get(studyB.getId()).size(), expectedTeamBCategorySize);
+        for (int i = 0; i < studyCategoryMappingMap.get(studyB.getId()).size(); i++) {
+            assertEquals(studyCategoryMappingMap.get(studyB.getId()).get(i), myStudyCategoriesB.get(expectedTeamBCategorySize - i - 1).getName());
+        }
+
+        // 스터디 C 검증
+        assertEquals(studyCategoryMappingMap.get(studyC.getId()).size(), expectedTeamCCategorySize);
+        for (int i = 0; i < studyCategoryMappingMap.get(studyC.getId()).size(); i++) {
+            assertEquals(studyCategoryMappingMap.get(studyC.getId()).get(i), myStudyCategoriesC.get(expectedTeamCCategorySize - i - 1).getName());
+        }
+    }
+
+
+    @Test
+    public void 전체_스터디_조회_테스트_스터디_멤버_정보_반환_테스트() {
+        // given
+        int expectedTeamASize = 3;
+        int expectedTeamBSize = 4;
+        int expectedTeamCSize = 2;
+        int expectedStudySize = 3;
+
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user3 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+        User user4 = userRepository.save(UserFixture.generateAuthUserByPlatformId("d"));
+        User user5 = userRepository.save(UserFixture.generateAuthUserByPlatformId("e"));
+        User user6 = userRepository.save(UserFixture.generateAuthUserByPlatformId("f"));
+
+        // StudyInfo 생성
+        StudyInfo studyA = studyInfoRepository.save(generateStudyInfo(user1.getId()));
+        StudyInfo studyB = studyInfoRepository.save(generateStudyInfo(user2.getId()));
+        StudyInfo studyC = studyInfoRepository.save(generateStudyInfo(user3.getId()));
+
+        // StudyMemberA 생성
+        List<StudyMember> studyMembers = new ArrayList<>();
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(user1.getId(), studyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyA.getId()));
+
+
+        // StudyMemberB 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(user2.getId(), studyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user4.getId(), studyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user5.getId(), studyB.getId()));
+
+        // StudyMemberC 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(user3.getId(), studyC.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user6.getId(), studyC.getId()));
+
+        studyMemberRepository.saveAll(studyMembers);
+
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(user1.getId(), null, LIMIT, SORTBY, false);
+        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
+
+        // then
+        // 스터디 정보 검증
+        assertEquals(studyUserInfoMap.size(), expectedStudySize);
+
+        Long studyAId = studyA.getId();
+        List<UserNameAndProfileImageResponse> studyAUserList = studyUserInfoMap.get(studyAId);
+        assertEquals(expectedTeamASize, studyAUserList.size());
+//        for(int i=0;i<studyAUserList.size();i++){
+//            System.out.println(studyAUserList.get(i).getId());
+//        }
+
+        Long studyBId = studyB.getId();
+        List<UserNameAndProfileImageResponse> studyBUserList = studyUserInfoMap.get(studyBId);
+        assertEquals(expectedTeamBSize, studyBUserList.size());
+//        for(int i=0;i<studyBUserList.size();i++){
+//            System.out.println(studyBUserList.get(i).getId());
+//        }
+
+        Long studyCId = studyC.getId();
+        List<UserNameAndProfileImageResponse> studyCUserList = studyUserInfoMap.get(studyCId);
+        assertEquals(expectedTeamCSize, studyCUserList.size());
+//        for(int i=0;i<studyCUserList.size();i++){
+//            System.out.println(studyCUserList.get(i).getId());
+//        }
     }
 }

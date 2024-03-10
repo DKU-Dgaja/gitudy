@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
     // select u from user u where u.platformId = :platformId and u.platformType = :platformType
     Optional<User> findByPlatformIdAndPlatformType(String platformId, UserPlatformType platformType);

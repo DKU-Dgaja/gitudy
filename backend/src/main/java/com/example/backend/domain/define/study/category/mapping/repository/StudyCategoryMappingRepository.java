@@ -5,7 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface StudyCategoryMappingRepository extends JpaRepository<StudyCategoryMapping, Long> {
+public interface StudyCategoryMappingRepository extends JpaRepository<StudyCategoryMapping, Long>, StudyCategoryMappingRepositoryCustom {
     Optional<StudyCategoryMapping> deleteByStudyInfoId(Long studyInfoId);
 
     List<StudyCategoryMapping> findByStudyInfoId(Long studyInfoId);
