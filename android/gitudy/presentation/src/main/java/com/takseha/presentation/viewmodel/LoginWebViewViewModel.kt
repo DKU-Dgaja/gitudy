@@ -5,17 +5,17 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
-import com.takseha.common.util.SharedPreferences
+import com.takseha.common.util.SP
 import com.takseha.data.repository.GitudyRepository
 import kotlinx.coroutines.launch
 
 // viewModel에서 context 참조 필요한 경우 AndroidViewModel(application) 상속!
 class LoginWebViewViewModel(application: Application) : AndroidViewModel(application) {
     private val gitudyRepository = GitudyRepository()
-    private lateinit var prefs: SharedPreferences
+    private lateinit var prefs: SP
 
     fun saveAllTokens(platformType: String, code: String, state: String) = viewModelScope.launch {
-        prefs = SharedPreferences(getApplication())
+        prefs = SP(getApplication())
 
         val tokenResponse = gitudyRepository.getLoginTokens(platformType, code, state)
         val resCode = tokenResponse.resCode

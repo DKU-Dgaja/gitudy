@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import com.takseha.common.util.SharedPreferences
 import com.takseha.presentation.R
 import com.takseha.presentation.ui.login.LoginActivity
 

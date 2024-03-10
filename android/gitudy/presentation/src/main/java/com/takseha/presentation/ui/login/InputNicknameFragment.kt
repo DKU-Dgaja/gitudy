@@ -12,7 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
 import com.takseha.common.model.SPKey
-import com.takseha.common.util.SharedPreferences
+import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputNicknameBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
@@ -20,7 +20,7 @@ import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 class InputNicknameFragment : Fragment() {
     private var _binding: FragmentInputNicknameBinding? = null
     private val binding get() = _binding!!
-    private lateinit var prefs: SharedPreferences
+    private lateinit var prefs: SP
     private val maxLength = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,7 +38,7 @@ class InputNicknameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        prefs = SharedPreferences(requireActivity().applicationContext)
+        prefs = SP(requireActivity().applicationContext)
 
         with(binding) {
             inputNicknameEditText.addTextChangedListener(object : TextWatcher {

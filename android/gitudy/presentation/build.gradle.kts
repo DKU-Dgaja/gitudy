@@ -72,4 +72,7 @@ dependencies {
     // navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+
+    // security
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
 }
