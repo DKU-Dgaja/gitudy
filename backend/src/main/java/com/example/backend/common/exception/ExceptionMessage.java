@@ -62,6 +62,7 @@ public enum ExceptionMessage {
     STUDY_ALREADY_MEMBER("이미 해당 스터디의 멤버 입니다."),
     STUDY_RESIGNED_MEMBER("이미 강퇴당한 스터디 입니다."),
     STUDY_WAITING_MEMBER("이미 가입신청 완료하여 승인 대기중인 스터디 입니다."),
+    STUDY_JOIN_CODE_FAIL("스터디 참여 코드가 맞지 않습니다."),
 
     // StudyCommentException
     STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),

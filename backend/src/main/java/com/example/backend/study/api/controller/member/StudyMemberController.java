@@ -69,11 +69,12 @@ public class StudyMemberController {
     @ApiResponse(responseCode = "200", description = "스터디 가입 신청 성공")
     @PostMapping("/{studyInfoId}/apply")
     public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
-                                          @PathVariable(name = "studyInfoId") Long studyInfoId) {
+                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                          @RequestParam(name = "joinCode", required = false) String joinCode) {
 
         UserInfoResponse userInfo = authService.findUserInfo(user);
 
-        studyMemberService.applyStudyMember(userInfo, studyInfoId);
+        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode);
 
         return JsonResult.successOf("Apply StudyMember Success");
     }
