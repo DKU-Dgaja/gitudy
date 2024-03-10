@@ -4,6 +4,8 @@ import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -368,4 +370,26 @@ public class StudyMemberServiceTest extends TestConfig {
 
     }
 
+    @Test
+    @DisplayName("한번 강퇴된 스터디원 가입 신청 테스트")
+    public void applyStudyMember_resigned() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember studyMember = StudyMemberFixture.createStudyMemberResigned(user1.getId(), studyInfo.getId()); // 강퇴 멤버 생성
+        studyMemberRepository.save(studyMember);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // then
+        assertThrows(MemberException.class, () -> {
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId());
+        }, ExceptionMessage.STUDY_RESIGNED_MEMBER.getText());
+
+    }
 }
