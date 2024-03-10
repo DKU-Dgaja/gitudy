@@ -1,6 +1,5 @@
 package com.example.backend.auth.api.controller.auth.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -16,7 +15,6 @@ public class AuthRegisterRequest {
     private String name;
 
     @NotNull
-    @Email
     private String githubId;
 
 }
