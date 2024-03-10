@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.info;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.response.JsonResult;
@@ -79,16 +80,27 @@ public class StudyInfoController {
     // 스터디 조회
     @ApiResponse(responseCode = "200", description = "스터디 조회 성공", content = @Content(schema = @Schema(implementation =
             StudyInfoListResponse.class)))
-    @GetMapping("/{userId}")
+    @GetMapping("/")
     public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
-                                                    @PathVariable(name = "userId") Long userId,
                                                     @Min(value = 0, message = "Cursor index cannot be negative")
                                                     @RequestParam(name = "cursorIdx") Long cursorIdx,
                                                     @RequestParam(name = "limit", defaultValue = "20") Long limit,
                                                     @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
                                                     @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
     ) {
-        authService.authenticate(userId, user);
-        return JsonResult.successOf(studyInfoService.selectStudyInfoList(userId, cursorIdx, limit, sortBy, myStudy));
+        UserInfoResponse findUser = authService.findUserInfo(user);
+        authService.authenticate(findUser.getUserId(), user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoList(findUser.getUserId(), cursorIdx, limit, sortBy, myStudy));
     }
+
+//    // 한개의 스터디 상세정보 조회
+//    @ApiResponse(responseCode = "200", description = "스터디 상세정보 조회 성공", content = @Content(schema = @Schema(implementation =
+//            StudyInfoListResponse.class)))
+//    @GetMapping("/{studyInfoId}")
+//    public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
+//                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
+//        authService.authenticate(user);
+//        Optional<StudyInfoResponse> studyInfo = studyInfoService.selectStudyInfo(studyInfoId);
+//        return JsonResult.successOf(studyInfo);
+//    }
 }

@@ -269,13 +269,13 @@ class StudyInfoControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
-        mockMvc.perform(get("/study/" + user.getId())
+        mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
@@ -299,11 +299,12 @@ class StudyInfoControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/study/" + user.getId())
+        mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
@@ -333,7 +334,7 @@ class StudyInfoControllerTest extends TestConfig {
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
-        mockMvc.perform(get("/study/" + user.getId())
+        mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
@@ -356,13 +357,13 @@ class StudyInfoControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
-        mockMvc.perform(get("/study/" + user.getId())
+        mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
@@ -384,12 +385,12 @@ class StudyInfoControllerTest extends TestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
-
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/study/" + user.getId())
+        mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
@@ -418,7 +419,7 @@ class StudyInfoControllerTest extends TestConfig {
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
-        mockMvc.perform(get("/study/" + user.getId())
+        mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("limit", "10")
