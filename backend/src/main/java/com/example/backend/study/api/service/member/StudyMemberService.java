@@ -133,6 +133,11 @@ public class StudyMemberService {
             throw new MemberException(ExceptionMessage.STUDY_ALREADY_MEMBER);
         }
 
+        // 강퇴되었던 멤버인지 확인
+        if (studyMemberRepository.isResignedStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
+            throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
+        }
+
         // '스터디 승인 대기중인 유저' 로 생성
         StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId());
         studyMemberRepository.save(studyMember);
