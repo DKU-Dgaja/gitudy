@@ -5,8 +5,6 @@ import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenR
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
-import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
-import com.example.backend.auth.api.service.auth.response.AuthServiceRegisterResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
@@ -32,7 +30,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashMap;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -84,7 +81,6 @@ public class AuthService {
         return AuthLoginResponse.builder()
                 .accessToken(jwtToken.getAccessToken())
                 .refreshToken(jwtToken.getRefreshToken())
-                .role(findUser.getRole())
                 .build();
     }
 
@@ -151,7 +147,7 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthServiceRegisterResponse register(AuthServiceRegisterRequest request, User user) {
+    public AuthLoginResponse register(AuthServiceRegisterRequest request, User user) {
         User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElseThrow(() -> {
             // UNAUTH인 토큰을 받고 회원 탈퇴 후 그 토큰으로 회원가입 요청시 예외 처리
             log.warn(">>>> User Not Exist : {}", ExceptionMessage.AUTH_INVALID_REGISTER.getText());
@@ -170,7 +166,7 @@ public class AuthService {
         // JWT Access Token, Refresh Token 재발급
         JwtToken tokens = createJwtToken(findUser);
 
-        return AuthServiceRegisterResponse.builder()
+        return AuthLoginResponse.builder()
                 .accessToken(tokens.getAccessToken())
                 .refreshToken(tokens.getRefreshToken())
                 .build();

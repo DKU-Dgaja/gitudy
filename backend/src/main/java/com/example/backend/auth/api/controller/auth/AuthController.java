@@ -6,8 +6,6 @@ import com.example.backend.auth.api.controller.auth.response.*;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
-import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
-import com.example.backend.auth.api.service.auth.response.AuthServiceRegisterResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
@@ -119,14 +117,14 @@ public class AuthController {
         return JsonResult.successOf(userInfoResponse);
     }
 
-    @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthServiceLoginResponse.class)))
+    @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthLoginResponse.class)))
     @PostMapping("/register")
     public JsonResult<?> register(@AuthenticationPrincipal User user,
                                   @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
 
-        AuthServiceRegisterResponse registerResponse = authService.register(AuthServiceRegisterRequest.of(request), user);
+        AuthLoginResponse response = authService.register(AuthServiceRegisterRequest.of(request), user);
 
-        return JsonResult.successOf(registerResponse);
+        return JsonResult.successOf(response);
     }
 
     @ApiResponse(responseCode = "200", description = "회원탈퇴 성공")

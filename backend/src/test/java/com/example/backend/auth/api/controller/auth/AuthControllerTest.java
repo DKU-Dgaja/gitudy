@@ -3,12 +3,11 @@ package com.example.backend.auth.api.controller.auth;
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
+import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
-import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
-import com.example.backend.auth.api.service.auth.response.AuthServiceRegisterResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -16,12 +15,10 @@ import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -183,7 +180,7 @@ class AuthControllerTest extends TestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
-        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthServiceRegisterResponse.builder()
+        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthLoginResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .build()

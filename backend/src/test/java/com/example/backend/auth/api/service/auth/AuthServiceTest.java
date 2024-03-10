@@ -5,7 +5,6 @@ import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
-import com.example.backend.auth.api.service.auth.response.AuthServiceRegisterResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
@@ -149,7 +148,7 @@ class AuthServiceTest extends TestConfig {
                 .build();
 
         // when
-        AuthServiceRegisterResponse response = authService.register(request, unauthUser);
+        AuthLoginResponse response = authService.register(request, unauthUser);
 
         User savedUser = userRepository.findByPlatformIdAndPlatformType(unauthUser.getPlatformId(), unauthUser.getPlatformType()).orElse(null);
         boolean tokenValid = jwtService.isTokenValid(response.getAccessToken(), savedUser.getUsername());   // 발행한 토큰 검증
