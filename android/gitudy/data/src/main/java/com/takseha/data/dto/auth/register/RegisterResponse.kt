@@ -16,5 +16,7 @@ data class RegisterTokenInfo(
     @SerializedName("access_token")
     val accessToken: String,
     @SerializedName("refresh_token")
-    val refreshToken: String
+    val refreshToken: String,
+    @SerializedName("role")
+    val role: String
 )

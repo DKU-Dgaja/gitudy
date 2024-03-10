@@ -45,8 +45,8 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             )
         }"
         val request = RegisterRequest(
-            prefs.loadPref(SPKey.GITHUB_ID, "0"),
-            prefs.loadPref(SPKey.GITUDY_NAME, "0")
+            githubId = prefs.loadPref(SPKey.GITHUB_ID, "0"),
+            name = prefs.loadPref(SPKey.GITUDY_NAME, "0")
         )
 
         val tokenResponse = gitudyRepository.getRegisterTokens(bearerToken, request)
