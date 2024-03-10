@@ -6,11 +6,9 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
-import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,7 +53,7 @@ class StudyInfoRepositoryTest extends TestConfig {
 
 
         // when
-        List<MyStudyInfoListResponse> studyInfoList = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, true);
+        List<StudyInfoListResponse> studyInfoList = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, true);
         // then
         assertEquals(LIMIT, studyInfoList.size());
     }
@@ -74,10 +72,10 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyInfoRepository.saveAll(studyInfos);
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
-        List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, true);
+        List<StudyInfoListResponse> studyInfoPage = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, true);
 
         // then
-        for (MyStudyInfoListResponse myStudyInfoList : studyInfoPage) {
+        for (StudyInfoListResponse myStudyInfoList : studyInfoPage) {
             assertTrue(myStudyInfoList.getId() < cursorIdx);
         }
     }
@@ -96,10 +94,10 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos1));
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos2));
         // when
-        List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(user.getId(), cursorIdx, LIMIT, sortBy, true);
+        List<StudyInfoListResponse> studyInfoPage = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(user.getId(), cursorIdx, LIMIT, sortBy, true);
 
         // then
-        for (MyStudyInfoListResponse myStudyInfoList : studyInfoPage) {
+        for (StudyInfoListResponse myStudyInfoList : studyInfoPage) {
             assertTrue(myStudyInfoList.getId() < cursorIdx);
         }
     }
@@ -116,11 +114,11 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyInfoRepository.saveAll(studyInfos);
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
-        List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, true);
+        List<StudyInfoListResponse> studyInfoPage = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, true);
 
         // then
         int previousScore = Integer.MAX_VALUE;
-        for (MyStudyInfoListResponse studyInfo : studyInfoPage) {
+        for (StudyInfoListResponse studyInfo : studyInfoPage) {
             int currentScore = studyInfo.getScore();
             assertTrue(currentScore <= previousScore);
             previousScore = currentScore;
@@ -136,11 +134,11 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
 
         // when
-        List<MyStudyInfoListResponse> response = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, true);
+        List<StudyInfoListResponse> response = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, true);
 
         assertEquals(LIMIT, response.size());
         LocalDate previousCommitDay = null;
-        for (MyStudyInfoListResponse studyInfo : response) {
+        for (StudyInfoListResponse studyInfo : response) {
             LocalDate currentCommitDay = studyInfo.getLastCommitDay();
             if (previousCommitDay != null) {
                 assertTrue(currentCommitDay.isBefore(previousCommitDay) || currentCommitDay.isEqual(previousCommitDay));
@@ -158,13 +156,13 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
 
         // when
-        List<MyStudyInfoListResponse> response = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, true);
+        List<StudyInfoListResponse> response = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, true);
 
         // then
         assertEquals(LIMIT, response.size());
 
         LocalDateTime previousCreatedDateTime = response.get(0).getCreatedDateTime();
-        for (MyStudyInfoListResponse studyInfo : response) {
+        for (StudyInfoListResponse studyInfo : response) {
             LocalDateTime currentCreatedDateTime = studyInfo.getCreatedDateTime();
             assertTrue(currentCreatedDateTime.compareTo(previousCreatedDateTime) <= 0);
             previousCreatedDateTime = currentCreatedDateTime;
@@ -181,7 +179,7 @@ class StudyInfoRepositoryTest extends TestConfig {
 
 
         // when
-        List<MyStudyInfoListResponse> studyInfoList = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, false);
+        List<StudyInfoListResponse> studyInfoList = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, false);
         // then
         assertEquals(LIMIT, studyInfoList.size());
     }
@@ -200,10 +198,10 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyInfoRepository.saveAll(studyInfos);
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
-        List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, false);
+        List<StudyInfoListResponse> studyInfoPage = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, false);
 
         // then
-        for (MyStudyInfoListResponse myStudyInfoList : studyInfoPage) {
+        for (StudyInfoListResponse myStudyInfoList : studyInfoPage) {
             assertTrue(myStudyInfoList.getId() < cursorIdx);
         }
     }
@@ -222,10 +220,10 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos1));
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos2));
         // when
-        List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(user.getId(), cursorIdx, LIMIT, sortBy, false);
+        List<StudyInfoListResponse> studyInfoPage = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(user.getId(), cursorIdx, LIMIT, sortBy, false);
 
         // then
-        for (MyStudyInfoListResponse myStudyInfoList : studyInfoPage) {
+        for (StudyInfoListResponse myStudyInfoList : studyInfoPage) {
             assertTrue(myStudyInfoList.getId() < cursorIdx);
         }
     }
@@ -242,11 +240,11 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyInfoRepository.saveAll(studyInfos);
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
         // when
-        List<MyStudyInfoListResponse> studyInfoPage = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, false);
+        List<StudyInfoListResponse> studyInfoPage = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), cursorIdx, LIMIT, sortBy, false);
 
         // then
         int previousScore = Integer.MAX_VALUE;
-        for (MyStudyInfoListResponse studyInfo : studyInfoPage) {
+        for (StudyInfoListResponse studyInfo : studyInfoPage) {
             int currentScore = studyInfo.getScore();
             assertTrue(currentScore <= previousScore);
             previousScore = currentScore;
@@ -262,11 +260,11 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
 
         // when
-        List<MyStudyInfoListResponse> response = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, false);
+        List<StudyInfoListResponse> response = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, false);
 
         assertEquals(LIMIT, response.size());
         LocalDate previousCommitDay = null;
-        for (MyStudyInfoListResponse studyInfo : response) {
+        for (StudyInfoListResponse studyInfo : response) {
             LocalDate currentCommitDay = studyInfo.getLastCommitDay();
             if (previousCommitDay != null) {
                 assertTrue(currentCommitDay.isBefore(previousCommitDay) || currentCommitDay.isEqual(previousCommitDay));
@@ -284,13 +282,13 @@ class StudyInfoRepositoryTest extends TestConfig {
         studyMemberRepository.saveAll(StudyMemberFixture.createDefaultStudyMemberList(studyInfos));
 
         // when
-        List<MyStudyInfoListResponse> response = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, false);
+        List<StudyInfoListResponse> response = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(savedUser.getId(), null, LIMIT, sortBy, false);
 
         // then
         assertEquals(LIMIT, response.size());
 
         LocalDateTime previousCreatedDateTime = response.get(0).getCreatedDateTime();
-        for (MyStudyInfoListResponse studyInfo : response) {
+        for (StudyInfoListResponse studyInfo : response) {
             LocalDateTime currentCreatedDateTime = studyInfo.getCreatedDateTime();
             assertTrue(currentCreatedDateTime.compareTo(previousCreatedDateTime) <= 0);
             previousCreatedDateTime = currentCreatedDateTime;

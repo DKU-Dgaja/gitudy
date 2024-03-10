@@ -109,8 +109,8 @@ public class StudyInfoService {
     }
 
     // 정렬된 스터디 조회
-    public MyStudyInfoListAndCursorIdxResponse selectMyStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy, boolean myStudy) {
-        List<MyStudyInfoListResponse> studyInfoListResponse = studyInfoRepository.findMyStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy, myStudy);
+    public StudyInfoListAndCursorIdxResponse selectStudyInfoList(Long userId, Long cursorIdx, Long limit, String sortBy, boolean myStudy) {
+        List<StudyInfoListResponse> studyInfoListResponse = studyInfoRepository.findStudyInfoListByParameter_CursorPaging(userId, cursorIdx, limit, sortBy, myStudy);
         List<Long> studyInfoIdList = getStudyInfoIdList(studyInfoListResponse);
 
 
@@ -126,7 +126,7 @@ public class StudyInfoService {
         Map<Long, List<String>> studyCategoryMappingMap = getStudyCategoryMappingMap(categoryResponseWithStudyIdList);
 
 
-        MyStudyInfoListAndCursorIdxResponse response = MyStudyInfoListAndCursorIdxResponse.builder()
+        StudyInfoListAndCursorIdxResponse response = StudyInfoListAndCursorIdxResponse.builder()
                 .studyInfoList(studyInfoListResponse)
                 .studyUserInfoMap(studyUserInfoMap)
                 .studyCategoryMappingMap(studyCategoryMappingMap)
@@ -155,9 +155,9 @@ public class StudyInfoService {
     }
 
     // studyInfoIdList 만들어주는 함수
-    private static List<Long> getStudyInfoIdList(List<MyStudyInfoListResponse> studyInfoListResponse) {
+    private static List<Long> getStudyInfoIdList(List<StudyInfoListResponse> studyInfoListResponse) {
         return studyInfoListResponse.stream()
-                .map(MyStudyInfoListResponse::getId)
+                .map(StudyInfoListResponse::getId)
                 .collect(Collectors.toList());
     }
 

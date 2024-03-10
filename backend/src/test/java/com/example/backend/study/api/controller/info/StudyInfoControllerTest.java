@@ -271,7 +271,7 @@ class StudyInfoControllerTest extends TestConfig {
 
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -329,7 +329,7 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -358,7 +358,7 @@ class StudyInfoControllerTest extends TestConfig {
 
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -414,7 +414,7 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when

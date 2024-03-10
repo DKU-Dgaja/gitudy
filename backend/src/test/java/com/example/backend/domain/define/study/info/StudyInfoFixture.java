@@ -6,13 +6,12 @@ import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -214,13 +213,13 @@ public class StudyInfoFixture {
                 .build();
     }
     // MyStudyInfoListAndCursorIdxResponse를 생성해주는 함수
-    public static MyStudyInfoListAndCursorIdxResponse generateMyStudyInfoListAndCursorIdxResponse() {
-        List<MyStudyInfoListResponse> studyInfoList = new ArrayList<>();
+    public static StudyInfoListAndCursorIdxResponse generateMyStudyInfoListAndCursorIdxResponse() {
+        List<StudyInfoListResponse> studyInfoList = new ArrayList<>();
         Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = new HashMap<>();
         Map<Long, List<String>> studyCategoryMappingMap = new HashMap<>();
         Long cursorIdx = 123L;
 
-        return MyStudyInfoListAndCursorIdxResponse.builder()
+        return StudyInfoListAndCursorIdxResponse.builder()
                 .studyInfoList(studyInfoList)
                 .cursorIdx(cursorIdx)
                 .studyUserInfoMap(studyUserInfoMap)

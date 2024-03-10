@@ -8,8 +8,8 @@ import java.util.List;
 import java.util.Map;
 
 @Getter
-public class MyStudyInfoListAndCursorIdxResponse {
-    private List<MyStudyInfoListResponse> studyInfoList;
+public class StudyInfoListAndCursorIdxResponse {
+    private List<StudyInfoListResponse> studyInfoList;
 
     private Long cursorIdx;
 
@@ -20,7 +20,7 @@ public class MyStudyInfoListAndCursorIdxResponse {
     private Map<Long, List<String>> studyCategoryMappingMap;
 
     @Builder
-    public MyStudyInfoListAndCursorIdxResponse(List<MyStudyInfoListResponse> studyInfoList, Long cursorIdx, Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap, Map<Long, List<String>> studyCategoryMappingMap) {
+    public StudyInfoListAndCursorIdxResponse(List<StudyInfoListResponse> studyInfoList, Long cursorIdx, Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap, Map<Long, List<String>> studyCategoryMappingMap) {
         this.studyInfoList = studyInfoList;
         this.cursorIdx = cursorIdx;
         this.studyUserInfoMap = studyUserInfoMap;

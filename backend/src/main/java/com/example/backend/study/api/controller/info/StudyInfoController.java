@@ -6,7 +6,7 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -78,7 +78,7 @@ public class StudyInfoController {
 
     // 스터디 조회
     @ApiResponse(responseCode = "200", description = "스터디 조회 성공", content = @Content(schema = @Schema(implementation =
-            MyStudyInfoListResponse.class)))
+            StudyInfoListResponse.class)))
     @GetMapping("/{userId}")
     public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
                                                     @PathVariable(name = "userId") Long userId,
@@ -89,6 +89,6 @@ public class StudyInfoController {
                                                     @RequestParam(name = "myStudy") boolean myStudy
     ) {
         authService.authenticate(userId, user);
-        return JsonResult.successOf(studyInfoService.selectMyStudyInfoList(userId, cursorIdx, limit, sortBy, myStudy));
+        return JsonResult.successOf(studyInfoService.selectStudyInfoList(userId, cursorIdx, limit, sortBy, myStudy));
     }
 }
