@@ -86,8 +86,9 @@ public class User extends BaseEntity implements UserDetails {
         this.point = point;
     }
 
-    public void updateRegister(UserRole role, String name, String githubId) {
-        this.role = role;
+    // 회원가입 (UNAUTH -> USER)
+    public void updateRegister(String name, String githubId) {
+        this.role = UserRole.USER;
         this.name = name;
         this.githubId = githubId;
     }

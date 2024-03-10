@@ -6,7 +6,6 @@ import com.example.backend.auth.api.controller.auth.response.*;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
-import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
@@ -118,14 +117,14 @@ public class AuthController {
         return JsonResult.successOf(userInfoResponse);
     }
 
-    @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthServiceLoginResponse.class)))
+    @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthLoginResponse.class)))
     @PostMapping("/register")
-    public JsonResult<?> register(
-            @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
+    public JsonResult<?> register(@AuthenticationPrincipal User user,
+                                  @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
 
-        AuthServiceLoginResponse registerResponse = authService.register(AuthServiceRegisterRequest.of(request));
+        AuthLoginResponse response = authService.register(AuthServiceRegisterRequest.of(request), user);
 
-        return JsonResult.successOf(registerResponse);
+        return JsonResult.successOf(response);
     }
 
     @ApiResponse(responseCode = "200", description = "회원탈퇴 성공")
@@ -166,8 +165,8 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "푸시 알림 여부 수정 요청 성공")
     @GetMapping("/update/pushAlarmYn/{userId}/{pushAlarmEnable}")
     public JsonResult<?> updatePushAlarmYn(@AuthenticationPrincipal User user,
-                                    @PathVariable(name = "userId") Long userId,
-                                    @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
+                                           @PathVariable(name = "userId") Long userId,
+                                           @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
 
         // 수정을 요청한 user와 현재 로그인한 user를 비교해 일치하는지 확인
         authService.authenticate(userId, user);
