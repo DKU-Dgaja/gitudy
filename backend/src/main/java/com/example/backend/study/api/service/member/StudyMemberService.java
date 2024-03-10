@@ -133,6 +133,11 @@ public class StudyMemberService {
             throw new MemberException(ExceptionMessage.STUDY_ALREADY_MEMBER);
         }
 
+        // 스터디 가입 신청후 이미 대기중인 멤버인지 확인
+        if (studyMemberRepository.isWaitingStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
+            throw new MemberException(ExceptionMessage.STUDY_WAITING_MEMBER);
+        }
+
         // 강퇴되었던 멤버인지 확인
         if (studyMemberRepository.isResignedStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
             throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
