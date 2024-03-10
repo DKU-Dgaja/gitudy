@@ -26,9 +26,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudyCommitService {
 
-    @Value("${github.api.id}")
-    private String gitId;
-
     @Value("${github.api.token}")
     private String gitToken;
 

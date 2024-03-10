@@ -22,11 +22,8 @@ import java.util.List;
 public class GithubApiService {
     private final GithubApi githubApi;
 
-    @Value("${github.api.id}")
-    String id;
-
     @Value("${github.api.token}")
-    String token;
+    private String token;
 
     // 깃허브 api 통신 연결
     public GitHub connectGithubApi() {
