@@ -61,5 +61,13 @@ public class StudyCommitController {
 
         return JsonResult.successOf(studyCommitService.getCommitDetailsById(commitId));
     }
-    
+
+    @ApiResponse(responseCode = "200", description = "특정 스터디의 커밋 정보 업데이트(저장) 성공")
+    @GetMapping("/study/{studyInfoId}/commit/pull")
+    public JsonResult<?> pullCommits(@PathVariable(name = "studyInfoId") Long studyInfoId) {
+
+        studyCommitService.pullCommitsFromGitHub(studyInfoId);
+
+        return JsonResult.successOf("깃허브로부터 해당 스터디의 커밋을 업데이트 완료하였습니다.");
+    }
 }

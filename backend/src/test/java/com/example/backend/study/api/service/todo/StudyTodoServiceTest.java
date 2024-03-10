@@ -7,6 +7,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -19,11 +20,13 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,6 +36,8 @@ import java.util.Random;
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doNothing;
 
 public class StudyTodoServiceTest extends TestConfig {
 
@@ -57,6 +62,9 @@ public class StudyTodoServiceTest extends TestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
+    @MockBean
+    private GithubApiService githubApiService;
+
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
     public final static String expectedTodoLink = "https://www.acmicpc.net/";
@@ -73,7 +81,6 @@ public class StudyTodoServiceTest extends TestConfig {
         userRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
     }
-
 
     @Test
     @DisplayName("Todo 등록 테스트")
@@ -93,8 +100,9 @@ public class StudyTodoServiceTest extends TestConfig {
                 StudyMemberFixture.createStudyMemberWithdrawal(withdrawalMember.getId(), studyInfo.getId())
         ));
 
-
         StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
+
+        doNothing().when(githubApiService).createTodoFolder(any(RepositoryInfo.class), any(StudyTodo.class));
 
         //when
         studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
@@ -106,7 +114,6 @@ public class StudyTodoServiceTest extends TestConfig {
         assertNotNull(studyTodos);
         StudyTodo savedStudyTodo = studyTodos.get(0);
         assertEquals(studyInfo.getId(), savedStudyTodo.getStudyInfoId());
-
 
         List<StudyTodoMapping> mappings = studyTodoMappingRepository.findAll();
         // 활동중인 멤버에게 할당되었는지 확인
@@ -121,7 +128,6 @@ public class StudyTodoServiceTest extends TestConfig {
     @Test
     @DisplayName("Todo 수정 테스트")
     public void updateTodo() {
-
         //given
         User leader = userRepository.save(generateAuthUser());
 
@@ -137,6 +143,9 @@ public class StudyTodoServiceTest extends TestConfig {
         LocalDate updatedTodoDate = LocalDate.now().plusDays(3);
 
         StudyTodoUpdateRequest request = StudyTodoFixture.updateStudyTodoRequest(updatedTitle, updatedDetail, updatedTodoLink, updatedTodoDate);
+
+        doNothing().when(githubApiService).deleteTodoFolder(any(RepositoryInfo.class), any(StudyTodo.class));
+        doNothing().when(githubApiService).createTodoFolder(any(RepositoryInfo.class), any(StudyTodo.class));
 
         // when
         studyTodoService.updateStudyTodo(request, studyInfo.getId(), studyTodo.getId());
@@ -167,6 +176,7 @@ public class StudyTodoServiceTest extends TestConfig {
                 StudyMemberFixture.createDefaultStudyMember(activeMember2.getId(), studyInfo.getId())
 
         ));
+
         // 스터디장 To do 생성
         StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.save(studyTodo);
@@ -176,6 +186,9 @@ public class StudyTodoServiceTest extends TestConfig {
                 StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), activeMember1.getId()),
                 StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), activeMember2.getId())
         ));
+
+        doNothing().when(githubApiService).deleteTodoFolder(any(RepositoryInfo.class), any(StudyTodo.class));
+        doNothing().when(githubApiService).createTodoFolder(any(RepositoryInfo.class), any(StudyTodo.class));
 
         // when
         studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
@@ -240,11 +253,9 @@ public class StudyTodoServiceTest extends TestConfig {
         // when
         StudyTodoListAndCursorIdxResponse firstPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit);
 
-
         // then
         assertNotNull(firstPageResponse);
         assertEquals(3, firstPageResponse.getTodoList().size());  // 3개만 가져와야함
-
 
         // when
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
@@ -304,7 +315,6 @@ public class StudyTodoServiceTest extends TestConfig {
 
         responseForStudy1.getTodoList().forEach(todo ->
           assertTrue(todo.getTitle().contains("1번 투두 제목"), "모든 투두 항목은 '1번 투두 제목' 을 포함해야 한다"));
-
 
         // when
         StudyTodoListAndCursorIdxResponse responseForStudy2 = studyTodoService.readStudyTodoList(studyInfo2.getId(), CursorIdx, Limit);
