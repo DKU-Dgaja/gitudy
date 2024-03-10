@@ -83,7 +83,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginCompleteFragment"
-        android:name="com.takseha.presentation.ui.login.LoginCompleteFragment"
+        android:name="com.takseha.presentation.ui.login.RegisterCompleteFragment"
         android:label="fragment_login_complete"
-        tools:layout="@layout/fragment_login_complete" />
+        tools:layout="@layout/fragment_register_complete" />
 </navigation>

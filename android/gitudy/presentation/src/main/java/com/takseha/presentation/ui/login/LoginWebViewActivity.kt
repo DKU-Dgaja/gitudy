@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.login
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.net.UrlQuerySanitizer
@@ -10,8 +11,10 @@ import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.data.dto.LoginRequest
+import com.takseha.data.dto.Role
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
+import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.LoginWebViewViewModel
 
 class LoginWebViewActivity : AppCompatActivity() {
@@ -59,10 +62,11 @@ class LoginWebViewActivity : AppCompatActivity() {
                 val authCode = getAuthCode(url)
 
                 viewModel.saveAllTokens(platformType, authCode.code, authCode.state)
-
-                Log.d("saveAllToken", "code: ${authCode.code}\nstate: ${authCode.state}")
-
-                startActivity(Intent(view!!.context, SocialLoginCompleteActivity::class.java))
+                viewModel.role.observe(this@LoginWebViewActivity) {
+                    val intent = Intent(view!!.context, SocialLoginCompleteActivity::class.java)
+                    intent.putExtra("role", it)
+                    startActivity(intent)
+                }
                 return true
             }
             return false

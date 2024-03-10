@@ -11,9 +11,10 @@
         android:id="@+id/socialLoginCompleteTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="100dp"
+        android:gravity="center"
         android:orientation="vertical"
-        android:paddingLeft="22dp"
+        app:layout_constraintBottom_toTopOf="@+id/confirmBtn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -27,29 +28,23 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
-            android:text="소셜 로그인이 완료되었어요!\n\n추가 정보를 입력하여\n회원가입을 완료해주세요"
+            android:text="소셜 로그인이 완료되었어요!"
             android:textColor="@color/GS_900" />
     </LinearLayout>
 
-    <LinearLayout
+    <Button
+        android:id="@+id/confirmBtn"
+        style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-        <Button
-            android:id="@+id/confirmBtn"
-            style="@style/B5_1"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@drawable/box_non_stroke_r6_green"
-            android:paddingTop="18dp"
-            android:paddingBottom="18dp"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp"
-            android:layout_marginBottom="48dp"
-            android:text="다음"
-            android:textColor="@color/BLACK" />
-    </LinearLayout>
+        android:background="@drawable/box_non_stroke_r8_green"
+        android:paddingTop="18dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginBottom="48dp"
+        android:paddingBottom="18dp"
+        android:text="@string/confirm"
+        android:textColor="@color/BLACK"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
