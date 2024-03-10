@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import androidx.core.content.ContextCompat
 import com.takseha.data.dto.auth.login.Role
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivitySocialLoginCompleteBinding
@@ -15,6 +16,7 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_social_login_complete)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
 
         binding.confirmBtn.setOnClickListener {

@@ -3,6 +3,7 @@ package com.takseha.presentation.ui.login
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginBinding
@@ -15,6 +16,7 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
 
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
