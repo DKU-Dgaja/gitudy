@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class MyStudyInfoListResponse {
+public class StudyInfoListResponse {
     private Long id;                                // 아이디
 
     private Long userId;                            // 스터디장 ID

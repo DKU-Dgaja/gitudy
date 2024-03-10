@@ -271,7 +271,7 @@ class StudyInfoControllerTest extends TestConfig {
 
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -281,6 +281,7 @@ class StudyInfoControllerTest extends TestConfig {
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
+                        .param("myStudy", "true")
                 )
                 // then
                 .andExpect(status().isOk())
@@ -308,6 +309,7 @@ class StudyInfoControllerTest extends TestConfig {
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
+                        .param("myStudy", "true")
                 )
                 // then
                 .andExpect(status().isOk())
@@ -327,7 +329,7 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectMyStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class)))
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -337,6 +339,92 @@ class StudyInfoControllerTest extends TestConfig {
                         .param("limit", "10")
                         .param("cursorIdx", "-1")
                         .param("sortBy", "score")
+                        .param("myStudy", "true")
+                )
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
+                .andDo(print());
+    }
+    @Test
+    void 전체_스터디_조회_성공_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+                .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
+
+        // when
+        mockMvc.perform(get("/study/" + user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("limit", "10")
+                        .param("cursorIdx", "1")
+                        .param("sortBy", "score")
+                        .param("myStudy", "false")
+                )
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andDo(print());
+    }
+    @Test
+    void 전체_스터디_조회_권한_실패_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(authService.authenticate(any(Long.class), any(User.class)))
+                .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+
+        // when
+        mockMvc.perform(get("/study/" + user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("limit", "10")
+                        .param("cursorIdx", "1")
+                        .param("sortBy", "score")
+                        .param("myStudy", "false")
+                )
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
+
+    }
+    @Test
+    void 전체_스터디_조회_유효성_검증_실패_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+                .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
+
+        // when
+        mockMvc.perform(get("/study/" + user.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("limit", "10")
+                        .param("cursorIdx", "-1")
+                        .param("sortBy", "score")
+                        .param("myStudy", "false")
                 )
                 // then
                 .andExpect(status().isOk())
