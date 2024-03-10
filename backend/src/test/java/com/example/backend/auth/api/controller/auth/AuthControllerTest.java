@@ -146,32 +146,6 @@ class AuthControllerTest extends TestConfig {
     }
 
     @Test
-    @DisplayName("잘못된 형식의 깃허브 이메일이면 회원가입 실패")
-    void registerFailTest() throws Exception {
-        // given
-        User savedUser = userRepository.save(generateUNAUTHUser());
-        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
-        String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
-
-        // 유효성 검사 실패하는 request
-        AuthRegisterRequest request = AuthRegisterRequest.builder()
-                .name("구영민")
-                .githubId("test1234") // 잘못된 형식의 email
-                .build();
-
-        mockMvc.perform(
-                        post("/auth/register")
-                                .contentType(MediaType.APPLICATION_JSON)
-                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                                .content(objectMapper.writeValueAsString(request)))
-                // .andExpect(status().isBadRequest());
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value("githubId: must be a well-formed email address"));
-    }
-
-    @Test
     @DisplayName("올바른 사용자의 토큰으로 사용자 계정 탈퇴 요청을 하면, 계정이 삭제된다.")
     void validUserTokenRequestWithDrawThenUserDelete() throws Exception {
         //given

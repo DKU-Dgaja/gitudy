@@ -10,10 +10,12 @@ import lombok.NoArgsConstructor;
 public class AuthLoginResponse {
     private String accessToken;
     private String refreshToken;
+    private UserRole role;
 
     @Builder
     public AuthLoginResponse(String accessToken, String refreshToken, UserRole role) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
+        this.role = role;
     }
 }
