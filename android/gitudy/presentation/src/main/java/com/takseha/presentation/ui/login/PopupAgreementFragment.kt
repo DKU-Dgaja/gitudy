@@ -43,10 +43,13 @@ class PopupAgreementFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[PopupAgreementViewModel::class.java]
 
-        Handler(Looper.getMainLooper()).postDelayed({
-            view.setBackgroundColor(Color.argb(0x80,0x27,0x29,0x2E))
-            requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
-        }, 100)
+        view.setBackgroundColor(Color.argb(0x80,0x27,0x29,0x2E))
+        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
+
+//        Handler(Looper.getMainLooper()).postDelayed({
+//            view.setBackgroundColor(Color.argb(0x80,0x27,0x29,0x2E))
+//            requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
+//        }, 100)
 
         collectFlows()
 
