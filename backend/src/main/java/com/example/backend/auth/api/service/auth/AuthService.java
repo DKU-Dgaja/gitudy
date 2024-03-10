@@ -81,6 +81,7 @@ public class AuthService {
         return AuthLoginResponse.builder()
                 .accessToken(jwtToken.getAccessToken())
                 .refreshToken(jwtToken.getRefreshToken())
+                .role(findUser.getRole())
                 .build();
     }
 
@@ -169,6 +170,7 @@ public class AuthService {
         return AuthLoginResponse.builder()
                 .accessToken(tokens.getAccessToken())
                 .refreshToken(tokens.getRefreshToken())
+                .role(findUser.getRole())
                 .build();
     }
 
