@@ -11,10 +11,9 @@
         android:id="@+id/socialLoginCompleteTextBox"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
+        android:layout_marginTop="150dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toTopOf="@+id/confirmBtn"
-        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginLeft="22dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
