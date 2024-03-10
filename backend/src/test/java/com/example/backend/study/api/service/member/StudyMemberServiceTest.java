@@ -352,6 +352,8 @@ public class StudyMemberServiceTest extends TestConfig {
     @DisplayName("스터디 가입 신청 테스트")
     public void applyStudyMember() {
         // given
+        String joinCode = null;
+
         User leader = UserFixture.generateAuthUser();
         User user1 = UserFixture.generateGoogleUser();
         userRepository.saveAll(List.of(leader, user1));
@@ -362,7 +364,7 @@ public class StudyMemberServiceTest extends TestConfig {
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
         // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId());
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
 
         // then
@@ -374,6 +376,8 @@ public class StudyMemberServiceTest extends TestConfig {
     @DisplayName("한번 강퇴된 스터디원 가입 신청 테스트")
     public void applyStudyMember_resigned() {
         // given
+        String joinCode = null;
+
         User leader = UserFixture.generateAuthUser();
         User user1 = UserFixture.generateGoogleUser();
         userRepository.saveAll(List.of(leader, user1));
@@ -388,7 +392,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
-            studyMemberService.applyStudyMember(userInfo, studyInfo.getId());
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
         });
         assertEquals(ExceptionMessage.STUDY_RESIGNED_MEMBER.getText(), em.getMessage());
 
@@ -399,6 +403,8 @@ public class StudyMemberServiceTest extends TestConfig {
     @DisplayName("이미 신청완료한 스터디에 가입 재신청 테스트")
     public void applyStudyMember_replay() {
         // given
+        String joinCode = null;
+
         User leader = UserFixture.generateAuthUser();
         User user1 = UserFixture.generateGoogleUser();
         userRepository.saveAll(List.of(leader, user1));
@@ -414,10 +420,141 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
-            studyMemberService.applyStudyMember(userInfo, studyInfo.getId());
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
         });
 
         assertEquals(ExceptionMessage.STUDY_WAITING_MEMBER.getText(), em.getMessage());
 
     }
+
+    @Test
+    @DisplayName("비공개 스터디 가입 신청- 참여코드가 맞는 경우")
+    public void applyStudyMember_privateStudy_joinCode_match() {
+        // given
+        String joinCode = "joinCode";
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createPrivateStudyInfo(leader.getId(), joinCode); // 비공개 스터디 생성
+        studyInfoRepository.save(studyInfo);
+
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // when
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), studyInfo.getJoinCode());
+        Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
+    }
+
+    @Test
+    @DisplayName("비공개 스터디 가입 신청- 참여코드가 null인 경우")
+    public void applyStudyMember_privateStudy_joinCode_null() {
+        // given
+        String joinCode = null;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createPrivateStudyInfo(leader.getId(), joinCode); // 비공개 스터디 생성
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember studyMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId()); // 승인 대기중 멤버 생성
+        studyMemberRepository.save(studyMember);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // then
+        MemberException em = assertThrows(MemberException.class, () -> {
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+        });
+
+        assertEquals(ExceptionMessage.STUDY_JOIN_CODE_FAIL.getText(), em.getMessage());
+    }
+
+    @Test
+    @DisplayName("비공개 스터디 가입 신청- 참여코드가 10자 이상인 경우")
+    public void applyStudyMember_privateStudy_joinCode_10() {
+        // given
+        String joinCode = "1234567891011";
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createPrivateStudyInfo(leader.getId(), joinCode); // 비공개 스터디 생성
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember studyMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId()); // 승인 대기중 멤버 생성
+        studyMemberRepository.save(studyMember);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // then
+        MemberException em = assertThrows(MemberException.class, () -> {
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+        });
+
+        assertEquals(ExceptionMessage.STUDY_JOIN_CODE_FAIL.getText(), em.getMessage());
+    }
+
+
+    @Test
+    @DisplayName("이전에 탈퇴한 멤버가 가입 신청 테스트")
+    public void applyStudyMember_withdrawal() {
+        // given
+        String joinCode = null;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember withdrawalMember = StudyMemberFixture.createStudyMemberWithdrawal(user1.getId(), studyInfo.getId());
+        studyMemberRepository.save(withdrawalMember);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // when
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+        Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
+    }
+
+    @Test
+    @DisplayName("이전에 승인 거부된 멤버가 가입 신청 테스트")
+    public void applyStudyMember_refused() {
+        // given
+        String joinCode = null;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember refusedMember = StudyMemberFixture.createStudyMemberRefused(user1.getId(), studyInfo.getId());
+        studyMemberRepository.save(refusedMember);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // when
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+        Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
+    }
+
+
 }
