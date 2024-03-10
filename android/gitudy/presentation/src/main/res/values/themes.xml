@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Gitudy" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:statusBarColor">@color/WHITE</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:colorBackground">@color/WHITE</item>
+    </style>
+
+    <style name="Theme.Gitudy" parent="Base.Theme.Gitudy" />
+</resources>

@@ -21,7 +21,6 @@ public enum ExceptionMessage {
     REFRESHTOKEN_NOT_EXIST("Refresh Token이 존재하지 않습니다."),
     REFRESHTOKEN_INVALID("유효하지 않은 Refresh Token 입니다."),
 
-
     // OAuthException
     OAUTH_INVALID_TOKEN_URL("token URL이 올바르지 않습니다."),
     OAUTH_INVALID_ACCESS_TOKEN("access_token이 올바르지 않습니다."),
@@ -34,6 +33,7 @@ public enum ExceptionMessage {
   
     // AuthException
     UNAUTHORIZED_AUTHORITY("현재 요청한 작업을 수행할 권한이 없습니다."),
+
     // UserException
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
 
@@ -42,6 +42,30 @@ public enum ExceptionMessage {
     AUTH_DUPLICATE_UNAUTH_REGISTER("중복된 회원가입 요청입니다."),
     AUTH_NOT_FOUND("계정 정보를 찾을 수 없습니다."),
     AUTH_DELETE_FAIL("계정 삭제에 실패했습니다."),
+
+    // CommitException
+    COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),
+    COMMIT_COMMENT_NOT_FOUND("커밋 댓글 정보를 찾을 수 없습니다."),
+    COMMIT_COMMENT_PERMISSION_DENIED("커밋 댓글 정보를 변경할 권한이 없습니다."),
+
+    // BookmarkException
+    BOOKMARK_DELETE_FAIL("북마크 삭제에 실패했습니다."),
+
+    // TodoException
+    STUDY_INFO_NOT_FOUND("해당 스터디정보를 찾을 수 없습니다."),
+    STUDY_MEMBER_NOT_LEADER("스터디장이 아닙니다."),
+    STUDY_NOT_MEMBER("해당 스터디 멤버가 아닙니다."),
+    TODO_NOT_FOUND("해당 Todo를 찾을 수 없습니다."),
+
+    // StudyMemberException
+    USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
+
+    // StudyCommentException
+    STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),
+    STUDY_COMMENT_NOT_AUTHORIZED("스터디 댓글을 수정할 권한이 없습니다."),
+
+    // StudyConventionException
+    CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다.")
     ;
     private final String text;
 }

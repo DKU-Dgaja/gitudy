@@ -43,4 +43,11 @@ public class StudyTodo extends BaseEntity {
         this.todoLink = todoLink;
         this.todoDate = todoDate;
     }
+
+    public void updateStudyTodo(String title, String detail, String todoLink, LocalDate todoDate) {
+        this.title = title;
+        this.detail = detail;
+        this.todoLink = todoLink;
+        this.todoDate = todoDate;
+    }
 }

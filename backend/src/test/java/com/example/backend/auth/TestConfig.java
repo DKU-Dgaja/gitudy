@@ -15,38 +15,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
  */
 
-
-import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
-import com.example.backend.auth.config.fixture.UserFixture;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.constant.UserPlatformType;
-import com.example.backend.domain.define.account.user.constant.UserRole;
+import com.example.backend.domain.define.study.category.info.StudyCategory;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
+import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static com.example.backend.auth.config.fixture.UserFixture.expectedUserPlatformId;
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
-import static java.util.Map.entry;
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
 public class TestConfig {
-
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer";
 
     public static String createAuthorizationHeader(String accessToken, String refreshToken) {
         return BEARER + " " + accessToken + " " + refreshToken;
     }
-
 }
 
