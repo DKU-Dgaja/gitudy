@@ -7,6 +7,7 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -93,14 +94,14 @@ public class StudyInfoController {
         return JsonResult.successOf(studyInfoService.selectStudyInfoList(findUser.getUserId(), cursorIdx, limit, sortBy, myStudy));
     }
 
-//    // 한개의 스터디 상세정보 조회
-//    @ApiResponse(responseCode = "200", description = "스터디 상세정보 조회 성공", content = @Content(schema = @Schema(implementation =
-//            StudyInfoListResponse.class)))
-//    @GetMapping("/{studyInfoId}")
-//    public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
-//                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
-//        authService.authenticate(user);
-//        Optional<StudyInfoResponse> studyInfo = studyInfoService.selectStudyInfo(studyInfoId);
-//        return JsonResult.successOf(studyInfo);
-//    }
+    // 스터디 상세정보 조회
+    @ApiResponse(responseCode = "200", description = "스터디 상세정보 조회 성공", content = @Content(schema = @Schema(implementation =
+            StudyInfoDetailResponse.class)))
+    @GetMapping("/{studyInfoId}")
+    public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
+                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        UserInfoResponse findUser = authService.findUserInfo(user);
+        authService.authenticate(findUser.getUserId(), user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId));
+    }
 }
