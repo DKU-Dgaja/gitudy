@@ -19,10 +19,7 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberStatus
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
-import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
-import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
+import com.example.backend.study.api.controller.info.response.*;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -734,5 +731,46 @@ class StudyInfoServiceTest extends TestConfig {
 //        for(int i=0;i<studyCUserList.size();i++){
 //            System.out.println(studyCUserList.get(i).getId());
 //        }
+    }
+
+    @Test
+    public void 스터디_상세정보_페이지_요청_메소드_테스트() {
+        // given
+
+        // 스터디, 유저 생성
+        User user = userRepository.save(generateAuthUser());
+        StudyInfo savedStudyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(user.getId(), savedStudyInfo.getId()));
+
+        // 카테고리, 카테고리 매핑 생성
+        List<StudyCategory> studyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(savedStudyInfo, studyCategories));
+
+        // when
+        StudyInfoDetailResponse response = studyInfoService.selectStudyInfoDetail(savedStudyInfo.getId());
+
+        // then
+        assertAll(
+                () -> assertEquals(savedStudyInfo.getUserId(), response.getUserId()),
+                () -> assertEquals(savedStudyInfo.getTopic(), response.getTopic()),
+                () -> assertEquals(savedStudyInfo.getScore(), response.getScore()),
+                () -> assertEquals(savedStudyInfo.getInfo(), response.getInfo()),
+                () -> assertEquals(savedStudyInfo.getMaximumMember(), response.getMaximumMember()),
+                () -> assertEquals(savedStudyInfo.getCurrentMember(), response.getCurrentMember()),
+                () -> assertEquals(savedStudyInfo.getLastCommitDay(), response.getLastCommitDay()),
+                () -> assertEquals(savedStudyInfo.getProfileImageUrl(), response.getProfileImageUrl()),
+                () -> assertEquals(savedStudyInfo.getPeriodType(), response.getPeriodType()),
+                () -> assertEquals(savedStudyInfo.getStatus(), response.getStatus()),
+                () -> assertEquals(savedStudyInfo.getCreatedDateTime().getMinute(), response.getCreatedDateTime().getMinute()),
+                () -> assertEquals(savedStudyInfo.getModifiedDateTime().getMinute(), response.getModifiedDateTime().getMinute()),
+                () -> assertEquals(savedStudyInfo.getPeriodType(), response.getPeriodType())
+        );
+
+        // 카테고리 매핑 response 확인
+        List<StudyCategoryMapping> savedStudyCategoryMappings = studyCategoryMappingRepository.findAll();
+        assertEquals(savedStudyCategoryMappings.size(), response.getCategoriesId().size());
+
+        IntStream.range(0, response.getCategoriesId().size())
+                .forEach(i -> assertEquals(savedStudyCategoryMappings.get(i).getStudyCategoryId(), response.getCategoriesId().get(i)));
     }
 }

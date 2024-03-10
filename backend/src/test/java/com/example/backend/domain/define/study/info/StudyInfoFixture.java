@@ -1,11 +1,13 @@
 package com.example.backend.domain.define.study.info;
 
+import com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture;
 import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
@@ -54,6 +56,11 @@ public class StudyInfoFixture {
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .build();
+    }
+
+    // StudyInfoDetailResponse를 생성해주는 함수
+    public static StudyInfoDetailResponse generateStudyInfoDetailResponse(Long userId) {
+        return StudyInfoDetailResponse.of(generateStudyInfo(userId));
     }
 
     // generateStudyInfoRegisterRequest 생성 해주는 메소드
