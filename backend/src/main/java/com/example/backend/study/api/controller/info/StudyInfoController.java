@@ -84,9 +84,9 @@ public class StudyInfoController {
                                                     @PathVariable(name = "userId") Long userId,
                                                     @Min(value = 0, message = "Cursor index cannot be negative")
                                                     @RequestParam(name = "cursorIdx") Long cursorIdx,
-                                                    @RequestParam(name = "limit") Long limit,
-                                                    @RequestParam(name = "sortBy") String sortBy,
-                                                    @RequestParam(name = "myStudy") boolean myStudy
+                                                    @RequestParam(name = "limit", defaultValue = "20") Long limit,
+                                                    @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
+                                                    @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
     ) {
         authService.authenticate(userId, user);
         return JsonResult.successOf(studyInfoService.selectStudyInfoList(userId, cursorIdx, limit, sortBy, myStudy));
