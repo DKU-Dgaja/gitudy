@@ -339,4 +339,26 @@ public class StudyMemberServiceTest extends TestConfig {
                 .anyMatch(mapping -> mapping.getId().equals(mappingFuture2.getId())));
 
     }
+
+
+    @Test
+    @DisplayName("스터디 가입 신청 테스트")
+    public void applyStudyMember() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        // when
+        studyMemberService.applyStudyMember(user1, studyInfo.getId());
+        Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
+
+    }
+
 }
