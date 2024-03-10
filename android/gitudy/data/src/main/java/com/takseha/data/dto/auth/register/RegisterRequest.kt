@@ -1,4 +1,4 @@
-package com.takseha.data.dto.login.register
+package com.takseha.data.dto.auth.register
 
 
 import com.google.gson.annotations.SerializedName

@@ -1,20 +1,22 @@
-package com.takseha.data.dto.login.register
+package com.takseha.data.dto.auth.login
 
 
 import com.google.gson.annotations.SerializedName
 
-data class RegisterResponse(
+data class LoginResponse(
     @SerializedName("res_code")
     val resCode: Int,
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")
-    val tokenInfo: RegisterTokenInfo
+    val tokenInfo: LoginTokenInfo
 )
 
-data class RegisterTokenInfo(
+data class LoginTokenInfo(
     @SerializedName("access_token")
     val accessToken: String,
     @SerializedName("refresh_token")
-    val refreshToken: String
+    val refreshToken: String,
+    @SerializedName("role")
+    val role: String
 )
