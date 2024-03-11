@@ -30,7 +30,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -445,7 +444,7 @@ class StudyInfoControllerTest extends TestConfig {
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyInfoService.selectStudyInfoDetail(any(Long.class)))
-                .thenReturn(generateStudyInfoDetailResponse(user.getId()));
+                .thenReturn(generateStudyInfoDetailResponse(studyInfo));
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId())

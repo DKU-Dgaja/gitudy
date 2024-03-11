@@ -1,6 +1,5 @@
 package com.example.backend.domain.define.study.info;
 
-import com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture;
 import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
@@ -59,8 +58,21 @@ public class StudyInfoFixture {
     }
 
     // StudyInfoDetailResponse를 생성해주는 함수
-    public static StudyInfoDetailResponse generateStudyInfoDetailResponse(Long userId) {
-        return StudyInfoDetailResponse.of(generateStudyInfo(userId));
+    public static StudyInfoDetailResponse generateStudyInfoDetailResponse(StudyInfo studyInfo){
+        return StudyInfoDetailResponse.builder()
+                .userId(studyInfo.getId())
+                .topic(studyInfo.getTopic())
+                .score(studyInfo.getScore())
+                .info(studyInfo.getInfo())
+                .maximumMember(studyInfo.getMaximumMember())
+                .currentMember(studyInfo.getCurrentMember())
+                .lastCommitDay(studyInfo.getLastCommitDay())
+                .profileImageUrl(studyInfo.getProfileImageUrl())
+                .periodType(studyInfo.getPeriodType())
+                .status(studyInfo.getStatus())
+                .createdDateTime(studyInfo.getCreatedDateTime())
+                .modifiedDateTime(studyInfo.getModifiedDateTime())
+                .build();
     }
 
     // generateStudyInfoRegisterRequest 생성 해주는 메소드

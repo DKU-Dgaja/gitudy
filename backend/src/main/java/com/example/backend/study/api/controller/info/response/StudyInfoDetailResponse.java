@@ -62,21 +62,4 @@ public class StudyInfoDetailResponse {
                 .categoriesId(categoriesId)
                 .build();
     }
-
-    public static StudyInfoDetailResponse of(StudyInfo studyInfo){
-        return StudyInfoDetailResponse.builder()
-                .userId(studyInfo.getId())
-                .topic(studyInfo.getTopic())
-                .score(studyInfo.getScore())
-                .info(studyInfo.getInfo())
-                .maximumMember(studyInfo.getMaximumMember())
-                .currentMember(studyInfo.getCurrentMember())
-                .lastCommitDay(studyInfo.getLastCommitDay())
-                .profileImageUrl(studyInfo.getProfileImageUrl())
-                .periodType(studyInfo.getPeriodType())
-                .status(studyInfo.getStatus())
-                .createdDateTime(studyInfo.getCreatedDateTime())
-                .modifiedDateTime(studyInfo.getModifiedDateTime())
-                .build();
-    }
 }

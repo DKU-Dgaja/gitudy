@@ -146,6 +146,11 @@ public class StudyInfoService {
         return getStudyInfoDetailResponse(studyInfo, categoriesId);
     }
 
+    // StudyInfoDetailResponse를 생성해주는 함수
+    private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<Long> categoriesId) {
+        return StudyInfoDetailResponse.of(studyInfo, categoriesId);
+    }
+
     // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
     private static Map<Long, List<String>> getStudyCategoryMappingMap(List<CategoryResponseWithStudyId> categoryResponseWithStudyIdList) {
         return categoryResponseWithStudyIdList.stream()
@@ -248,10 +253,5 @@ public class StudyInfoService {
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);
-    }
-
-    // StudyInfoDetailResponse를 생성해주는 함수
-    private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<Long> categoriesId) {
-        return StudyInfoDetailResponse.of(studyInfo, categoriesId);
     }
 }
