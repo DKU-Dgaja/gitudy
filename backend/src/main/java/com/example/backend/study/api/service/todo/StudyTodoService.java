@@ -15,6 +15,7 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -134,5 +135,26 @@ public class StudyTodoService {
 
         return response;
     }
+
+    // 스터디원들의 Todo 완료여부 조회
+    public List<StudyTodoStatusResponse> readStudyTodoStatus(Long studyInfoId, Long todoId) {
+
+        // 스터디 active 멤버들 찾기
+        List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
+
+        // active 멤버들의 userId만 추출
+        List<Long> userIds = activeMembers.stream()
+                .map(StudyMember::getUserId)
+                .toList();
+
+        // active 멤버들에 대한 특정 Todo의 완료 상태를 조회
+        List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoIdAndUserIds(todoId, userIds);
+
+        // 조회된 정보를 바탕으로 응답 객체를 생성합니다.
+        return todoMappings.stream()
+                .map(mapping -> new StudyTodoStatusResponse(mapping.getUserId(), mapping.getStatus()))
+                .collect(Collectors.toList());
+    }
+
 
 }

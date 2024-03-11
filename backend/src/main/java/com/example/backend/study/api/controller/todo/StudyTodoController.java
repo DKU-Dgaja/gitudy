@@ -5,6 +5,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -82,5 +83,19 @@ public class StudyTodoController {
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
         return JsonResult.successOf(studyTodoService.readStudyTodoList(studyInfoId, cursorIdx, limit));
+    }
+
+
+    // 스터디원들의 Todo 완료여부 조회
+    @ApiResponse(responseCode = "200", description = "Todo 완료조회 성공", content = @Content(schema = @Schema(implementation = StudyTodoStatusResponse.class)))
+    @GetMapping("/{studyInfoId}/todo/{todoId}")
+    public JsonResult<?> readStudyTodoStatus(@AuthenticationPrincipal User user,
+                                             @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                             @PathVariable(name = "todoId") Long todoId) {
+
+        // 스터디 멤버인지 검증
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
+
+        return JsonResult.successOf(studyTodoService.readStudyTodoStatus(studyInfoId, todoId));
     }
 }
