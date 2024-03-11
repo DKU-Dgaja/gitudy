@@ -3,6 +3,7 @@ package com.example.backend.auth.config;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.swagger.v3.core.jackson.ModelResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,5 +53,9 @@ public class ProjectConfig implements WebMvcConfigurer {
     // 프로덕션 환경에서는 Cors 설정을 Front 페이지와 허용할 서버만 등록
     private void prodProfileCorsMapping(CorsRegistry registry) {
 
+    }
+    @Bean
+    public ModelResolver modelResolver(ObjectMapper objectMapper) {
+        return new ModelResolver(objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE));
     }
 }
