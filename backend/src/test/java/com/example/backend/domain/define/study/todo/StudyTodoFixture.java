@@ -33,6 +33,14 @@ public class StudyTodoFixture {
                 .build();
     }
 
+    // 테스트용 studyTodoMapping 생성
+    public static StudyTodoMapping createStudyTodoDefaultMapping(Long userId) {
+        return StudyTodoMapping.builder()
+                .userId(userId)
+                .status(expectedStatus)
+                .build();
+    }
+
     // 테스트용  완료된 studyTodoMapping 생성
     public static StudyTodoMapping createCompleteStudyTodoMapping(Long todoId, Long userId) {
         return StudyTodoMapping.builder()
