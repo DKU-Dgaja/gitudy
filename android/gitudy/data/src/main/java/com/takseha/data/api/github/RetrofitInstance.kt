@@ -1,14 +1,13 @@
-package com.takseha.data.api
+package com.takseha.data.api.github
 
+import com.takseha.data.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-object RetrofitInstance {
-    private const val BASE_URL = "https://gitudy.site"
-
+class RetrofitInstance {
     private val client: Retrofit = Retrofit
         .Builder()
-        .baseUrl(BASE_URL)
+        .baseUrl(BuildConfig.GITHUB_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

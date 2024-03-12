@@ -1,9 +1,9 @@
-package com.takseha.data.dto
+package com.takseha.data.dto.auth.login
 
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginResponse(
+data class LoginPageResponse(
     @SerializedName("res_code")
     val resCode: Int,
     @SerializedName("res_msg")

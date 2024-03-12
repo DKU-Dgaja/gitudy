@@ -53,7 +53,7 @@
         android:id="@+id/conventionLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_btn_stroke_r12_clicked"
+        android:background="@drawable/selector_btn_stroke_r12_checked"
         android:gravity="center_vertical"
         android:padding="15dp"
         android:layout_marginTop="24dp"

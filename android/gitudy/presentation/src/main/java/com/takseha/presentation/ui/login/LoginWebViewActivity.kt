@@ -5,28 +5,26 @@ import android.net.Uri
 import android.net.UrlQuerySanitizer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
-import com.takseha.common.util.SharedPreferences
-import com.takseha.data.dto.AuthCodeRequest
+import com.takseha.data.dto.auth.login.LoginRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
-import com.takseha.presentation.viewmodel.GetTokenViewModel
+import com.takseha.presentation.viewmodel.LoginWebViewViewModel
 
 class LoginWebViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginWebviewBinding
-    private lateinit var viewModel: GetTokenViewModel
-    private lateinit var prefs: SharedPreferences
+    private lateinit var viewModel: LoginWebViewViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_webview)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.WHITE)
         setBinding()
 
-        viewModel = ViewModelProvider(this)[GetTokenViewModel::class.java]
-        prefs = SharedPreferences(applicationContext)
+        viewModel = ViewModelProvider(this)[LoginWebViewViewModel::class.java]
 
         binding.loginWebView.run {
             webViewClient = LoginWebViewClient()
@@ -47,12 +45,12 @@ class LoginWebViewActivity : AppCompatActivity() {
         setContentView(view)
     }
 
-    private fun getAuthCode(url: String?): AuthCodeRequest {
+    private fun getAuthCode(url: String?): LoginRequest {
         val sanitizer = UrlQuerySanitizer()
         sanitizer.allowUnregisteredParamaters = true;
         sanitizer.parseUrl(url)
 
-        return AuthCodeRequest(sanitizer.getValue("code"), sanitizer.getValue("state"))
+        return LoginRequest(sanitizer.getValue("code"), sanitizer.getValue("state"))
     }
 
     inner class LoginWebViewClient : WebViewClient() {
@@ -62,10 +60,12 @@ class LoginWebViewActivity : AppCompatActivity() {
                 val authCode = getAuthCode(url)
 
                 viewModel.saveAllTokens(platformType, authCode.code, authCode.state)
+                viewModel.role.observe(this@LoginWebViewActivity) {
+                    val intent = Intent(view!!.context, SocialLoginCompleteActivity::class.java)
+                    intent.putExtra("role", it)
+                    startActivity(intent)
+                }
 
-                Log.d("saveAllToken", "code: ${authCode.code}\nstate: ${authCode.state}")
-
-                startActivity(Intent(view!!.context, SocialLoginCompleteActivity::class.java))
                 return true
             }
             return false

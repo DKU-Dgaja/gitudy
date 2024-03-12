@@ -2,11 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application>
         <activity
             android:name=".ui.login.SocialLoginCompleteActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:launchMode="singleTop"/>
         <activity
             android:name=".ui.login.LoginWebViewActivity"
             android:exported="false" />
@@ -37,7 +39,8 @@
         <activity
             android:name=".ui.home.MainHomeActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"
+            android:launchMode="singleTask"/>
         <activity
             android:name=".ui.profile.MyCommitActivity"
             android:exported="false"
@@ -55,7 +58,7 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.AgreementActivity"
+            android:name=".ui.login.PopupAgreementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity

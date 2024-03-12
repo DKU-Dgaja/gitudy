@@ -11,80 +11,57 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="250dp"
-        android:gravity="center"
+        android:layout_marginTop="100dp"
         android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
             android:layout_width="60dp"
             android:layout_height="60dp"
-            android:src="@drawable/ic_alert_gradient_c" />
+            android:src="@drawable/ic_alert_red_c" />
 
         <TextView
-            style="@style/B2_1"
+            style="@style/B1_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:gravity="center"
-            android:text="추후 Github 계정 연동은\n필수입니다!"
+            android:text="Github 계정 연동은\n필수입니다!"
             android:textColor="@color/GS_900" />
     </LinearLayout>
 
-    <LinearLayout
+    <Button
         android:id="@+id/kakaoLoginBtn"
+        style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:background="@drawable/box_non_stroke_r6"
+        android:background="@drawable/box_non_stroke_r8"
         android:backgroundTint="#F9E000"
+        android:drawableLeft="@drawable/ic_login_kakao"
         android:gravity="center"
+        android:padding="18dp"
+        android:text="카카오톡으로 로그인"
+        android:textColor="#3B1E1E"
         app:layout_constraintBottom_toTopOf="@+id/googleLoginBtn"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/logo_kakao" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/pretendard_semibold"
-            android:text="카카오톡으로 로그인"
-            android:textColor="#3B1E1E"
-            android:textSize="16dp" />
-    </LinearLayout>
-
-    <LinearLayout
+    <Button
         android:id="@+id/googleLoginBtn"
+        style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="48dp"
-        android:background="@drawable/box_non_stroke_r6"
+        android:background="@drawable/box_non_stroke_r8"
         android:backgroundTint="@color/WHITE"
-        android:gravity="center"
+        android:drawableLeft="@drawable/ic_login_google"
+        android:padding="18dp"
+        android:text="Google로 로그인"
+        android:textColor="#3B1E1E"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
+        app:layout_constraintStart_toStartOf="parent" />
 
-        <ImageView
-            android:layout_width="15dp"
-            android:layout_height="15dp"
-            android:layout_marginRight="5dp"
-            android:src="@drawable/logo_google" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:fontFamily="@font/pretendard_semibold"
-            android:text="Google로 로그인"
-            android:textColor="@color/BLACK"
-            android:textSize="16dp" />
-    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

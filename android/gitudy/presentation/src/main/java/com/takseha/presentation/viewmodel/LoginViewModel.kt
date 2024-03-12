@@ -17,22 +17,32 @@ class LoginViewModel : ViewModel() {
 
     fun startLogin(platformType: String) = viewModelScope.launch {
         val loginResponse = gitudyRepository.getLoginPage()
-        val resCode = loginResponse.resCode
-        val resMsg = loginResponse.resMsg
-        val loginPages = loginResponse.resObj
 
-        Log.d("LoginViewModel", "https status: $resCode, $resMsg")
+        if (loginResponse.isSuccessful) {
+            val resCode = loginResponse.body()!!.resCode
+            val resMsg = loginResponse.body()!!.resMsg
+            val loginPages = loginResponse.body()!!.resObj
 
-        if (resCode == 200 && resMsg == "OK") {
-            _loginPageUrl.value = when (platformType) {
-                "KAKAO" -> loginPages.filter { it.platformType == "KAKAO" }.map { it.url }.joinToString("")
-                "GOOGLE" -> loginPages.filter { it.platformType == "GOOGLE" }.map { it.url }.joinToString("")
-                "GITHUB" -> loginPages.filter { it.platformType == "GITHUB" }.map { it.url }.joinToString("")
-                else -> null
+            if (resCode == 200 && resMsg == "OK") {
+                _loginPageUrl.value = when (platformType) {
+                    "KAKAO" -> loginPages.filter { it.platformType == "KAKAO" }
+                        .joinToString("") { it.url }
+
+                    "GOOGLE" -> loginPages.filter { it.platformType == "GOOGLE" }
+                        .joinToString("") { it.url }
+
+                    "GITHUB" -> loginPages.filter { it.platformType == "GITHUB" }
+                        .joinToString("") { it.url }
+
+                    else -> null
+                }
+                Log.d("LoginViewModel", "https status: $resCode, $resMsg")
+                Log.d("LoginViewModel", "url: ${loginPageUrl.value}")
+            } else {
+                Log.e("LoginViewModel", "https status error: $resCode, $resMsg")
             }
-            Log.d("LoginViewModel", "url: ${loginPageUrl.value}")
         } else {
-            Log.e("LoginViewModel", "https status error: $resCode, $resMsg")
+            Log.e("LoginViewModel", "status: ${loginResponse.code()}, message: ${loginResponse.message()}")
         }
     }
 }

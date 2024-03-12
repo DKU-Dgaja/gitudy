@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/WHITE"
     tools:context=".ui.login.PopupDetail1Fragment">
 
     <LinearLayout
@@ -48,14 +49,4 @@
             android:text="@string/detail1_body" />
 
     </LinearLayout>
-
-    <Button
-        android:id="@+id/confirmBtn"
-        style="@style/B5_1"
-        android:layout_width="match_parent"
-        android:layout_height="97dp"
-        android:background="@drawable/selector_btn_r0_enable"
-        android:text="@string/confirm"
-        android:textColor="@drawable/selector_text_color_enable"
-        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

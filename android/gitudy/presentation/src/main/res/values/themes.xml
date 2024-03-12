@@ -1,7 +1,7 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Base.Theme.Gitudy" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="android:statusBarColor">@color/WHITE</item>
+    <style name="Base.Theme.Gitudy" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:statusBarColor">@color/TRANSPARENT</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:colorBackground">@color/WHITE</item>
     </style>
