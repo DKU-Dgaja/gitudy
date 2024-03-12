@@ -90,7 +90,6 @@ public class StudyInfoController {
                                                     @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
     ) {
         UserInfoResponse findUser = authService.findUserInfo(user);
-        authService.authenticate(findUser.getUserId(), user);
         return JsonResult.successOf(studyInfoService.selectStudyInfoList(findUser.getUserId(), cursorIdx, limit, sortBy, myStudy));
     }
 
@@ -101,7 +100,6 @@ public class StudyInfoController {
     public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
                                       @PathVariable(name = "studyInfoId") Long studyInfoId) {
         UserInfoResponse findUser = authService.findUserInfo(user);
-        authService.authenticate(findUser.getUserId(), user);
         return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId));
     }
 }
