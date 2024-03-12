@@ -15,6 +15,7 @@ import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PRIVATE;
 import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PUBLIC;
 
 public class StudyInfoFixture {
@@ -24,6 +25,16 @@ public class StudyInfoFixture {
                 .userId(userId)
                 .topic("토픽")
                 .status(STUDY_PUBLIC)
+                .build();
+    }
+
+    // 비공개 스터디 생성 메서드
+    public static StudyInfo createPrivateStudyInfo(Long userId, String joinCode) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("토픽")
+                .joinCode(joinCode)
+                .status(STUDY_PRIVATE)
                 .build();
     }
 

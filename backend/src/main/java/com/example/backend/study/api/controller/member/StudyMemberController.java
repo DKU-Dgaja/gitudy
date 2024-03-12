@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.member;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -62,6 +63,20 @@ public class StudyMemberController {
         studyMemberService.withdrawalStudyMember(studyInfoId, userId);
 
         return JsonResult.successOf("Withdrawal Member Success");
+    }
+
+    // 스터디 가입 신청
+    @ApiResponse(responseCode = "200", description = "스터디 가입 신청 성공")
+    @PostMapping("/{studyInfoId}/apply")
+    public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
+                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                          @RequestParam(name = "joinCode", required = false) String joinCode) {
+
+        UserInfoResponse userInfo = authService.findUserInfo(user);
+
+        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode);
+
+        return JsonResult.successOf("Apply StudyMember Success");
     }
 
 

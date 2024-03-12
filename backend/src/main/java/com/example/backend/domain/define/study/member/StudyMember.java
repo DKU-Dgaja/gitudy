@@ -57,4 +57,15 @@ public class StudyMember extends BaseEntity {
     public void updateStudyMemberStatus(StudyMemberStatus status) {
         this.status = status;
     }
+
+    // 승인 대기중 유저 생성 메서드
+    public static StudyMember waitingStudyMember(Long studyInfoId, Long userId) {
+        return StudyMember.builder()
+                .studyInfoId(studyInfoId)
+                .userId(userId)
+                .role(StudyMemberRole.STUDY_MEMBER)
+                .status(StudyMemberStatus.STUDY_WAITING)
+                .score(0)
+                .build();
+    }
 }

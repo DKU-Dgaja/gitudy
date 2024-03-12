@@ -8,6 +8,8 @@ import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
@@ -21,6 +23,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,6 +36,7 @@ public class StudyMemberService {
     private final StudyInfoRepository studyInfoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyTodoRepository studyTodoRepository;
+    private final static int JOIN_CODE_LENGTH = 10;
 
     // 스터디장 검증 메서드
     public UserInfoResponse isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
@@ -120,6 +124,73 @@ public class StudyMemberService {
 
         // 탈퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
         studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, userId);
+
+    }
+
+
+    // 스터디 가입 메서드
+    @Transactional
+    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode) {
+
+        // 스터디 조회 예외처리
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 비공개 스터디인 경우 joinCode 검증 (null, 맞지않을때, 10자를 넘겼을때)
+        if (studyInfo.getStatus() == StudyStatus.STUDY_PRIVATE) {
+            if (joinCode == null || !joinCode.equals(studyInfo.getJoinCode()) || joinCode.length() > JOIN_CODE_LENGTH) {
+                log.warn(">>>> {} : {} <<<<", joinCode, ExceptionMessage.STUDY_JOIN_CODE_FAIL);
+                throw new MemberException(ExceptionMessage.STUDY_JOIN_CODE_FAIL);
+            }
+        }
+        // 스터디 멤버인지확인
+        if (studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_ALREADY_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_ALREADY_MEMBER);
+        }
+
+        // 스터디 가입 신청후 이미 대기중인 멤버인지 확인
+        if (studyMemberRepository.isWaitingStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_WAITING_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_WAITING_MEMBER);
+        }
+
+        // 강퇴되었던 멤버인지 확인
+        if (studyMemberRepository.isResignedStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_RESIGNED_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
+        }
+
+        // 알림 여부
+        boolean notifyLeader = false;
+
+        // 탈퇴한 멤버인지 확인, 승인 거부된 유저인지 확인
+        Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
+        if (existingMember.isPresent()) {
+            if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
+                existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경 후 종료
+                notifyLeader = true;  // 알림설정
+            }
+
+        } else {
+
+            // '스터디 승인 대기중인 유저' 로 생성
+            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId());
+            studyMemberRepository.save(studyMember);
+            notifyLeader = true;
+
+        }
+
+
+        if (notifyLeader) {
+
+            /*
+             해당 스터디장에게 알림 메서드 추가되어야함  -> 유저의 이름등등을 보여주기위해 파라미터로 user 객체 가져옴
+         */
+        }
+
 
     }
 

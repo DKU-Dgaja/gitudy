@@ -21,4 +21,10 @@ public interface StudyMemberRepositoryCustom {
 
     // studyInfoIdList를 통해 스터디들의 모든 멤버를 조회한다.
     List<StudyMemberWithUserInfoResponse> findStudyMemberListByStudyInfoListJoinUserInfo(List<Long> studyInfoIdList);
+
+    // UserId와 StudyInfoId를 통해 사용자가 해당 스터디의 강퇴자 였는지 판별한다.
+    public boolean isResignedStudyMemberByUserIdAndStudyInfoId(Long userId, Long studyInfoId);
+
+    // UserId와 StudyInfoId를 통해 사용자가 해당 스터디에 이미 가입 신청했는지 판별한다.
+    public boolean isWaitingStudyMemberByUserIdAndStudyInfoId(Long userId, Long studyInfoId);
 }

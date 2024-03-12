@@ -48,6 +48,26 @@ public class StudyMemberFixture {
                 .build();
     }
 
+    // 테스트용 승인 대기중인 스터디원 생성 메서드
+    public static StudyMember createStudyMemberWaiting(Long userId, Long studyInfoId) {
+        return StudyMember.builder()
+                .userId(userId)
+                .studyInfoId(studyInfoId)
+                .role(StudyMemberRole.STUDY_MEMBER)
+                .status(StudyMemberStatus.STUDY_WAITING)
+                .build();
+    }
+
+    // 테스트용 승인 거부된 스터디원 생성 메서드
+    public static StudyMember createStudyMemberRefused(Long userId, Long studyInfoId) {
+        return StudyMember.builder()
+                .userId(userId)
+                .studyInfoId(studyInfoId)
+                .role(StudyMemberRole.STUDY_MEMBER)
+                .status(StudyMemberStatus.STUDY_REFUSED)
+                .build();
+    }
+
     // 테스트용 스코어 활동 스터디원 생성 메서드
     public static StudyMember createStudyActiveMembersByScore(Long userId, Long studyInfoId, int score) {
         return StudyMember.builder()

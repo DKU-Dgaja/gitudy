@@ -96,4 +96,23 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                 .orderBy(studyMember.id.desc());
         return query.fetch();
     }
+
+    @Override
+    public boolean isResignedStudyMemberByUserIdAndStudyInfoId(Long userId, Long studyInfoId) {
+
+        return queryFactory.from(studyMember)
+                .where(studyMember.studyInfoId.eq(studyInfoId)
+                        .and(studyMember.userId.eq(userId))
+                        .and(studyMember.status.eq(StudyMemberStatus.STUDY_RESIGNED)))
+                .fetchFirst() != null;
+    }
+
+    @Override
+    public boolean isWaitingStudyMemberByUserIdAndStudyInfoId(Long userId, Long studyInfoId) {
+        return queryFactory.from(studyMember)
+                .where(studyMember.studyInfoId.eq(studyInfoId)
+                        .and(studyMember.userId.eq(userId))
+                        .and(studyMember.status.eq(StudyMemberStatus.STUDY_WAITING)))
+                .fetchFirst() != null;
+    }
 }
