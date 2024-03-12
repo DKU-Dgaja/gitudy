@@ -163,28 +163,35 @@ public class StudyMemberService {
             throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
         }
 
+        // 알림 여부
+        boolean notifyLeader = false;
+
         // 탈퇴한 멤버인지 확인, 승인 거부된 유저인지 확인
         Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
         if (existingMember.isPresent()) {
-            if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED)
-            {
+            if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
                 existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경 후 종료
-
-                /*
-                   해당 스터디장 알림 메서드 추가
-                 */
-
-                return;
+                notifyLeader = true;  // 알림설정
             }
+
+        } else {
+
+            // '스터디 승인 대기중인 유저' 로 생성
+            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId());
+            studyMemberRepository.save(studyMember);
+            notifyLeader = true;
+
         }
 
-        // '스터디 승인 대기중인 유저' 로 생성
-        StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId());
-        studyMemberRepository.save(studyMember);
 
-        /*
+        if (notifyLeader) {
+
+            /*
              해당 스터디장에게 알림 메서드 추가되어야함  -> 유저의 이름등등을 보여주기위해 파라미터로 user 객체 가져옴
          */
+        }
+
+
     }
 
 }
