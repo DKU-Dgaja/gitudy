@@ -247,10 +247,9 @@ class StudyInfoServiceTest extends TestConfig {
 
         // 카테고리 매핑 response 확인
         List<StudyCategoryMapping> savedStudyCategoryMappings = studyCategoryMappingRepository.findAll();
-        assertEquals(savedStudyCategoryMappings.size(), response.getCategoriesId().size());
-
-        IntStream.range(0, response.getCategoriesId().size())
-                .forEach(i -> assertEquals(savedStudyCategoryMappings.get(i).getStudyCategoryId(), response.getCategoriesId().get(i)));
+        assertEquals(savedStudyCategoryMappings.size(), response.getCategoryNames().size());
+        IntStream.range(0, response.getCategoryNames().size())
+                .forEach(i -> assertEquals(studyCategories.get(i).getName(), response.getCategoryNames().get(i)));
     }
 
     @Test
@@ -768,9 +767,8 @@ class StudyInfoServiceTest extends TestConfig {
 
         // 카테고리 매핑 response 확인
         List<StudyCategoryMapping> savedStudyCategoryMappings = studyCategoryMappingRepository.findAll();
-        assertEquals(savedStudyCategoryMappings.size(), response.getCategoriesId().size());
-
-        IntStream.range(0, response.getCategoriesId().size())
-                .forEach(i -> assertEquals(savedStudyCategoryMappings.get(i).getStudyCategoryId(), response.getCategoriesId().get(i)));
+        assertEquals(savedStudyCategoryMappings.size(), response.getCategoryNames().size());
+        IntStream.range(0, response.getCategoryNames().size())
+                .forEach(i -> assertEquals(studyCategories.get(i).getName(), response.getCategoryNames().get(i)));
     }
 }

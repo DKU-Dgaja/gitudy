@@ -178,7 +178,7 @@ public class StudyInfoFixture {
 
     // 카테고리를 받아 StudyInfoRegisterRequest요청을 생성해주는 함수
     public static UpdateStudyInfoPageResponse generateUpdateStudyInfoPageResponseWithCategory(Long userId, List<StudyCategory> studyCategories) {
-        List<Long> categoriesId = getCategoriesId(studyCategories);
+        List<String> categoryNames = getCategoryNames(studyCategories);
 
         return UpdateStudyInfoPageResponse.builder()
                 .userId(userId)
@@ -191,7 +191,7 @@ public class StudyInfoFixture {
                 .profileImageUrl("https://example.com/profile.jpg")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
-                .categoriesId(categoriesId)
+                .categoryNames(categoryNames)
                 .build();
     }
 
@@ -202,6 +202,15 @@ public class StudyInfoFixture {
                 .map(StudyCategory::getId)
                 .collect(Collectors.toList());
         return categoriesId;
+    }
+
+    // 카테고리 name 리스트를 생성해주는 함수
+    private static List<String> getCategoryNames(List<StudyCategory> studyCategories) {
+        List<String> CategoryNames = studyCategories.stream()
+                .limit(studyCategories.size())
+                .map(StudyCategory::getName)
+                .collect(Collectors.toList());
+        return CategoryNames;
     }
 
     // 테스트용 스터디 정보 생성 메서드 (Score와 LastCommitDay는 랜덤 값으로 생성)
