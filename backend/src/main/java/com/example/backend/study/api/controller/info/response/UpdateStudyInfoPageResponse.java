@@ -38,5 +38,5 @@ public class UpdateStudyInfoPageResponse {
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
-    private List<Long> categoriesId;              // 카테고리 ID 리스트
+    private List<String> categoryNames;              // 카테고리 이름 리스트
 }
