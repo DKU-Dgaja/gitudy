@@ -135,6 +135,22 @@ public class StudyInfoService {
         return response;
     }
 
+    // 스터디 상세정보 조회
+    public StudyInfoDetailResponse selectStudyInfoDetail(Long studyInfoId) {
+        // Study 조회
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        List<Long> categoriesId = getCategoriesId(studyInfoId);
+        return getStudyInfoDetailResponse(studyInfo, categoriesId);
+    }
+
+    // StudyInfoDetailResponse를 생성해주는 함수
+    private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<Long> categoriesId) {
+        return StudyInfoDetailResponse.of(studyInfo, categoriesId);
+    }
+
     // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
     private static Map<Long, List<String>> getStudyCategoryMappingMap(List<CategoryResponseWithStudyId> categoryResponseWithStudyIdList) {
         return categoryResponseWithStudyIdList.stream()

@@ -1,11 +1,13 @@
 package com.example.backend.study.api.controller.info;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -79,16 +81,25 @@ public class StudyInfoController {
     // 스터디 조회
     @ApiResponse(responseCode = "200", description = "스터디 조회 성공", content = @Content(schema = @Schema(implementation =
             StudyInfoListResponse.class)))
-    @GetMapping("/{userId}")
+    @GetMapping("/")
     public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
-                                                    @PathVariable(name = "userId") Long userId,
                                                     @Min(value = 0, message = "Cursor index cannot be negative")
                                                     @RequestParam(name = "cursorIdx") Long cursorIdx,
                                                     @RequestParam(name = "limit", defaultValue = "20") Long limit,
                                                     @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
                                                     @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
     ) {
-        authService.authenticate(userId, user);
-        return JsonResult.successOf(studyInfoService.selectStudyInfoList(userId, cursorIdx, limit, sortBy, myStudy));
+        UserInfoResponse findUser = authService.findUserInfo(user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoList(findUser.getUserId(), cursorIdx, limit, sortBy, myStudy));
+    }
+
+    // 스터디 상세정보 조회
+    @ApiResponse(responseCode = "200", description = "스터디 상세정보 조회 성공", content = @Content(schema = @Schema(implementation =
+            StudyInfoDetailResponse.class)))
+    @GetMapping("/{studyInfoId}")
+    public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
+                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        UserInfoResponse findUser = authService.findUserInfo(user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId));
     }
 }

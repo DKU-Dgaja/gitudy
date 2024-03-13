@@ -6,6 +6,7 @@ import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
@@ -64,6 +65,24 @@ public class StudyInfoFixture {
                 .notice("Important notice for the study.")
                 .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+
+    // StudyInfoDetailResponse를 생성해주는 함수
+    public static StudyInfoDetailResponse generateStudyInfoDetailResponse(StudyInfo studyInfo){
+        return StudyInfoDetailResponse.builder()
+                .userId(studyInfo.getId())
+                .topic(studyInfo.getTopic())
+                .score(studyInfo.getScore())
+                .info(studyInfo.getInfo())
+                .maximumMember(studyInfo.getMaximumMember())
+                .currentMember(studyInfo.getCurrentMember())
+                .lastCommitDay(studyInfo.getLastCommitDay())
+                .profileImageUrl(studyInfo.getProfileImageUrl())
+                .periodType(studyInfo.getPeriodType())
+                .status(studyInfo.getStatus())
+                .createdDateTime(studyInfo.getCreatedDateTime())
+                .modifiedDateTime(studyInfo.getModifiedDateTime())
                 .build();
     }
 
