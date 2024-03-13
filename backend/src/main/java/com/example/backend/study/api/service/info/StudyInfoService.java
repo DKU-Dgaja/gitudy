@@ -71,7 +71,7 @@ public class StudyInfoService {
         studyCategoryMappingRepository.deleteByStudyInfoId(studyInfo.getId());
 
         // 변경 후 카테고리 매핑 생성
-        List<Long> categories = saveStudyCategoryMappings(request.getCategoriesId(), studyInfo);
+        saveStudyCategoryMappings(request.getCategoriesId(), studyInfo);
 
         // 스터디 업데이트
         studyInfo.updateStudyInfo(request);
@@ -101,9 +101,9 @@ public class StudyInfoService {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
-        List<Long> categoriesId = getCategoriesId(studyInfoId);
+        List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
 
-        UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoriesId);
+        UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoryNames);
 
         return response;
     }
@@ -142,13 +142,13 @@ public class StudyInfoService {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
-        List<Long> categoriesId = getCategoriesId(studyInfoId);
-        return getStudyInfoDetailResponse(studyInfo, categoriesId);
+        List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
+        return getStudyInfoDetailResponse(studyInfo, categoryNames);
     }
 
     // StudyInfoDetailResponse를 생성해주는 함수
-    private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<Long> categoriesId) {
-        return StudyInfoDetailResponse.of(studyInfo, categoriesId);
+    private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<String> categoryNames) {
+        return StudyInfoDetailResponse.of(studyInfo, categoryNames);
     }
 
     // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
@@ -177,16 +177,7 @@ public class StudyInfoService {
                 .collect(Collectors.toList());
     }
 
-    // studyinfoId를 파라미터로 받아 카테고리 id를 생성해주는 함수
-    private List<Long> getCategoriesId(Long studyInfoId) {
-        List<Long> categoriesId = studyCategoryMappingRepository.findByStudyInfoId(studyInfoId)
-                .stream()
-                .map(StudyCategoryMapping::getStudyCategoryId)
-                .collect(Collectors.toList());
-        return categoriesId;
-    }
-
-    private static UpdateStudyInfoPageResponse getUpdateStudyInfoPageResponse(StudyInfo studyInfo, List<Long> categoriesId) {
+    private static UpdateStudyInfoPageResponse getUpdateStudyInfoPageResponse(StudyInfo studyInfo, List<String> categoryNames) {
         UpdateStudyInfoPageResponse response = UpdateStudyInfoPageResponse.builder()
                 .userId(studyInfo.getUserId())
                 .topic(studyInfo.getTopic())
@@ -198,7 +189,7 @@ public class StudyInfoService {
                 .profileImageUrl(studyInfo.getProfileImageUrl())
                 .repositoryInfo(studyInfo.getRepositoryInfo())
                 .periodType(studyInfo.getPeriodType())
-                .categoriesId(categoriesId)
+                .categoryNames(categoryNames)
                 .build();
         return response;
     }
