@@ -59,44 +59,33 @@ class InputIdFragment : Fragment() {
             })
 
             isIdOkBtn.setOnClickListener {
-                // github api 연동 시 403 에러가 발생하는 이슈 때문에 일단은 주석 처리! 추후에 다시 체크
-                // 해당 이슈 원인은 아마 지나친 트래픽 같다.
-//                var githubId = inputIdEditText.text.toString()
-//
-//                viewModel.checkGithubId(githubId)
-//                viewModel.isCorrectId.observe(viewLifecycleOwner) {
-//                    Log.e("InputIdFragment", "$it")
-//                    if (it) {
-//                        idCheckText.apply {
-//                            text = getString(R.string.alert_id_ok)
-//                            setTextColor(
-//                                ContextCompat.getColor(
-//                                requireContext(),
-//                                R.color.GS_500
-//                            ))
-//                        }
-//                        confirmBtn.isEnabled = true
-//                    } else {
-//                        idCheckText.apply {
-//                            text = getString(R.string.alert_id_not_ok)
-//                            setTextColor(
-//                                ContextCompat.getColor(
-//                                    requireContext(),
-//                                    R.color.BASIC_RED
-//                                ))
-//                        }
-//                        confirmBtn.isEnabled = false
-//                    }
-//                }
-                idCheckText.apply {
-                    text = getString(R.string.alert_id_ok)
-                    setTextColor(
-                        ContextCompat.getColor(
-                        requireContext(),
-                        R.color.GS_500
-                    ))
+                var githubId = inputIdEditText.text.toString()
+
+                viewModel.checkGithubId(githubId)
+                viewModel.isCorrectId.observe(viewLifecycleOwner) {
+                    Log.e("InputIdFragment", "$it")
+                    if (it) {
+                        idCheckText.apply {
+                            text = getString(R.string.alert_id_ok)
+                            setTextColor(
+                                ContextCompat.getColor(
+                                requireContext(),
+                                R.color.GS_500
+                            ))
+                        }
+                        confirmBtn.isEnabled = true
+                    } else {
+                        idCheckText.apply {
+                            text = getString(R.string.alert_id_not_ok)
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_RED
+                                ))
+                        }
+                        confirmBtn.isEnabled = false
+                    }
                 }
-                confirmBtn.isEnabled = true
             }
 
             confirmBtn.setOnClickListener { view ->
