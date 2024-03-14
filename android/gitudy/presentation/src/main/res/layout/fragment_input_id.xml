@@ -70,7 +70,7 @@
         android:layout_marginTop="65dp"
         android:background="@drawable/selector_btn_r6_enable"
         android:enabled="false"
-        android:text="@string/confirm"
+        android:text="인증"
         android:textColor="@drawable/selector_text_color_enable"
         app:layout_constraintStart_toEndOf="@+id/inputIdEditText"
         app:layout_constraintTop_toBottomOf="@+id/inputIdDescription2" />
