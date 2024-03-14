@@ -8,6 +8,7 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
@@ -19,6 +20,7 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -31,6 +33,7 @@ import java.util.List;
 import java.util.Random;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -315,6 +318,40 @@ public class StudyTodoServiceTest extends TestConfig {
 
         responseForStudy2.getTodoList().forEach(todo ->
                 assertTrue(todo.getTitle().contains("2번 투두 제목"), "모든 투두 항목은 '2번 투두 제목' 을 포함해야 한다"));
+
+    }
+
+
+    @Test
+    @DisplayName("스터디원들의 특정 Todo에 대한 완료여부 조회 테스트")
+    void readStudyTodo_status() {
+        // given
+        User leader = userRepository.save(generateAuthUser());
+        User member1 = userRepository.save(generateKaKaoUser());
+        User member2 = userRepository.save(generateGoogleUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        // 스터디장 To do 생성
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(studyTodo);
+
+        StudyMember koo = StudyMemberFixture.createDefaultStudyMember(member1.getId(), studyInfo.getId());
+        StudyMember Lee = StudyMemberFixture.createDefaultStudyMember(member2.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(koo, Lee));
+
+        StudyTodoMapping studyTodoMapping1 = StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), koo.getUserId());
+        StudyTodoMapping studyTodoMapping2 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodo.getId(), Lee.getUserId());
+        studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2));
+
+        // when
+        List<StudyTodoStatusResponse> results = studyTodoService.readStudyTodoStatus(studyInfo.getId(), studyTodo.getId());
+
+        // then
+        assertEquals(2, results.size());
+        assertTrue(results.stream().anyMatch(r -> r.getUserId().equals(koo.getUserId()) && r.getStatus() == StudyTodoStatus.TODO_INCOMPLETE));
+        assertTrue(results.stream().anyMatch(r -> r.getUserId().equals(Lee.getUserId()) && r.getStatus() == StudyTodoStatus.TODO_COMPLETE));
 
     }
 
