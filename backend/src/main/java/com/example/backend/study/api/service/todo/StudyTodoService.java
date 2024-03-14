@@ -148,25 +148,24 @@ public class StudyTodoService {
         // 스터디 active 멤버들 찾기
         List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
-        // active 멤버들의 userId만 추출
+        // active 멤버들의 userId 추출
         List<Long> userIds = extractUserIds(activeMembers);
 
         // active 멤버들에 대한 특정 Todo의 완료 상태를 조회
         List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoIdAndUserIds(todoId, userIds);
 
-        // 조회된 정보를 바탕으로 응답 객체를 생성합니다.
+        // 조회된 정보를 바탕으로 응답 객체를 생성
         return todoMappings.stream()
                 .map(mapping -> new StudyTodoStatusResponse(mapping.getUserId(), mapping.getStatus()))
                 .collect(Collectors.toList());
     }
 
-    // active 멤버들의 userId만 추출
+    // 멤버들의 userId만 추출
     private List<Long> extractUserIds(List<StudyMember> activeMembers) {
         return activeMembers.stream()
                 .map(StudyMember::getUserId)
                 .toList();
     }
-
 
 
 }
