@@ -139,13 +139,17 @@ public class StudyTodoService {
     // 스터디원들의 Todo 완료여부 조회
     public List<StudyTodoStatusResponse> readStudyTodoStatus(Long studyInfoId, Long todoId) {
 
+        // 스터디와 관련된 To do 예외처리
+        studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+
         // 스터디 active 멤버들 찾기
         List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
         // active 멤버들의 userId만 추출
-        List<Long> userIds = activeMembers.stream()
-                .map(StudyMember::getUserId)
-                .toList();
+        List<Long> userIds = extractUserIds(activeMembers);
 
         // active 멤버들에 대한 특정 Todo의 완료 상태를 조회
         List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoIdAndUserIds(todoId, userIds);
@@ -155,6 +159,14 @@ public class StudyTodoService {
                 .map(mapping -> new StudyTodoStatusResponse(mapping.getUserId(), mapping.getStatus()))
                 .collect(Collectors.toList());
     }
+
+    // active 멤버들의 userId만 추출
+    private List<Long> extractUserIds(List<StudyMember> activeMembers) {
+        return activeMembers.stream()
+                .map(StudyMember::getUserId)
+                .toList();
+    }
+
 
 
 }
