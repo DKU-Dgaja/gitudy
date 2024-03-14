@@ -41,6 +41,10 @@ class RegisterCompleteFragment : Fragment() {
 
             val characterAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in)
             characterLayout.startAnimation(characterAnim)
+            val textAnim = AnimationUtils.loadAnimation(context, R.anim.alpha)
+            loginCompleteDescription1.startAnimation(textAnim)
+            loginCompleteDescription2.startAnimation(textAnim)
+            loginCompleteDescription3.startAnimation(textAnim)
         }
     }
 
