@@ -99,7 +99,7 @@ public class StudyInfoController {
     @GetMapping("/{studyInfoId}")
     public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
                                       @PathVariable(name = "studyInfoId") Long studyInfoId) {
-        UserInfoResponse findUser = authService.findUserInfo(user);
+        authService.findUserInfo(user);
         return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId));
     }
 }

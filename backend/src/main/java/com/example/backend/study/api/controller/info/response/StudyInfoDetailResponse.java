@@ -43,9 +43,9 @@ public class StudyInfoDetailResponse {
 
     private LocalDateTime modifiedDateTime;         // 스터디 변경 시간
 
-    private List<Long> categoriesId;              // 카테고리 ID 리스트
+    private List<String> categoryNames;              // 카테고리 이름 리스트
 
-    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<Long> categoriesId){
+    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<String> categoryNames){
         return StudyInfoDetailResponse.builder()
                 .userId(studyInfo.getUserId())
                 .topic(studyInfo.getTopic())
@@ -59,7 +59,7 @@ public class StudyInfoDetailResponse {
                 .status(studyInfo.getStatus())
                 .createdDateTime(studyInfo.getCreatedDateTime())
                 .modifiedDateTime(studyInfo.getModifiedDateTime())
-                .categoriesId(categoriesId)
+                .categoryNames(categoryNames)
                 .build();
     }
 }
