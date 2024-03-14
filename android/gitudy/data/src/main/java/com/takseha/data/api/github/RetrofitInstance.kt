@@ -4,7 +4,7 @@ import com.takseha.data.BuildConfig
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitInstance {
+object RetrofitInstance {
     private val client: Retrofit = Retrofit
         .Builder()
         .baseUrl(BuildConfig.GITHUB_BASE_URL)

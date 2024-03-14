@@ -53,7 +53,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/nicknameAddText2"
+            android:id="@+id/loginCompleteDescription3"
             style="@style/H3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -72,7 +72,7 @@
             android:layout_marginTop="20dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/nicknameAddText2">
+            app:layout_constraintTop_toBottomOf="@+id/loginCompleteDescription3">
 
             <ImageView
                 android:id="@+id/characterImg"
