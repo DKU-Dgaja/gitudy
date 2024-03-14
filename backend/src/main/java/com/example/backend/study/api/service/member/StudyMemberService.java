@@ -205,6 +205,12 @@ public class StudyMemberService {
             return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
         });
 
+        // 신청대기중인 유저가 아닌경우 예외처리
+        if (applyMember.getStatus() != StudyMemberStatus.STUDY_WAITING) {
+            log.warn(">>>> {} : {} <<<<", applyUserId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            throw new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        }
+
         if (approve) {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_ACTIVE);
 
