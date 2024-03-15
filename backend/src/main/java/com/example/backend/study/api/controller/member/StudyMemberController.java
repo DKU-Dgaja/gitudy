@@ -79,6 +79,7 @@ public class StudyMemberController {
         return JsonResult.successOf("Apply StudyMember Success");
     }
 
+
     // 스터디 가입 신청 취소
     @ApiResponse(responseCode = "200", description = "스터디 가입 신청 취소 성공")
     @DeleteMapping("/{studyInfoId}/apply")
@@ -90,5 +91,21 @@ public class StudyMemberController {
         studyMemberService.applyCancelStudyMember(userInfo, studyInfoId);
 
         return JsonResult.successOf("Apply cancel StudyMember Success");
+    }
+  
+    // 스터디장의 가입 신청 승인/거부
+    @ApiResponse(responseCode = "200", description = "스터디 가입 승인/거부 성공")
+    @PatchMapping("/{studyInfoId}/apply/{applyUserId}")
+    public JsonResult<?> leaderApproveRefuseMember(@AuthenticationPrincipal User user,
+                                                   @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                   @PathVariable(name = "applyUserId") Long applyUserId,
+                                                   @RequestParam(name = "approve", defaultValue = "false") boolean approve) {
+
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyMemberService.leaderApproveRefuseMember(studyInfoId, applyUserId, approve);
+
+        return JsonResult.successOf("Apply Approve or Refuse StudyMember Success");
+
     }
 }
