@@ -557,4 +557,72 @@ public class StudyMemberServiceTest extends TestConfig {
     }
 
 
+    @Test
+    @DisplayName("스터디 가입 신청 취소 테스트")
+    public void applyCancelStudyMember() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());
+        studyMemberRepository.save(waitingMember);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // when
+        studyMemberService.applyCancelStudyMember(userInfo, studyInfo.getId());
+        Optional<StudyMember> cancelledMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), userInfo.getUserId());
+
+        // then
+        assertFalse(cancelledMember.isPresent());
+    }
+
+    @Test
+    @DisplayName("스터디 가입 신청 실패 테스트- 대기중인 멤버가 아닐때")
+    public void applyCancelStudyMember_fail() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember notWaitingMember = StudyMemberFixture.createStudyMemberResigned(user1.getId(), studyInfo.getId());
+        studyMemberRepository.save(notWaitingMember);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // then
+        MemberException em = assertThrows(MemberException.class, () -> {
+            studyMemberService.applyCancelStudyMember(userInfo, studyInfo.getId());
+        });
+
+        assertEquals(ExceptionMessage.STUDY_WAITING_NOT_MEMBER.getText(), em.getMessage());
+    }
+
+    @Test
+    @DisplayName("스터디 가입 신청 실패 테스트- 멤버를 찾을 수 없을때")
+    public void applyCancelStudyMember_fail_2() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        // then
+        MemberException em = assertThrows(MemberException.class, () -> {
+            studyMemberService.applyCancelStudyMember(userInfo, studyInfo.getId());
+        });
+
+        assertEquals(ExceptionMessage.USER_NOT_STUDY_MEMBER.getText(), em.getMessage());
+    }
 }
