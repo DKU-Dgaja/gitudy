@@ -557,4 +557,78 @@ public class StudyMemberServiceTest extends TestConfig {
     }
 
 
+    @Test
+    @DisplayName("스터디장의 가입신청 승인 테스트")
+    public void leaderApplyApproveTest() {
+        // given
+        boolean approve = true;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
+        studyMemberRepository.save(waitingMember);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
+        Optional<StudyMember> findStudyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), waitingMember.getUserId());
+
+        // then
+        assertTrue(findStudyMember.isPresent());
+        assertEquals(findStudyMember.get().getStatus(), StudyMemberStatus.STUDY_ACTIVE);  // 활동 상태로 변경
+    }
+
+    @Test
+    @DisplayName("스터디장의 가입신청 거부 테스트")
+    public void leaderApplyRefuseTest() {
+        // given
+        boolean approve = false;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
+        studyMemberRepository.save(waitingMember);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
+        Optional<StudyMember> findStudyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), waitingMember.getUserId());
+
+        // then
+        assertTrue(findStudyMember.isPresent());
+        assertEquals(findStudyMember.get().getStatus(), StudyMemberStatus.STUDY_REFUSED);  // 거부 상태로 변경
+    }
+
+    @Test
+    @DisplayName("스터디장의 가입신청 테스트 - 대기중인 유저가 아닐때")
+    public void leaderApplyRefuseTest_waiting() {
+        // given
+        boolean approve = true;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember refusedMember = StudyMemberFixture.createStudyMemberRefused(user1.getId(), studyInfo.getId());  // 거부된 멤버 생성
+        studyMemberRepository.save(refusedMember);
+
+
+        // then
+        MemberException em = assertThrows(MemberException.class, () -> {
+            studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), refusedMember.getUserId(), approve);
+        });
+
+        assertEquals(ExceptionMessage.USER_NOT_STUDY_MEMBER.getText(), em.getMessage());
+    }
 }

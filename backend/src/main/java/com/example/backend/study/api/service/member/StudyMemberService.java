@@ -194,4 +194,38 @@ public class StudyMemberService {
 
     }
 
+
+    // 스터디장의 가입 신청 승인/거부 메서드
+    @Transactional
+    public void leaderApproveRefuseMember(Long studyInfoId, Long applyUserId, boolean approve) {
+
+        // 승인/거부할 스터디원 조회
+        StudyMember applyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, applyUserId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", applyUserId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        });
+
+        // 신청대기중인 유저가 아닌경우 예외처리
+        if (applyMember.getStatus() != StudyMemberStatus.STUDY_WAITING) {
+            log.warn(">>>> {} : {} <<<<", applyUserId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            throw new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        }
+
+        if (approve) {
+            applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_ACTIVE);
+
+            /*
+                알림 메서드 추가
+            */
+
+        } else {
+            applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_REFUSED);
+
+            /*
+                알림 메서드 추가
+             */
+        }
+
+    }
+
 }
