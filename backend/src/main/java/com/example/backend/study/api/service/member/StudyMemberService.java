@@ -194,6 +194,34 @@ public class StudyMemberService {
 
     }
 
+    // 스터디 가입 취소 메서드
+    @Transactional
+    public void applyCancelStudyMember(UserInfoResponse user, Long studyInfoId) {
+
+        // 스터디 조회 예외처리
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 대기중인 멤버인지 조회
+        Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
+
+        // 멤버가 존재하지 않으면 예외 발생
+        if (existingMember.isEmpty()) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            throw new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        }
+
+        // 멤버의 상태가 대기중이 아니면 예외 발생
+        if (existingMember.get().getStatus() != StudyMemberStatus.STUDY_WAITING) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
+        }
+
+        // 상태가 대기인 멤버 삭제
+        studyMemberRepository.delete(existingMember.get());
+    }
 
     // 스터디장의 가입 신청 승인/거부 메서드
     @Transactional
@@ -225,7 +253,7 @@ public class StudyMemberService {
                 알림 메서드 추가
              */
         }
-
+      
     }
 
 }

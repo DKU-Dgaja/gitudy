@@ -180,7 +180,7 @@ public class StudyMemberControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Apply StudyMember Success"));
 
     }
-
+  
     @Test
     public void 스터디장의_가입_신청_승인_거부_테스트() throws Exception {
         // given
@@ -207,7 +207,31 @@ public class StudyMemberControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Apply Approve or Refuse StudyMember Success"));
 
     }
+  
+    @Test
+    public void 스터디_가입_신청_취소_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
 
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(studyMemberService).applyCancelStudyMember(any(UserInfoResponse.class), any(Long.class));
+
+        //when , then
+        mockMvc.perform(delete("/member/" + studyInfo.getId() + "/apply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_obj").value("Apply cancel StudyMember Success"));
+
+    }
 }
-
