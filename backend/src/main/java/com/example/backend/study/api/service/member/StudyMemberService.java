@@ -206,21 +206,20 @@ public class StudyMemberService {
 
         // 대기중인 멤버인지 조회
         Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
-        if (existingMember.isPresent()) {
-            if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WAITING) {
 
-                studyMemberRepository.delete(existingMember.get());
-
-            } else {
-                log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
-                throw new MemberException(ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
-            }
-
-        } else {
+        // 멤버가 존재하지 않으면 예외 발생
+        if (existingMember.isEmpty()) {
             log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.USER_NOT_STUDY_MEMBER);
             throw new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
         }
 
-    }
+        // 멤버의 상태가 대기중이 아니면 예외 발생
+        if (existingMember.get().getStatus() != StudyMemberStatus.STUDY_WAITING) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
+        }
 
+        // 상태가 대기인 멤버 삭제
+        studyMemberRepository.delete(existingMember.get());
+    }
 }
