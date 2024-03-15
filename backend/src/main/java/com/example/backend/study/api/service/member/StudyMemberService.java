@@ -194,4 +194,33 @@ public class StudyMemberService {
 
     }
 
+    // 스터디 가입 취소 메서드
+    @Transactional
+    public void applyCancelStudyMember(UserInfoResponse user, Long studyInfoId) {
+
+        // 스터디 조회 예외처리
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 대기중인 멤버인지 조회
+        Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
+        if (existingMember.isPresent()) {
+            if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WAITING) {
+
+                studyMemberRepository.delete(existingMember.get());
+
+            } else {
+                log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
+                throw new MemberException(ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
+            }
+
+        } else {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            throw new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        }
+
+    }
+
 }
