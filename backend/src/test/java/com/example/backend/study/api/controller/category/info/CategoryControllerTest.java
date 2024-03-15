@@ -60,7 +60,7 @@ class CategoryControllerTest extends TestConfig {
 
         CategoryRegisterRequest request = CategoryRegisterRequest.builder()
                 .userId(user.getId())
-                .name("categoryName")
+                .name("name")
                 .build();
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
@@ -80,6 +80,69 @@ class CategoryControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("Category Register Success."))
+                .andDo(print());
+    }
+    @Test
+    void 카테고리_등록_공백_유효성_검증_실패_테스트() throws Exception {
+        //given
+        String inValidContent = "        ";
+        String expectedError = "name: 카테고리 내용은 공백일 수 없습니다.";
+
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        CategoryRegisterRequest request = CategoryRegisterRequest.builder()
+                .userId(user.getId())
+                .name(inValidContent)
+                .build();
+
+        // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(categoryService).registerCategory(request);
+
+        //when, then
+        mockMvc.perform(post("/category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(expectedError))
+                .andDo(print());
+    }
+
+    @Test
+    void 카테고리_등록_글자수_초과_유효성_검증_실패_테스트() throws Exception {
+        //given
+        String inValidContent = "1234567891011";
+        String expectedError = "name: 카테고리 내용은 10자를 넘을 수 없습니다.";
+
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        CategoryRegisterRequest request = CategoryRegisterRequest.builder()
+                .userId(user.getId())
+                .name(inValidContent)
+                .build();
+
+        // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(categoryService).registerCategory(request);
+
+        //when, then
+        mockMvc.perform(post("/category")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
 }
