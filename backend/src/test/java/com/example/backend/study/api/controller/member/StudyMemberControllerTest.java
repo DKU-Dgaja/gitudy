@@ -13,6 +13,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +31,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -180,7 +182,7 @@ public class StudyMemberControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Apply StudyMember Success"));
 
     }
-  
+
     @Test
     public void 스터디장의_가입_신청_승인_거부_테스트() throws Exception {
         // given
@@ -207,7 +209,7 @@ public class StudyMemberControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Apply Approve or Refuse StudyMember Success"));
 
     }
-  
+
     @Test
     public void 스터디_가입_신청_취소_테스트() throws Exception {
         //given
@@ -233,5 +235,40 @@ public class StudyMemberControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Apply cancel StudyMember Success"));
 
+    }
+
+
+    @Test
+    public void 스터디_가입_신청_목록_조회_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMemberApplyListAndCursorIdxResponse response = StudyMemberApplyListAndCursorIdxResponse.builder()
+                .applyList(new ArrayList<>()) // 비어 있는 가입 리스트
+                .build();
+
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        when(studyMemberService.applyListStudyMember(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+
+        //when , then
+        mockMvc.perform(get("/member/" + studyInfo.getId() + "/apply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "1")
+                        .param("limit", "5"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andDo(print());
     }
 }

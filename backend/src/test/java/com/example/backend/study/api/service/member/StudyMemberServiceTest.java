@@ -20,6 +20,7 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -54,6 +55,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Autowired
     private AuthService authService;
+
+    public final static Long CursorIdx = null;
+    public final static Long Limit = 3L;
 
     @AfterEach
     void tearDown() {
@@ -555,7 +559,7 @@ public class StudyMemberServiceTest extends TestConfig {
         // then
         assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
     }
-  
+
     @Test
     @DisplayName("스터디장의 가입신청 승인 테스트")
     public void leaderApplyApproveTest() {
@@ -630,7 +634,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         assertEquals(ExceptionMessage.USER_NOT_STUDY_MEMBER.getText(), em.getMessage());
     }
-  
+
     @Test
     @DisplayName("스터디 가입 신청 취소 테스트")
     public void applyCancelStudyMember() {
@@ -698,5 +702,134 @@ public class StudyMemberServiceTest extends TestConfig {
         });
 
         assertEquals(ExceptionMessage.USER_NOT_STUDY_MEMBER.getText(), em.getMessage());
+    }
+
+
+    @Test
+    @DisplayName("스터디 가입신청 목록 조회 테스트")
+    void applyListStudyMember() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateDefaultUser("1", "Lee");
+        User user2 = UserFixture.generateDefaultUser("2", "Koo");
+        User user3 = UserFixture.generateDefaultUser("3", "Tak");
+        User user4 = UserFixture.generateDefaultUser("4", "Joo");
+        userRepository.saveAll(List.of(leader, user1, user2, user3, user4));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitStudyMember1 = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());
+        StudyMember waitStudyMember2 = StudyMemberFixture.createStudyMemberWaiting(user2.getId(), studyInfo.getId());
+        StudyMember waitStudyMember3 = StudyMemberFixture.createStudyMemberWaiting(user3.getId(), studyInfo.getId());
+        StudyMember waitStudyMember4 = StudyMemberFixture.createStudyMemberWaiting(user4.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(waitStudyMember1, waitStudyMember2, waitStudyMember3, waitStudyMember4));
+
+        // when
+        StudyMemberApplyListAndCursorIdxResponse responses = studyMemberService.applyListStudyMember(studyInfo.getId(), CursorIdx, Limit);
+
+        // then
+        assertNotNull(responses);
+        assertEquals(3, responses.getApplyList().size());
+        assertEquals("Lee", responses.getApplyList().get(0).getName());
+        assertEquals("Tak", responses.getApplyList().get(2).getName());
+    }
+
+    @Test
+    @DisplayName("가입신청 목록 커서 기반 페이징 로직 검증")
+    void applyList_CursorPaging_Success() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateDefaultUser("1", "Lee");
+        User user2 = UserFixture.generateDefaultUser("2", "Koo");
+        User user3 = UserFixture.generateDefaultUser("3", "Tak");
+        User user4 = UserFixture.generateDefaultUser("4", "Joo");
+        userRepository.saveAll(List.of(leader, user1, user2, user3, user4));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitStudyMember1 = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());
+        StudyMember waitStudyMember2 = StudyMemberFixture.createStudyMemberWaiting(user2.getId(), studyInfo.getId());
+        StudyMember waitStudyMember3 = StudyMemberFixture.createStudyMemberWaiting(user3.getId(), studyInfo.getId());
+        StudyMember waitStudyMember4 = StudyMemberFixture.createStudyMemberWaiting(user4.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(waitStudyMember1, waitStudyMember2, waitStudyMember3, waitStudyMember4));
+
+        // when1
+        StudyMemberApplyListAndCursorIdxResponse firstPageResponse = studyMemberService.applyListStudyMember(studyInfo.getId(), CursorIdx, Limit);
+
+        // then1
+        assertNotNull(firstPageResponse);
+        assertEquals(3, firstPageResponse.getApplyList().size());
+        assertEquals("Lee", firstPageResponse.getApplyList().get(0).getName());
+
+        // when2
+        Long newCursorIdx = firstPageResponse.getCursorIdx();
+        StudyMemberApplyListAndCursorIdxResponse secondPageResponse = studyMemberService.applyListStudyMember(studyInfo.getId(), newCursorIdx, Limit);
+
+        // then2
+        assertNotNull(secondPageResponse);
+        assertEquals(1, secondPageResponse.getApplyList().size());
+        assertEquals("Joo", secondPageResponse.getApplyList().get(0).getName());
+    }
+
+    @Test
+    @DisplayName("가입신청 목록 테스트- 멤버가 섞여있을때")
+    void applyList_MemberMix() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateDefaultUser("1", "Lee");
+        User user2 = UserFixture.generateDefaultUser("2", "Koo");
+        User user3 = UserFixture.generateDefaultUser("3", "Tak");
+        User user4 = UserFixture.generateDefaultUser("4", "Joo");
+        userRepository.saveAll(List.of(leader, user1, user2, user3, user4));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitStudyMember1 = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());
+        StudyMember resignedStudyMember2 = StudyMemberFixture.createStudyMemberResigned(user2.getId(), studyInfo.getId());  // 강퇴된 멤버
+        StudyMember waitStudyMember3 = StudyMemberFixture.createStudyMemberWaiting(user3.getId(), studyInfo.getId());
+        StudyMember refusedStudyMember4 = StudyMemberFixture.createStudyMemberResigned(user4.getId(), studyInfo.getId());  // 거부된 멤버
+        studyMemberRepository.saveAll(List.of(waitStudyMember1, resignedStudyMember2, waitStudyMember3, refusedStudyMember4));
+
+        // when
+        StudyMemberApplyListAndCursorIdxResponse responses = studyMemberService.applyListStudyMember(studyInfo.getId(), CursorIdx, Limit);
+
+        // then
+        assertNotNull(responses);
+        assertEquals(2, responses.getApplyList().size());
+        assertEquals("Lee", responses.getApplyList().get(0).getName());
+        assertEquals("Tak", responses.getApplyList().get(1).getName());
+    }
+
+
+    @Test
+    @DisplayName("가입신청 목록 테스트 - 가입신청이 없는경우")
+    void applyList_empty() {
+        // given
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateDefaultUser("1", "Lee");
+        User user2 = UserFixture.generateDefaultUser("2", "Koo");
+        User user3 = UserFixture.generateDefaultUser("3", "Tak");
+        User user4 = UserFixture.generateDefaultUser("4", "Joo");
+        userRepository.saveAll(List.of(leader, user1, user2, user3, user4));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        // 전부 활동중인 멤버로 생성
+        StudyMember activeStudyMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        StudyMember activeStudyMember2 = StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId());
+        StudyMember activeStudyMember3 = StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyInfo.getId());
+        StudyMember activeStudyMember4 = StudyMemberFixture.createDefaultStudyMember(user4.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(activeStudyMember1, activeStudyMember2, activeStudyMember3, activeStudyMember4));
+
+        // then
+        MemberException em = assertThrows(MemberException.class, () -> {
+            studyMemberService.applyListStudyMember(studyInfo.getId(), CursorIdx, Limit);
+        });
+
+        assertEquals(ExceptionMessage.STUDY_NOT_APPLY_LIST.getText(), em.getMessage());
     }
 }

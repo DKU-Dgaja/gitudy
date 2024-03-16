@@ -1,6 +1,7 @@
 package com.example.backend.auth.config.fixture;
 
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.*;
@@ -80,6 +81,26 @@ public class UserFixture {
                 .name(name)
                 .profileImageUrl(profileImageUrl)
                 .githubId("구글아이디")
+                .build();
+    }
+
+
+    public static User generateDefaultUser(String platformId, String name) {
+
+        SocialInfo socialInfo = SocialInfo.builder()
+                .blogLink("블로그 링크")
+                .githubLink("깃허브 링크")
+                .linkedInLink("링크드인 링크")
+                .build();
+
+        return User.builder()
+                .platformId(platformId)
+                .name(name)
+                .platformType(GOOGLE)
+                .role(USER)
+                .githubId("깃허브아이디")
+                .socialInfo(socialInfo)
+                .profileImageUrl("이미지")
                 .build();
     }
 }
