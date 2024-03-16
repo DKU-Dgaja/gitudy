@@ -13,8 +13,7 @@
                 <gradient
                     android:type="linear"
                     android:startColor="@color/BASIC_GREEN"
-                    android:centerColor="@color/BASIC_GREEN"
-                    android:endColor="@color/BASIC_BLUE"
+                    android:endColor="@color/BASIC_GRADIENT"
                     android:angle="270"/>
             </shape>
         </clip>
