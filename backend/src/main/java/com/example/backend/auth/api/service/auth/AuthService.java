@@ -1,5 +1,6 @@
 package com.example.backend.auth.api.service.auth;
 
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
@@ -283,5 +284,17 @@ public class AuthService {
                 });
 
         return UserInfoResponse.of(findUser);
+    }
+
+    // 닉네임 중복체크 메서드
+    public void nickNameDuplicationCheck(UserNameRequest request) {
+
+        boolean exists = userRepository.existsByName(request.getName());
+
+        if (exists) {
+            log.warn(">>>> {} : {} <<<<", request.getName(), ExceptionMessage.USER_NAME_DUPLICATION);
+            throw new UserException(ExceptionMessage.USER_NAME_DUPLICATION);
+        }
+
     }
 }

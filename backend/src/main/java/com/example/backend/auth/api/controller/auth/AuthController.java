@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
 import com.example.backend.auth.api.controller.auth.response.*;
 import com.example.backend.auth.api.service.auth.AuthService;
@@ -177,4 +178,13 @@ public class AuthController {
         return JsonResult.successOf("PushAlarmYn Update Success.");
     }
 
+
+    @ApiResponse(responseCode = "200", description = "닉네임 중복 검사 성공")
+    @PostMapping("/name")
+    public JsonResult<?> nickNameDuplicationCheck(@Valid @RequestBody UserNameRequest request) {
+
+        authService.nickNameDuplicationCheck(request);
+
+        return JsonResult.successOf("Nickname Duplication Check Success.");
+    }
 }
