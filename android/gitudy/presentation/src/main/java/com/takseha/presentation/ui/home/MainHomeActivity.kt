@@ -3,9 +3,8 @@ package com.takseha.presentation.ui.home
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.window.OnBackInvokedDispatcher
 import androidx.activity.OnBackPressedCallback
-import androidx.navigation.findNavController
+import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMainHomeBinding
 import com.takseha.presentation.ui.feed.FeedHomeFragment
@@ -17,12 +16,12 @@ class MainHomeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_home)
-        window.statusBarColor = Color.argb(0xFF,0x1B,0x1B,0x25)
         setBinding()
         this.onBackPressedDispatcher.addCallback(this, callback)
 
         if (savedInstanceState == null) {
             supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, MainHomeFragment()).commit()
+            binding.navHome.isChecked = true
         }
         setMainFragmentView()
     }
@@ -37,15 +36,19 @@ class MainHomeActivity : AppCompatActivity() {
         with(binding) {
             navHome.setOnClickListener {
                 supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, MainHomeFragment()).commit()
+                navHome.isChecked = true
             }
             navMyStudy.setOnClickListener {
                 supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, MyStudyHomeFragment()).commit()
+                navMyStudy.isChecked = true
             }
             navFeed.setOnClickListener {
                 supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, FeedHomeFragment()).commit()
+                navFeed.isChecked = true
             }
             navProfile.setOnClickListener {
                 supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, ProfileHomeFragment()).commit()
+                navProfile.isChecked = true
             }
         }
     }
