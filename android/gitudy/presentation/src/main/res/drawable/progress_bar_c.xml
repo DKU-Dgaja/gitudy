@@ -16,11 +16,12 @@
             <shape
                 android:innerRadiusRatio="2.15"
                 android:shape="ring"
-                android:thickness="13dp" >
+                android:thickness="9dp" >
                 <gradient
-                    android:endColor="@color/BASIC_BLUE"
+                    android:type="linear"
                     android:startColor="@color/BASIC_GREEN"
-                    android:type="sweep"/>
+                    android:endColor="@color/BASIC_GRADIENT"
+                    android:angle="180"/>
             </shape>
         </rotate>
     </item>
