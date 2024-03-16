@@ -1,5 +1,6 @@
 package com.example.backend.auth.config.fixture;
 
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.account.user.User;
 
@@ -82,4 +83,11 @@ public class UserFixture {
                 .githubId("구글아이디")
                 .build();
     }
+
+    public static UserNameRequest generateUserNameRequest(String name) {
+        return UserNameRequest.builder()
+                .name(name)
+                .build();
+    }
+
 }

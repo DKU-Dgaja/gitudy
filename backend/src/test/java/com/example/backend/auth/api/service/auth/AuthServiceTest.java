@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
@@ -8,7 +9,10 @@ import com.example.backend.auth.api.service.auth.request.UserUpdateServiceReques
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
@@ -343,6 +347,32 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertFalse(updateUser2.isPushAlarmYn());
+    }
+
+    @Test
+    void 닉네임_중복체크_테스트_중복인경우() {
+        // given
+        userRepository.save(generateAuthUser());
+
+        UserNameRequest request = UserFixture.generateUserNameRequest("이름");
+
+        // then
+        UserException em = assertThrows(UserException.class, () -> {
+            authService.nickNameDuplicationCheck(request);
+        });
+
+        assertEquals(ExceptionMessage.USER_NAME_DUPLICATION.getText(), em.getMessage());
+    }
+
+    @Test
+    void 닉네임_중복체크_테스트_중복이아닌경우() {
+        // given
+        userRepository.save(generateAuthUser());
+
+        UserNameRequest request = UserFixture.generateUserNameRequest("이정우");
+
+        // when
+        authService.nickNameDuplicationCheck(request);
     }
 
 }
