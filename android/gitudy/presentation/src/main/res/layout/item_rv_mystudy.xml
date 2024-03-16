@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     app:cardCornerRadius="12dp">
@@ -33,6 +32,24 @@
             android:text="단국알고깃터디"
             android:textColor="@color/GS_800"
             app:layout_constraintStart_toEndOf="@+id/studyImg"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/leaderTag"
+            style="@style/B7_2"
+            android:layout_width="41dp"
+            android:layout_height="28dp"
+            android:background="@drawable/box_non_stroke_r24"
+            android:backgroundTint="@color/BASIC_BLUE"
+            android:gravity="center"
+            android:text="팀장"
+            android:layout_marginTop="2dp"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/WHITE"
+            android:visibility="visible"
+            android:paddingLeft="10dp"
+            android:paddingRight="10dp"
+            app:layout_constraintStart_toEndOf="@+id/studyName"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
