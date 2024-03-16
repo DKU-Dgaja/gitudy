@@ -9,7 +9,7 @@ data class LoginPageResponse(
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")
-    val resObj: List<LoginPageInfo>
+    val loginPageInfos: List<LoginPageInfo>
 )
 
 data class LoginPageInfo(
