@@ -57,7 +57,6 @@
                     android:layout_height="55dp"
                     android:layout_marginRight="16dp"
                     android:background="@drawable/circle_non_stroke"
-                    android:padding="7dp"
                     android:src="@drawable/character_bebe_over_130" />
 
                 <LinearLayout

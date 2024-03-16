@@ -296,7 +296,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="4dp"
-                                android:text="@string/to_do_time_check"
+                                android:text="@string/to_do_deadline"
                                 android:textColor="@color/GS_500" />
 
                             <TextView
@@ -305,7 +305,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="4dp"
-                                android:text="@string/to_do_time"
+                                android:text="@string/to_do_deadline_date"
                                 android:textColor="@color/GS_600" />
                         </LinearLayout>
                     </LinearLayout>
