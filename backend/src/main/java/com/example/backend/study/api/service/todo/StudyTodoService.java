@@ -136,6 +136,18 @@ public class StudyTodoService {
         return response;
     }
 
+    // Todo 단일조회
+    public StudyTodoResponse readStudyTodo(Long todoId) {
+
+        // To do 조회
+        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() ->{
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+
+        return StudyTodoResponse.of(studyTodo);
+    }
+
     // 스터디원들의 Todo 완료여부 조회
     public List<StudyTodoStatusResponse> readStudyTodoStatus(Long studyInfoId, Long todoId) {
 
