@@ -20,6 +20,7 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
@@ -231,6 +232,38 @@ public class StudyTodoControllerTest extends TestConfig {
     }
 
     @Test
+    public void Todo_단일_조회_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(studyTodo);
+
+        StudyTodoResponse response = StudyTodoResponse.of(studyTodo);
+
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        when(studyTodoService.readStudyTodo(any(Long.class))).thenReturn(response);
+
+        // when
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj.title").value(response.getTitle()))
+                .andDo(print());
+    }
+
+    @Test
     public void Todo_스터디원들의_완료여부_조회() throws Exception {
         // given
         User savedUser = userRepository.save(generateAuthUser());
@@ -258,7 +291,7 @@ public class StudyTodoControllerTest extends TestConfig {
         when(studyTodoService.readStudyTodoStatus(any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
-        mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + 1L)
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + 1L + "/status")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
