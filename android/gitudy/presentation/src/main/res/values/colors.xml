@@ -16,4 +16,5 @@
     <color name="BASIC_RED">#FF4646</color>
     <color name="BASIC_YELLOW">#FFD84F</color>
     <color name="BASIC_GREEN">#31DA7E</color>
+    <color name="BASIC_GRADIENT">#77C6FD</color>
 </resources>
