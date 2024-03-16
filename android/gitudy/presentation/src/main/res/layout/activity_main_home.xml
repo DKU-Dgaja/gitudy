@@ -8,9 +8,10 @@
     tools:context=".ui.home.MainHomeActivity">
 
     <FrameLayout
-        android:id="@+id/mainFrameLayout"
+        android:id="@+id/mainFragmentContainerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/menu_bottom"
