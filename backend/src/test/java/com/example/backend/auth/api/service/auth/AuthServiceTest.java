@@ -373,6 +373,9 @@ class AuthServiceTest extends TestConfig {
 
         // when
         authService.nickNameDuplicationCheck(request);
+
+        // then
+        assertDoesNotThrow(() -> authService.nickNameDuplicationCheck(request));
     }
 
 }
