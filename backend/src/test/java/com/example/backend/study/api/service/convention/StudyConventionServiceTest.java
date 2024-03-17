@@ -205,4 +205,57 @@ public class StudyConventionServiceTest extends TestConfig {
         assertEquals("4번째 컨벤션", responses.getStudyConventionList().get(0).getName()); // 최신 컨벤션 확인
 
     }
+
+    @Test
+    void 정규식_통과_테스트() {
+        // given
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^\\[[A-Za-z가-힣0-9]+\\] [A-Za-z가-힣]+: .+$";
+        String conventionDescription = "커밋 메세지 규칙: [이름] 플랫폼 \":\" + \" \" + 문제 이름 \n" +
+                "예시 1) [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) [이주성] 프로그래머스: 두 수의 곱";
+
+        StudyConvention sc = StudyConvention.builder()
+                .studyInfoId(1L)
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build();
+
+        String commitMag = "[이주성] 백준: 크리스마스 트리";
+
+        // when
+        boolean result = studyConventionService.checkConvention(convention, commitMag);
+
+        // then
+        assertTrue(result);
+
+    }
+
+    @Test
+    void 정규식_실패_테스트() {
+        // given
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^\\[[A-Za-z가-힣0-9]+\\] [A-Za-z가-힣]+: .+$";
+        String conventionDescription = "커밋 메세지 규칙: [이름] 플랫폼 \":\" + \" \" + 문제 이름 \n" +
+                "예시 1) [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) [이주성] 프로그래머스: 두 수의 곱";
+
+        StudyConvention sc = StudyConvention.builder()
+                .studyInfoId(1L)
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build();
+
+        String invalidCommitMag = "[이주성] 백준:크리스마스 트리";
+
+        // when
+        boolean result = studyConventionService.checkConvention(convention, invalidCommitMag);
+
+        // then
+        assertFalse(result);
+    }
 }
