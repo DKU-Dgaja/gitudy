@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.todo.response;
 
 
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -27,4 +28,14 @@ public class StudyTodoResponse {
 
     private LocalDate todoDate;  // To do 날짜
 
+    public static StudyTodoResponse of(StudyTodo studyTodo) {
+        return StudyTodoResponse.builder()
+                .id(studyTodo.getId())
+                .studyInfoId(studyTodo.getStudyInfoId())
+                .title(studyTodo.getTitle())
+                .detail(studyTodo.getDetail())
+                .todoLink(studyTodo.getTodoLink())
+                .todoDate(studyTodo.getTodoDate())
+                .build();
+    }
 }
