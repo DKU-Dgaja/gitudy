@@ -41,4 +41,20 @@ public class StudyConventionRepositoryImpl implements StudyConventionRepositoryC
                 .fetch();
     }
 
+    @Override
+    public List<StudyConventionResponse> findActiveConventionByStudyInId(Long studyInfoId) {
+
+        return queryFactory.select(Projections.constructor(StudyConventionResponse.class,
+                        studyConvention.id,
+                        studyConvention.studyInfoId,
+                        studyConvention.name,
+                        studyConvention.description,
+                        studyConvention.content,
+                        studyConvention.isActive))
+                .from(studyConvention)
+                .where(studyConvention.studyInfoId.eq(studyInfoId)
+                        .and(studyConvention.isActive))
+                .fetch();
+    }
+
 }
