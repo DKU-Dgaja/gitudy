@@ -1,15 +1,23 @@
 package com.example.backend.study.api.service.category.info;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.category.CategoryException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture;
+import com.example.backend.domain.define.study.StudyCategory.mapping.StudyCategoryMappingFixture;
 import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
+import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.category.info.request.CategoryRegisterRequest;
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
+import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
+import com.example.backend.study.api.service.category.info.response.CategoryResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +30,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class CategoryServiceTest extends TestConfig {
+    private final static int DATA_SIZE = 10;
+    private final static Long LIMIT = 5L;
     @Autowired
     private UserRepository userRepository;
 
@@ -31,10 +41,18 @@ class CategoryServiceTest extends TestConfig {
     @Autowired
     private CategoryService categoryService;
 
+    @Autowired
+    private StudyInfoRepository studyInfoRepository;
+
+    @Autowired
+    private StudyCategoryMappingRepository studyCategoryMappingRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
         studyCategoryRepository.deleteAllInBatch();
+        studyInfoRepository.deleteAllInBatch();
+        studyCategoryMappingRepository.deleteAllInBatch();
     }
     @Test
     void 카테고리_등록_테스트() {
@@ -121,5 +139,65 @@ class CategoryServiceTest extends TestConfig {
         assertThrows(CategoryException.class, () -> {
             categoryService.deleteCategory(invaildCategoryId);
         }, ExceptionMessage.CATEGORY_NOT_FOUND.getText());
+    }
+
+    @Test
+    void 커서가_null이_아닌_경우_카테고리_리스트_조회_테스트_1() {
+        // given
+        Long cursorIdx = 5L;
+
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+
+        List<StudyCategory> categories
+                = studyCategoryRepository.saveAll(StudyCategoryFixture.createDefaultPublicStudyCategories(DATA_SIZE));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(study, categories));
+
+        // when
+        CategoryListAndCursorIdxResponse categoryListAndCursorIdxResponse = categoryService.selectCategoryList(study.getId(), cursorIdx, LIMIT);
+
+        for (CategoryResponse categoryResponse : categoryListAndCursorIdxResponse.getCategoryResponseList()) {
+            assertTrue(categoryResponse.getId() < cursorIdx);
+            System.out.println(categoryResponse.getId() + " " + categoryResponse.getName());
+        }
+    }
+
+    @Test
+    void 커서가_null이_아닌_경우_카테고리_리스트_조회_테스트_2() {
+        // given
+        Long cursorIdx = 15L;
+
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+
+        List<StudyCategory> categories
+                = studyCategoryRepository.saveAll(StudyCategoryFixture.createDefaultPublicStudyCategories(DATA_SIZE));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(study, categories));
+
+        // when
+        CategoryListAndCursorIdxResponse categoryListAndCursorIdxResponse = categoryService.selectCategoryList(study.getId(), cursorIdx, LIMIT);
+
+        for (CategoryResponse categoryResponse : categoryListAndCursorIdxResponse.getCategoryResponseList()) {
+            assertTrue(categoryResponse.getId() < cursorIdx);
+            System.out.println(categoryResponse.getId() + " " + categoryResponse.getName());
+        }
+    }
+
+    @Test
+    void 커서가_null인_경우_카테고리_리스트_조회_테스트() {
+        // given
+        Long cursorIdx = null;
+
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+
+        List<StudyCategory> categories
+                = studyCategoryRepository.saveAll(StudyCategoryFixture.createDefaultPublicStudyCategories(DATA_SIZE));
+        studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(study, categories));
+
+        // when
+        CategoryListAndCursorIdxResponse categoryListAndCursorIdxResponse = categoryService.selectCategoryList(study.getId(), cursorIdx, LIMIT);
+
+        assertEquals(LIMIT, categoryListAndCursorIdxResponse.getCategoryResponseList().size());
     }
 }
