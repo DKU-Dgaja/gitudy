@@ -5,6 +5,7 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.study.StudyInfoException;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -16,6 +17,8 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberStatus
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -34,9 +37,9 @@ public class StudyMemberService {
     private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyInfoRepository studyInfoRepository;
-    private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyTodoRepository studyTodoRepository;
     private final static int JOIN_CODE_LENGTH = 10;
+    private final static Long MAX_LIMIT = 10L;
 
     // 스터디장 검증 메서드
     public UserInfoResponse isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
@@ -253,7 +256,36 @@ public class StudyMemberService {
                 알림 메서드 추가
              */
         }
-      
+
+    }
+
+    // 스터디 가입신청 목록 조회 메서드
+    public StudyMemberApplyListAndCursorIdxResponse applyListStudyMember(Long studyInfoId, Long cursorIdx, Long limit) {
+
+        // 스터디 조회 예외처리
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
+            return new MemberException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        limit = Math.min(limit, MAX_LIMIT);
+
+        // 대기중인 멤버들의 신청목록 조회
+        List<StudyMemberApplyResponse> applyList  = studyMemberRepository.findStudyApplyListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+
+        // 대기중인 멤버가 없는 경우(가입 신청x) 예외처리
+        if (applyList.isEmpty()) {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_NOT_APPLY_LIST);
+            throw new MemberException(ExceptionMessage.STUDY_NOT_APPLY_LIST);
+        }
+
+        StudyMemberApplyListAndCursorIdxResponse response = StudyMemberApplyListAndCursorIdxResponse.builder()
+                .applyList(applyList)
+                .build();
+
+        response.setNextCursorIdx();
+
+        return response;
     }
 
 }

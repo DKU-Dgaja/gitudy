@@ -4,7 +4,9 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.study.api.controller.info.response.StudyMemberWithUserInfoResponse;
+import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -114,5 +116,33 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                         .and(studyMember.userId.eq(userId))
                         .and(studyMember.status.eq(StudyMemberStatus.STUDY_WAITING)))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    public List<StudyMemberApplyResponse> findStudyApplyListByStudyInfoId_CursorPaging(Long studyInfoId, Long cursorIdx, Long limit) {
+
+        JPAQuery<StudyMemberApplyResponse> query = queryFactory
+                .select(Projections.constructor(StudyMemberApplyResponse.class,
+                        studyMember.id,
+                        user.id.as("userId"),
+                        user.name,
+                        user.githubId,
+                        user.socialInfo,
+                        user.profileImageUrl,
+                        user.score,
+                        user.point))
+                .from(studyMember)
+                .join(user).on(studyMember.userId.eq(user.id))
+                .where(studyMember.studyInfoId.eq(studyInfoId)
+                        .and(studyMember.status.eq(StudyMemberStatus.STUDY_WAITING)))
+                .orderBy(studyMember.id.asc());
+
+        if (cursorIdx != null) {
+            query = query.where(studyMember.id.gt(cursorIdx)); // 먼저 신청한순 (마지막 항목기준 Id 값이 큰값들 조회)
+        }
+
+        return query.limit(limit)
+                .fetch();
+
     }
 }

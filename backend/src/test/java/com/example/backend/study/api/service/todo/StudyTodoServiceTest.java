@@ -321,6 +321,25 @@ public class StudyTodoServiceTest extends TestConfig {
 
     }
 
+    @Test
+    @DisplayName("Todo 단일조회 테스트")
+    void readStudyTodo() {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
+        studyTodoRepository.save(studyTodo);
+
+        //when
+        studyTodoService.readStudyTodo(studyTodo.getId());
+
+        //then
+        assertEquals("백준 1234번 풀기", studyTodo.getTitle());
+    }
+
 
     @Test
     @DisplayName("스터디원들의 특정 Todo에 대한 완료여부 조회 테스트")

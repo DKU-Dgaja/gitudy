@@ -4,11 +4,13 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -92,7 +94,7 @@ public class StudyMemberController {
 
         return JsonResult.successOf("Apply cancel StudyMember Success");
     }
-  
+
     // 스터디장의 가입 신청 승인/거부
     @ApiResponse(responseCode = "200", description = "스터디 가입 승인/거부 성공")
     @PatchMapping("/{studyInfoId}/apply/{applyUserId}")
@@ -108,4 +110,18 @@ public class StudyMemberController {
         return JsonResult.successOf("Apply Approve or Refuse StudyMember Success");
 
     }
+
+    // 스터디 가입신청 목록 조회
+    @ApiResponse(responseCode = "200", description = "스터디 가입신청 목록 조회 성공", content = @Content(schema = @Schema(implementation = StudyMemberApplyListAndCursorIdxResponse.class)))
+    @GetMapping("/{studyInfoId}/apply")
+    public JsonResult<?> applyListStudyMember(@AuthenticationPrincipal User user,
+                                              @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                              @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                              @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "3") Long limit) {
+
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        return JsonResult.successOf(studyMemberService.applyListStudyMember(studyInfoId, cursorIdx, limit));
+    }
+
 }
