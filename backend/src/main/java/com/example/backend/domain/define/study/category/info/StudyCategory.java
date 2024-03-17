@@ -24,4 +24,8 @@ public class StudyCategory extends BaseEntity {
     public StudyCategory(String name) {
         this.name = name;
     }
+
+    public void updateCategory(String name) {
+        this.name = name;
+    }
 }
