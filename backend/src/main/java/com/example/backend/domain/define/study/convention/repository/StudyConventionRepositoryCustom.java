@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.convention.repository;
 
+import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 
 import java.util.List;
@@ -10,5 +11,5 @@ public interface StudyConventionRepositoryCustom {
     List<StudyConventionResponse> findStudyConventionListByStudyInfoId_CursorPaging(Long studyInfoId, Long cursorIdx, Long limit);
 
     // StudyInfoId를 통해 활성화된 Convention 가져오기
-    List<StudyConventionResponse> findActiveConventionByStudyInId(Long studyInfoId);
+    StudyConventionResponse findActiveConventionByStudyInId(Long studyInfoId);
 }

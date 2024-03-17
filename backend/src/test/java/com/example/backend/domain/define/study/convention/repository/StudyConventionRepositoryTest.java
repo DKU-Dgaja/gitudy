@@ -68,18 +68,16 @@ public class StudyConventionRepositoryTest extends TestConfig {
     void 활성화된_컨벤션_조회_테스트() {
         // given
         Long studyId = 1L;
-        int expectedSize = 1;
 
         studyConventionRepository.save(StudyConventionFixture.createStudyDefaultConvention(studyId));
         studyConventionRepository.save(StudyConventionFixture.createNonActiveConvention(studyId));
 
         // when
-        List<StudyConventionResponse> conventions = studyConventionRepository.findActiveConventionByStudyInId(studyId);
+        var convention = studyConventionRepository.findActiveConventionByStudyInId(studyId);
 
         // then
-        assertEquals(conventions.size(), expectedSize);
-        assertEquals(conventions.get(0).getStudyInfoId(), studyId);
+        assertEquals(convention.getStudyInfoId(), studyId);
+        assertTrue(convention.isActive());
     }
-
 
 }

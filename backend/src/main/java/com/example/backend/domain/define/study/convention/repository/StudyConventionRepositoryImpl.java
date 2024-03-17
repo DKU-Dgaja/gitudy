@@ -1,6 +1,7 @@
 package com.example.backend.domain.define.study.convention.repository;
 
 
+import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -42,7 +43,7 @@ public class StudyConventionRepositoryImpl implements StudyConventionRepositoryC
     }
 
     @Override
-    public List<StudyConventionResponse> findActiveConventionByStudyInId(Long studyInfoId) {
+    public StudyConventionResponse findActiveConventionByStudyInId(Long studyInfoId) {
 
         return queryFactory.select(Projections.constructor(StudyConventionResponse.class,
                         studyConvention.id,
@@ -54,7 +55,7 @@ public class StudyConventionRepositoryImpl implements StudyConventionRepositoryC
                 .from(studyConvention)
                 .where(studyConvention.studyInfoId.eq(studyInfoId)
                         .and(studyConvention.isActive))
-                .fetch();
+                .fetchFirst();
     }
 
 }
