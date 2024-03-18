@@ -84,7 +84,7 @@ public class StudyInfoController {
     @GetMapping("/")
     public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
                                                     @Min(value = 0, message = "Cursor index cannot be negative")
-                                                    @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                                    @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                                     @RequestParam(name = "limit", defaultValue = "20") Long limit,
                                                     @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
                                                     @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
