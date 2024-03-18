@@ -288,6 +288,36 @@ class StudyInfoControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andDo(print());
     }
+
+    @Test
+    void 마이_스터디_조회_성공_테스트_cursorIdx가_null일_때() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+                .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
+
+        // when
+        mockMvc.perform(get("/study/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("limit", "10")
+                        .param("cursorIdx", "")
+                        .param("sortBy", "score")
+                        .param("myStudy", "true")
+                )
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andDo(print());
+    }
     @Test
     void 마이_스터디_조회_유효성_검증_실패_테스트() throws Exception {
         // given
