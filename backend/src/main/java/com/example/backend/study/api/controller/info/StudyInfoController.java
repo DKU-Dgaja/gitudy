@@ -8,6 +8,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -80,7 +81,7 @@ public class StudyInfoController {
 
     // 스터디 조회
     @ApiResponse(responseCode = "200", description = "스터디 조회 성공", content = @Content(schema = @Schema(implementation =
-            StudyInfoListResponse.class)))
+            StudyInfoListAndCursorIdxResponse.class)))
     @GetMapping("/")
     public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
                                                     @Min(value = 0, message = "Cursor index cannot be negative")
