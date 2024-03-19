@@ -3,7 +3,6 @@ package com.takseha.data.repository
 import com.takseha.data.api.gitudy.GitudyApi
 import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.dto.auth.register.RegisterRequest
-import retrofit2.http.Query
 
 class GitudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyApi::class.java)
@@ -22,10 +21,11 @@ class GitudyRepository {
         bearerToken: String
     ) = client.getUserInfo(bearerToken)
 
-    suspend fun getMyStudyList(
+    suspend fun getStudyList(
         bearerToken: String,
-        userId: Int,
-        cursorIdx: Int?,
-        sortBy: String = "createdDateTime"
-    ) = client.getMyStudyList(bearerToken, userId, cursorIdx, limit = 20, sortBy, myStudy = true)
+        cursorIdx: Long?,
+        limit: Long = 5,
+        sortBy: String = "createdDateTime",
+        myStudy: Boolean
+    ) = client.getStudyList(bearerToken, cursorIdx, limit, sortBy, myStudy)
 }
