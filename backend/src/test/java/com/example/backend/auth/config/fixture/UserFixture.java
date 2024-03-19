@@ -1,5 +1,6 @@
 package com.example.backend.auth.config.fixture;
 
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
@@ -85,6 +86,7 @@ public class UserFixture {
     }
 
 
+
     public static User generateDefaultUser(String platformId, String name) {
 
         SocialInfo socialInfo = SocialInfo.builder()
@@ -103,4 +105,11 @@ public class UserFixture {
                 .profileImageUrl("이미지")
                 .build();
     }
+  
+   public static UserNameRequest generateUserNameRequest(String name) {
+        return UserNameRequest.builder()
+                .name(name)
+                .build();
+    }
+
 }

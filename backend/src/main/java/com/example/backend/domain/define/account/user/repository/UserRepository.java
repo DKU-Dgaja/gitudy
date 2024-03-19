@@ -13,4 +13,6 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     // select u from user u where u.platformId = :platformId and u.platformType = :platformType
     Optional<User> findByPlatformIdAndPlatformType(String platformId, UserPlatformType platformType);
 
+    // 같은 Name(닉네임)이 있는지 판별한다.
+    boolean existsByName(String name);
 }

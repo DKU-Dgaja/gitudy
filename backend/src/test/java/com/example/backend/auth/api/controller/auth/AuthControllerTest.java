@@ -2,6 +2,7 @@ package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
@@ -10,6 +11,7 @@ import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequ
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.common.utils.TokenUtil;
@@ -32,13 +34,13 @@ import java.util.Map;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class AuthControllerTest extends TestConfig {
@@ -448,6 +450,70 @@ class AuthControllerTest extends TestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
+    }
+
+    @Test
+    void 닉네임_중복체크_테스트() throws Exception {
+        // given
+        UserNameRequest request = UserFixture.generateUserNameRequest("이정우");
+
+        doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
+
+        // when & then
+        mockMvc.perform(post("/auth/check-nickname")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("Nickname Duplication Check Success."))
+                .andDo(print());
+    }
+
+    @Test
+    void 닉네임_중복체크_유효성_검증_실패_테스트1() throws Exception {
+        // given
+        String inValidName = "   ";
+        String expectedError = "name: 이름은 공백일 수 없습니다.";
+
+        UserNameRequest request = UserFixture.generateUserNameRequest(inValidName);
+
+        doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
+
+        // when
+        mockMvc.perform(post("/auth/check-nickname")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(expectedError))
+                .andDo(print());
+    }
+
+    @Test
+    void 닉네임_중복체크_유효성_검증_실패_테스트2() throws Exception {
+        // given
+        String inValidName = "이름은6자이내";
+        String expectedError = "name: 이름 6자 이내";
+
+        UserNameRequest request = UserFixture.generateUserNameRequest(inValidName);
+
+        doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
+
+        // when
+        mockMvc.perform(post("/auth/check-nickname")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
 }
