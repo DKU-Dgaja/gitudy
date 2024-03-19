@@ -73,7 +73,7 @@ public class StudyCommentController {
     @GetMapping("/{studyInfoId}/comments")
     public JsonResult<?> StudyCommentList(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                          @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                          @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);

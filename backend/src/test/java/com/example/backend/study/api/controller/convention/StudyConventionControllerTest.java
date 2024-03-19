@@ -306,5 +306,40 @@ public class StudyConventionControllerTest extends TestConfig {
                 .andDo(print());
     }
 
+    @Test
+    public void cursorIdx가_null일_때_Convention_전체_조회_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyConvention studyConvention = StudyConventionFixture.createStudyDefaultConvention(studyInfo.getId());
+        studyConventionRepository.save(studyConvention);
+
+        StudyConventionListAndCursorIdxResponse response = StudyConventionListAndCursorIdxResponse.builder()
+                .studyConventionList(new ArrayList<>())  // 비어 있는 convention 리스트
+                .build();
+        response.setNextCursorIdx();
+
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
+        when(studyConventionService.readStudyConventionList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("cursorIdx","")
+                        .param("limit","1")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isEmpty())
+                .andDo(print());
+    }
 }

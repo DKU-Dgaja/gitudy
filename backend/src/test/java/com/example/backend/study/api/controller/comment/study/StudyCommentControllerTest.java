@@ -190,6 +190,37 @@ class StudyCommentControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
+    }
+
+    @Test
+    void cursorIdx가_null일_때_스터디_댓글_조회_성공_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+        StudyCommentListAndCursorIdxResponse response
+                = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
+
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(studyCommentService.selectStudyCommentList(any(Long.class), any(Long.class), any(Long.class)))
+                .thenReturn(response);
+
+        // when
+        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "")
+                        .param("limit", "5"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isEmpty())
+                .andDo(print());
 
     }
 

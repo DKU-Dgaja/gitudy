@@ -228,7 +228,41 @@ public class StudyTodoControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
+    }
 
+    @Test
+    public void cursorIdx가_null일_때_Todo_전체조회_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodoListAndCursorIdxResponse response = StudyTodoListAndCursorIdxResponse.builder()
+                .todoList(new ArrayList<>()) // 비어 있는 Todo 리스트
+                .build();
+        response.setNextCursorIdx();
+
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
+        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+
+        // when
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "")
+                        .param("limit", "3"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isEmpty())
+                .andDo(print());
     }
 
     @Test

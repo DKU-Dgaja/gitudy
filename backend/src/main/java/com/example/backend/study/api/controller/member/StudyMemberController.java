@@ -116,7 +116,7 @@ public class StudyMemberController {
     @GetMapping("/{studyInfoId}/apply")
     public JsonResult<?> applyListStudyMember(@AuthenticationPrincipal User user,
                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                              @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                              @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                               @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "3") Long limit) {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
