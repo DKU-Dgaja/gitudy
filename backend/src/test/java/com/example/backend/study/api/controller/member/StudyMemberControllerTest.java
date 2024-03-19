@@ -271,4 +271,38 @@ public class StudyMemberControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
     }
+
+    @Test
+    public void cursorIdx가_null일_때_스터디_가입_신청_목록_조회_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMemberApplyListAndCursorIdxResponse response = StudyMemberApplyListAndCursorIdxResponse.builder()
+                .applyList(new ArrayList<>()) // 비어 있는 가입 리스트
+                .build();
+
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        when(studyMemberService.applyListStudyMember(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+
+        //when , then
+        mockMvc.perform(get("/member/" + studyInfo.getId() + "/apply")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "")
+                        .param("limit", "5"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isEmpty())
+                .andDo(print());
+    }
 }

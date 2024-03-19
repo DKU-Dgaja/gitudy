@@ -34,7 +34,7 @@ public class StudyCommitController {
     public JsonResult<?> userCommitList(@AuthenticationPrincipal User user,
                                         @PathVariable(name = "userId") Long userId,
                                         @RequestParam(name = "studyInfoId", required = false) Long studyInfoId,
-                                        @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                        @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                         @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "20") Long limit) {
 
         authService.authenticate(userId, user);

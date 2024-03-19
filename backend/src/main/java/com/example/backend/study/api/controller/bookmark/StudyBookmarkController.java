@@ -32,7 +32,7 @@ public class StudyBookmarkController {
     @GetMapping("/user/{userId}")
     public JsonResult<?> userBookmarkList(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "userId") Long userId,
-                                          @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                          @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
         authService.authenticate(userId, user);
