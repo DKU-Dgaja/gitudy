@@ -5,9 +5,13 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.category.info.request.CategoryRegisterRequest;
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
+import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
 import com.example.backend.study.api.service.category.info.CategoryService;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -46,5 +50,20 @@ public class CategoryController {
         authService.findUserInfo(user);
         categoryService.deleteCategory(categoryId);
         return JsonResult.successOf("Category deleted successfully");
+    }
+
+    @ApiResponse(responseCode = "200",
+            description = "카테고리 조회 성공",
+            content = @Content(schema = @Schema(implementation = CategoryListAndCursorIdxResponse.class)))
+    @GetMapping("/{studyInfoId}")
+    public JsonResult<?> StudyCommentList(@AuthenticationPrincipal User user,
+                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                          @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                          @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
+
+        authService.findUserInfo(user);
+        CategoryListAndCursorIdxResponse response = categoryService.selectCategoryList(studyInfoId, cursorIdx, limit);
+
+        return JsonResult.successOf(response);
     }
 }

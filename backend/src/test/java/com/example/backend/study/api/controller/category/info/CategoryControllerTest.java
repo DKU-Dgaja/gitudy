@@ -12,9 +12,12 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture;
 import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.category.info.request.CategoryRegisterRequest;
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
+import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
 import com.example.backend.study.api.service.category.info.CategoryService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -61,6 +64,7 @@ class CategoryControllerTest extends TestConfig {
     void tearDown() {
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
+        studyCategoryRepository.deleteAllInBatch();
     }
 
     @Test
@@ -337,6 +341,94 @@ class CategoryControllerTest extends TestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
+    }
+
+    @Test
+    void 카테고리_조회_성공_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+        CategoryListAndCursorIdxResponse response
+                = StudyCategoryFixture.generateCategoryListAndCursorIdxResponse(3);
+
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(categoryService.selectCategoryList(any(Long.class), any(Long.class), any(Long.class)))
+                .thenReturn(response);
+
+        // when
+        mockMvc.perform(get("/category/" + studyInfo.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "1")
+                        .param("limit", "5"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andDo(print());
+    }
+
+    @Test
+    void 카테고리_조회_실패_테스트_권한_없음() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+        CategoryListAndCursorIdxResponse response
+                = StudyCategoryFixture.generateCategoryListAndCursorIdxResponse(3);
+
+
+        //when
+        doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
+                .when(authService)
+                .findUserInfo(any(User.class));
+
+        mockMvc.perform(get("/category/" + studyInfo.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "1")
+                        .param("limit", "5"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andDo(print());
+    }
+
+    @Test
+    void 카테고리_조회_유효성_검증_실패_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+        CategoryListAndCursorIdxResponse response
+                = StudyCategoryFixture.generateCategoryListAndCursorIdxResponse(3);
+
+        // when
+        mockMvc.perform(get("/category/" + studyInfo.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "1")
+                        .param("limit", "-1"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
 }
