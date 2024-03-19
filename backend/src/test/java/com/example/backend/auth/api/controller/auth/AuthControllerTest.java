@@ -461,7 +461,7 @@ class AuthControllerTest extends TestConfig {
         doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
 
         // when & then
-        mockMvc.perform(post("/auth/name")
+        mockMvc.perform(post("/auth/check-nickname")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
 
@@ -484,7 +484,7 @@ class AuthControllerTest extends TestConfig {
         doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
 
         // when
-        mockMvc.perform(post("/auth/name")
+        mockMvc.perform(post("/auth/check-nickname")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
 
@@ -506,7 +506,7 @@ class AuthControllerTest extends TestConfig {
         doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
 
         // when
-        mockMvc.perform(post("/auth/name")
+        mockMvc.perform(post("/auth/check-nickname")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
 

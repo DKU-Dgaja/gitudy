@@ -180,7 +180,7 @@ public class AuthController {
 
 
     @ApiResponse(responseCode = "200", description = "닉네임 중복 검사 성공")
-    @PostMapping("/name")
+    @PostMapping("/check-nickname")
     public JsonResult<?> nickNameDuplicationCheck(@Valid @RequestBody UserNameRequest request) {
 
         authService.nickNameDuplicationCheck(request);
