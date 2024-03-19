@@ -65,7 +65,6 @@ public class GithubApiService {
         GHRepository getRepo = getRepository(repo);
         String todoPath = todo.getTitle();
 
-
         // 특정 폴더의 커밋 리스트를 가져오는 로직 추가
         List<GHCommit> commits = null;
         try {

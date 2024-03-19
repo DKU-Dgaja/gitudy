@@ -73,13 +73,14 @@ public class StudyCommitService {
                         return Stream.of(StudyCommit.of(findUser.getId(), todo, commit));
                     } catch (UserException e) {
                         // user를 찾을 수 없는 경우 처리
-                        log.warn("User not found for commit: {}", commit.getMessage());
+                        log.warn(">>>> User not found for commit: {}", commit.getMessage());
                         return Stream.empty();
                     }
                 })
                 .toList();
 
-        studyCommitRepository.saveAll(commitList);
+        List<StudyCommit> saveCommits = studyCommitRepository.saveAll(commitList);
+        log.info(">>>> 원격 레포지토리로부터 커밋 업데이트를 성공하였습니다. 업데이트 커밋 개수: {}", saveCommits.size());
 
     }
 }
