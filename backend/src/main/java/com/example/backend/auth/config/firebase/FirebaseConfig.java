@@ -35,4 +35,5 @@ public class FirebaseConfig {
             throw new RuntimeException(e.getMessage());
         }
     }
+    
 }
