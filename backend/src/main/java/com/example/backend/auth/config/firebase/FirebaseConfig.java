@@ -22,14 +22,15 @@ public class FirebaseConfig {
     @PostConstruct
     public void getFcmCredential() {
         try {
-            InputStream refreshToken = new ClassPathResource(fcmKeyPath).getInputStream();
+            if (FirebaseApp.getApps().isEmpty()) {
+                InputStream refreshToken = new ClassPathResource(fcmKeyPath).getInputStream();
 
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
+                FirebaseOptions options = FirebaseOptions.builder()
+                        .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
 
-            FirebaseApp.initializeApp(options);
-            log.info("Fcm Setting Completed");
-
+                FirebaseApp.initializeApp(options);
+                log.info("Fcm Setting Completed");
+            }
         } catch (IOException e) {
             throw new RuntimeException(e.getMessage());
         }
