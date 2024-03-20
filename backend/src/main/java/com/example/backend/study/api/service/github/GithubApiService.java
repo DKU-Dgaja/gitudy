@@ -4,19 +4,16 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.kohsuke.github.GHCommit;
-import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
-import org.kohsuke.github.GitHubBuilder;
+import org.kohsuke.github.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -26,8 +23,6 @@ import java.util.List;
 public class GithubApiService {
     @Value("${github.api.token}")
     private String token;
-
-    private final StudyCommitRepository studyCommitRepository;
 
     // 깃허브 api 통신 연결
     public GitHub connectGithubApi() {
@@ -60,20 +55,35 @@ public class GithubApiService {
         }
     }
 
-    // 지정한 폴더의 커밋 리스트를 불러오기
-    public List<GithubCommitResponse> pullUnsavedCommits(RepositoryInfo repo, StudyTodo todo) {
-        GHRepository getRepo = getRepository(repo);
-        String todoPath = todo.getTitle();
+        // 지정한 폴더의 커밋 리스트를 불러오기
+        public List<GithubCommitResponse> fetchCommits(RepositoryInfo repo, int pageNumber, int pageSize) {
+            GHRepository getRepo = getRepository(repo);
+            List<GHCommit> commits = new ArrayList<>();
 
-        // 특정 폴더의 커밋 리스트를 가져오는 로직 추가
-        List<GHCommit> commits = null;
-        try {
-            commits = getRepo.queryCommits().path(todoPath).list().toList();
+            // 페이지네이션을 위해 list() 메서드에 페이지 및 페이지 크기 인수 제공
+            PagedIterator<GHCommit> commitsIterable = getRepo.listCommits().withPageSize(pageSize).iterator();
 
-            log.info(">>>> [ '{}' 폴더의 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", todoPath);
+            // pageNumber - 1 만큼 페이지를 이동합니다.
+            for (int i = 0; i < pageNumber - 1; i++) {
+                if (commitsIterable.hasNext()) {
+                    commitsIterable.nextPage();
+                } else {
+                    // 페이지가 없을 경우 예외 처리 또는 로그 등의 작업을 수행할 수 있습니다.
+                    throw new IllegalArgumentException("Requested page does not exist");
+                }
+            }
 
-            // GithubCommitResponse 리스트로 변환
-            List<GithubCommitResponse> commitList = commits.stream()
+            // 현재 페이지의 데이터만 가져옵니다.
+            int count = 0;
+            while (commitsIterable.hasNext() && count < pageSize) {
+                commits.add(commitsIterable.next());
+                count++;
+            }
+
+            log.info(">>>> [ '{}'의 {} 페이지 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", repo.getName(), pageNumber);
+
+            // 가져온 커밋들을 GithubCommitResponse로 변환하여 반환
+            return commits.stream()
                     .map(commit -> {
                         try {
                             return GithubCommitResponse.of(commit);
@@ -83,14 +93,6 @@ public class GithubApiService {
                         }
                     })
                     .toList();
-
-            // 저장되지 않은 커밋의 경우만 필터링
-            return studyCommitRepository.findUnsavedGithubCommits(commitList);
-
-        } catch (IOException e) {
-            throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMITS_ERROR);
         }
-
-    }
 
 }
