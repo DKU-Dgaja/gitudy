@@ -19,14 +19,19 @@ public class FirebaseConfig {
     @Value("${firebase.key-path}")
     String fcmKeyPath;
 
+    @Value("${firebase.project-id}")
+    String projectId;
+
     @PostConstruct
     public void getFcmCredential() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                InputStream refreshToken = new ClassPathResource(fcmKeyPath).getInputStream();
+                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
 
                 FirebaseOptions options = FirebaseOptions.builder()
-                        .setCredentials(GoogleCredentials.fromStream(refreshToken)).build();
+                        .setCredentials(GoogleCredentials.fromStream(credentials))
+                        .setProjectId(projectId)
+                        .build();
 
                 FirebaseApp.initializeApp(options);
                 log.info("Fcm Setting Completed");
