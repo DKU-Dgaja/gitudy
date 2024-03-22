@@ -245,6 +245,10 @@ public class StudyMemberService {
         if (approve) {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_ACTIVE);
 
+            // 스터디 가입 시 User +5점
+            Optional<User> findUser = userRepository.findById(applyMember.getUserId());
+            findUser.get().addUserScore(5);
+
             /*
                 알림 메서드 추가
             */
