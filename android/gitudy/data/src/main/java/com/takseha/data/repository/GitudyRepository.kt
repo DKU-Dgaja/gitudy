@@ -16,4 +16,16 @@ class GitudyRepository {
         bearerToken: String,
         request: RegisterRequest
     ) = client.getRegisterTokens(bearerToken, request)
+
+    suspend fun getUserInfo(
+        bearerToken: String
+    ) = client.getUserInfo(bearerToken)
+
+    suspend fun getStudyList(
+        bearerToken: String,
+        cursorIdx: Long?,
+        limit: Long = 5,
+        sortBy: String = "createdDateTime",
+        myStudy: Boolean
+    ) = client.getStudyList(bearerToken, cursorIdx, limit, sortBy, myStudy)
 }

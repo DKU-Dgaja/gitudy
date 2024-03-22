@@ -1,9 +1,11 @@
 package com.takseha.data.api.gitudy
 
+import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.login.LoginPageResponse
 import com.takseha.data.dto.auth.login.LoginResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.auth.register.RegisterResponse
+import com.takseha.data.dto.study.StudyListResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -28,4 +30,18 @@ interface GitudyApi {
         @Header("Authorization") bearerToken: String,
         @Body request: RegisterRequest
     ): Response<RegisterResponse>
+
+    @GET("/auth/info")
+    suspend fun getUserInfo(
+        @Header("Authorization") bearerToken: String
+    ): Response<UserInfoResponse>
+
+    @GET("/study/")
+    suspend fun getStudyList(
+        @Header("Authorization") bearerToken: String,
+        @Query("cursorIdx") cursorIdx: Long?,
+        @Query("limit") limit: Long,
+        @Query("sortBy") sortBy: String,
+        @Query("myStudy") myStudy: Boolean
+    ): Response<StudyListResponse>
 }

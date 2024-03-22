@@ -1,17 +1,20 @@
 package com.takseha.presentation.ui.login
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
-import androidx.core.content.ContextCompat
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentRegisterCompleteBinding
+import com.takseha.presentation.ui.home.MainHomeActivity
 
 class RegisterCompleteFragment : Fragment() {
     private var _binding : FragmentRegisterCompleteBinding? = null
@@ -46,6 +49,11 @@ class RegisterCompleteFragment : Fragment() {
             loginCompleteDescription2.startAnimation(textAnim)
             loginCompleteDescription3.startAnimation(textAnim)
         }
+
+        Handler(Looper.getMainLooper()).postDelayed({
+            startActivity(Intent(requireActivity(), MainHomeActivity::class.java))
+            requireActivity().finish()
+        }, 3000)
     }
 
     override fun onDestroyView() {

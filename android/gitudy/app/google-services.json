@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "965970659972",
+    "project_id": "fcm-gitudy",
+    "storage_bucket": "fcm-gitudy.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:965970659972:android:7653a61d1ec0a8499010d1",
+        "android_client_info": {
+          "package_name": "com.takseha.gitudy"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCvz3Uy4JYy-RDNkyrVmF_IQvVz7ZrGmI4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -21,7 +21,7 @@ class LoginViewModel : ViewModel() {
         if (loginResponse.isSuccessful) {
             val resCode = loginResponse.body()!!.resCode
             val resMsg = loginResponse.body()!!.resMsg
-            val loginPages = loginResponse.body()!!.resObj
+            val loginPages = loginResponse.body()!!.loginPageInfos
 
             if (resCode == 200 && resMsg == "OK") {
                 _loginPageUrl.value = when (platformType) {
