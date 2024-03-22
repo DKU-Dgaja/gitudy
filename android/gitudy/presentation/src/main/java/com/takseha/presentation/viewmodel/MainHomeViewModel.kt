@@ -3,6 +3,8 @@ package com.takseha.presentation.viewmodel
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
@@ -13,18 +15,21 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainHomeViewModel(application: Application) : AndroidViewModel(application) {
-    private lateinit var gitudyRepository: GitudyRepository
+    private var gitudyRepository: GitudyRepository = GitudyRepository()
     private val prefs = SP(getApplication())
+
+    private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
+        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}"
 
     private val _uiState = MutableStateFlow(UserInfoUiState())
     val uiState = _uiState.asStateFlow()
 
+    //live data로 할까?
+    private var _cursorIdx = MutableLiveData<Long?>()
+    val cursorIdx : LiveData<Long?>
+        get() = _cursorIdx
+
     fun getUserInfo() = viewModelScope.launch {
-        gitudyRepository = GitudyRepository()
-
-        val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-            prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}"
-
         val userInfoResponse = gitudyRepository.getUserInfo(bearerToken)
 
         if (userInfoResponse.isSuccessful) {
@@ -51,6 +56,27 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
             }
         } else {
             Log.e("MainHomeViewModel", "tokenResponse status: ${userInfoResponse.code()}\ntokenResponse message: ${userInfoResponse.message()}")
+        }
+    }
+
+    fun getMyStudyList(cursorIdx: Long?) = viewModelScope.launch {
+        val myStudyListResponse = gitudyRepository.getStudyList(bearerToken, cursorIdx, myStudy = true)
+
+        if (myStudyListResponse.isSuccessful) {
+            val resCode = myStudyListResponse.body()!!.resCode
+            val resMsg = myStudyListResponse.body()!!.resMsg
+            val myStudyListInfo = myStudyListResponse.body()!!.studyListInfo
+
+            if (resCode == 200 && resMsg == "OK") {
+                _cursorIdx.value = myStudyListInfo.cursorIdx + 1
+                // recyclerview 관련 myStudyList 업데이트 기능 구현
+
+                Log.d("MainHomeViewModel", _cursorIdx.value.toString())
+            } else {
+                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+            }
+        } else {
+            Log.e("MainHomeViewModel", "tokenResponse status: ${myStudyListResponse.code()}\ntokenResponse message: ${myStudyListResponse.message()}")
         }
     }
 }

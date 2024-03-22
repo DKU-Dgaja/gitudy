@@ -2,14 +2,18 @@ package com.takseha.presentation.ui.home
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
 import com.takseha.presentation.viewmodel.MainHomeViewModel
@@ -38,13 +42,18 @@ class MainHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewModel = ViewModelProvider(this)[MainHomeViewModel::class.java]
 
-        collectFlows()
+        collectUserInfoFlows()
+        setMyStudyList()
+
+        val characterAnim = AnimationUtils.loadAnimation(context, R.anim.alpha_character)
+        binding.characterImg.startAnimation(characterAnim)
+
 
     }
 
-    private fun collectFlows() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getUserInfo()
+    private fun collectUserInfoFlows() {
+        viewModel.getUserInfo()
+        lifecycleScope.launch {
             viewModel.uiState.flowWithLifecycle(
                 lifecycle = viewLifecycleOwner.lifecycle,
                 minActiveState = Lifecycle.State.STARTED
@@ -52,6 +61,10 @@ class MainHomeFragment : Fragment() {
                 setUserInfo(it.name, it.score, it.progressScore, it.progressMax)
             }
         }
+    }
+
+    private fun setMyStudyList() {
+        // recyclerView 관련 기능 구현
     }
 
     private fun setUserInfo(
@@ -68,5 +81,10 @@ class MainHomeFragment : Fragment() {
             profileProgressBar.max = progressMax
             profileProgressBar.progress = progressScore
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

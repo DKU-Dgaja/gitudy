@@ -83,6 +83,9 @@ dependencies {
     //firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
+
+    // recyclerView
+    implementation("androidx.recyclerview:recyclerview:1.3.2")
 }
 
 kapt {
