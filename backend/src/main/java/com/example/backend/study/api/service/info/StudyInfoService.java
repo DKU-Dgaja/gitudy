@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
@@ -22,6 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.study.member.constant.StudyMemberRole.STUDY_LEADER;
@@ -54,6 +56,10 @@ public class StudyInfoService {
 
         // 스터디 카테고리 매핑
         List<Long> categories = saveStudyCategoryMappings(request.getCategoriesId(), studyInfo);
+
+        // 스터디 가입 시 User score +5
+        Optional<User> user = userRepository.findById(request.getUserId());
+        user.get().addUserScore(5);
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
     }
