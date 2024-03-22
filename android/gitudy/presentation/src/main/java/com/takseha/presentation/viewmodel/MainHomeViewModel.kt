@@ -21,7 +21,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
         prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}"
 
-    private val _uiState = MutableStateFlow(UserInfoUiState())
+    private val _uiState = MutableStateFlow(MainHomeUserInfoUiState())
     val uiState = _uiState.asStateFlow()
 
     //live data로 할까?
@@ -81,7 +81,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     }
 }
 
-data class UserInfoUiState(
+data class MainHomeUserInfoUiState(
     var name: String = "",
     var score: Int = 0,
 //    var rank: Int,

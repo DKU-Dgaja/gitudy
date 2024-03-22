@@ -19,8 +19,8 @@
                 android:thickness="9dp" >
                 <gradient
                     android:type="linear"
-                    android:startColor="@color/BASIC_GREEN"
-                    android:endColor="@color/BASIC_GRADIENT"
+                    android:startColor="@color/BASIC_GRADIENT_TOP"
+                    android:endColor="@color/BASIC_GRADIENT_BOTTOM"
                     android:angle="180"/>
             </shape>
         </rotate>

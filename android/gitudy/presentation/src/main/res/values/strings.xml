@@ -34,6 +34,7 @@
     <!-- Strings related to study -->
     <string name="study_my_cnt">마이스터디  %d</string>
     <string name="study_name">단국알고깃터디</string>
+    <string name="study_no_my_study">가입 중인 스터디가 없습니다</string>
     <string name="study_commit_rule">월/수/금 커밋 필수</string>
     <string name="study_lock">스터디 공개</string>
     <string name="study_team_rank">%d점 • %d등</string>
@@ -55,6 +56,7 @@
     <!-- Strings related to feed -->
     <string name="feed_cnt">전체스터디  %d</string>
     <string name="feed_explanation">"야금야금, 하지만 확실하게"\n이 스터디는 코딩 테스트를 준비하시는 분들이 각자 알고리즘 문제를 풀고, 서로 학습한 내용을 공유하며 동기부여 형성을 하도록 하는 스터디입니다.</string>
+    <string name="study_no_study">운영 중인 스터디가 없습니다</string>
     <string name="feed_rule">주 %d일 제출 • %s 마감</string>
     <string name="feed_member_number">%d/%d 명</string>
     <string name="feed_member_full_number">%d명</string>
@@ -71,9 +73,11 @@
 
     <!-- Strings related to profile -->
     <string name="nickname">대머리깃터디</string>
-    <string name="github_id">\@boldgitudy</string>
+    <string name="github_id">\@%s</string>
     <string name="profile_github_link">www.github.com</string>
     <string name="profile_blog_link">www.naver.com</string>
     <string name="profile_linkedin_link">www.linkedin.com</string>
+    <string name="profile_no_commit_list">커밋 기록이 없습니다</string>
+    <string name="profile_no_saved_study">저장한 스터디가 없습니다</string>
 
 </resources>
