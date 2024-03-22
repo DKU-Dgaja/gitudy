@@ -5,7 +5,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.takseha.data.dto.auth.login.Role
+import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivitySocialLoginCompleteBinding
 import com.takseha.presentation.ui.home.MainHomeActivity
@@ -18,6 +21,8 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_social_login_complete)
         window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
+
+        MyFirebaseMessagingService()
 
         binding.confirmBtn.setOnClickListener {
             val role = intent.getStringExtra("role").toString()
