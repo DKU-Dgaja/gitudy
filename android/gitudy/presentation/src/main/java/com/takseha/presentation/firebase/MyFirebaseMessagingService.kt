@@ -87,5 +87,5 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         )
     }
 
-    // 추후 백그라운드 메시지 수신 로직 구현
+    // TODO : 추후 백그라운드 메시지 수신 로직 구현
 }
