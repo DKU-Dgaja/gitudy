@@ -27,6 +27,7 @@ jobs:
         echo "${{ secrets.APPLICATION_TEST }}" > ./backend/src/main/resources/application-test.yml
         echo "${{ secrets.APPLICATION_DEV }}" > ./backend/src/main/resources/application-dev.yml
         echo "${{ secrets.APPLICATION_DB }}" > ./backend/src/main/resources/database.yml
+        echo "${{ secrets.FCM_SERVICE_ACCOUNT_KEY }}" > ./backend/src/main/resources/serviceAccountKey.json
 
     # gradlew를 실행시키기 위해 권한 부여
     - name: Gradlew에게 실행권한 부여
