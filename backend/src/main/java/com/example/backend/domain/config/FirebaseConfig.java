@@ -31,13 +31,12 @@ public class FirebaseConfig {
                         .build();
 
                 FirebaseApp.initializeApp(options);
-
-
                 log.info("Fcm Setting Completed");
             }
         } catch (IOException e) {
             log.info(">>>>>>>>FCM error");
             log.error(">>>>>>FCM error message : " + e.getMessage());
+            throw new RuntimeException(e.getMessage());
         }
     }
 
