@@ -36,7 +36,6 @@ public class FirebaseConfig {
         } catch (IOException e) {
             log.info(">>>>>>>>FCM error");
             log.error(">>>>>>FCM error message : " + e.getMessage());
-            throw new RuntimeException(e.getMessage());
         }
     }
 
