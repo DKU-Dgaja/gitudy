@@ -9,10 +9,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Configuration
@@ -26,11 +24,10 @@ public class FirebaseConfig {
     public void getFcmCredential() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
-                GoogleCredentials credentials = GoogleCredentials
-                        .fromStream(new ClassPathResource(fcmKeyPath).getInputStream());
+                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
 
                 FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(credentials)
+                        .setCredentials(GoogleCredentials.fromStream(credentials))
                         .build();
 
                 FirebaseApp.initializeApp(options);
@@ -39,7 +36,8 @@ public class FirebaseConfig {
                 log.info("Fcm Setting Completed");
             }
         } catch (IOException e) {
-            throw new RuntimeException(e.getMessage());
+            log.info(">>>>>>>>FCM error");
+            log.error(">>>>>>FCM error message : " + e.getMessage());
         }
     }
 
