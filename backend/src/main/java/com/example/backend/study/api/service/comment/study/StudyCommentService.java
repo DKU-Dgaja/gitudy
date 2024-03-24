@@ -68,7 +68,7 @@ public class StudyCommentService {
         StudyComment studyComment = findByIdOrThrowStudyCommentException(studyCommentId);
 
         // User 객체 조회 예외처리
-        User savedUser = studyMemberService.findByIdandPlatformTypeOrThrowUserException(user);
+        User savedUser = studyMemberService.findByIdAndPlatformTypeOrThrowUserException(user);
 
         // 유저가 스터디 장이거나 댓글 작성자인지 검증
         if(!studyMemberService.isTrueStudyLeader(savedUser, studyInfoId) && savedUser.getId() != studyComment.getUserId()){

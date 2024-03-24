@@ -42,7 +42,7 @@ public class StudyMemberService {
     public UserInfoResponse isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
 
         // platformId와 platformType을 이용하여 User 객체 조회
-        User user = findByIdandPlatformTypeOrThrowUserException(userPrincipal);
+        User user = findByIdAndPlatformTypeOrThrowUserException(userPrincipal);
 
         // 스터디장인지 확인
         if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
@@ -61,7 +61,7 @@ public class StudyMemberService {
     public UserInfoResponse isValidateStudyMember(User userPrincipal, Long studyInfoId) {
 
         // platformId와 platformType을 이용하여 User 객체 조회
-        User user = findByIdandPlatformTypeOrThrowUserException(userPrincipal);
+        User user = findByIdAndPlatformTypeOrThrowUserException(userPrincipal);
 
         // 스터디 멤버인지확인
         if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
@@ -279,7 +279,7 @@ public class StudyMemberService {
         return findUser;
     }
 
-    public User findByIdandPlatformTypeOrThrowUserException(User userPrincipal) {
+    public User findByIdAndPlatformTypeOrThrowUserException(User userPrincipal) {
         User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
             log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
             return new UserException(ExceptionMessage.USER_NOT_FOUND);
