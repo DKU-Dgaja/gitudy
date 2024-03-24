@@ -4,22 +4,19 @@ package com.example.backend.study.api.service.member;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
-import com.example.backend.common.exception.study.StudyInfoException;
-import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
-import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.example.backend.study.api.service.info.StudyInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,8 +33,8 @@ public class StudyMemberService {
 
     private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
-    private final StudyInfoRepository studyInfoRepository;
     private final StudyTodoRepository studyTodoRepository;
+    private final StudyInfoService studyInfoService;
     private final static int JOIN_CODE_LENGTH = 10;
     private final static Long MAX_LIMIT = 10L;
 
@@ -45,10 +42,7 @@ public class StudyMemberService {
     public UserInfoResponse isValidateStudyLeader(User userPrincipal, Long studyInfoId) {
 
         // platformId와 platformType을 이용하여 User 객체 조회
-        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
-            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
-            return new UserException(ExceptionMessage.USER_NOT_FOUND);
-        });
+        User user = findByIdandPlatformTypeOrThrowUserException(userPrincipal);
 
         // 스터디장인지 확인
         if (!studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
@@ -67,10 +61,7 @@ public class StudyMemberService {
     public UserInfoResponse isValidateStudyMember(User userPrincipal, Long studyInfoId) {
 
         // platformId와 platformType을 이용하여 User 객체 조회
-        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
-            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
-            return new UserException(ExceptionMessage.USER_NOT_FOUND);
-        });
+        User user = findByIdandPlatformTypeOrThrowUserException(userPrincipal);
 
         // 스터디 멤버인지확인
         if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), studyInfoId)) {
@@ -85,10 +76,7 @@ public class StudyMemberService {
     public List<StudyMembersResponse> readStudyMembers(Long studyInfoId, boolean orderByScore) {
 
         // 스터디 조회 예외처리
-        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
         return studyMemberRepository.findStudyMembersByStudyInfoIdOrderByScore(studyInfoId, orderByScore);
     }
@@ -99,10 +87,7 @@ public class StudyMemberService {
     public void resignStudyMember(Long studyInfoId, Long resignUserId) {
 
         // 강퇴시킬 스터디원 조회
-        StudyMember resignMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, resignUserId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", resignUserId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
-            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
-        });
+        StudyMember resignMember = findByIdOrThrowMemberException(studyInfoId, resignUserId);
 
         // 강퇴 스터디원 상태 업데이트
         resignMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_RESIGNED);
@@ -117,10 +102,7 @@ public class StudyMemberService {
     public void withdrawalStudyMember(Long studyInfoId, Long userId) {
 
         // 탈퇴 스터디원 조회
-        StudyMember withdrawalMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, userId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
-            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
-        });
+        StudyMember withdrawalMember = findByIdOrThrowMemberException(studyInfoId, userId);
 
         // 탈퇴 스터디원 상태 메서드
         withdrawalMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_WITHDRAWAL);
@@ -136,10 +118,7 @@ public class StudyMemberService {
     public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode) {
 
         // 스터디 조회 예외처리
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        StudyInfo studyInfo = studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
         // 비공개 스터디인 경우 joinCode 검증 (null, 맞지않을때, 10자를 넘겼을때)
         if (studyInfo.getStatus() == StudyStatus.STUDY_PRIVATE) {
@@ -202,10 +181,7 @@ public class StudyMemberService {
     public void applyCancelStudyMember(UserInfoResponse user, Long studyInfoId) {
 
         // 스터디 조회 예외처리
-        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
         // 대기중인 멤버인지 조회
         Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
@@ -231,10 +207,7 @@ public class StudyMemberService {
     public void leaderApproveRefuseMember(Long studyInfoId, Long applyUserId, boolean approve) {
 
         // 승인/거부할 스터디원 조회
-        StudyMember applyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, applyUserId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", applyUserId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
-            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
-        });
+        StudyMember applyMember = findByIdOrThrowMemberException(studyInfoId, applyUserId);
 
         // 신청대기중인 유저가 아닌경우 예외처리
         if (applyMember.getStatus() != StudyMemberStatus.STUDY_WAITING) {
@@ -245,10 +218,9 @@ public class StudyMemberService {
         if (approve) {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_ACTIVE);
 
-            User findUser = userRepository.findById(applyMember.getUserId()).orElseThrow(() -> {
-                log.warn(">>>> {} : {} <<<<", applyMember.getUserId(), ExceptionMessage.USER_NOT_FOUND);
-                return new UserException(ExceptionMessage.USER_NOT_FOUND);
-            });
+            // User 조회
+            User findUser = findByIdOrThrowUserException(applyMember);
+
             // 스터디 가입 시 User +5점
             findUser.addUserScore(5);
 
@@ -263,17 +235,13 @@ public class StudyMemberService {
                 알림 메서드 추가
              */
         }
-
     }
 
     // 스터디 가입신청 목록 조회 메서드
     public StudyMemberApplyListAndCursorIdxResponse applyListStudyMember(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
-            return new MemberException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 
@@ -295,4 +263,27 @@ public class StudyMemberService {
         return response;
     }
 
+    public StudyMember findByIdOrThrowMemberException(Long studyInfoId, Long userId) {
+        StudyMember withdrawalMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, userId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+        });
+        return withdrawalMember;
+    }
+
+    public User findByIdOrThrowUserException(StudyMember applyMember) {
+        User findUser = userRepository.findById(applyMember.getUserId()).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", applyMember.getUserId(), ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+        return findUser;
+    }
+
+    public User findByIdandPlatformTypeOrThrowUserException(User userPrincipal) {
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+        return user;
+    }
 }
