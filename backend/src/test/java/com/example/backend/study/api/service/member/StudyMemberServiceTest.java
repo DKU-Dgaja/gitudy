@@ -568,6 +568,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
         User leader = UserFixture.generateAuthUser();
         User user1 = UserFixture.generateGoogleUser();
+
+        int beforeUser1Score = user1.getScore();
+
         userRepository.saveAll(List.of(leader, user1));
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
@@ -583,6 +586,9 @@ public class StudyMemberServiceTest extends TestConfig {
         // then
         assertTrue(findStudyMember.isPresent());
         assertEquals(findStudyMember.get().getStatus(), StudyMemberStatus.STUDY_ACTIVE);  // 활동 상태로 변경
+
+        // 스터디 가입 시 User score +5점
+        assertEquals(beforeUser1Score + 5, userRepository.findById(user1.getId()).get().getScore());
     }
 
     @Test

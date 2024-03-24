@@ -66,7 +66,7 @@ public class User extends BaseEntity implements UserDetails {
     private boolean profilePublicYn = true;                     // 프로필 공개 여부
 
     @Column(name = "SCORE")
-    private int score = 0;                                      // 사용자 활동 점수
+    private int score = 10;                                      // 사용자 활동 점수
 
     @Column(name = "POINT")
     private int point = 0;                                      // 사용자 포인트
@@ -108,6 +108,11 @@ public class User extends BaseEntity implements UserDetails {
 
     public void deleteUser() {
         this.role = UserRole.WITHDRAW;
+    }
+
+    // Score 업데이트 메서드
+    public void addUserScore(int score) {
+        this.score = Math.max(0, this.score + score);
     }
 
     // Spring Security UserDetails Area

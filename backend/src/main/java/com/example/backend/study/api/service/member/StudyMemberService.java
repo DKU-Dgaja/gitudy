@@ -245,6 +245,13 @@ public class StudyMemberService {
         if (approve) {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_ACTIVE);
 
+            User findUser = userRepository.findById(applyMember.getUserId()).orElseThrow(() -> {
+                log.warn(">>>> {} : {} <<<<", applyMember.getUserId(), ExceptionMessage.USER_NOT_FOUND);
+                return new UserException(ExceptionMessage.USER_NOT_FOUND);
+            });
+            // 스터디 가입 시 User +5점
+            findUser.addUserScore(5);
+
             /*
                 알림 메서드 추가
             */

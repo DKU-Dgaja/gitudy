@@ -68,6 +68,7 @@ class StudyInfoServiceTest extends TestConfig {
     void StudyInfo_등록_테스트() {
         // given
         User user = userRepository.save(generateAuthUser());
+        int beforeUserScore = user.getScore();
 
         List<StudyCategory> studyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
 
@@ -105,6 +106,9 @@ class StudyInfoServiceTest extends TestConfig {
 
         // joinCode 10자리가 잘 생성되었는지 검증
         assertEquals(registeredStudy.getJoinCode().length(), JOIN_CODE_LENGTH);
+
+        // User의 score가 +5가 되었는 지 검증
+        assertEquals(beforeUserScore + 5, userRepository.findById(user.getId()).get().getScore());
     }
 
 
