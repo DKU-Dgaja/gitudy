@@ -24,36 +24,29 @@ public class FirebaseConfig {
 
 
     @Bean
-    public FirebaseMessaging firebaseMessaging() {
+    public FirebaseMessaging firebaseMessaging() throws IOException {
+        ClassPathResource resource = new ClassPathResource(fcmKeyPath);
+        InputStream refreshToken = resource.getInputStream();
 
         FirebaseApp firebaseApp = null;
-        try {
-            ClassPathResource resource = new ClassPathResource("serviceAccountKey.json");
-            try (InputStream refreshToken = resource.getInputStream()) {
-                List<FirebaseApp> firebaseApps = FirebaseApp.getApps();
-                if (!firebaseApps.isEmpty()) {
-                    for (FirebaseApp app : firebaseApps) {
-                        if (FirebaseApp.DEFAULT_APP_NAME.equals(app.getName())) {
-                            firebaseApp = app;
-                            log.info("Using existing FirebaseApp instance.");
-                            break;
-                        }
-                    }
-                }
-                if (firebaseApp == null) {
-                    FirebaseOptions options = FirebaseOptions.builder()
-                            .setCredentials(GoogleCredentials.fromStream(refreshToken))
-                            .build();
-                    firebaseApp = FirebaseApp.initializeApp(options);
-                    log.info("FCM Setting Completed");
+        List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();
+
+        if (firebaseAppList != null && !firebaseAppList.isEmpty()) {
+            for(FirebaseApp app: firebaseAppList) {
+                if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
+                    firebaseApp = app;
                 }
             }
-        } catch (Exception e) {
-            log.info(">>>>>>>>FCM error");
-            log.error(">>>>>>FCM error message : " + e.getMessage());
         }
+
+        if(firebaseApp == null) {
+            FirebaseOptions options = FirebaseOptions.builder()
+                    .setCredentials(GoogleCredentials.fromStream(refreshToken))
+                    .build();
+            firebaseApp = FirebaseApp.initializeApp(options);
+            log.info("FCM Setting Complete");
+        }
+
         return FirebaseMessaging.getInstance(firebaseApp);
-
-
     }
 }
