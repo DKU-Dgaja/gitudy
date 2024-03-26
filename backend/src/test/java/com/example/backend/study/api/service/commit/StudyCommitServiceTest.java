@@ -239,7 +239,7 @@ class StudyCommitServiceTest extends TestConfig {
         // then
         assertEquals(allCommits.size(), expectedSize);
         for (var c : allCommits) {
-            assertEquals(c.getStudyInfoId(), study.getUserId());
+            assertEquals(c.getStudyInfoId(), study.getId());
             assertTrue(c.getUserId() == userA.getId()
                     || c.getUserId() == userB.getId());
         }
@@ -363,7 +363,7 @@ class StudyCommitServiceTest extends TestConfig {
                 "예시 2) [이주성] 프로그래머스: 두 수의 곱";
 
         studyConventionRepository.save(StudyConvention.builder()
-                .studyInfoId(1L)
+                .studyInfoId(study.getId())
                 .name(conventionName)
                 .description(conventionDescription)
                 .content(convention)
