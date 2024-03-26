@@ -55,44 +55,54 @@ public class GithubApiService {
         }
     }
 
-        // 지정한 폴더의 커밋 리스트를 불러오기
-        public List<GithubCommitResponse> fetchCommits(RepositoryInfo repo, int pageNumber, int pageSize) {
-            GHRepository getRepo = getRepository(repo);
-            List<GHCommit> commits = new ArrayList<>();
+    // 지정한 레포지토리의 커밋 리스트를 불러오기
+    public List<GithubCommitResponse> fetchCommits(RepositoryInfo repo, int pageNumber, int pageSize, String todoCode) {
+        GHRepository getRepo = getRepository(repo);
+        List<GHCommit> commits = new ArrayList<>();
 
-            // 페이지네이션을 위해 list() 메서드에 페이지 및 페이지 크기 인수 제공
-            PagedIterator<GHCommit> commitsIterable = getRepo.listCommits().withPageSize(pageSize).iterator();
+        // 페이지네이션을 위해 list() 메서드에 페이지 및 페이지 크기 인수 제공
+        PagedIterator<GHCommit> commitsIterable = getRepo.listCommits().withPageSize(pageSize).iterator();
 
-            // pageNumber - 1 만큼 페이지를 이동합니다.
-            for (int i = 0; i < pageNumber - 1; i++) {
-                if (commitsIterable.hasNext()) {
-                    commitsIterable.nextPage();
-                } else {
-                    // 페이지가 없을 경우 예외 처리 또는 로그 등의 작업을 수행할 수 있습니다.
-                    throw new IllegalArgumentException("Requested page does not exist");
-                }
+        // pageNumber - 1 만큼 페이지를 이동합니다.
+        for (int i = 0; i < pageNumber; i++) {
+            if (commitsIterable.hasNext()) {
+                commitsIterable.nextPage();
+            } else {
+                // 페이지가 없을 경우 예외 처리 또는 로그 등의 작업을 수행할 수 있습니다.
+                throw new IllegalArgumentException("Requested page does not exist");
             }
-
-            // 현재 페이지의 데이터만 가져옵니다.
-            int count = 0;
-            while (commitsIterable.hasNext() && count < pageSize) {
-                commits.add(commitsIterable.next());
-                count++;
-            }
-
-            log.info(">>>> [ '{}'의 {} 페이지 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", repo.getName(), pageNumber);
-
-            // 가져온 커밋들을 GithubCommitResponse로 변환하여 반환
-            return commits.stream()
-                    .map(commit -> {
-                        try {
-                            return GithubCommitResponse.of(commit);
-                        } catch (IOException e) {
-                            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
-                            throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
-                        }
-                    })
-                    .toList();
         }
+
+        // 현재 페이지의 데이터만 가져옵니다.
+        int count = 0;
+        while (commitsIterable.hasNext() && count < pageSize) {
+            GHCommit commit = commitsIterable.next();
+
+            // 투두에 해당하는 커밋만 필터링합니다.
+            try {
+                if (commit.getCommitShortInfo().getMessage().startsWith(todoCode)) {
+                    commits.add(commit);
+                    count++;
+                }
+            } catch (IOException e) {
+                log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
+                throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
+            }
+        }
+
+        log.info(">>>> [ '{}'의 {} 페이지 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", repo.getName(), pageNumber);
+
+        // 가져온 커밋들을 GithubCommitResponse로 변환하여 반환
+        return commits.stream()
+                .map(commit -> {
+                    try {
+                        return GithubCommitResponse.of(commit);
+                    } catch (IOException e) {
+                        log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
+                        throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
+                    }
+                })
+                .toList();
+    }
 
 }

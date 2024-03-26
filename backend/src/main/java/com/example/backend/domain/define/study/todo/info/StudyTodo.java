@@ -68,4 +68,9 @@ public class StudyTodo extends BaseEntity {
         this.todoLink = todoLink;
         this.todoDate = todoDate;
     }
+
+    // 테스트를 위해 코드 업데이트 메서드 추가
+    public void updateTodoCode(String code) {
+        this.todoCode = code;
+    }
 }

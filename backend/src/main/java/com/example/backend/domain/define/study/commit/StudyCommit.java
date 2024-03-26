@@ -69,7 +69,7 @@ public class StudyCommit extends BaseEntity {
         likeCount = LikeCount.createDefault();
     }
 
-    public static StudyCommit of(Long userId, StudyTodo todo, GithubCommitResponse commit) {
+    public static StudyCommit of(Long userId, StudyTodo todo, GithubCommitResponse commit, CommitStatus status) {
         return StudyCommit.builder()
                 .studyInfoId(todo.getStudyInfoId())
                 .studyTodoId(todo.getId())
@@ -77,7 +77,7 @@ public class StudyCommit extends BaseEntity {
                 .commitSHA(commit.getSha())
                 .message(commit.getMessage())
                 .commitDate(commit.getCommitDate())
-                .status(CommitStatus.COMMIT_APPROVAL)
+                .status(status)
                 .build();
     }
 }

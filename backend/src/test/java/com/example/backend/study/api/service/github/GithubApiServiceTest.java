@@ -44,16 +44,15 @@ class GithubApiServiceTest extends TestConfig {
     @Test
     void 깃허브_레포지토리의_커밋_리스트_조회_테스트() {
         // given
-        int pageNumber = 4;
-        int pageSize = 5;
-        String expectedName = "jusung-c";
+        int pageNumber = 1;
+        int pageSize = 3;
+        String todoCode = "qwe321";
 
-        // 현재 저장되어 있는 커밋들 중 1Page 목록
-        // 레쯔고레쯔고
-        // 테스트스테
-        // [이주성] 프로그래머스 컨벤션 무시하기
-        // [이주성 프로그래머스: 컨벤션 지키기
-        // [이주성] 프로그래머스: 컨벤션 지키기
+        // todoCode에 해당하는 커밋들 중 1Page 목록
+//        qwe321 [jusung-c] 백준: 컨벤션 지키기
+//        qwe321 컨벤션 무시하기
+//        qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기
+        int expectedSize = 3;
 
         RepositoryInfo repo = RepositoryInfo.builder()
                 .owner(REPOSITORY_OWNER)
@@ -62,19 +61,19 @@ class GithubApiServiceTest extends TestConfig {
                 .build();
 
         // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageNumber, pageSize);
+        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageNumber, pageSize, todoCode);
 
-        System.out.println("commits.size() = " + commits.size());
-        for (var c : commits) {
-            System.out.println("c.getAuthorName() = " + c.getAuthorName());
-            System.out.println("c.getMessage() = " + c.getMessage());
-            System.out.println("c.getSha() = " + c.getSha());
-        }
+//        System.out.println("commits.size() = " + commits.size());
+//        for (var c : commits) {
+//            System.out.println("c.getAuthorName() = " + c.getAuthorName());
+//            System.out.println("c.getMessage() = " + c.getMessage());
+//            System.out.println("c.getSha() = " + c.getSha());
+//        }
 
         // then
-//        assertEquals(commits.size(), pageSize);
+        assertEquals(expectedSize, commits.size());
         for (var c : commits) {
-            assertEquals(c.getAuthorName(), expectedName);
+            assertTrue(c.getMessage().startsWith(todoCode));
         }
     }
 

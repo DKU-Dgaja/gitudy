@@ -9,6 +9,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
+import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.StudyConventionFixture;
@@ -154,10 +155,8 @@ class StudyCommitServiceTest extends TestConfig {
     }
 
     @Test
-    void 레포지토리에서_커밋_fetch_성공_테스트() {
+    void 레포지토리에서_aBc123에_해당하는_커밋_fetch_성공_테스트() {
         // given
-        String gitId = "jjjjssssuuunngg";
-
         // 유저 저장
         User userA = userRepository.save(User.builder()
                 .platformId("1")
@@ -168,6 +167,7 @@ class StudyCommitServiceTest extends TestConfig {
                 .profileImageUrl("프로필이미지")
                 .build());
 
+        String gitId = "jjjjssssuuunngg";
         User userB = userRepository.save(User.builder()
                 .platformId("2")
                 .platformType(GITHUB)
@@ -194,15 +194,19 @@ class StudyCommitServiceTest extends TestConfig {
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userB.getId(), study.getId()));
 
         // 투두 저장
-        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
 
         // 컨벤션 저장
         String conventionName = "커밋 메세지 규칙";
-        String convention = "^\\[[A-Za-z가-힣0-9]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: [이름] 플랫폼 \":\" + \" \" + 문제 이름 \n" +
-                "예시 1) [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) [이주성] 프로그래머스: 두 수의 곱";
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
+        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
+                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
 
+        // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
@@ -211,29 +215,38 @@ class StudyCommitServiceTest extends TestConfig {
                 .isActive(true)
                 .build());
 
-        // 현재 저장되어 있는 커밋들 목록 중 컨벤션 지킨 것 6개 (순서대로)
-        // [LJS] 백준: 또 지켜보기                            -> jjjjssssuuunngg
-        // [LSJ] 프로그래머스: 컨벤션 지켜보기                    -> jjjjssssuuunngg
-        // [LEEJUSUNG] 백준: 첫 커밋입니다.                    -> jjjjssssuuunngg
-        // [이주성] 프로그래머스: 컨벤션 지키기                    -> jusung-c
-        // [이주성] 백준: 2839번 설탕 배달                      -> jusung-c
-        // [이주성] 백준: 1234번 크리스마스 트리/n/n[이주성] 백준: 1234번 크리스마스 트리                  -> jusung-c
-        int expectedSize = 6;
+        // 레포지토리의 총 10개의 커밋 중 컨벤션 지킨 것 5개 (순서대로)
+        /*
+                aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기
+                qwe321 [jusung-c] 백준: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
+                qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 크리스마스 트리
+        */
 
-        String A = "[LJS] 백준: 또 지켜보기";
-        String B = "[LSJ] 프로그래머스: 컨벤션 지켜보기";
-        String C = "[LEEJUSUNG] 백준: 첫 커밋입니다.";
-        String D = "[이주성] 프로그래머스: 컨벤션 지키기";
-        String E = "[이주성] 백준: 2839번 설탕 배달";
-        String F = "[이주성] 백준: 1234번 크리스마스 트리\n\n[이주성] 백준: 1234번 크리스마스 트리";
+        // 그 중 aBc123 투두에 해당하는 커밋 3개
+        /*
+                aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
+                aBc123 [jusung-c] 백준: 크리스마스 트리
+        */
+        int expectedSize = 3;
+
+        String A = "aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기";
+        String B = "aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기";
+        String C = "aBc123 [jusung-c] 백준: 크리스마스 트리";
 
         // when
         studyCommitService.fetchRemoteCommitsAndSave(study, todo);
-        List<StudyCommit> allCommits = studyCommitRepository.findAll();
+
+        // 저장된 커밋들 중 컨벤션을 지킨 APPROVAL 상태의 커밋만 필터링
+        List<StudyCommit> allCommits = studyCommitRepository.findByStudyTodoId(todo.getId())
+                .stream()
+                .filter(commit -> commit.getStatus() == CommitStatus.COMMIT_APPROVAL)
+                .toList();
+//        System.out.println("allCommits.size() = " + allCommits.size());
 //        for (var c : allCommits) {
-//            System.out.println("c.getUserId() = " + c.getUserId());
-//            System.out.println("c.getStudyInfoId() = " + c.getStudyInfoId());
-//            System.out.println("c.getMessage() = " + c.getMessage());
+//            System.out.println(c.getMessage());
 //        }
 
         // then
@@ -247,75 +260,12 @@ class StudyCommitServiceTest extends TestConfig {
         assertEquals(A, allCommits.get(0).getMessage());
         assertEquals(B, allCommits.get(1).getMessage());
         assertEquals(C, allCommits.get(2).getMessage());
-        assertEquals(D, allCommits.get(3).getMessage());
-        assertEquals(E, allCommits.get(4).getMessage());
-        assertEquals(F, allCommits.get(5).getMessage());
 
     }
 
     @Test
-    void 앱사용자가_아닌_사람의_커밋은_무시() {
+    void 레포지토리에서_qwe321에_해당하는_커밋_fetch_성공_테스트() {
         // given
-        int expectedSize = 0;
-
-        // 유저 저장
-        User user = userRepository.save(User.builder()
-                .platformId("1")
-                .platformType(GITHUB)
-                .role(USER)
-                .name("이름")
-                .githubId("anotherId")
-                .profileImageUrl("프로필이미지")
-                .build());
-
-        // 스터디 저장
-        StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
-                .userId(user.getId())
-                .topic("topic")
-                .status(StudyStatus.STUDY_PUBLIC)
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner(REPOSITORY_OWNER)
-                        .name(REPOSITORY_NAME)
-                        .branchName("main")
-                        .build())
-                .build());
-
-        // 투두 저장
-        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
-
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^\\[[A-Za-z가-힣0-9]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: [이름] 플랫폼 \":\" + \" \" + 문제 이름 \n" +
-                "예시 1) [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) [이주성] 프로그래머스: 두 수의 곱";
-
-        studyConventionRepository.save(StudyConvention.builder()
-                .studyInfoId(study.getId())
-                .name(conventionName)
-                .description(conventionDescription)
-                .content(convention)
-                .isActive(true)
-                .build());
-
-        // 현재 저장되어 있는 커밋들은 전부 jusung-c의 커밋이다.
-
-        // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
-        List<StudyCommit> allCommits = studyCommitRepository.findAll();
-//        System.out.println("allCommits.size() = " + allCommits.size());
-
-        // then
-        assertEquals(expectedSize, allCommits.size());
-
-    }
-
-    @Test
-    void 스터디원이_아닌_사람의_커밋은_무시() {
-        // given
-        int expectedSize = 3;
-        String gitId = "jjjjssssuuunngg";
-
         // 유저 저장
         User userA = userRepository.save(User.builder()
                 .platformId("1")
@@ -326,6 +276,7 @@ class StudyCommitServiceTest extends TestConfig {
                 .profileImageUrl("프로필이미지")
                 .build());
 
+        String gitId = "jjjjssssuuunngg";
         User userB = userRepository.save(User.builder()
                 .platformId("2")
                 .platformType(GITHUB)
@@ -349,19 +300,22 @@ class StudyCommitServiceTest extends TestConfig {
 
         // 스터디원 저장
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), study.getId()));
-//        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userB.getId(), study.getId()));
-
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userB.getId(), study.getId()));
 
         // 투두 저장
-        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
 
         // 컨벤션 저장
         String conventionName = "커밋 메세지 규칙";
-        String convention = "^\\[[A-Za-z가-힣0-9]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: [이름] 플랫폼 \":\" + \" \" + 문제 이름 \n" +
-                "예시 1) [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) [이주성] 프로그래머스: 두 수의 곱";
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
+        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
+                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
 
+        // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
@@ -370,18 +324,156 @@ class StudyCommitServiceTest extends TestConfig {
                 .isActive(true)
                 .build());
 
-        // 현재 저장되어 있는 커밋들은 jusung-c 3개, jjjjssssuuunngg 3개이다.
+        // 레포지토리의 총 10개의 커밋 중 컨벤션 지킨 것 5개 (순서대로)
+        /*
+                aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기
+                qwe321 [jusung-c] 백준: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
+                qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 크리스마스 트리
+        */
+
+        // 그 중 aBc123 투두에 해당하는 커밋 3개
+        /*
+                aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
+                aBc123 [jusung-c] 백준: 크리스마스 트리
+        */
+        int expectedSize = 3;
+
+        String A = "aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기";
+        String B = "aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기";
+        String C = "aBc123 [jusung-c] 백준: 크리스마스 트리";
 
         // when
         studyCommitService.fetchRemoteCommitsAndSave(study, todo);
-        List<StudyCommit> allCommits = studyCommitRepository.findAll();
+
+        // 저장된 커밋들 중 컨벤션을 지킨 APPROVAL 상태의 커밋만 필터링
+        List<StudyCommit> allCommits = studyCommitRepository.findByStudyTodoId(todo.getId())
+                .stream()
+                .filter(commit -> commit.getStatus() == CommitStatus.COMMIT_APPROVAL)
+                .toList();
 //        System.out.println("allCommits.size() = " + allCommits.size());
+//        for (var c : allCommits) {
+//            System.out.println(c.getMessage());
+//        }
 
         // then
-        assertEquals(expectedSize, allCommits.size());
+        assertEquals(allCommits.size(), expectedSize);
         for (var c : allCommits) {
-            assertEquals(c.getUserId(), userA.getId());
+            assertEquals(c.getStudyInfoId(), study.getId());
+            assertTrue(c.getUserId() == userA.getId()
+                    || c.getUserId() == userB.getId());
         }
+
+        assertEquals(A, allCommits.get(0).getMessage());
+        assertEquals(B, allCommits.get(1).getMessage());
+
+    }
+
+    @Test
+    void 스터디원이_아닌_사람의_커밋은_무시() {
+        // given
+        // 유저 저장
+        User userA = userRepository.save(User.builder()
+                .platformId("1")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId(REPOSITORY_OWNER)
+                .profileImageUrl("프로필이미지")
+                .build());
+
+        String gitId = "jjjjssssuuunngg";
+        User userB = userRepository.save(User.builder()
+                .platformId("2")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId(gitId)
+                .profileImageUrl("프로필이미지")
+                .build());
+
+        // 스터디 저장
+        StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
+                .userId(userA.getId())
+                .topic("topic")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner(REPOSITORY_OWNER)
+                        .name(REPOSITORY_NAME)
+                        .branchName("main")
+                        .build())
+                .build());
+
+        // 스터디원 저장
+//        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), study.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userB.getId(), study.getId()));
+
+        // 투두 저장
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
+
+        // 컨벤션 저장
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
+        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
+                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+
+        // 컨벤션 등록
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(study.getId())
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build());
+
+        // 레포지토리의 총 10개의 커밋 중 컨벤션 지킨 것 5개 (순서대로)
+        /*
+                aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기
+                qwe321 [jusung-c] 백준: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
+                qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 크리스마스 트리
+        */
+
+        // 그 중 aBc123 투두에 해당하는 커밋 3개
+        /*
+                aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기
+                aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기  -> 스터디원 아님
+                aBc123 [jusung-c] 백준: 크리스마스 트리    -> 스터디원 아님
+        */
+        // 스터디원의 커밋은 단 하나
+        int expectedSize = 1;
+
+        String A = "aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기";
+
+        // when
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+
+        // 저장된 커밋들 중 컨벤션을 지킨 APPROVAL 상태의 커밋만 필터링
+        List<StudyCommit> allCommits = studyCommitRepository.findByStudyTodoId(todo.getId())
+                .stream()
+                .filter(commit -> commit.getStatus() == CommitStatus.COMMIT_APPROVAL)
+                .toList();
+//        System.out.println("allCommits.size() = " + allCommits.size());
+//        for (var c : allCommits) {
+//            System.out.println(c.getMessage());
+//        }
+
+        // then
+        assertEquals(allCommits.size(), expectedSize);
+        for (var c : allCommits) {
+            assertEquals(c.getStudyInfoId(), study.getId());
+            assertTrue(c.getUserId() == userA.getId()
+                    || c.getUserId() == userB.getId());
+        }
+
+        assertEquals(A, allCommits.get(0).getMessage());
 
     }
 }

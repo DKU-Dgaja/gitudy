@@ -9,6 +9,7 @@ import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -62,12 +64,12 @@ public class StudyCommitService {
     @Transactional
     public void fetchRemoteCommitsAndSave(StudyInfo study, StudyTodo todo) {
         int pageNumber = 0;
-        int pageSize = 15;
+        int pageSize = 10;
 
-        // 불러온 커밋 페이지의 저장되지 않은 커밋이 없을 때까지 반복
+        // 불러온 커밋 페이지에 저장되지 않은 커밋이 없을 때까지 반복
         while (true) {
             // 원격의 커밋 한 페이지 추출
-            List<GithubCommitResponse> commitPage = githubApiService.fetchCommits(study.getRepositoryInfo(), pageNumber, pageSize);
+            List<GithubCommitResponse> commitPage = githubApiService.fetchCommits(study.getRepositoryInfo(), pageNumber, pageSize, todo.getTodoCode());
             if (commitPage.isEmpty()) break;
 
             pageNumber++;
@@ -81,8 +83,7 @@ public class StudyCommitService {
             // 컨벤션 검증 후 통과한 커밋만 StudyCommit으로 저장
             StudyConventionResponse conventions = studyConventionRepository.findActiveConventionByStudyInId(study.getId());
             List<StudyCommit> commitList = unsavedCommits.stream()
-                    .filter(commit -> studyConventionService.checkConvention(conventions.getContent(), commit.getMessage()))
-                    .flatMap(commit -> {    // user를 못 찾았거나, 찾았어도 활동중인 스터디원이 아닌 경우 무시하고 다음 커밋으로 넘어가도록 설정
+                    .map(commit -> {    // user를 못 찾았거나, 찾았어도 활동중인 스터디원이 아닌 경우 무시하고 다음 커밋으로 넘어가도록 설정
                         try {
                             User findUser = userRepository.findByGithubId(commit.getAuthorName()).orElseThrow(() -> {
                                 log.warn(">>>> User not found with GithubId: {}", commit.getAuthorName());
@@ -94,11 +95,19 @@ public class StudyCommitService {
                                 throw new MemberException(ExceptionMessage.STUDY_NOT_MEMBER);
                             }
 
-                            return Stream.of(StudyCommit.of(findUser.getId(), todo, commit));
+                            // 컨벤션 검증 통과 여부에 따른 커밋 상태 지정
+                            boolean isValid = studyConventionService.checkConvention(conventions.getContent(), commit.getMessage());
+                            CommitStatus status = isValid ? CommitStatus.COMMIT_APPROVAL : CommitStatus.COMMIT_INVALID;
+
+                            return StudyCommit.of(findUser.getId(), todo, commit, status);
+
                         } catch (GitudyException e) {
-                            return Stream.empty();
+                            log.error(">>>> 조회한 커밋을 저장하는 중 에러가 발생했습니다: {}", e.getMessage());
+                            // 에러 발생 시 null 반환
+                            return null;
                         }
                     })
+                    .filter(Objects::nonNull)       // null이 아닌 것만 필터링
                     .toList();
 
             studyCommitRepository.saveAll(commitList);
