@@ -15,4 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
 
     // 같은 Name(닉네임)이 있는지 판별한다.
     boolean existsByName(String name);
+
+    Optional<User> findByGithubId(String githubId);
+
 }

@@ -2,6 +2,9 @@ package com.example.backend.study.api.service.github;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
+import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,6 +27,8 @@ public class GithubApiService {
     @Value("${github.api.token}")
     private String token;
 
+    private final StudyCommitRepository studyCommitRepository;
+
     // 깃허브 api 통신 연결
     public GitHub connectGithubApi() {
         return connectGithub(token);
@@ -45,9 +50,10 @@ public class GithubApiService {
     }
 
     // 레포지토리 정보 가져오기
-    public GHRepository getRepository(GitHub gitHub, String owner, String repository) {
+    public GHRepository getRepository(RepositoryInfo studyInfo) {
         try {
-            return gitHub.getRepository(owner + "/" + repository);
+            GitHub gitHub = connectGithub(token);
+            return gitHub.getRepository(studyInfo.getOwner() + "/" + studyInfo.getName());
         } catch (IOException e) {
             log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_REPOSITORY_ERROR.getText(), e.getMessage());
             throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_REPOSITORY_ERROR);
@@ -55,24 +61,37 @@ public class GithubApiService {
     }
 
     // 지정한 폴더의 커밋 리스트를 불러오기
-    public List<GithubCommitResponse> pullCommits(GHRepository repo, String folderPath) {
-        GitHub gitHub = connectGithubApi();
-        GHRepository getRepo = getRepository(gitHub, repo.getOwnerName(), repo.getName());
+    public List<GithubCommitResponse> pullUnsavedCommits(RepositoryInfo repo, StudyTodo todo) {
+        GHRepository getRepo = getRepository(repo);
+        String todoPath = todo.getTitle();
+
 
         // 특정 폴더의 커밋 리스트를 가져오는 로직 추가
-        List<GHCommit> commits = getRepo.queryCommits().path(folderPath).list().asList();
-        log.info(">>>> [ '{}' 폴더의 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", folderPath);
+        List<GHCommit> commits = null;
+        try {
+            commits = getRepo.queryCommits().path(todoPath).list().toList();
 
-        return commits.stream()
-                .map(commit -> {
-                    try {
-                        return GithubCommitResponse.of(commit);
-                    } catch (IOException e) {
-                        log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
-                        throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
-                    }
-                })
-                .toList();
+            log.info(">>>> [ '{}' 폴더의 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", todoPath);
+
+            // GithubCommitResponse 리스트로 변환
+            List<GithubCommitResponse> commitList = commits.stream()
+                    .map(commit -> {
+                        try {
+                            return GithubCommitResponse.of(commit);
+                        } catch (IOException e) {
+                            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
+                            throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
+                        }
+                    })
+                    .toList();
+
+            // 저장되지 않은 커밋의 경우만 필터링
+            return studyCommitRepository.findUnsavedGithubCommits(commitList);
+
+        } catch (IOException e) {
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMITS_ERROR);
+        }
+
     }
 
 }

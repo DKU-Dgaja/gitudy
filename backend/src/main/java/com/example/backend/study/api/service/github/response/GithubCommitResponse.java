@@ -15,15 +15,15 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class GithubCommitResponse {
-    private String sha;             // 커밋 식별자
-    private String authorName;      // 커밋 작성자 이름
-    private String message;         // 커밋 메시지
-    private LocalDate commitDate;        // 커밋 날짜 정보
+    private String sha;                 // 커밋 식별자
+    private String authorName;          // 커밋 작성자 깃허브 id
+    private String message;             // 커밋 메시지
+    private LocalDate commitDate;       // 커밋 날짜 정보
 
     public static GithubCommitResponse of(GHCommit commit) throws IOException {
         return GithubCommitResponse.builder()
                 .sha(commit.getSHA1())
-                .authorName(commit.getAuthor().getName())
+                .authorName(commit.getAuthor().getLogin())
                 .message(commit.getCommitShortInfo().getMessage())
                 .commitDate(DateUtil.convertToLocalDate(commit.getCommitDate()))
                 .build();

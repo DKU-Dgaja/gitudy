@@ -1,12 +1,12 @@
 package com.example.backend.study.api.service.github;
 
 import com.example.backend.auth.TestConfig;
-import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
+import com.example.backend.domain.define.study.todo.StudyTodoFixture;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHRepository;
-import org.kohsuke.github.GitHub;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -28,10 +28,14 @@ class GithubApiServiceTest extends TestConfig {
     @Test
     void 깃허브_레포지토리_조회_테스트() {
         // given
-        GitHub gitHub = githubApiService.connectGithub(token);
+        RepositoryInfo repo = RepositoryInfo.builder()
+                .owner(REPOSITORY_OWNER)
+                .name(REPOSITORY_NAME)
+                .branchName("main")
+                .build();
 
         // when
-        GHRepository repository = githubApiService.getRepository(gitHub, REPOSITORY_OWNER, REPOSITORY_NAME);
+        GHRepository repository = githubApiService.getRepository(repo);
 
         // then
         assertAll(
@@ -43,23 +47,32 @@ class GithubApiServiceTest extends TestConfig {
     @Test
     void 깃허브_레포지토리의_커밋_리스트_조회_테스트() {
         // given
-        GitHub gitHub = githubApiService.connectGithub(token);
-        String folderPath = "TODO_NAME";
+        int expectedSize = 3;
+        String expectedName = "jusung-c";
 
-        int expectedSize = 1;
-        String expectedName = "이주성";
-        String expectedMessage = "CREATE_NEW_FOLDER";
+        RepositoryInfo repo = RepositoryInfo.builder()
+                .owner(REPOSITORY_OWNER)
+                .name(REPOSITORY_NAME)
+                .branchName("main")
+                .build();
+
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(1L);
 
         // when
-        GHRepository repository = githubApiService.getRepository(gitHub, REPOSITORY_OWNER, REPOSITORY_NAME);
-        List<GithubCommitResponse> commits = githubApiService.pullCommits(repository, folderPath);
+        List<GithubCommitResponse> commits = githubApiService.pullUnsavedCommits(repo, todo);
+
+//        System.out.println("commits.size() = " + commits.size());
+//        for (var c : commits) {
+//            System.out.println("c.getAuthorName() = " + c.getAuthorName());
+//            System.out.println("c.getMessage() = " + c.getMessage());
+//            System.out.println("c.getSha() = " + c.getSha());
+//        }
 
         // then
-        assertAll(
-                () -> assertEquals(commits.size(), expectedSize),
-                () -> assertEquals(commits.get(0).getAuthorName(), expectedName),
-                () -> assertEquals(commits.get(0).getMessage(), expectedMessage)
-        );
+        assertEquals(commits.size(), expectedSize);
+        for (var c : commits) {
+            assertEquals(c.getAuthorName(), expectedName);
+        }
     }
 
 }
