@@ -28,7 +28,7 @@ public class FirebaseConfig {
 
         FirebaseApp firebaseApp = null;
         try {
-            ClassPathResource resource = new ClassPathResource(fcmKeyPath);
+            ClassPathResource resource = new ClassPathResource("serviceAccountKey.json");
             try (InputStream refreshToken = resource.getInputStream()) {
                 List<FirebaseApp> firebaseApps = FirebaseApp.getApps();
                 if (!firebaseApps.isEmpty()) {
