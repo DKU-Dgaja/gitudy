@@ -89,10 +89,6 @@ public class StudyCommitService {
             // StudyCommit으로 저장되지 않은 것만 필터링
             List<GithubCommitResponse> unsavedCommits = studyCommitRepository.findUnsavedGithubCommits(commitPage);
 
-            // 페이지 내 저장된 커밋이 하나라도 있으면 현재 페이지까지만 저장 로직 적용
-            boolean hasSavedCommit = commitPage.size() > unsavedCommits.size();
-            if (hasSavedCommit) break;
-
             // 컨벤션 검증 결과에 따라 상태를 다르게 저장
             StudyConventionResponse conventions = studyConventionRepository.findActiveConventionByStudyInId(study.getId());
             List<StudyCommit> commitList = unsavedCommits.stream()
@@ -110,6 +106,10 @@ public class StudyCommitService {
                     .toList();
 
             studyCommitRepository.saveAll(commitList);
+
+            // 페이지 내 저장된 커밋이 하나라도 있으면 현재 페이지까지만 저장 로직 적용
+            boolean hasSavedCommit = commitPage.size() > unsavedCommits.size();
+            if (hasSavedCommit) break;
 
             // 다음 페이지로
             pageNumber++;
