@@ -108,8 +108,7 @@ public class StudyCommitService {
             studyCommitRepository.saveAll(commitList);
 
             // 페이지 내 저장된 커밋이 하나라도 있으면 현재 페이지까지만 저장 로직 적용
-            boolean hasSavedCommit = commitPage.size() > unsavedCommits.size();
-            if (hasSavedCommit) break;
+            if (commitPage.size() > unsavedCommits.size()) break;
 
             // 다음 페이지로
             pageNumber++;
