@@ -74,7 +74,13 @@ public enum ExceptionMessage {
     // StudyConventionException
     CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다."),
 
-    //
+    // GithubApiException
+    GITHUB_API_CONNECTION_ERROR("Github Api 통신에 실패했습니다."),
+    GITHUB_API_GET_REPOSITORY_ERROR("Repository 정보를 불러오는 데에 실패했습니다."),
+    GITHUB_API_GET_COMMITS_ERROR("커밋 리스트를 불러오는데 실패했습니다."),
+    GITHUB_API_GET_COMMIT_ERROR("커밋을 불러오는데 실패했습니다."),
+
+    // SturyCategoryException
     CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다.")
     ;
     private final String text;

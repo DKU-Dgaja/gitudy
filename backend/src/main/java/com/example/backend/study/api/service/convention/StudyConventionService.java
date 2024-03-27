@@ -5,17 +5,20 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.controller.convention.response.StudyConventionListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
+import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 @Slf4j
 @Service
@@ -106,7 +109,15 @@ public class StudyConventionService {
 
         return response;
 
+    }
 
+    // 컨벤션 검사 로직
+    public boolean checkConvention(String convention, String commitMsg) {
+        // 정규식 패턴 생성
+        Pattern pattern = Pattern.compile(convention);
+
+        // 커밋 메세지가 정규식과 일치하는지 반환
+        return pattern.matcher(commitMsg).matches();
     }
 
 }

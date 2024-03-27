@@ -2,7 +2,9 @@ package com.example.backend.study.api.service.todo;
 
 
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -16,6 +18,7 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequ
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.service.commit.StudyCommitService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -30,11 +33,12 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudyTodoService {
 
-
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyInfoRepository studyInfoRepository;
+    private final StudyCommitService studyCommitService;
+
     private final static Long MAX_LIMIT = 10L;
 
     // Todo 등록
@@ -92,6 +96,14 @@ public class StudyTodoService {
                 request.getTodoLink(),
                 request.getTodoDate());
 
+        // 깃허브 api를 사용해 커밋 업데이트
+        StudyInfo studyInfo = studyInfoRepository.findById(studyTodo.getStudyInfoId()).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyTodo.getStudyInfoId(), ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, studyTodo);
+
+
     }
 
     // Todo 삭제
@@ -133,6 +145,23 @@ public class StudyTodoService {
         // 다음 페이지 조회를 위한 cursorIdx 설정
         response.setNextCursorIdx();
 
+        // 커밋 fetch 업데이트
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        studyTodoList.forEach(todo -> {
+            StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
+                log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
+                return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+            });
+
+            // 깃허브 api를 사용해 커밋 업데이트
+            studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo);
+
+            // TODO: 점수 부여 로직 필요
+        });
+
         return response;
     }
 
@@ -152,7 +181,7 @@ public class StudyTodoService {
     public List<StudyTodoStatusResponse> readStudyTodoStatus(Long studyInfoId, Long todoId) {
 
         // 스터디와 관련된 To do 예외처리
-        studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
+        StudyTodo todo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
             return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
@@ -165,6 +194,15 @@ public class StudyTodoService {
 
         // active 멤버들에 대한 특정 Todo의 완료 상태를 조회
         List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoIdAndUserIds(todoId, userIds);
+
+        // 깃허브 api를 사용해 커밋 업데이트
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, todo);
+
+        // TODO: 점수 부여 로직 필요
 
         // 조회된 정보를 바탕으로 응답 객체를 생성
         return todoMappings.stream()

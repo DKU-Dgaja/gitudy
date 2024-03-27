@@ -49,4 +49,14 @@ public class StudyConventionFixture {
                 .build();
     }
 
+    // 비활성화된 Convention
+    public static StudyConvention createNonActiveConvention(Long studyInfoId) {
+        return StudyConvention.builder()
+                .studyInfoId(studyInfoId)
+                .name("이름")
+                .description("설명")
+                .content("정규식")
+                .isActive(false)
+                .build();
+    }
 }

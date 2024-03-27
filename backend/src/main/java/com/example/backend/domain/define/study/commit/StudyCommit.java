@@ -3,6 +3,8 @@ package com.example.backend.domain.define.study.commit;
 import com.example.backend.domain.define.BaseEntity;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.constant.LikeCount;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -65,5 +67,17 @@ public class StudyCommit extends BaseEntity {
         this.status = status;
         this.rejectionReason = rejectionReason;
         likeCount = LikeCount.createDefault();
+    }
+
+    public static StudyCommit of(Long userId, StudyTodo todo, GithubCommitResponse commit, CommitStatus status) {
+        return StudyCommit.builder()
+                .studyInfoId(todo.getStudyInfoId())
+                .studyTodoId(todo.getId())
+                .userId(userId)
+                .commitSHA(commit.getSha())
+                .message(commit.getMessage())
+                .commitDate(commit.getCommitDate())
+                .status(status)
+                .build();
     }
 }
