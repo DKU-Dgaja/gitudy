@@ -1,5 +1,7 @@
 package com.example.backend.domain.define.study.commit;
 
+import com.example.backend.study.api.service.github.response.GithubCommitResponse;
+
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,5 +52,15 @@ public class StudyCommitFixture {
             studyCommits.add(createDefaultStudyCommit(userId, studyInfoId, studyTodoId, Integer.toString(randomValue)));
         }
         return studyCommits;
+    }
+
+    // 테스트용 깃허브 커밋 응답 객체 생성 메서드
+    public static GithubCommitResponse createGithubCommitResponse(String authorName) {
+        return GithubCommitResponse.builder()
+                .sha("sha")
+                .commitDate(LocalDate.now())
+                .message("message")
+                .authorName(authorName)
+                .build();
     }
 }

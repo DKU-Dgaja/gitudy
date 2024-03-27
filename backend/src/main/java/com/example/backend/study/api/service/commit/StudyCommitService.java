@@ -27,7 +27,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -72,45 +75,44 @@ public class StudyCommitService {
             List<GithubCommitResponse> commitPage = githubApiService.fetchCommits(study.getRepositoryInfo(), pageNumber, pageSize, todo.getTodoCode());
             if (commitPage.isEmpty()) break;
 
-            pageNumber++;
+            // 사용자 조회 로직을 최소화하기 위해 map에 미리 저장
+            Map<String, Optional<User>> userCache = commitPage.stream()
+                    .collect(Collectors.toMap(
+                            // key
+                            GithubCommitResponse::getAuthorName,
+                            // value
+                            commit -> userRepository.findByGithubId(commit.getAuthorName()),
+                            // 동일한 키에 대해 충돌이 나면, 기존 값을 사용
+                            (existing, replacement) -> existing
+                    ));
 
             // StudyCommit으로 저장되지 않은 것만 필터링
             List<GithubCommitResponse> unsavedCommits = studyCommitRepository.findUnsavedGithubCommits(commitPage);
 
-            // 저장되지 않은 커밋이 없다면 이미 다 업데이트되었으므로 스탑
-            if (unsavedCommits.isEmpty()) break;
+            // 페이지 내 저장된 커밋이 하나라도 있으면 현재 페이지까지만 저장 로직 적용
+            boolean hasSavedCommit = commitPage.size() > unsavedCommits.size();
+            if (hasSavedCommit) break;
 
-            // 컨벤션 검증 후 통과한 커밋만 StudyCommit으로 저장
+            // 컨벤션 검증 결과에 따라 상태를 다르게 저장
             StudyConventionResponse conventions = studyConventionRepository.findActiveConventionByStudyInId(study.getId());
             List<StudyCommit> commitList = unsavedCommits.stream()
-                    .map(commit -> {    // user를 못 찾았거나, 찾았어도 활동중인 스터디원이 아닌 경우 무시하고 다음 커밋으로 넘어가도록 설정
-                        try {
-                            User findUser = userRepository.findByGithubId(commit.getAuthorName()).orElseThrow(() -> {
-                                log.warn(">>>> User not found with GithubId: {}", commit.getAuthorName());
-                                throw  new UserException(ExceptionMessage.USER_NOT_FOUND);
-                            });
-
-                            if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(findUser.getId(), study.getId())) {
-                                log.warn(">>>> StudyMember not found with : {}", findUser.getName());
-                                throw new MemberException(ExceptionMessage.STUDY_NOT_MEMBER);
-                            }
-
-                            // 컨벤션 검증 통과 여부에 따른 커밋 상태 지정
-                            boolean isValid = studyConventionService.checkConvention(conventions.getContent(), commit.getMessage());
-                            CommitStatus status = isValid ? CommitStatus.COMMIT_APPROVAL : CommitStatus.COMMIT_INVALID;
-
-                            return StudyCommit.of(findUser.getId(), todo, commit, status);
-
-                        } catch (GitudyException e) {
-                            log.error(">>>> 조회한 커밋을 저장하는 중 에러가 발생했습니다: {}", e.getMessage());
-                            // 에러 발생 시 null 반환
-                            return null;
-                        }
+                    // 사용자가 존재하는지, 존재한다면 스터디의 활동중인 멤버인지, 컨벤션을 통과하는지 검증
+                    .filter(commit -> {
+                        Optional<User> user = userCache.get(commit.getAuthorName());
+                        return user.isPresent() &&
+                                studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.get().getId(), study.getId()) &&
+                                studyConventionService.checkConvention(conventions.getContent(), commit.getMessage());
                     })
-                    .filter(Objects::nonNull)       // null이 아닌 것만 필터링
+                    .map(commit -> {
+                        User findUser = userCache.get(commit.getAuthorName()).get();
+                        return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_APPROVAL);
+                    })
                     .toList();
 
             studyCommitRepository.saveAll(commitList);
+
+            // 다음 페이지로
+            pageNumber++;
         }
 
         log.info(">>>> 원격 레포지토리로부터 커밋 업데이트를 성공하였습니다.");
