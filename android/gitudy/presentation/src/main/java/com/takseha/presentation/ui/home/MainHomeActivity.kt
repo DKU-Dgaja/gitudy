@@ -2,13 +2,10 @@ package com.takseha.presentation.ui.home
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMainHomeBinding
 import com.takseha.presentation.ui.feed.FeedHomeFragment
@@ -53,14 +50,14 @@ class MainHomeActivity : AppCompatActivity() {
         viewModel.getUserInfo()
     }
     private fun setMainFragmentView(savedInstanceState: Bundle?) {
-        if (savedInstanceState == null) {
-            val fragment = MainHomeFragment()
-
-            sendUserInfo(fragment)
-            supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, fragment).commit()
-            binding.navHome.isChecked = true
-        }
         with(binding) {
+            if (savedInstanceState == null) {
+                val fragment = MainHomeFragment()
+
+                sendUserInfo(fragment)
+                supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, fragment).commit()
+                navHome.isChecked = true
+            }
             navHome.setOnClickListener {
                 val fragment = MainHomeFragment()
 
