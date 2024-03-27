@@ -20,6 +20,8 @@ public class FcmService {
 
     public void sendMessageSingleDevice(FcmSingleTokenRequest token) throws FirebaseMessagingException {
 
+        //Todo: 가져온 userId와 token 예외처리 구현
+
         Notification notification = Notification.builder()
                 .setTitle(token.getTitle())
                 .setBody(token.getMessage())   // .setImage(token.getImage()) 이미지 사용할때
@@ -35,6 +37,8 @@ public class FcmService {
     }
 
     public void sendMessageMultiDevice(FcmMultiTokenRequest token) throws FirebaseMessagingException {
+
+        //Todo: 가져온 userId와 token 예외처리 구현
 
         Notification notification = Notification.builder()
                 .setTitle(token.getTitle())
