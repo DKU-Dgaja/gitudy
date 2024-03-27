@@ -1,6 +1,5 @@
 package com.takseha.presentation.ui.home
 
-import android.R.attr.fragment
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -11,16 +10,21 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
 import com.takseha.presentation.viewmodel.MainHomeUserInfoUiState
+import com.takseha.presentation.viewmodel.MainHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 
 // progress bar 끝 부분 둥글게 하는 건 추후 리팩토링 시 구현해보자..
 class MainHomeFragment : Fragment() {
     private var _binding: FragmentMainHomeBinding? = null
     private val binding get() = _binding!!
+    private lateinit var viewModel: MainHomeViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,8 +44,7 @@ class MainHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val userInfo = arguments?.getSerializable("userInfo") as MainHomeUserInfoUiState
-        Log.d("MainHomeFragment", userInfo.toString())
-        setUserInfo(userInfo)
+        setUserInfoInit(userInfo)
 
         val characterAnim = AnimationUtils.loadAnimation(context, R.anim.alpha_character)
         binding.characterImg.startAnimation(characterAnim)
@@ -49,6 +52,23 @@ class MainHomeFragment : Fragment() {
 
     private fun setMyStudyList() {
         // recyclerView 관련 기능 구현
+    }
+
+    private fun setUserInfoInit(
+        userInfo: MainHomeUserInfoUiState
+    ) {
+        if (userInfo.name == "") {  // stateflow 초기값 처리 로직
+            viewModel = ViewModelProvider(this)[MainHomeViewModel::class.java]
+            viewModel.getUserInfo()
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.uiState.collectLatest {
+                    setUserInfo(it)
+                    Log.d("MainHomeFragment", it.toString())
+                }
+            }
+        } else {
+            setUserInfo(userInfo)
+        }
     }
 
     private fun setUserInfo(
