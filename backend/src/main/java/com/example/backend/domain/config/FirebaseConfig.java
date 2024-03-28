@@ -97,7 +97,7 @@ public class FirebaseConfig {
     }*/
 
 
-    @Bean
+   /* @PostConstruct
     public FirebaseApp initializeFirebaseApp() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             try (InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream()) {
@@ -119,6 +119,30 @@ public class FirebaseConfig {
 
     @Bean
     @DependsOn("initializeFirebaseApp")
+    public FirebaseMessaging firebaseMessaging() {
+        return FirebaseMessaging.getInstance();
+    }*/
+
+
+    @PostConstruct
+    public void initialize() {
+        try {
+            if (FirebaseApp.getApps().isEmpty()) {
+                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
+                String text = new String(credentials.readAllBytes(), StandardCharsets.UTF_8);
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))))
+                        .build();
+
+                FirebaseApp.initializeApp(options);
+                log.info("FCM Setting Completed");
+            }
+        } catch (IOException e) {
+            log.error("FCM error message : " + e.getMessage());
+        }
+    }
+
+    @Bean
     public FirebaseMessaging firebaseMessaging() {
         return FirebaseMessaging.getInstance();
     }
