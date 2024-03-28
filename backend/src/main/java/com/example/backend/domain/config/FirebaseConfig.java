@@ -11,8 +11,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 
 @Slf4j
@@ -75,16 +77,21 @@ public class FirebaseConfig {
         if (FirebaseApp.getApps().isEmpty()) { // FirebaseApp이 초기화되지 않았는지 확인
             try {
                 InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
+                String text = new String(credentials.readAllBytes(), StandardCharsets.UTF_8);
+
                 FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(credentials))
+                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))))
                         .build();
-                FirebaseApp.initializeApp(options); // 여기서 FirebaseApp을 초기화
-                log.info("FCM Setting Completed");
+
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options);
+                }
             } catch (IOException e) {
                 log.error("FCM Initialization error: " + e.getMessage());
                 throw new IllegalStateException("Failed to initialize FirebaseApp", e);
             }
         }
+        log.info("FCM Setting Completed");
         return FirebaseMessaging.getInstance(); // 이제 안전하게 FirebaseMessaging 인스턴스를 가져올 수 있음
     }
 
