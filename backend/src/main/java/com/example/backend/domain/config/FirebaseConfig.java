@@ -26,7 +26,7 @@ public class FirebaseConfig {
     private String fcmKeyPath;
 
 
-    @PostConstruct
+    /*@Bean
     public void initialize() {
         if (FirebaseApp.getApps().isEmpty()) {
             try {
@@ -43,7 +43,7 @@ public class FirebaseConfig {
                 log.error("FCM error message : " + e.getMessage());
             }
         }
-    }
+    }*/
 
     @Bean
     public FirebaseMessaging firebaseMessaging() {
@@ -62,6 +62,7 @@ public class FirebaseConfig {
             }
         }
 
+        log.info("FCM Setting Completed");
         // FirebaseApp이 정상적으로 초기화된 후, FirebaseMessaging 인스턴스 반환
         return FirebaseMessaging.getInstance();
     }
