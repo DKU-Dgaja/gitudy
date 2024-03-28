@@ -19,9 +19,9 @@ import java.util.List;
 @Configuration
 public class FirebaseConfig {
 
-    @Value("${firebase.key-path}")
+    /*@Value("${firebase.key-path}")
     private String fcmKeyPath;
-
+*/
 
     /*@Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
