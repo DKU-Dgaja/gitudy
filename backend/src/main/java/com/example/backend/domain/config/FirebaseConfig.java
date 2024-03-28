@@ -23,7 +23,7 @@ public class FirebaseConfig {
     private String fcmKeyPath;
 
 
-    @Bean
+    /*@Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
         ClassPathResource resource = new ClassPathResource(fcmKeyPath);
         InputStream refreshToken = resource.getInputStream();
@@ -48,5 +48,5 @@ public class FirebaseConfig {
         }
 
         return FirebaseMessaging.getInstance(firebaseApp);
-    }
+    }*/
 }
