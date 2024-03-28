@@ -22,7 +22,7 @@ public class FirebaseConfig {
     @Value("${firebase.key-path}")
     private String fcmKeyPath;
 
-    @Bean
+   /* @Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
         ClassPathResource resource = new ClassPathResource(fcmKeyPath);
         InputStream refreshToken = resource.getInputStream();
@@ -47,5 +47,26 @@ public class FirebaseConfig {
         }
 
         return FirebaseMessaging.getInstance(firebaseApp);
+    }*/
+
+    @PostConstruct
+    public void initialize() {
+        try {
+            if (FirebaseApp.getApps().isEmpty()) {
+                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(credentials))
+                        .build();
+                FirebaseApp.initializeApp(options);
+                log.info("FCM Setting Completed");
+            }
+        } catch (IOException e) {
+            log.error("FCM error message : " + e.getMessage());
+        }
+    }
+
+    @Bean
+    public FirebaseMessaging firebaseMessaging() {
+        return FirebaseMessaging.getInstance();
     }
 }
