@@ -65,8 +65,8 @@ public class FirebaseConfig {
         }
     }
 
-    @Bean
+   /* @Bean
     public FirebaseMessaging firebaseMessaging() {
         return FirebaseMessaging.getInstance();
-    }
+    }*/
 }
