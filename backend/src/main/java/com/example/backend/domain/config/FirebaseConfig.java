@@ -101,8 +101,9 @@ public class FirebaseConfig {
     public FirebaseApp initializeFirebaseApp() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
             try (InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream()) {
+                String text = new String(credentials.readAllBytes(), StandardCharsets.UTF_8);
                 FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(credentials))
+                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))))
                         .build();
 
                 log.info("FCM Setting Completed1");
