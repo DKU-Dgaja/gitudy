@@ -46,20 +46,16 @@ public class FirebaseConfig {
     }*/
 
     @Bean
-    public FirebaseMessaging firebaseMessaging() {
+    public FirebaseMessaging firebaseMessaging() throws IOException {
         if (FirebaseApp.getApps().isEmpty()) {
-            try {
-                // FirebaseApp 초기화 로직
-                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
-                String text = new String(credentials.readAllBytes(), StandardCharsets.UTF_8);
-                FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))))
-                        .build();
-                FirebaseApp.initializeApp(options);
-            } catch (IOException e) {
-                log.error("Failed to initialize FirebaseApp", e);
-                throw new IllegalStateException("Failed to initialize FirebaseApp", e);
-            }
+            // FirebaseApp 초기화 로직
+            InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
+
+            FirebaseOptions options = new FirebaseOptions.Builder()
+                    .setCredentials(GoogleCredentials.fromStream(credentials))
+                    .build();
+            FirebaseApp.initializeApp(options);
+
         }
 
         log.info("FCM Setting Completed");
