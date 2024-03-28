@@ -18,14 +18,11 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StudyCommitService {
     private final static Long MAX_LIMIT = 50L;
-
     private final StudyCommitRepository studyCommitRepository;
 
     public CommitInfoResponse getCommitDetailsById(Long commitId) {
-        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
-            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
-            throw new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
-        });
+        // 커밋 조회 예외처리
+        StudyCommit commit = findByIdOrThrowCommitException(commitId);
 
         return CommitInfoResponse.of(commit);
     }
@@ -35,5 +32,13 @@ public class StudyCommitService {
         limit = Math.min(limit, MAX_LIMIT);
 
         return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, studyId, cursorIdx, limit);
+    }
+
+    public StudyCommit findByIdOrThrowCommitException(Long commitId) {
+        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
+            throw new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
+        });
+        return commit;
     }
 }
