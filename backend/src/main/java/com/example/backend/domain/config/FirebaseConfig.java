@@ -25,6 +25,21 @@ public class FirebaseConfig {
     @Value("${firebase.key-path}")
     private String fcmKeyPath;
 
+    @PostConstruct
+    public void initialize() {
+        try {
+            if (FirebaseApp.getApps().isEmpty()) {
+                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(credentials))
+                        .build();
+                FirebaseApp.initializeApp(options);
+                log.info("FCM Setting Completed");
+            }
+        } catch (IOException e) {
+            log.error("FCM error message : " + e.getMessage());
+        }
+    }
 
     @Bean
     public FirebaseMessaging firebaseMessaging() throws IOException {
@@ -39,7 +54,6 @@ public class FirebaseConfig {
 
         }
 
-        log.info("FCM Setting Completed");
         // FirebaseApp이 정상적으로 초기화된 후, FirebaseMessaging 인스턴스 반환
         return FirebaseMessaging.getInstance();
     }
