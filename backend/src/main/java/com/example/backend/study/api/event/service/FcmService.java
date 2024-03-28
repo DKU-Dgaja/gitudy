@@ -1,3 +1,4 @@
+/*
 package com.example.backend.study.api.event.service;
 
 
@@ -55,3 +56,4 @@ public class FcmService {
     }
 
 }
+*/
