@@ -1,5 +1,6 @@
 package com.example.backend.study.api.event.controller;
 
+import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.event.controller.request.FcmTokenSaveRequest;
 import com.example.backend.study.api.event.service.FcmService;
@@ -47,8 +48,9 @@ public class FcmController {
 
     @ApiResponse(responseCode = "200", description = "FCM token 저장 성공")
     @PostMapping("")
-    public void saveFcmToken(@AuthenticationPrincipal User userPrincipal,
-                             @RequestBody FcmTokenSaveRequest token) {
+    public JsonResult<?> saveFcmToken(@AuthenticationPrincipal User userPrincipal,
+                                      @RequestBody FcmTokenSaveRequest token) {
         fcmService.saveFcmTokenRequest(userPrincipal, token);
+        return JsonResult.successOf("FCM token save Success.");
     }
 }
