@@ -25,109 +25,11 @@ public class FirebaseConfig {
     @Value("${firebase.key-path}")
     private String fcmKeyPath;
 
-   /* @Bean
-    public FirebaseMessaging firebaseMessaging() throws IOException {
-        ClassPathResource resource = new ClassPathResource(fcmKeyPath);
-        InputStream refreshToken = resource.getInputStream();
-
-        FirebaseApp firebaseApp = null;
-        List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();
-
-        if (firebaseAppList != null && !firebaseAppList.isEmpty()) {
-            for(FirebaseApp app: firebaseAppList) {
-                if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
-                    firebaseApp = app;
-                }
-            }
-        }
-
-        if(firebaseApp == null) {
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(refreshToken))
-                    .build();
-            firebaseApp = FirebaseApp.initializeApp(options);
-            log.info("FCM Setting Complete");
-        }
-
-        return FirebaseMessaging.getInstance(firebaseApp);
-    }*/
-
-   /* @PostConstruct
-    public void initialize() {
-        try {
-            if (FirebaseApp.getApps().isEmpty()) {
-                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
-                FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(credentials))
-                        .build();
-                FirebaseApp.initializeApp(options);
-                log.info("FCM Setting Completed");
-            }
-        } catch (IOException e) {
-            log.error("FCM error message : " + e.getMessage());
-        }
-    }
-
-    @Bean
-    public FirebaseMessaging firebaseMessaging() {
-        return FirebaseMessaging.getInstance();
-    }*/
-
-   /* @Bean
-    public FirebaseMessaging firebaseMessaging() {
-        if (FirebaseApp.getApps().isEmpty()) { // FirebaseApp이 초기화되지 않았는지 확인
-            try {
-                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
-                String text = new String(credentials.readAllBytes(), StandardCharsets.UTF_8);
-
-                FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))))
-                        .build();
-
-
-                FirebaseApp.initializeApp(options);
-
-            } catch (IOException e) {
-                log.error("FCM Initialization error: " + e.getMessage());
-                throw new IllegalStateException("Failed to initialize FirebaseApp", e);
-            }
-        }
-        log.info("FCM Setting Completed");
-        return FirebaseMessaging.getInstance(); // 이제 안전하게 FirebaseMessaging 인스턴스를 가져올 수 있음
-    }*/
-
-
-   /* @PostConstruct
-    public FirebaseApp initializeFirebaseApp() throws IOException {
-        if (FirebaseApp.getApps().isEmpty()) {
-            try (InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream()) {
-                String text = new String(credentials.readAllBytes(), StandardCharsets.UTF_8);
-                FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8))))
-                        .build();
-
-                log.info("FCM Setting Completed1");
-                return FirebaseApp.initializeApp(options);
-            } catch (IOException e) {
-                log.error("FCM Initialization error", e);
-                throw e;
-            }
-        }
-        log.info("FCM Setting Completed2");
-        return FirebaseApp.getInstance();
-    }
-
-    @Bean
-    @DependsOn("initializeFirebaseApp")
-    public FirebaseMessaging firebaseMessaging() {
-        return FirebaseMessaging.getInstance();
-    }*/
-
 
     @PostConstruct
     public void initialize() {
-        try {
-            if (FirebaseApp.getApps().isEmpty()) {
+        if (FirebaseApp.getApps().isEmpty()) {
+            try {
                 InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
                 String text = new String(credentials.readAllBytes(), StandardCharsets.UTF_8);
                 FirebaseOptions options = new FirebaseOptions.Builder()
@@ -136,9 +38,10 @@ public class FirebaseConfig {
 
                 FirebaseApp.initializeApp(options);
                 log.info("FCM Setting Completed");
+
+            } catch (IOException e) {
+                log.error("FCM error message : " + e.getMessage());
             }
-        } catch (IOException e) {
-            log.error("FCM error message : " + e.getMessage());
         }
     }
 
