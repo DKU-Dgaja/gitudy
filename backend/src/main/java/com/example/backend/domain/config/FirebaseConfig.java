@@ -49,7 +49,7 @@ public class FirebaseConfig {
         return FirebaseMessaging.getInstance(firebaseApp);
     }*/
 
-    @PostConstruct
+   /* @PostConstruct
     public void initialize() {
         try {
             if (FirebaseApp.getApps().isEmpty()) {
@@ -68,5 +68,24 @@ public class FirebaseConfig {
     @Bean
     public FirebaseMessaging firebaseMessaging() {
         return FirebaseMessaging.getInstance();
+    }*/
+
+    @Bean
+    public FirebaseMessaging firebaseMessaging() {
+        if (FirebaseApp.getApps().isEmpty()) { // FirebaseApp이 초기화되지 않았는지 확인
+            try {
+                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
+                FirebaseOptions options = new FirebaseOptions.Builder()
+                        .setCredentials(GoogleCredentials.fromStream(credentials))
+                        .build();
+                FirebaseApp.initializeApp(options); // 여기서 FirebaseApp을 초기화
+                log.info("FCM Setting Completed");
+            } catch (IOException e) {
+                log.error("FCM Initialization error: " + e.getMessage());
+                throw new IllegalStateException("Failed to initialize FirebaseApp", e);
+            }
+        }
+        return FirebaseMessaging.getInstance(); // 이제 안전하게 FirebaseMessaging 인스턴스를 가져올 수 있음
     }
+
 }
