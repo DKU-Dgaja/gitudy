@@ -1,4 +1,3 @@
-/*
 package com.example.backend.study.api.event.controller;
 
 
@@ -24,11 +23,9 @@ public class FcmController {
     private final FcmService fcmService;
 
 
-    */
-/*
+    /*
     백엔드에서 따로 메시지 확인방법이 없어서 확인하는 용도
-     *//*
-
+     */
     @ApiResponse(responseCode = "200", description = "FCM Single 성공")
     @PostMapping("/single")
     public void sendMessageSingleDevice(@RequestBody FcmSingleTokenRequest token) throws FirebaseMessagingException {
@@ -43,4 +40,3 @@ public class FcmController {
         fcmService.sendMessageMultiDevice(token);
     }
 }
-*/
