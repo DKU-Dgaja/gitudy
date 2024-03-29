@@ -20,6 +20,9 @@ import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.service.github.GithubApiService;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
@@ -59,6 +62,9 @@ public class CommitFetchServiceTest extends TestConfig {
     private StudyTodoRepository studyTodoRepository;
 
     @Autowired
+    private StudyTodoMappingRepository studyTodoMappingRepository;
+
+    @Autowired
     private StudyConventionRepository studyConventionRepository;
 
     @Autowired
@@ -75,6 +81,7 @@ public class CommitFetchServiceTest extends TestConfig {
         studyTodoRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
+        studyTodoMappingRepository.deleteAllInBatch();
     }
 
     @Test
@@ -405,6 +412,217 @@ public class CommitFetchServiceTest extends TestConfig {
 
         // then
         assertTrue(allCommits.isEmpty());
+    }
+
+    @Test
+    void 비활성_스터디_멤버의_커밋_무시_테스트() {
+        // given
+        String inActiveGithubId = "inActive";
+
+        User activeUser = userRepository.save(UserFixture.generateAuthUser());
+        User inActiveUser = userRepository.save(UserFixture.generateAuthUserByGithubId(inActiveGithubId));
+
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(activeUser.getId()));
+
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(activeUser.getId(), study.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberWaiting(inActiveUser.getId(), study.getId()));
+
+        // 투두 저장
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
+
+        // 컨벤션 저장
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
+        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
+                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+
+        // 컨벤션 등록
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(study.getId())
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build());
+
+        // 활성 멤버 커밋
+        String activeMessage = "aBc123 [activeUser] 백준: 활성 멤버 커밋";
+        GithubCommitResponse activeCommit = GithubCommitResponse.builder()
+                .authorName(activeUser.getGithubId())
+                .message(activeMessage)
+                .commitDate(LocalDate.now())
+                .sha("sha")
+                .build();
+
+        // 비활성 멤버 커밋
+        String inActiveMessage = "aBc123 [inactiveUser] 백준: 비활성 멤버 커밋";
+        GithubCommitResponse inActiveCommit = GithubCommitResponse.builder()
+                .authorName(inActiveUser.getGithubId())
+                .message(inActiveMessage)
+                .commitDate(LocalDate.now())
+                .sha("sshhaa")
+                .build();
+
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyInt(), anyString()))
+                .thenReturn(List.of(activeCommit, inActiveCommit));
+
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyInt(), anyString()))
+                .thenReturn(Collections.emptyList());
+
+        // when
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+
+        // then
+        List<StudyCommit> allCommits = studyCommitRepository.findAll();
+        assertEquals(1, allCommits.size());
+
+        StudyCommit commit = allCommits.get(0);
+        assertEquals(commit.getUserId(), activeUser.getId());
+        assertEquals(CommitStatus.COMMIT_APPROVAL, commit.getStatus());
+
+    }
+
+    @Test
+    void 마감일_당일_커밋_처리_테스트() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(user.getId(), study.getId()));
+
+        // 투두 저장
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
+
+        // 컨벤션 저장
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
+        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
+                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+
+        // 컨벤션 등록
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(study.getId())
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build());
+
+        String message = "aBc123 [이주성] 백준: 활성 멤버 커밋";
+        GithubCommitResponse commit = GithubCommitResponse.builder()
+                .authorName(user.getGithubId())
+                .message(message)
+                .commitDate(LocalDate.now())
+                .sha("sha")
+                .build();
+
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyInt(), anyString()))
+                .thenReturn(List.of(commit));
+
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyInt(), anyString()))
+                .thenReturn(Collections.emptyList());
+
+        // when
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+
+        // then
+        List<StudyCommit> allCommits = studyCommitRepository.findAll();
+        assertEquals(1, allCommits.size());
+        assertEquals(message, allCommits.get(0).getMessage());
+        assertEquals(CommitStatus.COMMIT_APPROVAL, allCommits.get(0).getStatus());
+    }
+
+    @Test
+    public void 마감일_지난_커밋으로_투두_매핑_상태_변경_테스트() {
+        // given
+        User userA = userRepository.save(UserFixture.generateAuthUser());
+        User userB = userRepository.save(UserFixture.generateKaKaoUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(userA.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userA.getId(), study.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userB.getId(), study.getId()));
+
+        // 투두 저장
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
+
+        // 미완료 투두 매핑 생성
+        studyTodoMappingRepository.save(StudyTodoMapping.builder()
+                .todoId(todo.getId())
+                .userId(userA.getId())
+                .status(StudyTodoStatus.TODO_INCOMPLETE)
+                .build());
+
+        studyTodoMappingRepository.save(StudyTodoMapping.builder()
+                .todoId(todo.getId())
+                .userId(userB.getId())
+                .status(StudyTodoStatus.TODO_INCOMPLETE)
+                .build());
+
+        // 컨벤션 저장
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
+        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
+                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+
+        // 컨벤션 등록
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(study.getId())
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build());
+
+        String lateMsg = "aBc123 [이주성] 백준: 마감일 지난 커밋";
+        String msg = "aBc123 [이주성] 백준: 마감일 지킨 커밋";
+
+        GithubCommitResponse lateCommit = GithubCommitResponse.builder()
+                .authorName(userA.getGithubId())
+                .message(lateMsg)
+                .commitDate(LocalDate.now().plusDays(1))   // 마감일 지남
+                .sha("sha1")
+                .build();
+
+        GithubCommitResponse commit = GithubCommitResponse.builder()
+                .authorName(userB.getGithubId())
+                .message(msg)
+                .commitDate(LocalDate.now().minusDays(1))   // 마감일 지킴
+                .sha("sha2")
+                .build();
+
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyInt(), anyString()))
+                .thenReturn(List.of(lateCommit, commit));
+
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyInt(), anyString()))
+                .thenReturn(Collections.emptyList());
+
+        // when
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+
+        // then
+        List<StudyCommit> allCommit = studyCommitRepository.findAll();
+        List<StudyTodoMapping> allTodoMapping = studyTodoMappingRepository.findByTodoId(todo.getId());
+
+        assertEquals(2, allCommit.size());
+        assertEquals(2, allTodoMapping.size());
+        for (var mapping : allTodoMapping) {
+            if (mapping.getUserId() == userA.getId()) {
+                assertEquals(StudyTodoStatus.TODO_OVERDUE, mapping.getStatus());
+            } else {
+                assertEquals(StudyTodoStatus.TODO_COMPLETE, mapping.getStatus());
+            }
+        }
+
     }
 
     @Test

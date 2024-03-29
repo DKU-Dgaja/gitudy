@@ -58,6 +58,9 @@ public enum ExceptionMessage {
     STUDY_NOT_MEMBER("해당 스터디 멤버가 아닙니다."),
     TODO_NOT_FOUND("해당 Todo를 찾을 수 없습니다."),
 
+    // TodoMappingException
+    STUDY_TODO_MAPPING_NOT_FOUND("해당 스터디원에 할당된 투두 정보를 찾을 수 없습니다."),
+
     // StudyMemberException
     USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
     STUDY_ALREADY_MEMBER("이미 해당 스터디의 멤버 입니다."),

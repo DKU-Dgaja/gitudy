@@ -5,6 +5,7 @@ import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.exception.commit.CommitException;
 import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.common.exception.member.MemberException;
+import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -14,8 +15,12 @@ import com.example.backend.domain.define.study.commit.repository.StudyCommitRepo
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.convention.StudyConventionService;
@@ -30,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -38,6 +44,7 @@ import java.util.stream.Stream;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class StudyCommitService {
+    private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final UserRepository userRepository;
     private final static Long MAX_LIMIT = 50L;
@@ -69,6 +76,10 @@ public class StudyCommitService {
         int pageNumber = 0;
         int pageSize = 10;
 
+        // 스터디의 활동중인 모든 멤버의 Id를 미리 조회
+        Map<Long, StudyMember> studyMemberMap = studyMemberRepository.findActiveMembersByStudyInfoId(study.getId()).stream()
+                .collect(Collectors.toMap(StudyMember::getUserId, Function.identity()));
+
         // 불러온 커밋 페이지에 저장되지 않은 커밋이 없을 때까지 반복
         while (true) {
             // 원격의 커밋 한 페이지 추출
@@ -76,31 +87,55 @@ public class StudyCommitService {
             if (commitPage.isEmpty()) break;
 
             // 사용자 조회 로직을 최소화하기 위해 map에 미리 저장
-            Map<String, Optional<User>> userCache = commitPage.stream()
-                    .collect(Collectors.toMap(
-                            // key
-                            GithubCommitResponse::getAuthorName,
-                            // value
-                            commit -> userRepository.findByGithubId(commit.getAuthorName()),
-                            // 동일한 키에 대해 충돌이 나면, 기존 값을 사용
-                            (existing, replacement) -> existing
-                    ));
+            List<String> githubIds = commitPage.stream()
+                    .map(GithubCommitResponse::getAuthorName)
+                    .distinct() // 중복 제거
+                    .toList();
+
+            List<User> users = userRepository.findByGithubIdIn(githubIds);
+            Map<String, User> userMap = users.stream()
+                    .collect(Collectors.toMap(User::getGithubId, Function.identity()));
+
+            // 스터디 투두 매핑 조회 로직 최소화를 위해 map에 미리 저장
+            List<Long> userIds = users.stream()
+                    .map(User::getId)
+                    .toList();
+
+            List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoIdAndUserIds(todo.getId(), userIds);
+            Map<Long, StudyTodoMapping> todoMappingMap = todoMappings.stream()
+                    .collect(Collectors.toMap(StudyTodoMapping::getUserId, Function.identity()));
 
             // StudyCommit으로 저장되지 않은 것만 필터링
             List<GithubCommitResponse> unsavedCommits = studyCommitRepository.findUnsavedGithubCommits(commitPage);
 
-            // 컨벤션 검증 결과에 따라 상태를 다르게 저장
+            // 검증할 컨벤션 조회
             StudyConventionResponse conventions = studyConventionRepository.findActiveConventionByStudyInId(study.getId());
+
             List<StudyCommit> commitList = unsavedCommits.stream()
-                    // 사용자가 존재하는지, 존재한다면 스터디의 활동중인 멤버인지, 컨벤션을 통과하는지 검증
                     .filter(commit -> {
-                        Optional<User> user = userCache.get(commit.getAuthorName());
-                        return user.isPresent() &&
-                                studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.get().getId(), study.getId()) &&
+                        User user = userMap.get(commit.getAuthorName());
+
+                        return user != null &&
+                                // 활동중인 스터디 멤버인지
+                                studyMemberMap.containsKey(user.getId()) &&
+                                // 컨벤션을 지켰는지
                                 studyConventionService.checkConvention(conventions.getContent(), commit.getMessage());
                     })
                     .map(commit -> {
-                        User findUser = userCache.get(commit.getAuthorName()).get();
+                        User findUser = userMap.get(commit.getAuthorName());
+                        StudyTodoMapping todoMapping = todoMappingMap.get(findUser.getId());
+
+                        // 마감일이 지났는지 확인
+                        if (todoMapping != null && commit.getCommitDate().isAfter(todo.getTodoDate())) {
+                            // 마감일이 지났다면 상태를 TODO_OVERDUE로 변경
+                            todoMapping.updateTodoMappingStatus(StudyTodoStatus.TODO_OVERDUE);
+                        } else {
+                            // 마감일이 지나지 않았다면 상태를 TODO_COMPLETE로 변경
+                            if (todoMapping != null) {
+                                todoMapping.updateTodoMappingStatus(StudyTodoStatus.TODO_COMPLETE);
+                            }
+                        }
+
                         return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_APPROVAL);
                     })
                     .toList();
@@ -114,6 +149,6 @@ public class StudyCommitService {
             pageNumber++;
         }
 
-        log.info(">>>> 원격 레포지토리로부터 커밋 업데이트를 성공하였습니다.");
+        log.info(">>>> [ 원격 레포지토리로부터 커밋 업데이트를 성공하였습니다. ] <<<<");
     }
 }

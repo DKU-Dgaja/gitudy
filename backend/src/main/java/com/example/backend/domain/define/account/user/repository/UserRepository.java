@@ -5,6 +5,7 @@ import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -17,5 +18,7 @@ public interface UserRepository extends JpaRepository<User, Long>, UserRepositor
     boolean existsByName(String name);
 
     Optional<User> findByGithubId(String githubId);
+
+    List<User> findByGithubIdIn(List<String> githubIdList);
 
 }
