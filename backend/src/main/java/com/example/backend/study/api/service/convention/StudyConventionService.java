@@ -11,6 +11,7 @@ import com.example.backend.study.api.controller.convention.request.StudyConventi
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.controller.convention.response.StudyConventionListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
+import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,13 +29,13 @@ public class StudyConventionService {
 
 
     private final StudyConventionRepository studyConventionRepository;
-    private final StudyInfoRepository studyInfoRepository;
+    private final StudyInfoService studyInfoService;
+
     private final static Long MAX_LIMIT = 10L;
 
     // 컨벤션 등록
     @Transactional
     public void registerStudyConvention(StudyConventionRequest request, Long studyInfoId) {
-
         // 컨벤션 저장
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(studyInfoId)
@@ -48,12 +49,8 @@ public class StudyConventionService {
     // 컨벤션 수정
     @Transactional
     public void updateStudyConvention(StudyConventionUpdateRequest request, Long conventionId) {
-
-        // Convention 조회
-        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
-            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
-        });
+        // Convention 조회 예외처리
+        StudyConvention studyConvention = findByIdOrThrowStudyConventionException(conventionId);
 
         // 기존 Convention 업데이트
         studyConvention.updateConvention(
@@ -66,24 +63,16 @@ public class StudyConventionService {
     // 컨벤션 삭제
     @Transactional
     public void deleteStudyConvention(Long conventionId) {
-
-        // Convention 조회
-        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
-            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
-        });
+        // Convention 조회 예외처리
+        StudyConvention studyConvention = findByIdOrThrowStudyConventionException(conventionId);
 
         studyConventionRepository.delete(studyConvention);
     }
 
     // 컨벤션 단일 조회
     public StudyConventionResponse readStudyConvention(Long conventionId) {
-
-        // Convention 조회
-        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
-            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
-        });
+        // Convention 조회 예외처리
+        StudyConvention studyConvention = findByIdOrThrowStudyConventionException(conventionId);
 
         return StudyConventionResponse.of(studyConvention);
     }
@@ -92,10 +81,7 @@ public class StudyConventionService {
     public StudyConventionListAndCursorIdxResponse readStudyConventionList(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
-            return new ConventionException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 
@@ -120,4 +106,11 @@ public class StudyConventionService {
         return pattern.matcher(commitMsg).matches();
     }
 
+    public StudyConvention findByIdOrThrowStudyConventionException(Long conventionId) {
+        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
+            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
+        });
+        return studyConvention;
+    }
 }

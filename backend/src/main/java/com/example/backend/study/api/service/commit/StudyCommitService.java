@@ -1,18 +1,12 @@
 package com.example.backend.study.api.service.commit;
 
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.exception.commit.CommitException;
-import com.example.backend.common.exception.convention.ConventionException;
-import com.example.backend.common.exception.member.MemberException;
-import com.example.backend.common.exception.todo.TodoException;
-import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
-import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -33,11 +27,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Slf4j
 @Service
@@ -48,17 +39,14 @@ public class StudyCommitService {
     private final StudyMemberRepository studyMemberRepository;
     private final UserRepository userRepository;
     private final static Long MAX_LIMIT = 50L;
-
     private final StudyCommitRepository studyCommitRepository;
     private final GithubApiService githubApiService;
     private final StudyConventionService studyConventionService;
     private final StudyConventionRepository studyConventionRepository;
 
     public CommitInfoResponse getCommitDetailsById(Long commitId) {
-        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
-            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
-            throw new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
-        });
+        // 커밋 조회 예외처리
+        StudyCommit commit = findByIdOrThrowCommitException(commitId);
 
         return CommitInfoResponse.of(commit);
     }
@@ -68,6 +56,14 @@ public class StudyCommitService {
         limit = Math.min(limit, MAX_LIMIT);
 
         return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, studyId, cursorIdx, limit);
+    }
+
+    public StudyCommit findByIdOrThrowCommitException(Long commitId) {
+        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
+            throw new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
+        });
+        return commit;
     }
 
     // 커밋 업데이트

@@ -36,15 +36,10 @@ import static com.example.backend.domain.define.study.member.constant.StudyMembe
 public class StudyInfoService {
 
     private final StudyInfoRepository studyInfoRepository;
-
     private final StudyMemberRepository memberRepository;
-
     private final StudyCategoryMappingRepository studyCategoryMappingRepository;
-
     private final StudyMemberRepository studyMemberRepository;
-
     private final StudyCategoryRepository studyCategoryRepository;
-
     private final UserRepository userRepository;
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
@@ -52,7 +47,7 @@ public class StudyInfoService {
         StudyInfo studyInfo = saveStudyInfo(request);
 
         // 스터디장 생성
-        StudyMember studyMember = saveStudyMember(request, studyInfo);
+        saveStudyMember(request, studyInfo);
 
         // 스터디 카테고리 매핑
         List<Long> categories = saveStudyCategoryMappings(request.getCategoriesId(), studyInfo);
@@ -67,11 +62,8 @@ public class StudyInfoService {
 
     @Transactional
     public void updateStudyInfo(StudyInfoUpdateRequest request, Long studyInfoId) {
-        // Study 조회
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        // 스터디 조회 예외처리
+        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
 
         // 변경 전 카테고리 매핑 삭제
         studyCategoryMappingRepository.deleteByStudyInfoId(studyInfo.getId());
@@ -86,11 +78,8 @@ public class StudyInfoService {
     // 스터디 삭제
     @Transactional
     public boolean deleteStudy(Long studyInfoId) {
-        // 스터디가 있는지 확인
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        // 스터디 조회 예외처리
+        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
 
         // 스터디 상태정보 변경
         studyInfo.updateDeletedStudy();
@@ -102,11 +91,9 @@ public class StudyInfoService {
     }
 
     public UpdateStudyInfoPageResponse updateStudyInfoPage(Long studyInfoId) {
-        // Study 조회
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        // 스터디 조회 예외처리
+        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
 
         UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoryNames);
@@ -144,10 +131,8 @@ public class StudyInfoService {
     // 스터디 상세정보 조회
     public StudyInfoDetailResponse selectStudyInfoDetail(Long studyInfoId) {
         // Study 조회
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
         return getStudyInfoDetailResponse(studyInfo, categoryNames);
     }
@@ -250,5 +235,12 @@ public class StudyInfoService {
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);
+    }
+
+    public StudyInfo findByIdOrThrowStudyInfoException(Long studyInfoId) {
+        return studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
     }
 }
