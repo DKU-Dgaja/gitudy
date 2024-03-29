@@ -7,6 +7,7 @@
     android:background="@color/BACKGROUND"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
+    android:clipToPadding="false"
     tools:context=".ui.feed.FeedHomeFragment">
 
     <ImageView
@@ -41,10 +42,10 @@
         android:id="@+id/feedTitleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="112dp"
+        android:layout_marginTop="10dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/gitImg">
 
         <TextView
             android:id="@+id/feedTitle"
@@ -57,15 +58,16 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <Button
+        <ImageButton
             android:id="@+id/makeNewStudyBtn"
             style="@style/B7_1"
-            android:layout_width="92dp"
+            android:layout_width="98dp"
             android:layout_height="36dp"
+            android:scaleType="fitCenter"
+            android:padding="10dp"
             android:background="@drawable/box_non_stroke_r6"
             android:backgroundTint="@color/GS_700"
-            android:text="+ 스터디 개설"
-            android:textColor="@color/WHITE"
+            android:src="@drawable/ic_btn_make_study"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
