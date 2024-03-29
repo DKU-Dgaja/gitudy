@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/WHITE"
-    tools:context=".ui.login.PopupDetail3Fragment">
+    tools:context=".ui.auth.PopupDetail3Fragment">
 
     <LinearLayout
         android:layout_width="match_parent"

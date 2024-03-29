@@ -1,4 +1,4 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.auth
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

@@ -9,11 +9,11 @@
             android:name=".ui.feed.MakeStudyActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.login.SocialLoginCompleteActivity"
+            android:name=".ui.auth.SocialLoginCompleteActivity"
             android:exported="false"
             android:launchMode="singleTop" />
         <activity
-            android:name=".ui.login.LoginWebViewActivity"
+            android:name=".ui.auth.LoginWebViewActivity"
             android:exported="false" />
         <activity
             android:name=".ui.feed.StudyApplyActivity"
@@ -53,23 +53,23 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.InputNicknameActivity"
+            android:name=".ui.auth.InputNicknameActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.InputIdActivity"
+            android:name=".ui.auth.InputIdActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.PopupAgreementActivity"
+            android:name=".ui.auth.PopupAgreementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.SubLoginActivity"
+            android:name=".ui.auth.SubLoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity

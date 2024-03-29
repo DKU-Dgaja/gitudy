@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
     android:padding="22dp"
-    tools:context=".ui.login.LoginActivity">
+    tools:context=".ui.auth.LoginActivity">
 
     <LinearLayout
         android:layout_width="wrap_content"
