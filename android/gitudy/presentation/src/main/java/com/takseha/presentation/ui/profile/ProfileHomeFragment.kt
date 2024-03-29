@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentProfileHomeBinding
-import com.takseha.presentation.viewmodel.MainHomeUserInfoUiState
+import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
 
 class ProfileHomeFragment : Fragment() {
     private var _binding: FragmentProfileHomeBinding? = null

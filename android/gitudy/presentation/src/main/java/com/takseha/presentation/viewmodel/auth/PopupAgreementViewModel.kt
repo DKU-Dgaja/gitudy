@@ -1,4 +1,4 @@
-package com.takseha.presentation.viewmodel
+package com.takseha.presentation.viewmodel.auth
 
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

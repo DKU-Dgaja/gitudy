@@ -14,8 +14,8 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentPopupAgreementBinding
-import com.takseha.presentation.viewmodel.PopupAgreementIntent
-import com.takseha.presentation.viewmodel.PopupAgreementViewModel
+import com.takseha.presentation.viewmodel.auth.PopupAgreementIntent
+import com.takseha.presentation.viewmodel.auth.PopupAgreementViewModel
 import kotlinx.coroutines.launch
 
 

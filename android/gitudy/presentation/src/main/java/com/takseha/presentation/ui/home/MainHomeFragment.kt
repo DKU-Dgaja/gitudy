@@ -14,8 +14,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
-import com.takseha.presentation.viewmodel.MainHomeUserInfoUiState
-import com.takseha.presentation.viewmodel.MainHomeViewModel
+import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
+import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 

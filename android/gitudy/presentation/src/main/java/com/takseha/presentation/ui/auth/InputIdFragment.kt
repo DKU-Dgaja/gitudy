@@ -15,7 +15,7 @@ import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputIdBinding
-import com.takseha.presentation.viewmodel.RegisterViewModel
+import com.takseha.presentation.viewmodel.auth.RegisterViewModel
 
 class InputIdFragment : Fragment() {
     private var _binding: FragmentInputIdBinding? = null
