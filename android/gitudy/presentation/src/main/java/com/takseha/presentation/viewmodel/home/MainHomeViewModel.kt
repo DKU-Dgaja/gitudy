@@ -1,4 +1,4 @@
-package com.takseha.presentation.viewmodel
+package com.takseha.presentation.viewmodel.home
 
 import android.app.Application
 import android.util.Log

@@ -1,4 +1,4 @@
-package com.takseha.presentation.viewmodel
+package com.takseha.presentation.viewmodel.auth
 
 import android.util.Log
 import androidx.lifecycle.LiveData

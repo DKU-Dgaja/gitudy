@@ -7,7 +7,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginBinding
-import com.takseha.presentation.viewmodel.LoginViewModel
+import com.takseha.presentation.viewmodel.auth.LoginViewModel
 
 class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding

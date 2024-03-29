@@ -11,7 +11,7 @@ import com.takseha.presentation.databinding.ActivityMainHomeBinding
 import com.takseha.presentation.ui.feed.FeedHomeFragment
 import com.takseha.presentation.ui.mystudy.MyStudyHomeFragment
 import com.takseha.presentation.ui.profile.ProfileHomeFragment
-import com.takseha.presentation.viewmodel.MainHomeViewModel
+import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
