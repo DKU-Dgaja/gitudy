@@ -1,4 +1,4 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.auth
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,10 +8,10 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import com.takseha.presentation.R
-import com.takseha.presentation.databinding.FragmentPopupDetail3Binding
+import com.takseha.presentation.databinding.FragmentPopupDetail2Binding
 
-class PopupDetail3Fragment : Fragment() {
-    private var _binding : FragmentPopupDetail3Binding? = null
+class PopupDetail2Fragment : Fragment() {
+    private var _binding : FragmentPopupDetail2Binding? = null
     private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -23,7 +23,7 @@ class PopupDetail3Fragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        _binding = FragmentPopupDetail3Binding.inflate(inflater, container, false)
+        _binding = FragmentPopupDetail2Binding.inflate(inflater, container, false)
         return binding.root
     }
 

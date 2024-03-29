@@ -1,6 +1,5 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.auth
 
-import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper

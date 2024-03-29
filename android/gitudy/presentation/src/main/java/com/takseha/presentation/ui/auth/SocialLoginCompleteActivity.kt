@@ -1,12 +1,10 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.auth
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.firebase.messaging.FirebaseMessaging
 import com.takseha.data.dto.auth.login.Role
 import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.R

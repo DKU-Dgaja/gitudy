@@ -1,9 +1,7 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.auth
 
 import android.graphics.Color
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
