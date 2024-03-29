@@ -6,9 +6,12 @@
 
     <application>
         <activity
+            android:name=".ui.feed.MakeStudyActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.login.SocialLoginCompleteActivity"
             android:exported="false"
-            android:launchMode="singleTop"/>
+            android:launchMode="singleTop" />
         <activity
             android:name=".ui.login.LoginWebViewActivity"
             android:exported="false" />
@@ -39,8 +42,8 @@
         <activity
             android:name=".ui.home.MainHomeActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"
-            android:launchMode="singleTask"/>
+            android:launchMode="singleTask"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.profile.MyCommitActivity"
             android:exported="false"
