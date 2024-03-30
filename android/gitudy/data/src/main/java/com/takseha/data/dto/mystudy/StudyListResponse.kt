@@ -1,4 +1,4 @@
-package com.takseha.data.dto.study
+package com.takseha.data.dto.mystudy
 
 import com.google.gson.annotations.SerializedName
 
