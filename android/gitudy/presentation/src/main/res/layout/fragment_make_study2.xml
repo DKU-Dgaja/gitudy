@@ -26,15 +26,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:id="@+id/backBtn"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:src="@drawable/ic_arrow_back"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             style="@style/B3_1"
             android:layout_width="wrap_content"
@@ -57,99 +48,78 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle" />
 
-    <LinearLayout
-        android:id="@+id/commitCntSelectBox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="91dp"
-        android:orientation="vertical"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle">
-
-        <LinearLayout
-            android:id="@+id/everydayBtn"
-            android:layout_width="wrap_content"
+        <RadioGroup
+            android:id="@+id/commitCntSelectBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:gravity="center">
-
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/selector_radio_clicked" />
-
-            <TextView
-                style="@style/B4_2"
+            android:layout_marginTop="91dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle">
+            <LinearLayout
+                android:id="@+id/everydayBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="주 7회(매일)"
-                android:textColor="@color/BLACK" />
-        </LinearLayout>
+                android:layout_marginBottom="20dp"
+                android:gravity="center">
 
-        <LinearLayout
-            android:id="@+id/fiveToSixBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:gravity="center">
+                <RadioButton
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="8dp"
+                    android:button="@null"
+                    android:background="@drawable/selector_radio_clicked" />
 
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/selector_radio_clicked" />
-
-            <TextView
-                style="@style/B4_2"
+                <TextView
+                    style="@style/B4_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="주 7회(매일)"
+                    android:textColor="@color/BLACK" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/OneBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="주 5-6회"
-                android:textColor="@color/BLACK" />
-        </LinearLayout>
+                android:layout_marginBottom="20dp"
+                android:gravity="center">
 
-        <LinearLayout
-            android:id="@+id/threeToFourBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:gravity="center">
+                <RadioButton
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="8dp"
+                    android:button="@null"
+                    android:background="@drawable/selector_radio_clicked" />
 
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/selector_radio_clicked" />
-
-            <TextView
-                style="@style/B4_2"
+                <TextView
+                    style="@style/B4_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="주 1회"
+                    android:textColor="@color/BLACK" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/FreeBtn"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="주 3-4회"
-                android:textColor="@color/BLACK" />
-        </LinearLayout>
+                android:gravity="center">
 
-        <LinearLayout
-            android:id="@+id/oneToTwoBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:gravity="center">
+                <RadioButton
+                    android:layout_width="28dp"
+                    android:layout_height="28dp"
+                    android:layout_marginRight="8dp"
+                    android:button="@null"
+                    android:background="@drawable/selector_radio_clicked" />
 
-            <ImageView
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:src="@drawable/selector_radio_clicked" />
-
-            <TextView
-                style="@style/B4_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="주 1-2회"
-                android:textColor="@color/BLACK" />
-        </LinearLayout>
-    </LinearLayout>
+                <TextView
+                    style="@style/B4_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="자유"
+                    android:textColor="@color/BLACK" />
+            </LinearLayout>
+        </RadioGroup>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/closeTimeLayout"
@@ -163,7 +133,7 @@
             style="@style/B4_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="마감 시간"
+            android:text="마감 요일"
             android:textColor="@color/BLACK"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -174,7 +144,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="마감 1시간 전에 팀원에게 알람을 보내드려요\n* 사용자 지역에 따른 시간 기준입니다"
+            android:text="마감 요일에 팀원에게 알람을 보내드려요"
             android:textColor="@color/GS_500"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/closeTimeTitle" />
@@ -197,7 +167,7 @@
                 style="@style/B4_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/to_do_close_time"
+                android:text="%s"
                 android:textColor="@color/GS_900" />
 
         </LinearLayout>
