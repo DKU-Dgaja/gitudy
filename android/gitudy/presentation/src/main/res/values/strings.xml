@@ -50,7 +50,6 @@
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
-    <string name="to_do_close_time">%s %d:%d</string>
 
 
     <!-- Strings related to feed -->
