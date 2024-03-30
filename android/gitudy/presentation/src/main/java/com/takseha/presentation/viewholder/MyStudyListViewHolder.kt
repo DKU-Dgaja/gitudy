@@ -4,7 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.study.StudyInfo
+import com.takseha.data.dto.mystudy.StudyInfo
 import com.takseha.presentation.R
 
 class MyStudyListViewHolder(view: View) : RecyclerView.ViewHolder(view) {
