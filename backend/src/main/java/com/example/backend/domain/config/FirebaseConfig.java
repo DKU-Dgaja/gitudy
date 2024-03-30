@@ -24,28 +24,7 @@ public class FirebaseConfig {
 
 
     @Bean
-    public FirebaseMessaging firebaseMessaging() throws IOException {
-        ClassPathResource resource = new ClassPathResource(fcmKeyPath);
-        InputStream refreshToken = resource.getInputStream();
-
-        FirebaseApp firebaseApp = null;
-        List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();
-
-        if (firebaseAppList != null && !firebaseAppList.isEmpty()) {
-            for(FirebaseApp app: firebaseAppList) {
-                if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
-                    firebaseApp = app;
-                }
-            }
-        }
-
-        if(firebaseApp == null) {
-            FirebaseOptions options = FirebaseOptions.builder()
-                    .setCredentials(GoogleCredentials.fromStream(refreshToken))
-                    .build();
-            firebaseApp = FirebaseApp.initializeApp(options);
-        }
-
+    public FirebaseMessaging firebaseMessaging(FirebaseApp firebaseApp){
         return FirebaseMessaging.getInstance(firebaseApp);
     }
 
