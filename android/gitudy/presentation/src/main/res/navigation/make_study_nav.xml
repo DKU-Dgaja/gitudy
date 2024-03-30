@@ -35,5 +35,14 @@
         android:id="@+id/makeStudy4Fragment"
         android:name="com.takseha.presentation.ui.feed.MakeStudy4Fragment"
         android:label="fragment_make_study4"
-        tools:layout="@layout/fragment_make_study4" />
+        tools:layout="@layout/fragment_make_study4" >
+        <action
+            android:id="@+id/action_makeStudy4Fragment_to_newStudyFragment"
+            app:destination="@id/newStudyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newStudyFragment"
+        android:name="com.takseha.presentation.ui.feed.NewStudyFragment"
+        android:label="fragment_new_study"
+        tools:layout="@layout/fragment_new_study" />
 </navigation>
