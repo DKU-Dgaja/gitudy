@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
@@ -28,22 +29,13 @@ public class FirebaseConfig {
         return FirebaseMessaging.getInstance(firebaseApp);
     }
 
-    @PostConstruct
-    public void getFcmCredential() {
-        try {
-            if (FirebaseApp.getApps().isEmpty()) {
-                InputStream credentials = new ClassPathResource(fcmKeyPath).getInputStream();
-
-                FirebaseOptions options = new FirebaseOptions.Builder()
-                        .setCredentials(GoogleCredentials.fromStream(credentials))
-                        .build();
-
-                FirebaseApp.initializeApp(options);
-                log.info("Fcm Setting Completed");
-            }
-        } catch (IOException e) {
-            log.info(">>>>>>>>FCM error");
-            log.error(">>>>>>FCM error message : " + e.getMessage());
-        }
+    @Bean
+    public FirebaseApp firebaseApp() throws IOException {
+        FileInputStream serviceAccountFile = new FileInputStream("src/main/resources/serviceAccount-File.json");
+        FirebaseOptions options = FirebaseOptions
+                .builder()
+                .setCredentials(GoogleCredentials.fromStream(serviceAccountFile))
+                .build();
+        return FirebaseApp.initializeApp(options);
     }
 }
