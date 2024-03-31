@@ -8,12 +8,15 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.fcmToken.FcmToken;
+import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.listener.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -22,16 +25,22 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.event.ApplicationEvents;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.when;
 
 public class StudyMemberServiceTest extends TestConfig {
 
@@ -56,6 +65,15 @@ public class StudyMemberServiceTest extends TestConfig {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    ApplicationEvents events;
+
+    @Autowired
+    private FcmTokenRepository fcmTokenRepository;
+
+    @MockBean
+    private FirebaseMessaging firebaseMessaging;
+
     public final static Long CursorIdx = null;
     public final static Long Limit = 3L;
 
@@ -66,6 +84,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
         studyTodoRepository.deleteAllInBatch();
+        fcmTokenRepository.deleteAll();;
     }
 
 
@@ -198,7 +217,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Test
     @DisplayName("스터디원 강퇴 테스트")
-    public void resignStudyMember() {
+    public void resignStudyMember() throws FirebaseMessagingException {
         // given
 
         User leaderuser = UserFixture.generateAuthUser();
@@ -206,6 +225,10 @@ public class StudyMemberServiceTest extends TestConfig {
         User user2 = UserFixture.generateKaKaoUser();
 
         userRepository.saveAll(List.of(leaderuser, user1, user2));
+        fcmTokenRepository.save(FcmToken.builder()
+                        .userId(user1.getId())
+                        .fcmToken("FCM token")
+                .build());
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
         studyInfoRepository.save(studyInfo);
@@ -216,12 +239,15 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember1, activeMember2));
 
         // when
+        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
         studyMemberService.resignStudyMember(studyInfo.getId(), activeMember1.getUserId());
         Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
 
         // then
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
+        // event 발생 검증
+        assertEquals(1, (int) events.stream(ResignMemberEvent.class).count());
     }
 
     @Test
@@ -280,6 +306,11 @@ public class StudyMemberServiceTest extends TestConfig {
         StudyTodoMapping mappingFuture2 = StudyTodoFixture.createStudyTodoMapping(futureTodo2.getId(), activeMember.getUserId());
         StudyTodoMapping mappingPast1 = StudyTodoFixture.createCompleteStudyTodoMapping(pastTodo1.getId(), activeMember.getUserId());
         studyTodoMappingRepository.saveAll(List.of(mappingFuture1, mappingFuture2, mappingPast1));
+
+        fcmTokenRepository.save(FcmToken.builder()
+                .userId(activeMember.getUserId())
+                .fcmToken("FCM token")
+                .build());
 
         // when
         studyMemberService.resignStudyMember(studyInfo.getId(), activeMember.getUserId());
