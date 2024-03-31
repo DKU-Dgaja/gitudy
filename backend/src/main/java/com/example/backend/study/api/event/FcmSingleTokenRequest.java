@@ -2,12 +2,14 @@ package com.example.backend.study.api.event;
 
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class FcmSingleTokenRequest {
 
     // private Long userId;          Todo: userId와 token 확인을 위해 가져올것

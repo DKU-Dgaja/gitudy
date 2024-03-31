@@ -1,6 +1,7 @@
 package com.example.backend.study.api.event.controller;
 
 
+import com.example.backend.common.response.JsonResult;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
@@ -33,17 +34,21 @@ public class FcmController {
      */
     @ApiResponse(responseCode = "200", description = "FCM Single 성공")
     @PostMapping("/single")
-    public void sendMessageSingleDevice(@RequestBody FcmSingleTokenRequest token) throws FirebaseMessagingException {
+    public JsonResult<?> sendMessageSingleDevice(@RequestBody FcmSingleTokenRequest token) throws FirebaseMessagingException {
 
         fcmService.sendMessageSingleDevice(token);
+
+        return JsonResult.successOf("Fcm Single Success");
     }
   
 
     @ApiResponse(responseCode = "200", description = "FCM Multi 성공")
     @PostMapping("/multi")
-    public void sendMessageMultiDevice(@RequestBody FcmMultiTokenRequest token) throws FirebaseMessagingException {
+    public JsonResult<?> sendMessageMultiDevice(@RequestBody FcmMultiTokenRequest token) throws FirebaseMessagingException {
 
         fcmService.sendMessageMultiDevice(token);
+
+        return JsonResult.successOf("Fcm Multi Success");
     }
 
 
