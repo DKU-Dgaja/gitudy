@@ -74,8 +74,11 @@ public enum ExceptionMessage {
     // StudyConventionException
     CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다."),
 
-    //
-    CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다.")
+    // CategoryException
+    CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),
+
+    // FcmException
+    FCM_DEVICE_NOT_FOUND("해당 유저의 기기를 찾을 수 없습니다.")
     ;
     private final String text;
 }
