@@ -14,10 +14,13 @@ import lombok.NoArgsConstructor;
 public class AuthServiceRegisterRequest {
     private String name;
     private String githubId;
+    private boolean pushAlarmYn;
+
     public static AuthServiceRegisterRequest of(AuthRegisterRequest request) {
         return AuthServiceRegisterRequest.builder()
                 .name(request.getName())
                 .githubId(request.getGithubId())
+                .pushAlarmYn(request.isPushAlarmYn())
                 .build();
     }
 }

@@ -163,7 +163,7 @@ public class AuthService {
         }
 
         // 회원가입 정보 DB 반영
-        findUser.updateRegister(request.getName(), request.getGithubId());
+        findUser.updateRegister(request.getName(), request.getGithubId(), request.isPushAlarmYn());
 
         // JWT Access Token, Refresh Token 재발급
         JwtToken tokens = createJwtToken(findUser);

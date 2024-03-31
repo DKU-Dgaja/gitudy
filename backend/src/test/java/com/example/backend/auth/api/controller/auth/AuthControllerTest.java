@@ -132,6 +132,7 @@ class AuthControllerTest extends TestConfig {
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
                 .name("구영민")
                 .githubId("test@1234")
+                .pushAlarmYn(false)
                 .build();
 
         mockMvc.perform(

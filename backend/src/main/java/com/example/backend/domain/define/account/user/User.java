@@ -87,10 +87,11 @@ public class User extends BaseEntity implements UserDetails {
     }
 
     // 회원가입 (UNAUTH -> USER)
-    public void updateRegister(String name, String githubId) {
+    public void updateRegister(String name, String githubId, boolean pushAlarmYn) {
         this.role = UserRole.USER;
         this.name = name;
         this.githubId = githubId;
+        this.pushAlarmYn = pushAlarmYn;
     }
 
     // 회원 정보 수정 메서드
