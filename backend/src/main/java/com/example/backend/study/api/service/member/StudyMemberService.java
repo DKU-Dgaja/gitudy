@@ -11,6 +11,7 @@ import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.listener.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
@@ -19,6 +20,8 @@ import com.example.backend.study.api.controller.member.response.StudyMembersResp
 import com.example.backend.study.api.service.info.StudyInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +38,8 @@ public class StudyMemberService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoRepository studyTodoRepository;
     private final StudyInfoService studyInfoService;
+    @Autowired
+    private final ApplicationEventPublisher eventPublisher;
     private final static int JOIN_CODE_LENGTH = 10;
     private final static Long MAX_LIMIT = 10L;
 
@@ -85,6 +90,8 @@ public class StudyMemberService {
     // 스터디원 강퇴 메서드
     @Transactional
     public void resignStudyMember(Long studyInfoId, Long resignUserId) {
+        // 스터디 조회
+        StudyInfo studyInfo = studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
         // 강퇴시킬 스터디원 조회
         StudyMember resignMember = findByIdOrThrowMemberException(studyInfoId, resignUserId);
@@ -94,6 +101,12 @@ public class StudyMemberService {
 
         // 강퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
         studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, resignUserId);
+
+        // 강퇴 알림
+        eventPublisher.publishEvent(ResignMemberEvent.builder()
+                .resignMemberId(resignUserId)
+                .studyInfoTopic(studyInfo.getTopic())
+                .build());
     }
 
 
