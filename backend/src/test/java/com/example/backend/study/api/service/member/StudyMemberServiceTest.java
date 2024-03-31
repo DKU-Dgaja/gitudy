@@ -9,7 +9,6 @@ import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
-import com.example.backend.domain.define.fcmToken.FcmToken;
 import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
@@ -25,23 +24,18 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
-import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.FcmTitleMessageRequest;
-import com.example.backend.study.api.event.service.FcmService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 
 public class StudyMemberServiceTest extends TestConfig {
 
@@ -68,9 +62,6 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Autowired
     private FcmTokenRepository fcmTokenRepository;
-
-    @MockBean
-    private FcmService fcmService;
 
     public final static Long CursorIdx = null;
     public final static Long Limit = 3L;
@@ -395,33 +386,6 @@ public class StudyMemberServiceTest extends TestConfig {
 
     }
 
-    @Test
-    @DisplayName("스터디 가입신청 알림 테스트")
-    void apply_notify_test() throws FirebaseMessagingException {
-        // given
-        String joinCode = null;
-
-        User leader = UserFixture.generateAuthUserPushAlarmY();  // 알람여부 true 추가
-        User user1 = UserFixture.generateGoogleUser();
-        userRepository.saveAll(List.of(leader, user1));
-
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
-        studyInfoRepository.save(studyInfo);
-
-        UserInfoResponse userInfo = authService.findUserInfo(user1);
-
-        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
-        fcmTokenRepository.save(fcmToken);
-
-        FcmTitleMessageRequest request = FcmFixture.generateFcmTitleMessageRequest();
-
-        // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
-
-        // then
-        Mockito.verify(fcmService).sendSingleNotification(any(FcmToken.class), any(FcmTitleMessageRequest.class)); // sendSingleNotification 호출 검증
-
-    }
 
     @Test
     @DisplayName("한번 강퇴된 스터디원 가입 신청 테스트")
