@@ -84,6 +84,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
+                android:layout_gravity="start"
                 android:hint="간단한 스터디 소개를 적어주세요\nex) 어떤 스터디인가요? 어떤 팀원을 찾고 있나오? 이 스터디만의 특별한 점이 무엇인가요?"
                 android:textColor="@color/BLACK"
                 android:textColorHint="@color/GS_400" />
@@ -98,7 +99,7 @@
         android:layout_marginTop="24dp"
         android:background="@drawable/box_non_stroke_r12"
         android:backgroundTint="#F4F5F5"
-        android:hint="연동할 깃허브 레포지토리 링크를 입력해주세요"
+        android:hint="@string/feed_make_study_github_repo"
         android:padding="20dp"
         android:textColorHint="@color/GS_400"
         app:layout_constraintTop_toBottomOf="@+id/studyDetailLayout" />
