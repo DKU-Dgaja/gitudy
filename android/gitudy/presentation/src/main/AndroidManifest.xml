@@ -7,11 +7,12 @@
     <application>
         <activity
             android:name=".ui.feed.MakeStudyActivity"
-            android:exported="false" />
+            android:launchMode="singleTop"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.auth.SocialLoginCompleteActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
+            android:exported="false" />
         <activity
             android:name=".ui.auth.LoginWebViewActivity"
             android:exported="false" />
@@ -42,7 +43,7 @@
         <activity
             android:name=".ui.home.MainHomeActivity"
             android:exported="false"
-            android:launchMode="singleTask"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.profile.MyCommitActivity"
@@ -50,14 +51,6 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.profile.ProfileEditActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.auth.InputNicknameActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.auth.InputIdActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
@@ -74,7 +67,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

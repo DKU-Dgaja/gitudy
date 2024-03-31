@@ -4,7 +4,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
-import com.takseha.presentation.databinding.ActivityMakeStudyBinding
 
 class MakeStudyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

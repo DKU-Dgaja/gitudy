@@ -3,14 +3,13 @@ package com.takseha.presentation.viewmodel.feed
 import android.app.Application
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.repository.GitudyRepository
-import dagger.hilt.android.internal.Contexts.getApplication
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -21,19 +20,15 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
     private val prefs = SP(getApplication())
 
     private val _newStudyInfoState = MutableStateFlow(MakeStudyRequest())
-    private val newStudyInfoState = _newStudyInfoState.asStateFlow()
+    val newStudyInfoState = _newStudyInfoState.asStateFlow()
 
     fun setStudyIntro(title: String, detail: String, githubRepo: String) {
-        // TODO: github repo 관련 구현
-        _newStudyInfoState.update { it.copy(topic = title, info = detail) }
+        _newStudyInfoState.update { it.copy(topic = title, info = detail, branchName = githubRepo) }
     }
-    fun setStudyCommitRule(commitTimes: StudyPeriod, dueDate: String, maxMember: Int) {
-        _newStudyInfoState.update { it.copy(periodType = commitTimes.toString(), maximumMember = maxMember) }
+    fun setStudyRule(commitTimes: StudyPeriod, isPublic: StudyStatus, maxMember: Int) {
+        _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember) }
     }
-    fun setStudyRecruitRule(isPublic: Boolean) {
-
-    }
-    fun makeNewStudy(input: String) = viewModelScope.launch {
+    fun makeNewStudy() = viewModelScope.launch {
         gitudyRepository = GitudyRepository()
 
         val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
@@ -50,7 +45,6 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
         if (newStudyResponse.isSuccessful) {
             val resCode = newStudyResponse.body()!!.resCode
             val resMsg = newStudyResponse.body()!!.resMsg
-            val resObj = newStudyResponse.body()!!.resObj
 
             if (resCode == 200 && resMsg == "OK") {
                 Log.d("MakeStudyViewModel", "New study registered successfully!")

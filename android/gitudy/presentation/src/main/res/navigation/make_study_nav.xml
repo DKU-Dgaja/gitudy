@@ -23,26 +23,17 @@
             app:destination="@id/makeStudy3Fragment" />
     </fragment>
     <fragment
+        android:id="@+id/newStudyFragment"
+        android:name="com.takseha.presentation.ui.feed.NewStudyFragment"
+        android:label="fragment_new_study"
+        tools:layout="@layout/fragment_new_study" />
+    <fragment
         android:id="@+id/makeStudy3Fragment"
         android:name="com.takseha.presentation.ui.feed.MakeStudy3Fragment"
         android:label="fragment_make_study3"
         tools:layout="@layout/fragment_make_study3" >
         <action
-            android:id="@+id/action_makeStudy3Fragment_to_makeStudy4Fragment"
-            app:destination="@id/makeStudy4Fragment" />
-    </fragment>
-    <fragment
-        android:id="@+id/makeStudy4Fragment"
-        android:name="com.takseha.presentation.ui.feed.MakeStudy4Fragment"
-        android:label="fragment_make_study4"
-        tools:layout="@layout/fragment_make_study4" >
-        <action
-            android:id="@+id/action_makeStudy4Fragment_to_newStudyFragment"
+            android:id="@+id/action_makeStudy3Fragment_to_newStudyFragment"
             app:destination="@id/newStudyFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/newStudyFragment"
-        android:name="com.takseha.presentation.ui.feed.NewStudyFragment"
-        android:label="fragment_new_study"
-        tools:layout="@layout/fragment_new_study" />
 </navigation>
