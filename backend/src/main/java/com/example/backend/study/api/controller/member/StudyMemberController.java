@@ -6,10 +6,14 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
+import com.example.backend.study.api.event.FcmTitleMessageRequest;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -72,11 +76,12 @@ public class StudyMemberController {
     @PostMapping("/{studyInfoId}/apply")
     public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                          @RequestParam(name = "joinCode", required = false) String joinCode) {
+                                          @RequestParam(name = "joinCode", required = false) String joinCode,
+                                          @Valid @RequestBody FcmTitleMessageRequest fcmTitleMessageRequest) throws FirebaseMessagingException {
 
         UserInfoResponse userInfo = authService.findUserInfo(user);
 
-        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode);
+        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode, fcmTitleMessageRequest);
 
         return JsonResult.successOf("Apply StudyMember Success");
     }

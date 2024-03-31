@@ -3,6 +3,7 @@ package com.example.backend.study.api.event.service;
 
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
+import com.example.backend.study.api.event.FcmTitleMessageRequest;
 import com.google.firebase.messaging.*;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.user.UserException;
@@ -29,6 +30,11 @@ public class FcmService {
 
     private final FcmTokenRepository fcmTokenRepository;
 
+    // 알림 전송 로직
+    public void sendSingleNotification(FcmToken fcmToken, FcmTitleMessageRequest fcmTitleMessageRequest) throws FirebaseMessagingException {
+        FcmSingleTokenRequest request = FcmSingleTokenRequest.of(fcmToken.getFcmToken(), fcmTitleMessageRequest.getTitle(), fcmTitleMessageRequest.getMessage());
+        sendMessageSingleDevice(request);
+    }
 
     public void sendMessageSingleDevice(FcmSingleTokenRequest token) throws FirebaseMessagingException {
 
