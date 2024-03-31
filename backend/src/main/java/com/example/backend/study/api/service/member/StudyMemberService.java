@@ -3,16 +3,13 @@ package com.example.backend.study.api.service.member;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.event.EventException;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.fcmToken.FcmToken;
 import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
-import com.example.backend.domain.define.study.info.listener.event.ApplyApproveMemberEvent;
 import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
@@ -24,7 +21,6 @@ import com.example.backend.study.api.controller.member.response.StudyMembersResp
 import com.example.backend.study.api.event.FcmTitleMessageRequest;
 import com.example.backend.study.api.event.service.FcmService;
 import com.example.backend.study.api.service.info.StudyInfoService;
-import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -194,12 +190,8 @@ public class StudyMemberService {
                         .title(fcmTitleMessageRequest.getTitle())
                         .message(fcmTitleMessageRequest.getMessage())
                         .build());
-
             }
-
         }
-
-
     }
 
     // 스터디 가입 취소 메서드
