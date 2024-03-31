@@ -17,4 +17,6 @@ public class AuthRegisterRequest {
     @NotNull
     private String githubId;
 
+    private boolean pushAlarmYn;
+
 }
