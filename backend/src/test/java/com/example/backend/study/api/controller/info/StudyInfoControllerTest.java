@@ -94,7 +94,7 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
-        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
+        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
         mockMvc.perform(post("/study/")
@@ -124,7 +124,7 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
-        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
+        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
         mockMvc.perform(post("/study/")
@@ -153,7 +153,7 @@ class StudyInfoControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
-        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class)))
+        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
         mockMvc.perform(post("/study/")
