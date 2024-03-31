@@ -75,14 +75,14 @@ public class FcmService {
             return new UserException(ExceptionMessage.USER_NOT_FOUND);
         });
 
-        saveRefreshToken(FcmToken.builder()
+        saveFcmToken(FcmToken.builder()
                 .userId(user.getId())
                 .fcmToken(token.getToken())
                 .build());
     }
 
     // FCM 토큰 저장 메서드
-    public void saveRefreshToken(FcmToken fcmToken) {
+    public void saveFcmToken(FcmToken fcmToken) {
         FcmToken savedToken = fcmTokenRepository.save(fcmToken);
         log.info(">>>> FCM Token register : {}", savedToken.getFcmToken());
     }
