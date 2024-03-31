@@ -29,7 +29,7 @@ public class ResignMemberEventListener {
             log.warn(">>>> {} : {} <<<<", event.getResignMemberId(), ExceptionMessage.FCM_DEVICE_NOT_FOUND);
             return new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
         });
-        System.out.println("resignMemberListener");
+        
         fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
                 .token(fcmToken.getFcmToken())
                 .title("알림")
