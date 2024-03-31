@@ -30,11 +30,6 @@ public class FcmService {
 
     private final FcmTokenRepository fcmTokenRepository;
 
-    // 알림 전송 로직
-    public void sendSingleNotification(FcmToken fcmToken, FcmTitleMessageRequest fcmTitleMessageRequest) throws FirebaseMessagingException {
-        FcmSingleTokenRequest request = FcmSingleTokenRequest.of(fcmToken.getFcmToken(), fcmTitleMessageRequest.getTitle(), fcmTitleMessageRequest.getMessage());
-        sendMessageSingleDevice(request);
-    }
 
     public void sendMessageSingleDevice(FcmSingleTokenRequest token) throws FirebaseMessagingException {
 

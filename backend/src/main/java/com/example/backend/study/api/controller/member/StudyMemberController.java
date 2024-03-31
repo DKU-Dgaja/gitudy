@@ -77,7 +77,7 @@ public class StudyMemberController {
     public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
                                           @RequestParam(name = "joinCode", required = false) String joinCode,
-                                          @Valid @RequestBody FcmTitleMessageRequest fcmTitleMessageRequest) throws FirebaseMessagingException {
+                                          @Valid @RequestBody FcmTitleMessageRequest fcmTitleMessageRequest) {
 
         UserInfoResponse userInfo = authService.findUserInfo(user);
 

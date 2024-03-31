@@ -12,6 +12,8 @@ import com.example.backend.domain.define.fcmToken.FcmToken;
 import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.domain.define.study.info.listener.event.ApplyApproveMemberEvent;
+import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -19,13 +21,13 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
-import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.FcmTitleMessageRequest;
 import com.example.backend.study.api.event.service.FcmService;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,6 +46,7 @@ public class StudyMemberService {
     private final StudyInfoService studyInfoService;
     private final FcmTokenRepository fcmTokenRepository;
     private final FcmService fcmService;
+    private final ApplicationEventPublisher eventPublisher;
 
     private final static int JOIN_CODE_LENGTH = 10;
     private final static Long MAX_LIMIT = 10L;
@@ -125,7 +128,7 @@ public class StudyMemberService {
 
     // 스터디 가입 메서드
     @Transactional
-    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, FcmTitleMessageRequest fcmTitleMessageRequest) throws FirebaseMessagingException {
+    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, FcmTitleMessageRequest fcmTitleMessageRequest) {
 
         // 스터디 조회 예외처리
         StudyInfo studyInfo = studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
@@ -185,13 +188,13 @@ public class StudyMemberService {
 
             // 알림여부 확인
             if (leader.isPushAlarmYn()) {
-                FcmToken fcmToken = fcmTokenRepository.findById(studyInfo.getUserId()).orElseThrow(() -> {
-                    log.warn(">>>> {} : {} <<<<", studyInfo.getUserId(), ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-                    return new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-                });
 
-                //FCM 서버로 알림 전송 로직
-                fcmService.sendSingleNotification(fcmToken, fcmTitleMessageRequest);
+                eventPublisher.publishEvent(ApplyMemberEvent.builder()
+                        .studyLeaderId(leader.getId())
+                        .title(fcmTitleMessageRequest.getTitle())
+                        .message(fcmTitleMessageRequest.getMessage())
+                        .build());
+
             }
 
         }
