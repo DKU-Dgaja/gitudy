@@ -1,5 +1,6 @@
 package com.example.backend.study.api.service.info;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
@@ -8,6 +9,7 @@ import com.example.backend.domain.define.study.category.info.repository.StudyCat
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -42,9 +44,9 @@ public class StudyInfoService {
     private final StudyCategoryRepository studyCategoryRepository;
     private final UserRepository userRepository;
     @Transactional
-    public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
+    public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
         // 새로운 스터디 생성
-        StudyInfo studyInfo = saveStudyInfo(request);
+        StudyInfo studyInfo = saveStudyInfo(request, userInfo);
 
         // 스터디장 생성
         saveStudyMember(request, studyInfo);
@@ -53,7 +55,7 @@ public class StudyInfoService {
         List<Long> categories = saveStudyCategoryMappings(request.getCategoriesId(), studyInfo);
 
         // 스터디 가입 시 User score +5
-        Optional<User> user = userRepository.findById(request.getUserId());
+        Optional<User> user = userRepository.findById(userInfo.getUserId());
         user.get().addUserScore(5);
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
@@ -218,12 +220,11 @@ public class StudyInfoService {
     }
 
     // StudyInfo를 생성해주는 함수
-    private StudyInfo saveStudyInfo(StudyInfoRegisterRequest request) {
+    private StudyInfo saveStudyInfo(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
         StudyInfo studyInfo = StudyInfo.builder()
-                .userId(request.getUserId())
+                .userId(userInfo.getUserId())
                 .topic(request.getTopic())
                 .score(0)
-                .endDate(request.getEndDate())
                 .info(request.getInfo())
                 .status(request.getStatus())
                 .maximumMember(request.getMaximumMember())
@@ -231,7 +232,11 @@ public class StudyInfoService {
                 .lastCommitDay(null)
                 .profileImageUrl(request.getProfileImageUrl())
                 .notice(null)
-                .repositoryInfo(request.getRepositoryInfo())
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner(userInfo.getGithubId())
+                        .name(userInfo.getName())
+                        .branchName(request.getBranchName())
+                        .build())
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);
