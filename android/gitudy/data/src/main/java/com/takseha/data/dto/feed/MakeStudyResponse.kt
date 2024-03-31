@@ -10,5 +10,5 @@ data class MakeStudyResponse(
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")
-    val resObj: JsonObject
+    val resObj: String
 )

@@ -39,15 +39,17 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
         }"
 
         val request = newStudyInfoState.value
+        Log.d("MakeStudyViewModel", request.toString())
 
         val newStudyResponse = gitudyRepository.makeNewStudy(bearerToken, request)
 
         if (newStudyResponse.isSuccessful) {
             val resCode = newStudyResponse.body()!!.resCode
             val resMsg = newStudyResponse.body()!!.resMsg
+            val resObj = newStudyResponse.body()!!.resObj
 
             if (resCode == 200 && resMsg == "OK") {
-                Log.d("MakeStudyViewModel", "New study registered successfully!")
+                Log.d("MakeStudyViewModel", resObj)
             } else {
                 Log.e("MakeStudyViewModel", "https status error: $resCode, $resMsg")
             }

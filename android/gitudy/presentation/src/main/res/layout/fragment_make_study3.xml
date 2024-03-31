@@ -86,7 +86,6 @@
             style="@style/B2_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/study_name"
             android:textColor="@color/GS_800"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -97,7 +96,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="12dp"
-            android:text="@string/feed_explanation"
             android:textColor="@color/GS_700"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/studyName" />
@@ -139,6 +137,7 @@
                 android:src="@drawable/ic_lock" />
 
             <TextView
+                android:id="@+id/isPublicStudy"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -162,6 +161,7 @@
                 android:src="@drawable/ic_people" />
 
             <TextView
+                android:id="@+id/maxMemberText"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -185,10 +185,10 @@
                 android:src="@drawable/ic_study_github_link" />
 
             <TextView
+                android:id="@+id/githubRepoLink"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/study_github_link"
                 android:textColor="@color/GS_600" />
         </LinearLayout>
 
@@ -208,10 +208,11 @@
                 android:src="@drawable/ic_attendance" />
 
             <TextView
+                android:id="@+id/commitRule"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/feed_rule"
+                android:text="@string/feed_rule_week"
                 android:textColor="@color/GS_600" />
         </LinearLayout>
 
