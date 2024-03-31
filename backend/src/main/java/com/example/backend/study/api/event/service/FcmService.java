@@ -4,6 +4,13 @@ package com.example.backend.study.api.event.service;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.google.firebase.messaging.*;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.user.UserException;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.fcmToken.FcmToken;
+import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
+import com.example.backend.study.api.event.controller.request.FcmTokenSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -15,7 +22,12 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class FcmService {
 
+
     private final FirebaseMessaging firebaseMessaging;
+  
+    private final UserRepository userRepository;
+
+    private final FcmTokenRepository fcmTokenRepository;
 
 
     public void sendMessageSingleDevice(FcmSingleTokenRequest token) throws FirebaseMessagingException {
@@ -52,6 +64,27 @@ public class FcmService {
 
         BatchResponse response = firebaseMessaging.sendEachForMulticast(message);
         log.info(">>>> [ {}개의 메세지가 성공적으로 전송되었습니다. ] : {}", response.getSuccessCount(), response);
+    }
+
+
+    @Transactional
+    public void saveFcmTokenRequest(User userPrincipal, FcmTokenSaveRequest token) {
+
+        User user = userRepository.findByPlatformIdAndPlatformType(userPrincipal.getPlatformId(), userPrincipal.getPlatformType()).orElseThrow(() -> {
+            log.warn(">>>> {},{} : {} <<<<", userPrincipal.getPlatformId(), userPrincipal.getPlatformType(), ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
+        });
+
+        saveRefreshToken(FcmToken.builder()
+                .userId(user.getId())
+                .fcmToken(token.getToken())
+                .build());
+    }
+
+    // FCM 토큰 저장 메서드
+    public void saveRefreshToken(FcmToken fcmToken) {
+        FcmToken savedToken = fcmTokenRepository.save(fcmToken);
+        log.info(">>>> FCM Token register : {}", savedToken.getFcmToken());
     }
 
 }

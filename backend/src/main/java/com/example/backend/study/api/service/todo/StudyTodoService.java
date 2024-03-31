@@ -3,7 +3,6 @@ package com.example.backend.study.api.service.todo;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
-import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -16,6 +15,7 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequ
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.service.info.StudyInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,14 +34,12 @@ public class StudyTodoService {
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
-    private final StudyInfoRepository studyInfoRepository;
+    private final StudyInfoService studyInfoService;
     private final static Long MAX_LIMIT = 10L;
 
     // Todo 등록
     @Transactional
     public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId) {
-
-
         // 스터디에 속한 활동중인 스터디원 조회
         List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
@@ -59,8 +57,6 @@ public class StudyTodoService {
 
         // 한 번의 쿼리로 모든 매핑 저장
         studyTodoMappingRepository.saveAll(todoMappings);
-
-
     }
 
     // StudyTodo 생성 로직
@@ -78,12 +74,8 @@ public class StudyTodoService {
     // Todo 수정
     @Transactional
     public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId) {
-
         // To do 조회
-        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND.getText());
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
+        StudyTodo studyTodo = findByIdOrThrowStudyTodoException(todoId);
 
         // 기존 To do 업데이트
         studyTodo.updateStudyTodo(
@@ -91,7 +83,6 @@ public class StudyTodoService {
                 request.getDetail(),
                 request.getTodoLink(),
                 request.getTodoDate());
-
     }
 
     // Todo 삭제
@@ -99,14 +90,10 @@ public class StudyTodoService {
     public void deleteStudyTodo(Long todoId, Long studyInfoId) {
 
         // 스터디와 관련된 StudyTodo 조회
-        StudyTodo studyTodo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
+        StudyTodo studyTodo = findByIdWithStudyInfoIdOrThrowStudyTodoException(studyInfoId, todoId);
 
         // StudyTodoMapping 테이블에서 todoId로 연결된 레코드 삭제
         studyTodoMappingRepository.deleteByTodoId(studyTodo.getId());
-
 
         // StudyTodo 테이블에서 해당 todoId에 해당하는 레코드 삭제
         studyTodoRepository.delete(studyTodo);
@@ -117,10 +104,7 @@ public class StudyTodoService {
     public StudyTodoListAndCursorIdxResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 
@@ -140,10 +124,7 @@ public class StudyTodoService {
     public StudyTodoResponse readStudyTodo(Long todoId) {
 
         // To do 조회
-        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() ->{
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
+        StudyTodo studyTodo = findByIdOrThrowStudyTodoException(todoId);
 
         return StudyTodoResponse.of(studyTodo);
     }
@@ -152,10 +133,7 @@ public class StudyTodoService {
     public List<StudyTodoStatusResponse> readStudyTodoStatus(Long studyInfoId, Long todoId) {
 
         // 스터디와 관련된 To do 예외처리
-        studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
+        findByIdWithStudyInfoIdOrThrowStudyTodoException(studyInfoId, todoId);
 
         // 스터디 active 멤버들 찾기
         List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
@@ -170,6 +148,22 @@ public class StudyTodoService {
         return todoMappings.stream()
                 .map(mapping -> new StudyTodoStatusResponse(mapping.getUserId(), mapping.getStatus()))
                 .collect(Collectors.toList());
+    }
+
+    public StudyTodo findByIdOrThrowStudyTodoException(Long todoId) {
+        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() ->{
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+        return studyTodo;
+    }
+
+    public StudyTodo findByIdWithStudyInfoIdOrThrowStudyTodoException(Long studyInfoId, Long todoId) {
+        StudyTodo studyTodo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+        return studyTodo;
     }
 
     // 멤버들의 userId만 추출
