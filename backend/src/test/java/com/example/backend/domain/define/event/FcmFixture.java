@@ -25,14 +25,6 @@ public class FcmFixture {
                 .build();
     }
 
-    public static FcmTitleMessageRequest generateFcmTitleMessageRequest() {
-        return FcmTitleMessageRequest.builder()
-                .title("title")
-                .message("message")
-                .build();
-    }
-
-
     public static FcmToken generateDefaultFcmToken(Long userId) {
         return FcmToken.builder()
                 .userId(userId)
