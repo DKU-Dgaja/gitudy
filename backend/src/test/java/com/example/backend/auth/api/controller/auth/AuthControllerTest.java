@@ -258,14 +258,14 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
         when(authService.updateUserPage(any(Long.class))).thenReturn(UserUpdatePageResponse.builder()
                 .name(savedUser.getName())
                 .profileImageUrl(savedUser.getProfileImageUrl())
                 .build());
 
         // then
-        mockMvc.perform(get("/auth/update/" + savedUser.getId())
+        mockMvc.perform(get("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
@@ -287,10 +287,10 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
-        when(authService.authenticate(any(Long.class), any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+        when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // then
-        mockMvc.perform(get("/auth/update/" + savedUser.getId())
+        mockMvc.perform(get("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
@@ -319,10 +319,11 @@ class AuthControllerTest extends TestConfig {
                 .build();
 
         // when
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
 
         // then
-        mockMvc.perform(post("/auth/update/" + savedUser.getId())
+        mockMvc.perform(post("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
@@ -353,12 +354,13 @@ class AuthControllerTest extends TestConfig {
                 .build();
 
         // when
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
                 .when(authService)
                 .updateUser(any(UserUpdateServiceRequest.class));
 
         // then
-        mockMvc.perform(post("/auth/update/" + savedUser.getId())
+        mockMvc.perform(post("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
@@ -393,7 +395,7 @@ class AuthControllerTest extends TestConfig {
         doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
 
         // then
-        mockMvc.perform(post("/auth/update/" + savedUser.getId())
+        mockMvc.perform(post("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
@@ -415,11 +417,11 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         doNothing().when(authService).updatePushAlarmYn(any(Long.class), any(boolean.class));
 
         // then
-        mockMvc.perform(get("/auth/update/pushAlarmYn/" + savedUser.getId() + "/" + true)
+        mockMvc.perform(get("/auth/update/pushAlarmYn" + "/" + true)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
@@ -441,9 +443,9 @@ class AuthControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
-        when(authService.authenticate(any(Long.class), any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+        when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
         // then
-        mockMvc.perform(get("/auth/update/pushAlarmYn/" + savedUser.getId() + "/" + true)
+        mockMvc.perform(get("/auth/update/pushAlarmYn" + "/" + true)
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 

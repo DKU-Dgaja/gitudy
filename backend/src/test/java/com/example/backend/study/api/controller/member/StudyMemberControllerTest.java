@@ -145,10 +145,9 @@ public class StudyMemberControllerTest extends TestConfig {
         doNothing().when(studyMemberService).resignStudyMember(any(Long.class), any(Long.class));
 
         //when , then
-        mockMvc.perform(patch("/member/" + studyInfo.getId() + "/withdrawal/" + studyMember.getUserId())
+        mockMvc.perform(patch("/member/" + studyInfo.getId() + "/withdrawal")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("userId", String.valueOf(studyMember.getUserId())))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
                 .andExpect(status().isOk())

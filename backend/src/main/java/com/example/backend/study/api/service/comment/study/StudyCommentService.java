@@ -30,21 +30,14 @@ public class StudyCommentService {
     private final StudyInfoService studyInfoService;
 
     @Transactional
-    public void registerStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId) {
-        // 활동중인 스터디원인지 확인
-        if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(studyCommentRegisterRequest.getUserId(), studyInfoId)) {
-            log.warn(">>>> {} : {} : {} <<<<", studyCommentRegisterRequest.getUserId()
-                    , studyInfoId
-                    , ExceptionMessage.USER_NOT_STUDY_MEMBER.getText());
-            throw new StudyCommentException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
-        }
+    public void registerStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId, Long userId) {
 
-        StudyComment studyComment = createStudyComment(studyCommentRegisterRequest, studyInfoId);
+        StudyComment studyComment = createStudyComment(studyCommentRegisterRequest, studyInfoId, userId);
         studyCommentRepository.save(studyComment);
     }
 
     @Transactional
-    public void updateStudyComment(StudyCommentUpdateRequest request,Long studyInfoId, Long studyCommentId) {
+    public void updateStudyComment(StudyCommentUpdateRequest request, Long studyInfoId, Long studyCommentId, Long userId) {
         // 스터디 조회 예외처리
         studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
 
@@ -52,8 +45,8 @@ public class StudyCommentService {
         StudyComment studyComment = findByIdOrThrowStudyCommentException(studyCommentId);
 
         // 댓글 수정 권한 확인
-        if (request.getUserId() != studyComment.getUserId()) {
-            log.warn(">>>> {} : {} <<<<", request.getUserId(), ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
+        if (userId != studyComment.getUserId()) {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
             throw new StudyCommentException(ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED);
         }
         studyComment.updateStudyComment(request.getContent());
@@ -99,10 +92,10 @@ public class StudyCommentService {
     }
 
     // StudyComment 생성 로직
-    private StudyComment createStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId) {
+    private StudyComment createStudyComment(StudyCommentRegisterRequest studyCommentRegisterRequest, Long studyInfoId, Long userId) {
         return StudyComment.builder()
                 .studyInfoId(studyInfoId)
-                .userId(studyCommentRegisterRequest.getUserId())
+                .userId(userId)
                 .content(studyCommentRegisterRequest.getContent())
                 .build();
     }

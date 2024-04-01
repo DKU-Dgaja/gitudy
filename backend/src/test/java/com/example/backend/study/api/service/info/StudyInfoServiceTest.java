@@ -73,7 +73,7 @@ class StudyInfoServiceTest extends TestConfig {
 
         List<StudyCategory> studyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
 
-        StudyInfoRegisterRequest studyInfoRegisterRequest = generateStudyInfoRegisterRequestWithCategory(user.getId(), studyCategories);
+        StudyInfoRegisterRequest studyInfoRegisterRequest = generateStudyInfoRegisterRequestWithCategory(studyCategories);
 
         // when
         StudyInfoRegisterResponse registeredStudy = studyInfoService.registerStudy(studyInfoRegisterRequest, UserInfoResponse.of(user));
@@ -93,7 +93,6 @@ class StudyInfoServiceTest extends TestConfig {
 
         // response가 잘 되었는지 검증
         assertAll("registeredStudy",
-                () -> assertEquals(studyInfoRegisterRequest.getUserId(), registeredStudy.getUserId()),
                 () -> assertEquals(studyInfoRegisterRequest.getTopic(), registeredStudy.getTopic()),
                 () -> assertEquals(studyInfoRegisterRequest.getInfo(), registeredStudy.getInfo()),
                 () -> assertEquals(studyInfoRegisterRequest.getStatus(), registeredStudy.getStatus()),
@@ -188,7 +187,7 @@ class StudyInfoServiceTest extends TestConfig {
 
         // when
         List<StudyCategory> updatedStudyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
-        StudyInfoUpdateRequest studyInfoUpdateRequest = generateUpdatedStudyInfoUpdateRequestWithCategory(user.getId(), updatedStudyCategories);
+        StudyInfoUpdateRequest studyInfoUpdateRequest = generateUpdatedStudyInfoUpdateRequestWithCategory(updatedStudyCategories);
         studyInfoService.updateStudyInfo(studyInfoUpdateRequest, studyInfo.getId());
 
         // then
@@ -197,7 +196,6 @@ class StudyInfoServiceTest extends TestConfig {
         // 스터디 정보 업데이트 확인
         assertAll(
                 // 업데이트한 값으로 바뀌었는 지 확인
-                () -> assertEquals(studyInfoUpdateRequest.getUserId(), updatedStudyInfo.get().getUserId()),
                 () -> assertEquals(studyInfoUpdateRequest.getTopic(), updatedStudyInfo.get().getTopic()),
                 () -> assertEquals(studyInfoUpdateRequest.getEndDate(), updatedStudyInfo.get().getEndDate()),
                 () -> assertEquals(studyInfoUpdateRequest.getInfo(), updatedStudyInfo.get().getInfo()),

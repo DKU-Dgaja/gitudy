@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CategoryRegisterRequest {
-    private Long userId;             // 유저 id
 
     @NotBlank(message = "카테고리 내용은 공백일 수 없습니다.")
     @Size(max = 10, message = "카테고리 내용은 10자를 넘을 수 없습니다.")

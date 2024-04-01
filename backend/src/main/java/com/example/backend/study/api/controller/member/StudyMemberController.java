@@ -54,15 +54,14 @@ public class StudyMemberController {
 
     // 스터디 탈퇴
     @ApiResponse(responseCode = "200", description = "스터디 탈퇴 성공")
-    @PatchMapping("/{studyInfoId}/withdrawal/{userId}")
+    @PatchMapping("/{studyInfoId}/withdrawal")
     public JsonResult<?> withdrawalStudyMember(@AuthenticationPrincipal User user,
-                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                               @PathVariable(name = "userId") Long userId) {
+                                               @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
         // 스터디멤버 검증
-        studyMemberService.isValidateStudyMember(user, studyInfoId);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        studyMemberService.withdrawalStudyMember(studyInfoId, userId);
+        studyMemberService.withdrawalStudyMember(studyInfoId, userInfo.getUserId());
 
         return JsonResult.successOf("Withdrawal Member Success");
     }

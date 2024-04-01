@@ -49,7 +49,7 @@ public class StudyInfoService {
         StudyInfo studyInfo = saveStudyInfo(request, userInfo);
 
         // 스터디장 생성
-        saveStudyMember(request, studyInfo);
+        saveStudyMember(request, studyInfo, userInfo.getUserId());
 
         // 스터디 카테고리 매핑
         List<Long> categories = saveStudyCategoryMappings(request.getCategoriesId(), studyInfo);
@@ -208,10 +208,10 @@ public class StudyInfoService {
     }
 
     // StudyMember를 leader로 생성해주는 함수
-    private StudyMember saveStudyMember(StudyInfoRegisterRequest request, StudyInfo studyInfo) {
+    private StudyMember saveStudyMember(StudyInfoRegisterRequest request, StudyInfo studyInfo, Long userId) {
         StudyMember studyMember = StudyMember.builder()
                 .studyInfoId(studyInfo.getId())
-                .userId(request.getUserId())
+                .userId(userId)
                 .role(STUDY_LEADER)
                 .status(STUDY_ACTIVE)
                 .score(0)

@@ -6,6 +6,7 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.category.CategoryException;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -74,7 +75,6 @@ class CategoryControllerTest extends TestConfig {
         User user = userRepository.save(generateAuthUser());
 
         CategoryRegisterRequest request = CategoryRegisterRequest.builder()
-                .userId(user.getId())
                 .name("name")
                 .build();
 
@@ -109,7 +109,6 @@ class CategoryControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         CategoryRegisterRequest request = CategoryRegisterRequest.builder()
-                .userId(user.getId())
                 .name(inValidContent)
                 .build();
 
@@ -141,7 +140,6 @@ class CategoryControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         CategoryRegisterRequest request = CategoryRegisterRequest.builder()
-                .userId(user.getId())
                 .name(inValidContent)
                 .build();
 
@@ -172,7 +170,6 @@ class CategoryControllerTest extends TestConfig {
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
         CategoryUpdateRequest request = CategoryUpdateRequest.builder()
-                .userId(savedUser.getId())
                 .name("updateName")
                 .build();
 
@@ -206,7 +203,6 @@ class CategoryControllerTest extends TestConfig {
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
 
         CategoryUpdateRequest request = CategoryUpdateRequest.builder()
-                .userId(user.getId())
                 .name(inValidContent)
                 .build();
 
@@ -240,7 +236,6 @@ class CategoryControllerTest extends TestConfig {
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
 
         CategoryUpdateRequest request = CategoryUpdateRequest.builder()
-                .userId(user.getId())
                 .name(inValidContent)
                 .build();
 
@@ -271,14 +266,13 @@ class CategoryControllerTest extends TestConfig {
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
         CategoryUpdateRequest request = CategoryUpdateRequest.builder()
-                .userId(savedUser.getId())
                 .name("updateName")
                 .build();
 
         //when
-        doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
-                .when(authService)
-                .authenticate(any(Long.class), any(User.class));
+        doThrow(new CategoryException(ExceptionMessage.CATEGORY_NOT_FOUND))
+                .when(categoryService)
+                .updateCategory(any(), any());
 
         //then
         mockMvc.perform(patch("/category/" + studyCategory.getId())
@@ -287,7 +281,7 @@ class CategoryControllerTest extends TestConfig {
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.CATEGORY_NOT_FOUND.getText()))
                 .andDo(print());
     }
     @Test
