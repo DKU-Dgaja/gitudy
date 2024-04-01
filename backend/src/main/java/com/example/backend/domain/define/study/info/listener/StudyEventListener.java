@@ -36,8 +36,8 @@ public class StudyEventListener {
 
         fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
                 .token(fcmToken.getFcmToken())
-                .title(event.getTitle())
-                .message(event.getMessage())
+                .title("[" + event.getStudyTopic() + "] 스터디 신청")
+                .message(event.getName() + "님이 스터디를 신청했습니다.\n" + "프로필과 메시지를 확인 후, 수락해주세요!")
                 .build());
     }
 }

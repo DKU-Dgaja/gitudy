@@ -12,9 +12,10 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ApplyMemberEvent {
 
-    private Long studyLeaderId;
+    private Long studyLeaderId;  // 스터디 리더 Id
 
-    private String title;
+    private String studyTopic;  // 스터디 제목
 
-    private String message;
+    private String name;      // 가입신청자 이름
+
 }
