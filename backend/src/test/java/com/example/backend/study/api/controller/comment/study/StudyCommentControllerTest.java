@@ -87,10 +87,10 @@ class StudyCommentControllerTest extends TestConfig {
 
         StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
 
-        StudyCommentRegisterRequest studyCommentRegisterRequest = StudyCommentFixture.createDefaultStudyCommentRegisterRequest(savedUser.getId());
+        StudyCommentRegisterRequest studyCommentRegisterRequest = StudyCommentFixture.createDefaultStudyCommentRegisterRequest();
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyCommentService).registerStudyComment(any(StudyCommentRegisterRequest.class), any(Long.class));
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(studyCommentService).registerStudyComment(any(StudyCommentRegisterRequest.class), any(Long.class), any(Long.class));
 
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/comment")
@@ -115,12 +115,11 @@ class StudyCommentControllerTest extends TestConfig {
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
         StudyComment studyComment =
                 studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(savedUser.getId(), studyInfo.getId()));
-        StudyCommentUpdateRequest studyCommentUpdateRequest =
-                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(savedUser.getId());
+        StudyCommentUpdateRequest studyCommentUpdateRequest = StudyCommentFixture.createDefaultStudyCommentUpdateRequest();
 
         //when
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyCommentService).updateStudyComment(any(StudyCommentUpdateRequest.class), any(Long.class), any(Long.class));
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(studyCommentService).registerStudyComment(any(StudyCommentRegisterRequest.class), any(Long.class), any(Long.class));
 
         //then
         mockMvc.perform(patch("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
