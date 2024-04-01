@@ -87,7 +87,7 @@ class StudyInfoControllerTest extends TestConfig {
         User savedUser = userRepository.save(generateAuthUser());
 
         List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
-        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequest(savedUser.getId(), studyCategories);
+        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequest(studyCategories);
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -117,7 +117,7 @@ class StudyInfoControllerTest extends TestConfig {
         List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
 
         // MaximumMember가 11일 때
-        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(savedUser.getId(), studyCategories);
+        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(studyCategories);
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -146,7 +146,7 @@ class StudyInfoControllerTest extends TestConfig {
         List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
 
         // MaximumMember가 -1일 때
-        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(savedUser.getId(), studyCategories);
+        StudyInfoRegisterRequest request = generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(studyCategories);
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
@@ -207,7 +207,7 @@ class StudyInfoControllerTest extends TestConfig {
 
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
 
-        StudyInfoUpdateRequest studyInfoUpdateRequest = generateUpdatedStudyInfoUpdateRequestWithCategory(savedUser.getId(), studyCategories);
+        StudyInfoUpdateRequest studyInfoUpdateRequest = generateUpdatedStudyInfoUpdateRequestWithCategory(studyCategories);
 
 
         //when

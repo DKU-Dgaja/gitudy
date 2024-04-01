@@ -20,7 +20,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudyInfoRegisterRequest {
-    private Long userId;                            // 스터디장 ID
 
     private String topic;                           // 스터디 이름
 
@@ -41,7 +40,6 @@ public class StudyInfoRegisterRequest {
     private List<Long> categoriesId;                // 카테고리 ID 리스트
     public static StudyInfoRegisterRequest of(StudyInfo request) {
         return StudyInfoRegisterRequest.builder()
-                .userId(request.getUserId())
                 .topic(request.getTopic())
                 .info(request.getInfo())
                 .status(request.getStatus())
