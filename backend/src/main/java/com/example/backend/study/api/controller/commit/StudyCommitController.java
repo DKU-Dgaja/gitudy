@@ -31,7 +31,7 @@ public class StudyCommitController {
     @ApiResponse(responseCode = "200",
             description = "마이 커밋 조회 성공",
             content = @Content(schema = @Schema(implementation = CommitInfoListAndCursorIdxResponse.class)))
-    @GetMapping("/")
+    @GetMapping("")
     public JsonResult<?> userCommitList(@AuthenticationPrincipal User user,
                                         @RequestParam(name = "studyInfoId", required = false) Long studyInfoId,
                                         @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,

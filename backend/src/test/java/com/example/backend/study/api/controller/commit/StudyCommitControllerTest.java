@@ -60,7 +60,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/commits/")
+        mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -88,7 +88,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/commits/")
+        mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "")
@@ -116,7 +116,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/commits/")
+        mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -143,7 +143,7 @@ class StudyCommitControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/commits/")
+        mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "-1")

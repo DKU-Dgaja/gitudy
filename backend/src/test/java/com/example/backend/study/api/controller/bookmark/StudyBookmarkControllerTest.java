@@ -56,7 +56,7 @@ class StudyBookmarkControllerTest extends TestConfig {
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/bookmarks/")
+        mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -85,7 +85,7 @@ class StudyBookmarkControllerTest extends TestConfig {
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/bookmarks/")
+        mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "")
@@ -112,7 +112,7 @@ class StudyBookmarkControllerTest extends TestConfig {
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/bookmarks/")
+        mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -135,7 +135,7 @@ class StudyBookmarkControllerTest extends TestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
-        mockMvc.perform(get("/bookmarks/")
+        mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")

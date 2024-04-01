@@ -29,7 +29,7 @@ public class StudyBookmarkController {
     @ApiResponse(responseCode = "200",
             description = "북마크 조회 성공",
             content = @Content(schema = @Schema(implementation = BookmarkInfoListAndCursorIdxResponse.class)))
-    @GetMapping("/")
+    @GetMapping("")
     public JsonResult<?> userBookmarkList(@AuthenticationPrincipal User user,
                                           @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
