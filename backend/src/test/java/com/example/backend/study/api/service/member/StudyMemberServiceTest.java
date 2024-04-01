@@ -9,7 +9,6 @@ import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
-import com.example.backend.domain.define.fcmToken.FcmToken;
 import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
@@ -17,6 +16,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.listener.MemberEventListener;
 import com.example.backend.domain.define.study.member.listener.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
@@ -33,15 +33,13 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.event.ApplicationEvents;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class StudyMemberServiceTest extends TestConfig {
 
@@ -66,8 +64,8 @@ public class StudyMemberServiceTest extends TestConfig {
     @Autowired
     private AuthService authService;
 
-    @Autowired
-    ApplicationEvents events;
+    @MockBean
+    private MemberEventListener memberEventListener;
 
     @Autowired
     private FcmTokenRepository fcmTokenRepository;
@@ -217,12 +215,12 @@ public class StudyMemberServiceTest extends TestConfig {
 
 
     @Test
-    @DisplayName("스터디원 강퇴 테스트")
+    @DisplayName("스터디원 강퇴 성공 테스트")
     public void resignStudyMember() throws FirebaseMessagingException {
         // given
 
-        User leaderuser = UserFixture.generateAuthUser();
-        User user1 = UserFixture.generateGoogleUser();
+        User leaderuser = UserFixture.generateAuthUserByPlatformId("leader");
+        User user1 = UserFixture.generateAuthUserPushAlarmY(); // 알람 여부 true
         User user2 = UserFixture.generateKaKaoUser();
 
         userRepository.saveAll(List.of(leaderuser, user1, user2));
@@ -245,7 +243,38 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
         // event 발생 검증
-        assertEquals(1, (int) events.stream(ResignMemberEvent.class).count());
+        verify(memberEventListener).resignMemberListener(any(ResignMemberEvent.class));
+    }
+    @Test
+    @DisplayName("스터디원 강퇴 실패 테스트")
+    public void failResignStudyMember() throws FirebaseMessagingException {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUserByPlatformId("leader");
+        User user1 = UserFixture.generateAuthUserPushAlarmN(); // 알람 여부 false
+        User user2 = UserFixture.generateKaKaoUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1, user2));
+        fcmTokenRepository.save(FcmFixture.generateDefaultFcmToken(user1.getId()));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        StudyMember activeMember2 = StudyMemberFixture.createStudyMemberResigned(user2.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember1, activeMember2));
+
+        // when
+        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
+        studyMemberService.resignStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
+
+        // 알람 여부 false이므로 event 발생하지 않는다.
+        // verify(memberEventListener).resignMemberListener(any(ResignMemberEvent.class));
     }
 
     @Test

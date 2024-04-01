@@ -102,11 +102,16 @@ public class StudyMemberService {
         // 강퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
         studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, resignUserId);
 
+        // 강퇴할 유저 조회
+        User resignUser = findByIdOrThrowUserException(resignMember);
+
         // 강퇴 알림
-        eventPublisher.publishEvent(ResignMemberEvent.builder()
-                .resignMemberId(resignUserId)
-                .studyInfoTopic(studyInfo.getTopic())
-                .build());
+        if(resignUser.isPushAlarmYn()){
+            eventPublisher.publishEvent(ResignMemberEvent.builder()
+                    .resignMemberId(resignUserId)
+                    .studyInfoTopic(studyInfo.getTopic())
+                    .build());
+        }
     }
 
 

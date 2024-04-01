@@ -112,4 +112,27 @@ public class UserFixture {
                 .build();
     }
 
+    public static User generateAuthUserPushAlarmY() {
+        return User.builder()
+                .platformId("test")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
+                .pushAlarmYn(true)
+                .build();
+    }
+
+    public static User generateAuthUserPushAlarmN() {
+        return User.builder()
+                .platformId("test")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
+                .pushAlarmYn(false)
+                .build();
+    }
 }
