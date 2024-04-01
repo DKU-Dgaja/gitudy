@@ -3,7 +3,6 @@ package com.example.backend.study.api.event.service;
 
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
-import com.example.backend.study.api.event.FcmTitleMessageRequest;
 import com.google.firebase.messaging.*;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.user.UserException;

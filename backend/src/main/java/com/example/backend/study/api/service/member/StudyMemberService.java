@@ -7,7 +7,6 @@ import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
@@ -15,11 +14,10 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
-import com.example.backend.study.api.event.FcmTitleMessageRequest;
-import com.example.backend.study.api.event.service.FcmService;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,8 +38,6 @@ public class StudyMemberService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoRepository studyTodoRepository;
     private final StudyInfoService studyInfoService;
-    private final FcmTokenRepository fcmTokenRepository;
-    private final FcmService fcmService;
     private final ApplicationEventPublisher eventPublisher;
 
     private final static int JOIN_CODE_LENGTH = 10;
@@ -124,7 +120,7 @@ public class StudyMemberService {
 
     // 스터디 가입 메서드
     @Transactional
-    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, FcmTitleMessageRequest fcmTitleMessageRequest) {
+    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, ApplyMemberMessageRequest memberMessageRequest) {
 
         // 스터디 조회 예외처리
         StudyInfo studyInfo = studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
@@ -154,6 +150,9 @@ public class StudyMemberService {
             throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
         }
 
+        // Todo: 팀장에게 한마디 저장하는 로직 memberMessageRequest
+        // Todo: 알림 페이지에 보여줄 정보 반환 로직
+
         // 알림 여부
         boolean notifyLeader = false;
 
@@ -174,7 +173,7 @@ public class StudyMemberService {
 
         }
 
-
+        // fcm 백그라운드 알림
         if (notifyLeader) {
 
             User leader = userRepository.findById(studyInfo.getUserId()).orElseThrow(() -> {
@@ -187,8 +186,8 @@ public class StudyMemberService {
 
                 eventPublisher.publishEvent(ApplyMemberEvent.builder()
                         .studyLeaderId(leader.getId())
-                        .title(fcmTitleMessageRequest.getTitle())
-                        .message(fcmTitleMessageRequest.getMessage())
+                        .studyTopic(studyInfo.getTopic())
+                        .name(user.getName())
                         .build());
             }
         }
@@ -255,7 +254,7 @@ public class StudyMemberService {
         }
     }
 
-    // 스터디 가입신청 목록 조회 메서드
+    // 스터디 가입신청 목록 조회 메서드 //Todo: 팀장에게 한마디 필드 보여줘야함 (팝업)
     public StudyMemberApplyListAndCursorIdxResponse applyListStudyMember(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
