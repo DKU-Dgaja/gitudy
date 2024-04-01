@@ -80,6 +80,9 @@
         <action
             android:id="@+id/action_inputNicknameFragment_to_inputIdFragment"
             app:destination="@id/inputIdFragment" />
+        <argument
+            android:name="pushAlarmYn"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/loginCompleteFragment"
