@@ -50,18 +50,17 @@ class StudyCommitControllerTest extends TestConfig {
     void 마이_커밋_조회_성공_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long userId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/commits/user/" + userId)
+        mockMvc.perform(get("/commits/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -79,18 +78,17 @@ class StudyCommitControllerTest extends TestConfig {
     void cursorIdx가_null일_때_마이_커밋_조회_성공_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long userId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/commits/user/" + userId)
+        mockMvc.perform(get("/commits/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "")
@@ -109,17 +107,16 @@ class StudyCommitControllerTest extends TestConfig {
     void 마이_커밋_조회_실패_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long userId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        when(authService.authenticate(any(Long.class), any(User.class)))
+        when(authService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/commits/user/" + userId)
+        mockMvc.perform(get("/commits/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -137,17 +134,16 @@ class StudyCommitControllerTest extends TestConfig {
     void 마이_커밋_조회_유효성_검증_실패_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long userId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        when(authService.authenticate(any(Long.class), any(User.class)))
+        when(authService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/commits/user/" + userId)
+        mockMvc.perform(get("/commits/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "-1")
