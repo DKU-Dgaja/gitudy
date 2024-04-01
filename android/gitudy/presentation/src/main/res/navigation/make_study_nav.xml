@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/makeStudy_nav"
+    app:startDestination="@id/makeStudy1Fragment">
+    <fragment
+        android:id="@+id/makeStudy1Fragment"
+        android:name="com.takseha.presentation.ui.feed.MakeStudy1Fragment"
+        android:label="fragment_make_study1"
+        tools:layout="@layout/fragment_make_study1" >
+        <action
+            android:id="@+id/action_makeStudy1Fragment_to_makeStudy2Fragment"
+            app:destination="@id/makeStudy2Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/makeStudy2Fragment"
+        android:name="com.takseha.presentation.ui.feed.MakeStudy2Fragment"
+        android:label="fragment_make_study2"
+        tools:layout="@layout/fragment_make_study2" >
+        <action
+            android:id="@+id/action_makeStudy2Fragment_to_makeStudy3Fragment"
+            app:destination="@id/makeStudy3Fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newStudyFragment"
+        android:name="com.takseha.presentation.ui.feed.NewStudyFragment"
+        android:label="fragment_new_study"
+        tools:layout="@layout/fragment_new_study" />
+    <fragment
+        android:id="@+id/makeStudy3Fragment"
+        android:name="com.takseha.presentation.ui.feed.MakeStudy3Fragment"
+        android:label="fragment_make_study3"
+        tools:layout="@layout/fragment_make_study3" >
+        <action
+            android:id="@+id/action_makeStudy3Fragment_to_newStudyFragment"
+            app:destination="@id/newStudyFragment" />
+    </fragment>
+</navigation>

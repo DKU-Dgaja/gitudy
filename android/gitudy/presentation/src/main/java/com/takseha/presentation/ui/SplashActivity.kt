@@ -7,7 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
-import com.takseha.presentation.ui.login.LoginActivity
+import com.takseha.presentation.ui.auth.LoginActivity
 
 class SplashActivity : AppCompatActivity() {
     /*

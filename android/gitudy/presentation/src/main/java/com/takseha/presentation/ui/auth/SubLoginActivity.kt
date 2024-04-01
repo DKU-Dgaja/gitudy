@@ -1,37 +1,39 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.auth
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.presentation.R
-import com.takseha.presentation.databinding.ActivityLoginBinding
-import com.takseha.presentation.viewmodel.LoginViewModel
+import com.takseha.presentation.databinding.ActivitySubLoginBinding
+import com.takseha.presentation.viewmodel.auth.LoginViewModel
 
-class LoginActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityLoginBinding
+
+class SubLoginActivity : AppCompatActivity() {
+    private lateinit var binding: ActivitySubLoginBinding
     private lateinit var viewModel: LoginViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_login)
+        setContentView(R.layout.activity_sub_login)
         window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
 
         viewModel = ViewModelProvider(this)[LoginViewModel::class.java]
 
         with(binding) {
-            githubLoginBtn.setOnClickListener {
-                startLogin("GITHUB")
+            kakaoLoginBtn.setOnClickListener {
+                startLogin("KAKAO")
             }
-            otherLoginBtn.setOnClickListener {
-                startActivity(Intent(baseContext, SubLoginActivity::class.java))
+            googleLoginBtn.setOnClickListener {
+                startLogin("GOOGLE")
             }
         }
     }
+
     private fun setBinding() {
-        binding = ActivityLoginBinding.inflate(layoutInflater)
+        binding = ActivitySubLoginBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
     }

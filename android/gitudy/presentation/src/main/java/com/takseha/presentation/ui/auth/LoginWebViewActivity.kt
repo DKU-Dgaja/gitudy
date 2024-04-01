@@ -1,4 +1,4 @@
-package com.takseha.presentation.ui.login
+package com.takseha.presentation.ui.auth
 
 import android.content.Intent
 import android.net.Uri
@@ -12,7 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.takseha.data.dto.auth.login.LoginRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
-import com.takseha.presentation.viewmodel.LoginWebViewViewModel
+import com.takseha.presentation.viewmodel.auth.LoginWebViewViewModel
 
 class LoginWebViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginWebviewBinding
