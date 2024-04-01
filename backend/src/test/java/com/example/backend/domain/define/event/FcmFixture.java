@@ -1,7 +1,9 @@
 package com.example.backend.domain.define.event;
 
+import com.example.backend.domain.define.fcmToken.FcmToken;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
+import com.example.backend.study.api.event.FcmTitleMessageRequest;
 
 import java.util.List;
 
@@ -20,6 +22,13 @@ public class FcmFixture {
                 .tokens(List.of("token1", "token2", "token3"))
                 .title("title")
                 .message("message")
+                .build();
+    }
+
+    public static FcmToken generateDefaultFcmToken(Long userId) {
+        return FcmToken.builder()
+                .userId(userId)
+                .fcmToken("token")
                 .build();
     }
 

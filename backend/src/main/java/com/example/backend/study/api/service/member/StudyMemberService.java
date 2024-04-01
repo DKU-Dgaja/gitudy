@@ -9,16 +9,19 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +38,8 @@ public class StudyMemberService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoRepository studyTodoRepository;
     private final StudyInfoService studyInfoService;
+    private final ApplicationEventPublisher eventPublisher;
+
     private final static int JOIN_CODE_LENGTH = 10;
     private final static Long MAX_LIMIT = 10L;
 
@@ -115,7 +120,7 @@ public class StudyMemberService {
 
     // 스터디 가입 메서드
     @Transactional
-    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode) {
+    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, ApplyMemberMessageRequest memberMessageRequest) {
 
         // 스터디 조회 예외처리
         StudyInfo studyInfo = studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
@@ -145,6 +150,9 @@ public class StudyMemberService {
             throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
         }
 
+        // Todo: 팀장에게 한마디 저장하는 로직 memberMessageRequest
+        // Todo: 알림 페이지에 보여줄 정보 반환 로직
+
         // 알림 여부
         boolean notifyLeader = false;
 
@@ -165,15 +173,24 @@ public class StudyMemberService {
 
         }
 
-
+        // fcm 백그라운드 알림
         if (notifyLeader) {
 
-            /*
-             해당 스터디장에게 알림 메서드 추가되어야함  -> 유저의 이름등등을 보여주기위해 파라미터로 user 객체 가져옴
-         */
+            User leader = userRepository.findById(studyInfo.getUserId()).orElseThrow(() -> {
+                log.warn(">>>> {} : {} <<<<", studyInfo.getUserId(), ExceptionMessage.USER_NOT_STUDY_MEMBER);
+                return new UserException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+            });
+
+            // 알림여부 확인
+            if (leader.isPushAlarmYn()) {
+
+                eventPublisher.publishEvent(ApplyMemberEvent.builder()
+                        .studyLeaderId(leader.getId())
+                        .studyTopic(studyInfo.getTopic())
+                        .name(user.getName())
+                        .build());
+            }
         }
-
-
     }
 
     // 스터디 가입 취소 메서드
@@ -237,7 +254,7 @@ public class StudyMemberService {
         }
     }
 
-    // 스터디 가입신청 목록 조회 메서드
+    // 스터디 가입신청 목록 조회 메서드 //Todo: 팀장에게 한마디 필드 보여줘야함 (팝업)
     public StudyMemberApplyListAndCursorIdxResponse applyListStudyMember(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
@@ -246,7 +263,7 @@ public class StudyMemberService {
         limit = Math.min(limit, MAX_LIMIT);
 
         // 대기중인 멤버들의 신청목록 조회
-        List<StudyMemberApplyResponse> applyList  = studyMemberRepository.findStudyApplyListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+        List<StudyMemberApplyResponse> applyList = studyMemberRepository.findStudyApplyListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
 
         // 대기중인 멤버가 없는 경우(가입 신청x) 예외처리
         if (applyList.isEmpty()) {

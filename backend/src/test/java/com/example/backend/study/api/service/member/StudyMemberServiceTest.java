@@ -8,8 +8,13 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.event.FcmFixture;
+import com.example.backend.domain.define.fcmToken.FcmToken;
+import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.listener.StudyEventListener;
+import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
@@ -20,18 +25,24 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class StudyMemberServiceTest extends TestConfig {
 
@@ -56,6 +67,12 @@ public class StudyMemberServiceTest extends TestConfig {
     @Autowired
     private AuthService authService;
 
+    @Autowired
+    private FcmTokenRepository fcmTokenRepository;
+
+    @MockBean
+    private StudyEventListener studyEventListener;
+
     public final static Long CursorIdx = null;
     public final static Long Limit = 3L;
 
@@ -66,6 +83,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
         studyTodoRepository.deleteAllInBatch();
+        fcmTokenRepository.deleteAll();
     }
 
 
@@ -354,7 +372,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Test
     @DisplayName("스터디 가입 신청 테스트")
-    public void applyStudyMember() {
+    public void applyStudyMember() throws FirebaseMessagingException {
         // given
         String joinCode = null;
 
@@ -367,13 +385,71 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
         // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
 
         // then
         assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
 
+    }
+
+    @Test
+    @DisplayName("스터디 가입신청 알림 테스트 - 알림여부 true")
+    void apply_notify_test_true() throws FirebaseMessagingException {
+        // given
+        String joinCode = null;
+
+        User leader = UserFixture.generateAuthUserPushAlarmY();  // 알람여부 true 추가
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
+        // when
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
+
+        // then
+        verify(studyEventListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
+    }
+
+
+    @Test
+    @DisplayName("스터디 가입신청 알림 테스트 - 알림여부 false")
+    void apply_notify_test_false() throws FirebaseMessagingException {
+
+        // given
+        String joinCode = null;
+
+        User leader = UserFixture.generateAuthUser();  // 알람여부 false 추가
+        User user1 = UserFixture.generateGoogleUser();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        UserInfoResponse userInfo = authService.findUserInfo(user1);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
+        // when
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
+
+        // then
+        verify(studyEventListener, times(0)).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출x 검증
     }
 
     @Test
@@ -394,9 +470,11 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
-            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
         assertEquals(ExceptionMessage.STUDY_RESIGNED_MEMBER.getText(), em.getMessage());
 
@@ -421,10 +499,11 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
-            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
 
         assertEquals(ExceptionMessage.STUDY_WAITING_MEMBER.getText(), em.getMessage());
@@ -433,7 +512,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Test
     @DisplayName("비공개 스터디 가입 신청- 참여코드가 맞는 경우")
-    public void applyStudyMember_privateStudy_joinCode_match() {
+    public void applyStudyMember_privateStudy_joinCode_match() throws FirebaseMessagingException {
         // given
         String joinCode = "joinCode";
 
@@ -447,8 +526,10 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
         // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), studyInfo.getJoinCode());
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), studyInfo.getJoinCode(), request);
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
 
         // then
@@ -473,9 +554,11 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
-            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
 
         assertEquals(ExceptionMessage.STUDY_JOIN_CODE_FAIL.getText(), em.getMessage());
@@ -499,9 +582,11 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
-            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
 
         assertEquals(ExceptionMessage.STUDY_JOIN_CODE_FAIL.getText(), em.getMessage());
@@ -510,7 +595,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Test
     @DisplayName("이전에 탈퇴한 멤버가 가입 신청 테스트")
-    public void applyStudyMember_withdrawal() {
+    public void applyStudyMember_withdrawal() throws FirebaseMessagingException {
         // given
         String joinCode = null;
 
@@ -526,8 +611,10 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
         // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
 
         // then
@@ -536,7 +623,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Test
     @DisplayName("이전에 승인 거부된 멤버가 가입 신청 테스트")
-    public void applyStudyMember_refused() {
+    public void applyStudyMember_refused() throws FirebaseMessagingException {
         // given
         String joinCode = null;
 
@@ -552,8 +639,10 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
+        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+
         // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode);
+        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
 
         // then

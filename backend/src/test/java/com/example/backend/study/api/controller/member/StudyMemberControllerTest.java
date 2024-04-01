@@ -13,8 +13,10 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,10 @@ public class StudyMemberControllerTest extends TestConfig {
 
     @MockBean
     private StudyMemberService studyMemberService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
 
     @AfterEach
     void tearDown() {
@@ -168,11 +174,14 @@ public class StudyMemberControllerTest extends TestConfig {
         studyInfoRepository.save(studyInfo);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyMemberService).applyStudyMember(any(UserInfoResponse.class), any(Long.class), any(String.class));
+        doNothing().when(studyMemberService).applyStudyMember(any(UserInfoResponse.class), any(Long.class), any(String.class), any(ApplyMemberMessageRequest.class));
+
+        ApplyMemberMessageRequest applyMemberMessageRequest = StudyMemberFixture.generateApplyMemberMessageRequest();
 
         //when , then
         mockMvc.perform(post("/member/" + studyInfo.getId() + "/apply")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(applyMemberMessageRequest))
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
