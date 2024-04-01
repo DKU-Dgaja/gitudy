@@ -5,12 +5,16 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.repository.GithubRepository
 import com.takseha.data.repository.GitudyRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
@@ -18,9 +22,16 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     private lateinit var githubRepository: GithubRepository
     private val prefs = SP(getApplication())
 
+    private val _registerInfoState = MutableStateFlow(RegisterRequest())
+    val registerInfoState = _registerInfoState.asStateFlow()
+
     private var _isCorrectId = MutableLiveData<Boolean>()
     val isCorrectId : LiveData<Boolean>
         get() = _isCorrectId
+
+//    private var _isCorrectName = MutableLiveData<Boolean>()
+//    val isCorrectName : LiveData<Boolean>
+//        get() = _isCorrectName
 
     fun checkGithubId(githubId: String) = viewModelScope.launch {
         githubRepository = GithubRepository()
@@ -35,6 +46,31 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // TODO : 닉네임 중복 검사 함수 구현하기
+//    fun checkNickname(name: String) = viewModelScope.launch {
+//        gitudyRepository = GitudyRepository()
+//
+//        val gitudyResponse = gitudyRepository.checkCorrectGithubId(name)
+//
+//        if (gitudyResponse.isSuccessful) {
+//            _isCorrectName.value = true
+//        } else {
+//            _isCorrectName.value = false
+//            Log.e("RegisterViewModel", "githubResponse status: ${gitudyResponse.code()}\ngithubResponse message: ${gitudyResponse.message()}")
+//        }
+//    }
+
+    fun setPushAlarmYn(isPush: Boolean) {
+        _registerInfoState.update { it.copy(pushAlarmYn = isPush) }
+    }
+
+    fun setNickname(name: String) {
+        _registerInfoState.update { it.copy(name = name) }
+    }
+    fun setGithubId(githubId: String) {
+        _registerInfoState.update { it.copy(githubId = githubId) }
+    }
+
     fun getRegisterTokens() = viewModelScope.launch {
         gitudyRepository = GitudyRepository()
 
@@ -45,10 +81,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
             )
         }"
         Log.d("RegisterViewModel", bearerToken)
-        val request = RegisterRequest(
-            github_id = prefs.loadPref(SPKey.GITHUB_ID, "0"),
-            name = prefs.loadPref(SPKey.GITUDY_NAME, "0")
-        )
+        val request = registerInfoState.value
 
         val tokenResponse = gitudyRepository.getRegisterTokens(bearerToken, request)
 
@@ -66,8 +99,6 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
                     SPKey.REFRESH_TOKEN,
                     allTokens.refreshToken
                 )
-
-                Log.d("RegisterViewModel", "https status: $resCode, $resMsg")
                 Log.d(
                     "RegisterViewModel",
                     "shared pref 저장된 access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\n"

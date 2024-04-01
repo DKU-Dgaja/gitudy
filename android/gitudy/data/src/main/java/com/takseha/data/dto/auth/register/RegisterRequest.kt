@@ -4,9 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class RegisterRequest(
     @SerializedName("name")
-    val name: String,
+    val name: String = "",
     @SerializedName("github_id")
-    val githubId: String,
+    val githubId: String = "",
     @SerializedName("push_alarm_yn")
-    val pushAlarmYn: Boolean
+    val pushAlarmYn: Boolean = true
 )
