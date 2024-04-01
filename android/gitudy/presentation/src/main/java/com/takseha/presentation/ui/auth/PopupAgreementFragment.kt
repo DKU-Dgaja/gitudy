@@ -86,8 +86,8 @@ class PopupAgreementFragment : Fragment() {
             }
 
             confirmBtn.setOnClickListener {
-                pushAlarmYnBtn.isChecked
-                it.findNavController().navigate(R.id.action_popupFragment_to_inputNicknameFragment)
+                var action = PopupAgreementFragmentDirections.actionPopupFragmentToInputNicknameFragment(pushAlarmYnBtn.isChecked)
+                it.findNavController().navigate(action)
             }
         }
     }
