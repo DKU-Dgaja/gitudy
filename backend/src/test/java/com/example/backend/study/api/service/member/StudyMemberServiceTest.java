@@ -8,6 +8,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcmToken.FcmToken;
 import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -225,10 +226,7 @@ public class StudyMemberServiceTest extends TestConfig {
         User user2 = UserFixture.generateKaKaoUser();
 
         userRepository.saveAll(List.of(leaderuser, user1, user2));
-        fcmTokenRepository.save(FcmToken.builder()
-                        .userId(user1.getId())
-                        .fcmToken("FCM token")
-                .build());
+        fcmTokenRepository.save(FcmFixture.generateDefaultFcmToken(user1.getId()));
 
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
         studyInfoRepository.save(studyInfo);
@@ -307,10 +305,7 @@ public class StudyMemberServiceTest extends TestConfig {
         StudyTodoMapping mappingPast1 = StudyTodoFixture.createCompleteStudyTodoMapping(pastTodo1.getId(), activeMember.getUserId());
         studyTodoMappingRepository.saveAll(List.of(mappingFuture1, mappingFuture2, mappingPast1));
 
-        fcmTokenRepository.save(FcmToken.builder()
-                .userId(activeMember.getUserId())
-                .fcmToken("FCM token")
-                .build());
+        fcmTokenRepository.save(FcmFixture.generateDefaultFcmToken(activeMember.getUserId()));
 
         // when
         studyMemberService.resignStudyMember(studyInfo.getId(), activeMember.getUserId());
