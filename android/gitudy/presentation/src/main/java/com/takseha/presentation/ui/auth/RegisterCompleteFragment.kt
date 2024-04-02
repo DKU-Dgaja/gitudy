@@ -10,17 +10,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import androidx.fragment.app.activityViewModels
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentRegisterCompleteBinding
 import com.takseha.presentation.ui.home.MainHomeActivity
+import com.takseha.presentation.viewmodel.auth.RegisterViewModel
 
 // TODO : push 알림 수신 동의 현황 dialog로 띄우기!!! 회원가입 후? 알아보기!
 class RegisterCompleteFragment : Fragment() {
     private var _binding : FragmentRegisterCompleteBinding? = null
     private val binding get() = _binding!!
-    private lateinit var prefs: SP
+    private val viewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,10 +40,8 @@ class RegisterCompleteFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        prefs = SP(requireActivity().applicationContext)
-
         with(binding) {
-            nickname.text = prefs.loadPref(SPKey.GITUDY_NAME, "0")
+            nickname.text = viewModel.registerInfoState.value.name
 
             val characterAnim = AnimationUtils.loadAnimation(context, R.anim.fade_in)
             characterLayout.startAnimation(characterAnim)
