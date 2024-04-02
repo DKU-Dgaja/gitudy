@@ -3,8 +3,7 @@ package com.takseha.presentation.ui.home
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMainHomeBinding
@@ -12,12 +11,12 @@ import com.takseha.presentation.ui.feed.FeedHomeFragment
 import com.takseha.presentation.ui.mystudy.MyStudyHomeFragment
 import com.takseha.presentation.ui.profile.ProfileHomeFragment
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
-import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainHomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainHomeBinding
-    private lateinit var viewModel: MainHomeViewModel
+    private val viewModel: MainHomeViewModel by viewModels()
+
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
             super.handleOnBackCancelled()
@@ -46,23 +45,20 @@ class MainHomeActivity : AppCompatActivity() {
         this.onBackPressedDispatcher.addCallback(this, callback)
     }
     private fun setViewModel() {
-        viewModel = ViewModelProvider(this)[MainHomeViewModel::class.java]
-        viewModel.getUserInfo()
+        lifecycleScope.launch {
+            // TODO : getMyStudyList, getStudyList function 적용
+            viewModel.getUserInfo()
+        }
     }
     private fun setMainFragmentView(savedInstanceState: Bundle?) {
         with(binding) {
             if (savedInstanceState == null) {
-                val fragment = MainHomeFragment()
-
-                sendUserInfo(fragment)
-                supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, fragment).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, MainHomeFragment()).commit()
                 navHome.isChecked = true
             }
-            navHome.setOnClickListener {
-                val fragment = MainHomeFragment()
 
-                sendUserInfo(fragment)
-                supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, fragment).commit()
+            navHome.setOnClickListener {
+                supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, MainHomeFragment()).commit()
                 navHome.isChecked = true
             }
             navMyStudy.setOnClickListener {
@@ -74,24 +70,9 @@ class MainHomeActivity : AppCompatActivity() {
                 navFeed.isChecked = true
             }
             navProfile.setOnClickListener {
-                val fragment = ProfileHomeFragment()
-
-                sendUserInfo(fragment)
-                supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, fragment).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.mainFragmentContainerView, ProfileHomeFragment()).commit()
                 navProfile.isChecked = true
             }
         }
     }
-    private fun sendUserInfo(fragment: Fragment) {
-        var bundle = Bundle()
-
-        lifecycleScope.launch {
-            viewModel.uiState.collectLatest {
-                bundle.putSerializable("userInfo", it)
-                fragment.arguments = bundle
-            }
-        }
-    }
-
-    // TODO : sendMyStudyList, sendStudyList function 만들기
 }
