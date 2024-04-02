@@ -8,3 +8,4 @@ public class EventException extends GitudyException {
         super(message.getText());
     }
 }
+

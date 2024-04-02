@@ -3,6 +3,7 @@ package com.example.backend.domain.define.study.member;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.member.constant.StudyMemberRole;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -106,4 +107,11 @@ public class StudyMemberFixture {
         }
         return studyMembers;
     }
+
+    public static ApplyMemberMessageRequest generateApplyMemberMessageRequest() {
+        return ApplyMemberMessageRequest.builder()
+                .message("message")
+                .build();
+    }
+
 }

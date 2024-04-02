@@ -77,7 +77,7 @@ public enum ExceptionMessage {
     // CategoryException
     CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),
 
-    // FcmException
+    // FCM Exception
     FCM_DEVICE_NOT_FOUND("해당 유저의 기기를 찾을 수 없습니다.")
     ;
     private final String text;

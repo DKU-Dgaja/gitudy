@@ -37,7 +37,7 @@ public class StudyInfoController {
     public JsonResult<?> registerStudy(@AuthenticationPrincipal User user,
                                        @Valid @RequestBody StudyInfoRegisterRequest studyInfoRequest) {
         UserInfoResponse findUser = authService.findUserInfo(user);
-        StudyInfoRegisterResponse response = studyInfoService.registerStudy(studyInfoRequest, findUser);
+        studyInfoService.registerStudy(studyInfoRequest, findUser);
         return JsonResult.successOf("Study Register Success.");
     }
 

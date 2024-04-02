@@ -192,7 +192,7 @@
                 style="@style/B4_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="마감시간"
+                android:text="마감 요일"
                 android:textColor="@color/BLACK"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -203,7 +203,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
-                android:text="마감 1시간 전에 팀원에게 알람을 보내드려요\n* 사용자 지역에 따른 시간 기준입니다"
+                android:text="마감일에 팀원에게 알람을 보내드려요"
                 android:textColor="@color/GS_500"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/closeTimeTitle" />
@@ -226,7 +226,7 @@
                     style="@style/B4_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/to_do_close_time"
+                    android:text="%s"
                     android:textColor="@color/GS_900" />
 
             </LinearLayout>

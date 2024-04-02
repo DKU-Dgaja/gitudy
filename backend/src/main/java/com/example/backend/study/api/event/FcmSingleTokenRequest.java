@@ -21,4 +21,13 @@ public class FcmSingleTokenRequest {
     private String message;          // 메시지
 
     // private String image;            // 이미지
+
+
+    public static FcmSingleTokenRequest of(String token, String title, String message) {
+        return FcmSingleTokenRequest.builder()
+                .token(token)
+                .title(title)
+                .message(message)
+                .build();
+    }
 }

@@ -19,7 +19,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudyInfoUpdateRequest {
-    private Long userId;                            // 스터디장 ID
 
     private String topic;                           // 스터디 이름
 

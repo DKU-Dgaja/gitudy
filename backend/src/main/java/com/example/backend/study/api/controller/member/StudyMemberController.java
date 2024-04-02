@@ -4,12 +4,14 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -54,15 +56,14 @@ public class StudyMemberController {
 
     // 스터디 탈퇴
     @ApiResponse(responseCode = "200", description = "스터디 탈퇴 성공")
-    @PatchMapping("/{studyInfoId}/withdrawal/{userId}")
+    @PatchMapping("/{studyInfoId}/withdrawal")
     public JsonResult<?> withdrawalStudyMember(@AuthenticationPrincipal User user,
-                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                               @PathVariable(name = "userId") Long userId) {
+                                               @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
         // 스터디멤버 검증
-        studyMemberService.isValidateStudyMember(user, studyInfoId);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        studyMemberService.withdrawalStudyMember(studyInfoId, userId);
+        studyMemberService.withdrawalStudyMember(studyInfoId, userInfo.getUserId());
 
         return JsonResult.successOf("Withdrawal Member Success");
     }
@@ -72,11 +73,12 @@ public class StudyMemberController {
     @PostMapping("/{studyInfoId}/apply")
     public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                          @RequestParam(name = "joinCode", required = false) String joinCode) {
+                                          @RequestParam(name = "joinCode", required = false) String joinCode,
+                                          @Valid @RequestBody ApplyMemberMessageRequest memberMessageRequest) {
 
         UserInfoResponse userInfo = authService.findUserInfo(user);
 
-        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode);
+        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode, memberMessageRequest);
 
         return JsonResult.successOf("Apply StudyMember Success");
     }

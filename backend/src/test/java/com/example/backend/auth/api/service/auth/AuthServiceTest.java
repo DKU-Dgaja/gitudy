@@ -149,6 +149,7 @@ class AuthServiceTest extends TestConfig {
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
                 .githubId(githubId)
                 .name(name)
+                .pushAlarmYn(true)
                 .build();
 
         // when
@@ -160,6 +161,7 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertThat(tokenValid).isTrue();
+        assertTrue(savedUser.isPushAlarmYn());
     }
 
     @Test
