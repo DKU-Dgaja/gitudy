@@ -16,6 +16,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentRegisterCompleteBinding
 import com.takseha.presentation.ui.home.MainHomeActivity
 
+// TODO : push 알림 수신 동의 현황 dialog로 띄우기!!! 회원가입 후? 알아보기!
 class RegisterCompleteFragment : Fragment() {
     private var _binding : FragmentRegisterCompleteBinding? = null
     private val binding get() = _binding!!
