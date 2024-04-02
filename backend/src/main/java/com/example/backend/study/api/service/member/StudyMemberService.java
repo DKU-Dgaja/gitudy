@@ -254,7 +254,7 @@ public class StudyMemberService {
         }
     }
 
-    // 스터디 가입신청 목록 조회 메서드 //Todo: 팀장에게 한마디 필드 보여줘야함 (팝업)
+    // 스터디 가입신청 목록 조회 메서드
     public StudyMemberApplyListAndCursorIdxResponse applyListStudyMember(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리

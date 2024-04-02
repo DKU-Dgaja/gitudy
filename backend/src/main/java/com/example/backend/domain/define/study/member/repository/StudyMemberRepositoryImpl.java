@@ -124,6 +124,7 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
         JPAQuery<StudyMemberApplyResponse> query = queryFactory
                 .select(Projections.constructor(StudyMemberApplyResponse.class,
                         studyMember.id,
+                        studyMember.signGreeting,
                         user.id.as("userId"),
                         user.name,
                         user.githubId,

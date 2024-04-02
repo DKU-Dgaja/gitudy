@@ -13,6 +13,8 @@ public class StudyMemberApplyResponse {
 
     private Long id;  // 스터디 member id
 
+    private String signGreeting; // 스터디장에게 한마디
+
     private Long userId;   // userId
 
     private String name;  // 이름
