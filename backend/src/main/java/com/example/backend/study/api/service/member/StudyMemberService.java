@@ -150,7 +150,6 @@ public class StudyMemberService {
             throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
         }
 
-        // Todo: 팀장에게 한마디 저장하는 로직 memberMessageRequest
         // Todo: 알림 페이지에 보여줄 정보 반환 로직
 
         // 알림 여부
@@ -160,14 +159,15 @@ public class StudyMemberService {
         Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
         if (existingMember.isPresent()) {
             if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
-                existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경 후 종료
+                existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경
+                existingMember.get().updateSignGreeting(memberMessageRequest.getMessage()); // 가입인사 수정
                 notifyLeader = true;  // 알림설정
             }
 
         } else {
 
             // '스터디 승인 대기중인 유저' 로 생성
-            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId());
+            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId(), memberMessageRequest.getMessage());
             studyMemberRepository.save(studyMember);
             notifyLeader = true;
 
