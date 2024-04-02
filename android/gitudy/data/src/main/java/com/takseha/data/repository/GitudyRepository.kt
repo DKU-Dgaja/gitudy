@@ -13,6 +13,11 @@ class GitudyRepository {
         code: String,
         state: String
     ) = client.getLoginTokens(platformType, code, state)
+
+    suspend fun checkCorrectNickname(
+        request: String
+    ) = client.checkCorrectNickname(request)
+
     suspend fun getRegisterTokens(
         bearerToken: String,
         request: RegisterRequest

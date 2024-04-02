@@ -3,6 +3,7 @@ package com.takseha.data.api.gitudy
 import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.login.LoginPageResponse
 import com.takseha.data.dto.auth.login.LoginResponse
+import com.takseha.data.dto.auth.register.NickNameResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.auth.register.RegisterResponse
 import com.takseha.data.dto.feed.MakeStudyRequest
@@ -26,6 +27,11 @@ interface GitudyApi {
         @Query("code") code: String,
         @Query("state") state: String
     ): Response<LoginResponse>
+
+    @POST("/auth/check-nickname")
+    suspend fun checkCorrectNickname(
+        @Body request: String
+    ): Response<NickNameResponse>
 
     @POST("/auth/register")
     suspend fun getRegisterTokens(
