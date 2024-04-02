@@ -22,7 +22,7 @@ public class StudyCommitService {
 
     public CommitInfoResponse getCommitDetailsById(Long commitId) {
         // 커밋 조회 예외처리
-        StudyCommit commit = findByIdOrThrowCommitException(commitId);
+        StudyCommit commit = findStudyCommitByIdOrThrowException(commitId);
 
         return CommitInfoResponse.of(commit);
     }
@@ -34,11 +34,11 @@ public class StudyCommitService {
         return studyCommitRepository.findStudyCommitListByUserId_CursorPaging(userId, studyId, cursorIdx, limit);
     }
 
-    public StudyCommit findByIdOrThrowCommitException(Long commitId) {
-        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
-            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
-            throw new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
-        });
-        return commit;
+    public StudyCommit findStudyCommitByIdOrThrowException(Long commitId) {
+        return studyCommitRepository.findById(commitId)
+                .orElseThrow(() -> {
+                    log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
+                    return new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
+                });
     }
 }

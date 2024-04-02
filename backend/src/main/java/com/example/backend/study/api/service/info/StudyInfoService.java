@@ -65,7 +65,7 @@ public class StudyInfoService {
     @Transactional
     public void updateStudyInfo(StudyInfoUpdateRequest request, Long studyInfoId) {
         // 스터디 조회 예외처리
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 변경 전 카테고리 매핑 삭제
         studyCategoryMappingRepository.deleteByStudyInfoId(studyInfo.getId());
@@ -81,7 +81,7 @@ public class StudyInfoService {
     @Transactional
     public boolean deleteStudy(Long studyInfoId) {
         // 스터디 조회 예외처리
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 스터디 상태정보 변경
         studyInfo.updateDeletedStudy();
@@ -94,7 +94,7 @@ public class StudyInfoService {
 
     public UpdateStudyInfoPageResponse updateStudyInfoPage(Long studyInfoId) {
         // 스터디 조회 예외처리
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
 
@@ -133,7 +133,7 @@ public class StudyInfoService {
     // 스터디 상세정보 조회
     public StudyInfoDetailResponse selectStudyInfoDetail(Long studyInfoId) {
         // Study 조회
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
         return getStudyInfoDetailResponse(studyInfo, categoryNames);
@@ -242,7 +242,7 @@ public class StudyInfoService {
         return studyInfoRepository.save(studyInfo);
     }
 
-    public StudyInfo findByIdOrThrowStudyInfoException(Long studyInfoId) {
+    public StudyInfo findStudyInfoByIdOrThrowException(Long studyInfoId) {
         return studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);

@@ -24,7 +24,7 @@ public class CommitCommentService {
 
     public List<CommitCommentInfoResponse> getCommitCommentsList(Long commitId) {
         // 커밋 조회 예외처리
-        studyCommitService.findByIdOrThrowCommitException(commitId);
+        studyCommitService.findStudyCommitByIdOrThrowException(commitId);
 
         // 커밋 Id로 댓글리스트 가져오기 + 유저 조인
         return commitCommentRepository.findCommitCommentListByCommitIdJoinUser(commitId);
@@ -43,7 +43,7 @@ public class CommitCommentService {
     @Transactional
     public void updateCommitComment(Long userId, Long commentId, AddCommitCommentRequest request) {
         // 커밋 댓글 조회 예외처리
-        CommitComment commitComment = findByIdOrThrowCommitCommentException(commentId);
+        CommitComment commitComment = findCommitCommentByIdOrThrowException(commentId);
 
         // 커밋 댓글의 주인이 아닐 경우 예외 발생
         isCommitOwner(userId, commitComment);
@@ -55,7 +55,7 @@ public class CommitCommentService {
     @Transactional
     public void deleteCommitComment(Long userId, Long commentId) {
         // 커밋 댓글 조회 예외처리
-        CommitComment commitComment = findByIdOrThrowCommitCommentException(commentId);
+        CommitComment commitComment = findCommitCommentByIdOrThrowException(commentId);
 
         // 커밋 댓글의 주인이 아닐 경우 예외 발생
         isCommitOwner(userId, commitComment);
@@ -64,12 +64,12 @@ public class CommitCommentService {
         commitCommentRepository.delete(commitComment);
     }
 
-    public CommitComment findByIdOrThrowCommitCommentException(Long commentId) {
-        CommitComment commitComment = commitCommentRepository.findById(commentId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", commentId, ExceptionMessage.COMMIT_COMMENT_NOT_FOUND.getText());
-            throw new CommitException(ExceptionMessage.COMMIT_COMMENT_NOT_FOUND);
-        });
-        return commitComment;
+    public CommitComment findCommitCommentByIdOrThrowException(Long commentId) {
+        return commitCommentRepository.findById(commentId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", commentId, ExceptionMessage.COMMIT_COMMENT_NOT_FOUND.getText());
+                    return new CommitException(ExceptionMessage.COMMIT_COMMENT_NOT_FOUND);
+                });
     }
 
     private static void isCommitOwner(Long userId, CommitComment commitComment) {

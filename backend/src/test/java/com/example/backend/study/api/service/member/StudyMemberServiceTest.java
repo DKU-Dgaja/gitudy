@@ -774,7 +774,7 @@ public class StudyMemberServiceTest extends TestConfig {
             studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), refusedMember.getUserId(), approve);
         });
 
-        assertEquals(ExceptionMessage.USER_NOT_STUDY_MEMBER.getText(), em.getMessage());
+        assertEquals(ExceptionMessage.STUDY_WAITING_NOT_MEMBER.getText(), em.getMessage());
     }
 
     @Test
