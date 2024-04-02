@@ -27,6 +27,7 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
+@RecordApplicationEvents
 @EnableAsync
 public class TestConfig {
     public static final String AUTHORIZATION = "Authorization";

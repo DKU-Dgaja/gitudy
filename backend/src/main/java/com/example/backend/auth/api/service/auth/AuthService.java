@@ -64,6 +64,7 @@ public class AuthService {
                             .platformType(loginResponse.getPlatformType())
                             .role(UserRole.UNAUTH)
                             .name(name)
+                            .score(10)
                             .profileImageUrl(profileImageUrl)
                             .build();
 
