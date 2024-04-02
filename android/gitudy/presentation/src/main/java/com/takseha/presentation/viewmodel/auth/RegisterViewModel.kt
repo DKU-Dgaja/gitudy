@@ -5,7 +5,6 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.SAVED_STATE_REGISTRY_OWNER_KEY
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
@@ -29,11 +28,11 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     val isCorrectId : LiveData<Boolean>
         get() = _isCorrectId
 
-//    private var _isCorrectName = MutableLiveData<Boolean>()
-//    val isCorrectName : LiveData<Boolean>
-//        get() = _isCorrectName
+    private var _isCorrectName = MutableLiveData<Boolean>()
+    val isCorrectName : LiveData<Boolean>
+        get() = _isCorrectName
 
-    fun checkGithubId(githubId: String) = viewModelScope.launch {
+    suspend fun checkGithubId(githubId: String) {
         githubRepository = GithubRepository()
 
         val githubResponse = githubRepository.checkCorrectGithubId(githubId)
@@ -46,19 +45,25 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    // TODO : 닉네임 중복 검사 함수 구현하기
-//    fun checkNickname(name: String) = viewModelScope.launch {
-//        gitudyRepository = GitudyRepository()
-//
-//        val gitudyResponse = gitudyRepository.checkCorrectGithubId(name)
-//
-//        if (gitudyResponse.isSuccessful) {
-//            _isCorrectName.value = true
-//        } else {
-//            _isCorrectName.value = false
-//            Log.e("RegisterViewModel", "githubResponse status: ${gitudyResponse.code()}\ngithubResponse message: ${gitudyResponse.message()}")
-//        }
-//    }
+    suspend fun checkNickname(name: String) {
+        gitudyRepository = GitudyRepository()
+
+        val correctNameResponse = gitudyRepository.checkCorrectNickname(name)
+        val resCode = correctNameResponse.body()!!.resCode
+        val resMsg = correctNameResponse.body()!!.resMsg
+        val resObj = correctNameResponse.body()!!.resObj
+
+        if (correctNameResponse.isSuccessful) {
+            if (resCode == 200 && resMsg == "OK") {
+                _isCorrectName.value = true
+                Log.d("RegisterViewModel", resObj)
+            } else {
+                _isCorrectName.value = false
+            }
+        } else {
+            Log.e("RegisterViewModel", "correctNameResponse status: ${correctNameResponse.code()}\ncorrectNameResponse message: ${correctNameResponse.message()}")
+        }
+    }
 
     fun setPushAlarmYn(isPush: Boolean) {
         _registerInfoState.update { it.copy(pushAlarmYn = isPush) }
