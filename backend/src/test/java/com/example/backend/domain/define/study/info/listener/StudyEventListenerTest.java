@@ -8,6 +8,8 @@ import com.example.backend.domain.define.study.info.StudyEventFixture;
 import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.Message;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,6 +33,9 @@ public class StudyEventListenerTest extends TestConfig {
     @Mock
     private FcmService fcmService;
 
+    @Mock
+    private FirebaseMessaging firebaseMessaging;
+
 
     @AfterEach()
     void tearDown() {
@@ -48,6 +53,8 @@ public class StudyEventListenerTest extends TestConfig {
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leaderId);
 
         when(fcmTokenRepository.findById(any(Long.class))).thenReturn(Optional.of(fcmToken));
+
+        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
 
         // when
         studyEventListener.applyMemberListener(applyMemberEvent);

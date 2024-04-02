@@ -372,7 +372,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Test
     @DisplayName("스터디 가입 신청 테스트")
-    public void applyStudyMember() throws FirebaseMessagingException {
+    public void applyStudyMember() {
         // given
         String joinCode = null;
 
@@ -393,7 +393,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // then
         assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
-
+        assertEquals(request.getMessage(), waitMember.get().getSignGreeting()); // 스터디장에게 한마디 저장 확인
     }
 
     @Test

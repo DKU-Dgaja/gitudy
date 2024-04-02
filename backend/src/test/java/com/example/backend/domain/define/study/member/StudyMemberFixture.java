@@ -110,7 +110,7 @@ public class StudyMemberFixture {
 
     public static ApplyMemberMessageRequest generateApplyMemberMessageRequest() {
         return ApplyMemberMessageRequest.builder()
-                .message("message")
+                .message("스터디장에게 한마디 입니다.")
                 .build();
     }
 
