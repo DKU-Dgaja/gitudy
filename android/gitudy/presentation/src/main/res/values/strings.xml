@@ -23,7 +23,7 @@
     <string name="alert_text_length">%d자 이하로 입력해주세요.</string>
     <string name="alert_text_emoji">특수기호 및 이모티콘 입력은 불가해요.</string>
     <string name="alert_id_ok">연동 가능한 아이디입니다</string>
-    <string name="alert_id_not_ok">잘못된 깃허브 아이디입니다</string>
+    <string name="alert_id_not_ok">존재하지 않는 아이디입니다</string>
     <string name="alert_name_ok">사용 가능한 닉네임입니다</string>
     <string name="alert_name_not_ok">이미 존재하는 닉네임입니다</string>
 
