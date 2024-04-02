@@ -9,19 +9,21 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputIdBinding
 import com.takseha.presentation.viewmodel.auth.RegisterViewModel
+import kotlinx.coroutines.launch
 
 class InputIdFragment : Fragment() {
     private var _binding: FragmentInputIdBinding? = null
     private val binding get() = _binding!!
-    private lateinit var prefs: SP
-    private lateinit var viewModel: RegisterViewModel
+    private val viewModel: RegisterViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -37,8 +39,6 @@ class InputIdFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        prefs = SP(requireActivity().applicationContext)
-        viewModel = ViewModelProvider(this)[RegisterViewModel::class.java]
 
         with(binding) {
             inputIdEditText.addTextChangedListener(object : TextWatcher {
@@ -59,19 +59,20 @@ class InputIdFragment : Fragment() {
             })
 
             isIdOkBtn.setOnClickListener {
-                var githubId = inputIdEditText.text.toString()
+                viewLifecycleOwner.lifecycleScope.launch {
+                    var githubId = inputIdEditText.text.toString()
+                    viewModel.checkGithubId(githubId)
 
-                viewModel.checkGithubId(githubId)
-                viewModel.isCorrectId.observe(viewLifecycleOwner) {
-                    Log.e("InputIdFragment", "$it")
-                    if (it) {
+                    val isCorrectId = viewModel.isCorrectId.value
+                    Log.e("InputIdFragment", isCorrectId.toString())
+                    if (isCorrectId == true) {
                         idCheckText.apply {
                             text = getString(R.string.alert_id_ok)
                             setTextColor(
                                 ContextCompat.getColor(
-                                requireContext(),
-                                R.color.GS_500
-                            ))
+                                    requireContext(),
+                                    R.color.GS_500
+                                ))
                         }
                         confirmBtn.isEnabled = true
                     } else {
@@ -89,15 +90,9 @@ class InputIdFragment : Fragment() {
             }
 
             confirmBtn.setOnClickListener { view ->
-                prefs.savePref(
-                    SPKey.GITHUB_ID,
-                    inputIdEditText.text.toString()
-                )
-                Log.d(
-                    "InputIdFragment",
-                    "githubId: ${prefs.loadPref(SPKey.GITHUB_ID, "0")}"
-                )
+                viewModel.setGithubId(inputIdEditText.text.toString())
                 viewModel.getRegisterTokens()
+                Log.d("InputIdFragment", viewModel.registerInfoState.value.toString())
                 view.findNavController()
                     .navigate(R.id.action_inputIdFragment_to_loginCompleteFragment)
             }

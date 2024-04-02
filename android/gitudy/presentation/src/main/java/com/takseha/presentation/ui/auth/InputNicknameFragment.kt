@@ -9,18 +9,24 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Observer
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputNicknameBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
+import com.takseha.presentation.viewmodel.auth.RegisterViewModel
+import kotlinx.coroutines.launch
 
 class InputNicknameFragment : Fragment() {
     private var _binding: FragmentInputNicknameBinding? = null
     private val binding get() = _binding!!
-    private lateinit var prefs: SP
+    private val viewModel: RegisterViewModel by activityViewModels()
     private val maxLength = 6
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -39,7 +45,10 @@ class InputNicknameFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        prefs = SP(requireActivity().applicationContext)
+        // registerInfoState 업데이트
+        val args: InputNicknameFragmentArgs by navArgs()
+        viewModel.setPushAlarmYn(args.pushAlarmYn)
+        Log.d("InputNicknameFragment", viewModel.registerInfoState.value.toString())
 
         with(binding) {
             inputNicknameEditText.addTextChangedListener(object : TextWatcher {
@@ -57,11 +66,11 @@ class InputNicknameFragment : Fragment() {
                     val snackBarText = getString(R.string.alert_text_length)
 
                     if (nicknameLength > 0) {
-                        confirmBtn.isEnabled = true
+                        isNameOkBtn.isEnabled = true
                         nicknameLengthWithMax.text =
                             String.format(nicknameLengthText, nicknameLength, maxLength)
                         if (nicknameLength > maxLength) {
-                            confirmBtn.isEnabled = false
+                            isNameOkBtn.isEnabled = false
                             nicknameLengthWithMax.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
@@ -72,7 +81,7 @@ class InputNicknameFragment : Fragment() {
                                 anchorView = confirmBtn
                             }.show()
                         } else {
-                            confirmBtn.isEnabled = true
+                            isNameOkBtn.isEnabled = true
                             nicknameLengthWithMax.setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
@@ -81,7 +90,7 @@ class InputNicknameFragment : Fragment() {
                             )
                         }
                     } else {
-                        confirmBtn.isEnabled = false
+                        isNameOkBtn.isEnabled = false
                         nicknameLengthWithMax.text =
                             String.format(nicknameLengthText, nicknameLength, maxLength)
                     }
@@ -89,16 +98,41 @@ class InputNicknameFragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {}
             })
+            isNameOkBtn.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    var name = inputNicknameEditText.text.toString()
+                    viewModel.checkNickname(name)
+
+                    val isCorrectName = viewModel.isCorrectName.value
+                    Log.e("InputNicknameFragment", isCorrectName.toString())
+                    if (isCorrectName == true) {
+                        nicknameLengthWithMax.apply {
+                            text = getString(R.string.alert_name_ok)
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.GS_500
+                                ))
+                        }
+                        confirmBtn.isEnabled = true
+                    } else {
+                        nicknameLengthWithMax.apply {
+                            text = getString(R.string.alert_name_not_ok)
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_RED
+                                ))
+                        }
+                        confirmBtn.isEnabled = false
+                    }
+                }
+            }
 
             confirmBtn.setOnClickListener {
-                prefs.savePref(
-                    SPKey.GITUDY_NAME,
-                    inputNicknameEditText.text.toString()
-                )
+                viewModel.setNickname(inputNicknameEditText.text.toString())
                 Log.d(
-                    "InputNicknameFragment",
-                    "gitudyName: ${prefs.loadPref(SPKey.GITUDY_NAME, "0")}"
-                )
+                    "InputNicknameFragment", viewModel.registerInfoState.value.toString())
                 it.findNavController()
                     .navigate(R.id.action_inputNicknameFragment_to_inputIdFragment)
             }
