@@ -247,7 +247,6 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember1, activeMember2));
 
         // when
-        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
         studyMemberService.resignStudyMember(studyInfo.getId(), activeMember1.getUserId());
         Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
 
@@ -278,7 +277,6 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember1, activeMember2));
 
         // when
-        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
         studyMemberService.resignStudyMember(studyInfo.getId(), activeMember1.getUserId());
         Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
 
@@ -286,7 +284,7 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
         // 알람 여부 false이므로 event 발생하지 않는다.
-        // verify(memberEventListener).resignMemberListener(any(ResignMemberEvent.class));
+        verify(memberEventListener, times(0) ).resignMemberListener(any(ResignMemberEvent.class));
     }
 
     @Test
