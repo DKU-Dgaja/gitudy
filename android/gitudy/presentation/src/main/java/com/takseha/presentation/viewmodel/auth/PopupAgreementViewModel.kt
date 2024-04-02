@@ -16,18 +16,18 @@ class PopupAgreementViewModel : ViewModel() {
             PopupAgreementIntent.CheckCheckBtn1 -> checkCheckBtn1()
             PopupAgreementIntent.CheckCheckBtn2 -> checkCheckBtn2()
             PopupAgreementIntent.CheckCheckBtn3 -> checkCheckBtn3()
-            PopupAgreementIntent.CheckCheckBtn4 -> checkCheckBtn4()
+            PopupAgreementIntent.PushAlarmYnBtnChecked -> checkPushAlarmYnBtn()
         }
     }
     private fun checkAllAgreeBtn() {
         val state = uiState.value
-        if (!state.isCheckBtn1Checked || !state.isCheckBtn2Checked || !state.isCheckBtn3Checked || !state.isCheckBtn4Checked) {
+        if (!state.isCheckBtn1Checked || !state.isCheckBtn2Checked || !state.isCheckBtn3Checked || !state.isPushAlarmYnBtnChecked) {
             _uiState.update {
                 PopupAgreementUiState(
                     isCheckBtn1Checked = true,
                     isCheckBtn2Checked = true,
                     isCheckBtn3Checked = true,
-                    isCheckBtn4Checked = true
+                    isPushAlarmYnBtnChecked = true
                 )
             }
         } else {
@@ -51,9 +51,9 @@ class PopupAgreementViewModel : ViewModel() {
             it.copy(isCheckBtn3Checked = !it.isCheckBtn3Checked)
         }
     }
-    private fun checkCheckBtn4() {
+    private fun checkPushAlarmYnBtn() {
         _uiState.update {
-            it.copy(isCheckBtn4Checked = !it.isCheckBtn4Checked)
+            it.copy(isPushAlarmYnBtnChecked = !it.isPushAlarmYnBtnChecked)
         }
     }
 }
@@ -62,7 +62,7 @@ data class PopupAgreementUiState(
     val isCheckBtn1Checked: Boolean = false,
     val isCheckBtn2Checked: Boolean = false,
     val isCheckBtn3Checked: Boolean = false,
-    val isCheckBtn4Checked: Boolean = false
+    val isPushAlarmYnBtnChecked: Boolean = false
 )
 
 sealed interface PopupAgreementIntent {
@@ -70,5 +70,5 @@ sealed interface PopupAgreementIntent {
     object CheckCheckBtn1 : PopupAgreementIntent
     object CheckCheckBtn2 : PopupAgreementIntent
     object CheckCheckBtn3 : PopupAgreementIntent
-    object CheckCheckBtn4 : PopupAgreementIntent
+    object PushAlarmYnBtnChecked : PopupAgreementIntent
 }

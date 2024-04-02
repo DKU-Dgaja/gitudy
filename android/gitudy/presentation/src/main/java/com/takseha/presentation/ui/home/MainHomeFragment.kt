@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 class MainHomeFragment : Fragment() {
     private var _binding: FragmentMainHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: MainHomeViewModel
+    private val viewModel: MainHomeViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,8 +44,11 @@ class MainHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val userInfo = arguments?.getSerializable("userInfo") as MainHomeUserInfoUiState
-        setUserInfoInit(userInfo)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collectLatest {
+                setUserInfo(it)
+            }
+        }
 
         val characterAnim = AnimationUtils.loadAnimation(context, R.anim.alpha_character)
         binding.characterImg.startAnimation(characterAnim)
@@ -52,23 +56,6 @@ class MainHomeFragment : Fragment() {
 
     private fun setMyStudyList() {
         // recyclerView 관련 기능 구현
-    }
-
-    private fun setUserInfoInit(
-        userInfo: MainHomeUserInfoUiState
-    ) {
-        if (userInfo.name == "") {  // stateflow 초기값 처리 로직
-            viewModel = ViewModelProvider(this)[MainHomeViewModel::class.java]
-            viewModel.getUserInfo()
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.uiState.collectLatest {
-                    setUserInfo(it)
-                    Log.d("MainHomeFragment", it.toString())
-                }
-            }
-        } else {
-            setUserInfo(userInfo)
-        }
     }
 
     private fun setUserInfo(

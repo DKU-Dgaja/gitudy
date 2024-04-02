@@ -35,7 +35,7 @@
     <EditText
         android:id="@+id/inputNicknameEditText"
         style="@style/B2_2"
-        android:layout_width="wrap_content"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:paddingLeft="22dp"
         android:layout_marginTop="75dp"
@@ -47,6 +47,19 @@
         android:textColorHint="@color/GS_300"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputNicknameDescription2" />
+
+    <Button
+        android:id="@+id/isNameOkBtn"
+        style="@style/B7_2"
+        android:layout_width="60dp"
+        android:layout_height="25dp"
+        android:layout_marginTop="80dp"
+        android:background="@drawable/selector_btn_r6_enable"
+        android:enabled="false"
+        android:text="중복 확인"
+        android:textColor="@drawable/selector_text_color_enable"
+        app:layout_constraintStart_toEndOf="@+id/inputNicknameEditText"
         app:layout_constraintTop_toBottomOf="@+id/inputNicknameDescription2" />
 
     <TextView

@@ -19,8 +19,5 @@ data class MakeStudyRequest(
     @SerializedName("status")
     val status: StudyStatus = StudyStatus.STUDY_PUBLIC,
     @SerializedName("topic")
-    val topic: String = "",
-    // 사용 안함
-    @SerializedName("user_id")
-    val userId: Int = 0
+    val topic: String = ""
 )

@@ -16,6 +16,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentPopupAgreementBinding
 import com.takseha.presentation.viewmodel.auth.PopupAgreementIntent
 import com.takseha.presentation.viewmodel.auth.PopupAgreementViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
@@ -70,8 +71,8 @@ class PopupAgreementFragment : Fragment() {
             checkBtn3.setOnClickListener {
                 viewModel.handleIntent(PopupAgreementIntent.CheckCheckBtn3)
             }
-            checkBtn4.setOnClickListener {
-                viewModel.handleIntent(PopupAgreementIntent.CheckCheckBtn4)
+            pushAlarmYnBtn.setOnClickListener {
+                viewModel.handleIntent(PopupAgreementIntent.PushAlarmYnBtnChecked)
             }
 
             detailBtn1.setOnClickListener {
@@ -85,7 +86,8 @@ class PopupAgreementFragment : Fragment() {
             }
 
             confirmBtn.setOnClickListener {
-                it.findNavController().navigate(R.id.action_popupFragment_to_inputNicknameFragment)
+                var action = PopupAgreementFragmentDirections.actionPopupFragmentToInputNicknameFragment(pushAlarmYnBtn.isChecked)
+                it.findNavController().navigate(action)
             }
         }
     }
@@ -95,8 +97,8 @@ class PopupAgreementFragment : Fragment() {
             viewModel.uiState.flowWithLifecycle(
                 lifecycle = viewLifecycleOwner.lifecycle,
                 minActiveState = Lifecycle.State.STARTED
-            ).collect {
-                handleAgreementStates(it.isCheckBtn1Checked, it.isCheckBtn2Checked, it.isCheckBtn3Checked, it.isCheckBtn4Checked)
+            ).collectLatest {
+                handleAgreementStates(it.isCheckBtn1Checked, it.isCheckBtn2Checked, it.isCheckBtn3Checked, it.isPushAlarmYnBtnChecked)
             }
         }
     }
@@ -105,17 +107,18 @@ class PopupAgreementFragment : Fragment() {
         isCheckBtn1Checked: Boolean,
         isCheckBtn2Checked: Boolean,
         isCheckBtn3Checked: Boolean,
-        isCheckBtn4Checked: Boolean
+        isPushAlarmYnBtnChecked: Boolean
     ) {
         with(binding) {
-            val isAllChecked = isCheckBtn1Checked && isCheckBtn2Checked && isCheckBtn3Checked && isCheckBtn4Checked
+            val isAllChecked = isCheckBtn1Checked && isCheckBtn2Checked && isCheckBtn3Checked && isPushAlarmYnBtnChecked
+            val isOk = isCheckBtn1Checked && isCheckBtn2Checked && isCheckBtn3Checked
 
             setAllAgreeBtnState(isAllChecked)
             checkBtn1.isChecked = isCheckBtn1Checked
             checkBtn2.isChecked = isCheckBtn2Checked
             checkBtn3.isChecked = isCheckBtn3Checked
-            checkBtn4.isChecked = isCheckBtn4Checked
-            confirmBtn.isEnabled = isAllChecked
+            pushAlarmYnBtn.isChecked = isPushAlarmYnBtnChecked
+            confirmBtn.isEnabled = isOk
         }
     }
 

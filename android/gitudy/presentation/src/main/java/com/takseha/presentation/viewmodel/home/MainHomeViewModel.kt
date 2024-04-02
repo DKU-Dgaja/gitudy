@@ -31,7 +31,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     val cursorIdx : LiveData<Long?>
         get() = _cursorIdx
 
-    fun getUserInfo() = viewModelScope.launch {
+    suspend fun getUserInfo() {
         val userInfoResponse = gitudyRepository.getUserInfo(bearerToken)
 
         if (userInfoResponse.isSuccessful) {

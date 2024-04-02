@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.cli.jvm.main
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs.kotlin")
 
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
@@ -72,6 +73,9 @@ dependencies {
     // navigation
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
+    // safe args
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // security
     implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
