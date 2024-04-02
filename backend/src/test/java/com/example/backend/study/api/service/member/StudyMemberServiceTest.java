@@ -14,6 +14,7 @@ import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.listener.StudyEventListener;
+import com.example.backend.domain.define.study.info.listener.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -77,9 +77,6 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @Autowired
     private FcmTokenRepository fcmTokenRepository;
-
-    @MockBean
-    private FirebaseMessaging firebaseMessaging;
     
     @MockBean
     private StudyEventListener studyEventListener;
@@ -728,6 +725,32 @@ public class StudyMemberServiceTest extends TestConfig {
     }
 
     @Test
+    @DisplayName("스터디장의 가입신청 승인 테스트 - 승인 알림")
+    public void leader_apply_approve_notify() throws FirebaseMessagingException {
+
+        // given
+        boolean approve = true;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+
+
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
+        studyMemberRepository.save(waitingMember);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
+
+        // then
+        verify(studyEventListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+    }
+
+    @Test
     @DisplayName("스터디장의 가입신청 거부 테스트")
     public void leaderApplyRefuseTest() {
         // given
@@ -750,6 +773,33 @@ public class StudyMemberServiceTest extends TestConfig {
         // then
         assertTrue(findStudyMember.isPresent());
         assertEquals(findStudyMember.get().getStatus(), StudyMemberStatus.STUDY_REFUSED);  // 거부 상태로 변경
+    }
+
+
+    @Test
+    @DisplayName("스터디장의 가입신청 거부 테스트 - 거부 알림")
+    public void leader_apply_refuse_notify() throws FirebaseMessagingException {
+
+        // given
+        boolean approve = false;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+
+
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
+        studyMemberRepository.save(waitingMember);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
+
+        // then
+        verify(studyEventListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
     }
 
     @Test

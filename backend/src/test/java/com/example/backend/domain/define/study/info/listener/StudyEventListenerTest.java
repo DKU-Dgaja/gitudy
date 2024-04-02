@@ -5,18 +5,16 @@ import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcmToken.FcmToken;
 import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyEventFixture;
+import com.example.backend.domain.define.study.info.listener.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.Optional;
 
@@ -58,6 +56,27 @@ public class StudyEventListenerTest extends TestConfig {
 
         // when
         studyEventListener.applyMemberListener(applyMemberEvent);
+
+        // then
+        verify(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증
+    }
+
+    @Test
+    @DisplayName("스터디 가입 신청 승인/거부 리스너 테스트")
+    void apply_approve_refuse_test() throws Exception {
+        // given
+        Long applyUserId = 1L;
+
+        ApplyApproveRefuseMemberEvent applyApproveRefuseMemberEvent = StudyEventFixture.generateApplyApproveRefuseMemberEvent(applyUserId);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(applyUserId);
+
+        when(fcmTokenRepository.findById(any(Long.class))).thenReturn(Optional.of(fcmToken));
+
+        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
+
+        // when
+        studyEventListener.applyApproveRefuseMemberListener(applyApproveRefuseMemberEvent);
 
         // then
         verify(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증
