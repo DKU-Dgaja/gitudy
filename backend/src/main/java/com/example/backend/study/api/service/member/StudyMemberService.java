@@ -9,6 +9,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.domain.define.study.info.listener.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
@@ -233,6 +234,9 @@ public class StudyMemberService {
     @Transactional
     public void leaderApproveRefuseMember(Long studyInfoId, Long applyUserId, boolean approve) {
 
+        // 스터디 조회 예외처리
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
         // 승인/거부할 스터디원 조회
         StudyMember applyMember = findStudyMemberByStudyInfoIdAndUserIdOrThrowException(studyInfoId, applyUserId);
 
@@ -248,16 +252,22 @@ public class StudyMemberService {
             // 스터디 가입 시 User +5점
             findUser.addUserScore(5);
 
-            /*
-                알림 메서드 추가
-            */
-
         } else {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_REFUSED);
 
-            /*
-                알림 메서드 추가
-             */
+        }
+
+        User applyUser = userService.findUserByIdOrThrowException(applyUserId);
+
+        // fcm 백그라운드 알림
+        if (applyUser.isPushAlarmYn()) {
+
+            eventPublisher.publishEvent(ApplyApproveRefuseMemberEvent.builder()
+                    .approve(approve)
+                    .applyUserId(applyUserId)
+                    .studyTopic(studyInfo.getTopic())
+                    .name(applyUser.getName())
+                    .build());
         }
     }
 
