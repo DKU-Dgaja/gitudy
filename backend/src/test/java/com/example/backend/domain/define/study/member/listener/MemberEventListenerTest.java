@@ -47,7 +47,7 @@ class MemberEventListenerTest extends TestConfig {
         ResignMemberEvent mockEvent = MemberEventFixture.generateApplyMemberEvent(resignMemberId);
         FcmToken mockFcmTokenObj = FcmFixture.generateDefaultFcmToken(resignMemberId);
 
-        when(fcmTokenRepository.findById(any(Long.class))).thenReturn(Optional.of(mockFcmTokenObj));
+        when(fcmService.findFcmTokenByIdOrThrowException(resignMemberId)).thenReturn(mockFcmTokenObj);
 
         // when
         memberEventListener.resignMemberListener(mockEvent);

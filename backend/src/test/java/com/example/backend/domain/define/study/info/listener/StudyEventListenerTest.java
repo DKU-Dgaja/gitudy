@@ -16,8 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.util.Optional;
-
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -50,7 +48,7 @@ public class StudyEventListenerTest extends TestConfig {
 
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leaderId);
 
-        when(fcmTokenRepository.findById(any(Long.class))).thenReturn(Optional.of(fcmToken));
+        when(fcmService.findFcmTokenByIdOrThrowException(leaderId)).thenReturn(fcmToken);
 
         when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
 
@@ -71,7 +69,7 @@ public class StudyEventListenerTest extends TestConfig {
 
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(applyUserId);
 
-        when(fcmTokenRepository.findById(any(Long.class))).thenReturn(Optional.of(fcmToken));
+        when(fcmService.findFcmTokenByIdOrThrowException(applyUserId)).thenReturn(fcmToken);
 
         when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
 
