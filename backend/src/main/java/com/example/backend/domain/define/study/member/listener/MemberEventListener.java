@@ -20,16 +20,12 @@ import org.springframework.stereotype.Component;
 public class MemberEventListener {
 
     private final FcmService fcmService;
-    private final FcmTokenRepository fcmTokenRepository;
 
     @Async
     @EventListener
     public void resignMemberListener(ResignMemberEvent event) throws FirebaseMessagingException {
-        FcmToken fcmToken = fcmTokenRepository.findById(event.getResignMemberId()).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", event.getResignMemberId(), ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-            return new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-        });
-        
+        FcmToken fcmToken = fcmService.findFcmTokenByIdOrThrowException(event.getResignMemberId());
+
         fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
                 .token(fcmToken.getFcmToken())
                 .title("알림")

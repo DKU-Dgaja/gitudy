@@ -22,18 +22,13 @@ import org.springframework.stereotype.Component;
 public class StudyEventListener {
 
     private final FcmService fcmService;
-    private final FcmTokenRepository fcmTokenRepository;
 
 
     @Async
     @EventListener
     public void applyMemberListener(ApplyMemberEvent event) throws FirebaseMessagingException {
 
-        FcmToken fcmToken = fcmTokenRepository.findById(event.getStudyLeaderId())
-                .orElseThrow(() -> {
-                    log.warn(">>>> {} : {} <<<<", event.getStudyLeaderId(), ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-                    return new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-                });
+        FcmToken fcmToken = fcmService.findFcmTokenByIdOrThrowException(event.getStudyLeaderId());
 
 
         fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
@@ -48,11 +43,7 @@ public class StudyEventListener {
     @EventListener
     public void applyApproveRefuseMemberListener(ApplyApproveRefuseMemberEvent event) throws FirebaseMessagingException {
 
-        FcmToken fcmToken = fcmTokenRepository.findById(event.getApplyUserId())
-                .orElseThrow(() -> {
-                    log.warn(">>>> {} : {} <<<<", event.getApplyUserId(), ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-                    return new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
-                });
+        FcmToken fcmToken = fcmService.findFcmTokenByIdOrThrowException(event.getApplyUserId());
 
         String title;
         String message;
