@@ -12,6 +12,7 @@ import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.listener.ApplyApproveRefuseMemberListener;
 import com.example.backend.domain.define.fcm.listener.ApplyMemberListener;
+import com.example.backend.domain.define.fcm.listener.NotifyMemberListener;
 import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -22,6 +23,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
@@ -83,6 +85,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @MockBean
     private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
+
+    @MockBean
+    private NotifyMemberListener notifyMemberListener;
 
 
     public final static Long CursorIdx = null;
@@ -1027,4 +1032,55 @@ public class StudyMemberServiceTest extends TestConfig {
 
         assertEquals(ExceptionMessage.STUDY_NOT_APPLY_LIST.getText(), em.getMessage());
     }
+
+
+    @Test
+    @DisplayName("스터디 멤버에게 알림 테스트 - 알림여부 true")
+    void notify_member_test_true() throws FirebaseMessagingException {
+        // given
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
+
+        // when
+        studyMemberService.notifyToStudyMember(studyInfo.getId(), user1.getId(), request);
+
+        // then
+        verify(notifyMemberListener).notifyMemberListener(any(NotifyMemberEvent.class)); // notifyMemberListener 호출 검증
+    }
+
+
+    @Test
+    @DisplayName("스터디 멤버에게 알림 테스트 - 알림여부 false")
+    void notify_member_test_false() throws FirebaseMessagingException {
+        // given
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmN();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
+
+        // when
+        studyMemberService.notifyToStudyMember(studyInfo.getId(), user1.getId(), request);
+
+        // then
+        verify(notifyMemberListener, times(0)).notifyMemberListener(any(NotifyMemberEvent.class)); // notifyMemberListener 호출 검증
+    }
+
 }
