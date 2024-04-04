@@ -1,11 +1,10 @@
-package com.example.backend.domain.define.fcmToken.repository;
+package com.example.backend.domain.define.fcm.repository;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.fcmToken.FcmToken;
-import com.example.backend.domain.define.refreshToken.RefreshToken;
+import com.example.backend.domain.define.fcm.FcmToken;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

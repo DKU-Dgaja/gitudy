@@ -1,11 +1,11 @@
-package com.example.backend.domain.define.study.member.listener;
+package com.example.backend.domain.define.fcm.listener;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.event.FcmFixture;
-import com.example.backend.domain.define.fcmToken.FcmToken;
-import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
+import com.example.backend.domain.define.fcm.FcmToken;
+import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.member.MemberEventFixture;
-import com.example.backend.domain.define.study.member.listener.event.ResignMemberEvent;
+import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -13,10 +13,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;

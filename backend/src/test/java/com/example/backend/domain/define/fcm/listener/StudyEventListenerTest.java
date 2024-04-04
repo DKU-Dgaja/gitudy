@@ -1,12 +1,12 @@
-package com.example.backend.domain.define.study.info.listener;
+package com.example.backend.domain.define.fcm.listener;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.event.FcmFixture;
-import com.example.backend.domain.define.fcmToken.FcmToken;
-import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
+import com.example.backend.domain.define.fcm.FcmToken;
+import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyEventFixture;
-import com.example.backend.domain.define.study.info.listener.event.ApplyApproveRefuseMemberEvent;
-import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
+import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
+import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
 import com.google.firebase.messaging.FirebaseMessaging;
