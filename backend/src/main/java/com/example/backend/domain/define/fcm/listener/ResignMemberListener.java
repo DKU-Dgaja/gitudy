@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class MemberEventListener {
+public class ResignMemberListener {
 
     private final FcmService fcmService;
 

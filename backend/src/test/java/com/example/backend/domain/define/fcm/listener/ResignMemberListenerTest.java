@@ -19,13 +19,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
-class MemberEventListenerTest extends TestConfig {
+class ResignMemberListenerTest extends TestConfig {
 
     @Mock
     private FcmTokenRepository fcmTokenRepository;
 
     @InjectMocks
-    private MemberEventListener memberEventListener;
+    private ResignMemberListener resignMemberListener;
 
     @Mock
     private FcmService fcmService;
@@ -46,7 +46,7 @@ class MemberEventListenerTest extends TestConfig {
         when(fcmService.findFcmTokenByIdOrThrowException(resignMemberId)).thenReturn(mockFcmTokenObj);
 
         // when
-        memberEventListener.resignMemberListener(mockEvent);
+        resignMemberListener.resignMemberListener(mockEvent);
 
         // then
         verify(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증

@@ -20,7 +20,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
-import com.example.backend.domain.define.fcm.listener.MemberEventListener;
+import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
@@ -72,7 +72,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
 
     @MockBean
-    private MemberEventListener memberEventListener;
+    private ResignMemberListener resignMemberListener;
 
     @Autowired
     private FcmTokenRepository fcmTokenRepository;
@@ -250,7 +250,7 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
         // event 발생 검증
-        verify(memberEventListener).resignMemberListener(any(ResignMemberEvent.class));
+        verify(resignMemberListener).resignMemberListener(any(ResignMemberEvent.class));
     }
     @Test
     @DisplayName("스터디원 강퇴 실패 테스트")
@@ -280,7 +280,7 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
         // 알람 여부 false이므로 event 발생하지 않는다.
-        verify(memberEventListener, times(0) ).resignMemberListener(any(ResignMemberEvent.class));
+        verify(resignMemberListener, times(0) ).resignMemberListener(any(ResignMemberEvent.class));
     }
 
     @Test
