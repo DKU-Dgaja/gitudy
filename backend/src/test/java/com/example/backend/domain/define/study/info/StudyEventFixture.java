@@ -1,7 +1,7 @@
 package com.example.backend.domain.define.study.info;
 
-import com.example.backend.domain.define.study.info.listener.event.ApplyApproveRefuseMemberEvent;
-import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
+import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
+import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 
 public class StudyEventFixture {
 

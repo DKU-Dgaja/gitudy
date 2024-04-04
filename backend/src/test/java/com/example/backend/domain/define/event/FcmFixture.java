@@ -1,9 +1,8 @@
 package com.example.backend.domain.define.event;
 
-import com.example.backend.domain.define.fcmToken.FcmToken;
+import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
-import com.example.backend.study.api.event.FcmTitleMessageRequest;
 
 import java.util.List;
 
