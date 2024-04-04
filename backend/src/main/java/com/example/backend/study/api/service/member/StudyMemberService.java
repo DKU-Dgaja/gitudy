@@ -13,6 +13,7 @@ import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
+import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
@@ -121,6 +122,8 @@ public class StudyMemberService {
     // 스터디원 탈퇴 메서드
     @Transactional
     public void withdrawalStudyMember(Long studyInfoId, Long userId) {
+        // 스터디 조회
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 탈퇴 스터디원 조회
         StudyMember withdrawalMember = findStudyMemberByStudyInfoIdAndUserIdOrThrowException(studyInfoId, userId);
@@ -131,6 +134,20 @@ public class StudyMemberService {
         // 탈퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
         studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, userId);
 
+        // 탈퇴 유저 조회
+        User withdrawalUser = userService.findUserByStudyMemberOrThrowException(withdrawalMember);
+
+        // 스터디장 조회
+        User studyLeader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
+
+        // 탈퇴 알림
+        if(studyLeader.isPushAlarmYn()){
+            eventPublisher.publishEvent(WithdrawalMemberEvent.builder()
+                    .studyLeaderId(studyInfo.getUserId())
+                    .withdrawalMemberName(withdrawalUser.getName())
+                    .studyInfoTopic(studyInfo.getTopic())
+                    .build());
+        }
     }
 
 
