@@ -4,7 +4,7 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -74,11 +74,11 @@ public class StudyMemberController {
     public JsonResult<?> applyStudyMember(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
                                           @RequestParam(name = "joinCode", required = false) String joinCode,
-                                          @Valid @RequestBody ApplyMemberMessageRequest memberMessageRequest) {
+                                          @Valid @RequestBody MessageRequest messageRequest) {
 
         UserInfoResponse userInfo = authService.findUserInfo(user);
 
-        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode, memberMessageRequest);
+        studyMemberService.applyStudyMember(userInfo, studyInfoId, joinCode, messageRequest);
 
         return JsonResult.successOf("Apply StudyMember Success");
     }

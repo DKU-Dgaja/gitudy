@@ -13,7 +13,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -174,14 +174,14 @@ public class StudyMemberControllerTest extends TestConfig {
         studyInfoRepository.save(studyInfo);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyMemberService).applyStudyMember(any(UserInfoResponse.class), any(Long.class), any(String.class), any(ApplyMemberMessageRequest.class));
+        doNothing().when(studyMemberService).applyStudyMember(any(UserInfoResponse.class), any(Long.class), any(String.class), any(MessageRequest.class));
 
-        ApplyMemberMessageRequest applyMemberMessageRequest = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest messageRequest = StudyMemberFixture.generateMessageRequest();
 
         //when , then
         mockMvc.perform(post("/member/" + studyInfo.getId() + "/apply")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(applyMemberMessageRequest))
+                        .content(objectMapper.writeValueAsString(messageRequest))
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApplyMemberMessageRequest {
+public class MessageRequest {
 
-    private String message;          // 팀장에게 한마디
+    private String message;          // 팀장에게 한마디 or 멤버에게 보낼 메세지
 }

@@ -15,7 +15,7 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberStatus
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
@@ -136,7 +136,7 @@ public class StudyMemberService {
 
     // 스터디 가입 메서드
     @Transactional
-    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, ApplyMemberMessageRequest memberMessageRequest) {
+    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, MessageRequest messageRequest) {
 
         // 스터디 조회 예외처리
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
@@ -176,14 +176,14 @@ public class StudyMemberService {
         if (existingMember.isPresent()) {
             if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
                 existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경
-                existingMember.get().updateSignGreeting(memberMessageRequest.getMessage()); // 가입인사 수정
+                existingMember.get().updateSignGreeting(messageRequest.getMessage()); // 가입인사 수정
                 notifyLeader = true;  // 알림설정
             }
 
         } else {
 
             // '스터디 승인 대기중인 유저' 로 생성
-            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId(), memberMessageRequest.getMessage());
+            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId(), messageRequest.getMessage());
             studyMemberRepository.save(studyMember);
             notifyLeader = true;
 

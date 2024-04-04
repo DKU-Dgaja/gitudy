@@ -29,7 +29,7 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -432,7 +432,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -461,7 +461,7 @@ public class StudyMemberServiceTest extends TestConfig {
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
         fcmTokenRepository.save(fcmToken);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -490,7 +490,7 @@ public class StudyMemberServiceTest extends TestConfig {
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
         fcmTokenRepository.save(fcmToken);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -517,7 +517,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -546,7 +546,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -573,7 +573,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), studyInfo.getJoinCode(), request);
@@ -601,7 +601,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -629,7 +629,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -658,7 +658,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -686,7 +686,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
