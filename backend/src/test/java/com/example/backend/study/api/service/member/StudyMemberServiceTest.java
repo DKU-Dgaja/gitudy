@@ -10,17 +10,18 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
+import com.example.backend.domain.define.fcm.listener.ApplyApproveRefuseMemberListener;
+import com.example.backend.domain.define.fcm.listener.ApplyMemberListener;
+import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
-import com.example.backend.domain.define.fcm.listener.StudyEventListener;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
-import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
@@ -78,7 +79,10 @@ public class StudyMemberServiceTest extends TestConfig {
     private FcmTokenRepository fcmTokenRepository;
     
     @MockBean
-    private StudyEventListener studyEventListener;
+    private ApplyMemberListener applyMemberListener;
+
+    @MockBean
+    private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
 
 
     public final static Long CursorIdx = null;
@@ -463,7 +467,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
 
         // then
-        verify(studyEventListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
+        verify(applyMemberListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
     }
 
 
@@ -492,7 +496,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
 
         // then
-        verify(studyEventListener, times(0)).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출x 검증
+        verify(applyMemberListener, times(0)).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출x 검증
     }
 
     @Test
@@ -746,7 +750,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
 
         // then
-        verify(studyEventListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+        verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
     }
 
     @Test
@@ -798,7 +802,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
 
         // then
-        verify(studyEventListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+        verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
     }
 
     @Test
