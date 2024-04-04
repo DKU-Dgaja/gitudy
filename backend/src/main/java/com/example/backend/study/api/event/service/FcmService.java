@@ -1,6 +1,7 @@
 package com.example.backend.study.api.event.service;
 
 
+import com.example.backend.common.exception.event.EventException;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.google.firebase.messaging.*;
@@ -8,8 +9,8 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.fcmToken.FcmToken;
-import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
+import com.example.backend.domain.define.fcm.FcmToken;
+import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.study.api.event.controller.request.FcmTokenSaveRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,7 +25,7 @@ public class FcmService {
 
 
     private final FirebaseMessaging firebaseMessaging;
-  
+
     private final UserRepository userRepository;
 
     private final FcmTokenRepository fcmTokenRepository;
@@ -85,6 +86,15 @@ public class FcmService {
     public void saveFcmToken(FcmToken fcmToken) {
         FcmToken savedToken = fcmTokenRepository.save(fcmToken);
         log.info(">>>> FCM Token register : {}", savedToken.getFcmToken());
+    }
+
+
+    public FcmToken findFcmTokenByIdOrThrowException(Long userId) {
+        return fcmTokenRepository.findById(userId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.FCM_DEVICE_NOT_FOUND);
+                    return new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
+                });
     }
 
 }

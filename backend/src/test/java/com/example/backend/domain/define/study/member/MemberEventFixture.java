@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.study.member;
 
-import com.example.backend.domain.define.study.member.listener.event.ResignMemberEvent;
+import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 
 public class MemberEventFixture {
 

@@ -53,7 +53,7 @@ public class CategoryService {
 
     public CategoryListAndCursorIdxResponse selectCategoryList(Long studyInfoId, Long cursorIdx, Long limit) {
         // 스터디 조회 예외처리
-        studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
+        studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<CategoryResponse> categoryNames =
                 studyCategoryRepository.findCategoryListByStudyInfoIdJoinCategoryMapping(studyInfoId, cursorIdx, limit);

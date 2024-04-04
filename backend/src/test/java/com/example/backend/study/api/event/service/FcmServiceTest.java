@@ -4,7 +4,7 @@ import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
-import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
+import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.controller.request.FcmTokenSaveRequest;

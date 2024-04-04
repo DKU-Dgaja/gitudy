@@ -1,4 +1,4 @@
-package com.example.backend.domain.define.fcmToken;
+package com.example.backend.domain.define.fcm;
 
 import lombok.Builder;
 import lombok.Getter;

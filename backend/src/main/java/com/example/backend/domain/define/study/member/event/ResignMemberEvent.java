@@ -1,4 +1,4 @@
-package com.example.backend.domain.define.study.member.listener.event;
+package com.example.backend.domain.define.study.member.event;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

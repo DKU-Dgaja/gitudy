@@ -1,46 +1,31 @@
-package com.example.backend.domain.define.study.info.listener;
+package com.example.backend.domain.define.fcm.listener;
 
 import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.event.FcmFixture;
-import com.example.backend.domain.define.fcmToken.FcmToken;
-import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
+import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.study.info.StudyEventFixture;
-import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
+import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.Message;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-
-import java.util.Optional;
 
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
-public class StudyEventListenerTest extends TestConfig {
-    @Mock
-    private FcmTokenRepository fcmTokenRepository;
+public class ApplyMemberListenerTest extends TestConfig {
 
     @InjectMocks
-    private StudyEventListener studyEventListener;
+    private ApplyMemberListener applyMemberListener;
 
     @Mock
     private FcmService fcmService;
 
     @Mock
     private FirebaseMessaging firebaseMessaging;
-
-
-    @AfterEach()
-    void tearDown() {
-        fcmTokenRepository.deleteAll();
-    }
 
     @Test
     @DisplayName("스터디 가입 신청 리스너 테스트")
@@ -52,12 +37,12 @@ public class StudyEventListenerTest extends TestConfig {
 
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leaderId);
 
-        when(fcmTokenRepository.findById(any(Long.class))).thenReturn(Optional.of(fcmToken));
+        when(fcmService.findFcmTokenByIdOrThrowException(leaderId)).thenReturn(fcmToken);
 
         when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
 
         // when
-        studyEventListener.applyMemberListener(applyMemberEvent);
+        applyMemberListener.applyMemberListener(applyMemberEvent);
 
         // then
         verify(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증

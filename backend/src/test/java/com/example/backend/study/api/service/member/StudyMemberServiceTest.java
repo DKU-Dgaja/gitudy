@@ -9,18 +9,20 @@ import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
-import com.example.backend.domain.define.fcmToken.FcmToken;
-import com.example.backend.domain.define.fcmToken.repository.FcmTokenRepository;
+import com.example.backend.domain.define.fcm.FcmToken;
+import com.example.backend.domain.define.fcm.listener.ApplyApproveRefuseMemberListener;
+import com.example.backend.domain.define.fcm.listener.ApplyMemberListener;
+import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
+import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
-import com.example.backend.domain.define.study.info.listener.StudyEventListener;
-import com.example.backend.domain.define.study.info.listener.event.ApplyMemberEvent;
+import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
+import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
-import com.example.backend.domain.define.study.member.listener.MemberEventListener;
-import com.example.backend.domain.define.study.member.listener.event.ResignMemberEvent;
+import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -30,7 +32,6 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
-import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -43,7 +44,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -73,16 +73,16 @@ public class StudyMemberServiceTest extends TestConfig {
 
 
     @MockBean
-    private MemberEventListener memberEventListener;
+    private ResignMemberListener resignMemberListener;
 
     @Autowired
     private FcmTokenRepository fcmTokenRepository;
-
-    @MockBean
-    private FirebaseMessaging firebaseMessaging;
     
     @MockBean
-    private StudyEventListener studyEventListener;
+    private ApplyMemberListener applyMemberListener;
+
+    @MockBean
+    private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
 
 
     public final static Long CursorIdx = null;
@@ -254,7 +254,7 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
         // event 발생 검증
-        verify(memberEventListener).resignMemberListener(any(ResignMemberEvent.class));
+        verify(resignMemberListener).resignMemberListener(any(ResignMemberEvent.class));
     }
     @Test
     @DisplayName("스터디원 강퇴 실패 테스트")
@@ -284,7 +284,7 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
         // 알람 여부 false이므로 event 발생하지 않는다.
-        verify(memberEventListener, times(0) ).resignMemberListener(any(ResignMemberEvent.class));
+        verify(resignMemberListener, times(0) ).resignMemberListener(any(ResignMemberEvent.class));
     }
 
     @Test
@@ -467,7 +467,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
 
         // then
-        verify(studyEventListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
+        verify(applyMemberListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
     }
 
 
@@ -496,7 +496,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
 
         // then
-        verify(studyEventListener, times(0)).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출x 검증
+        verify(applyMemberListener, times(0)).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출x 검증
     }
 
     @Test
@@ -728,6 +728,32 @@ public class StudyMemberServiceTest extends TestConfig {
     }
 
     @Test
+    @DisplayName("스터디장의 가입신청 승인 테스트 - 승인 알림")
+    public void leader_apply_approve_notify() throws FirebaseMessagingException {
+
+        // given
+        boolean approve = true;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+
+
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
+        studyMemberRepository.save(waitingMember);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
+
+        // then
+        verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+    }
+
+    @Test
     @DisplayName("스터디장의 가입신청 거부 테스트")
     public void leaderApplyRefuseTest() {
         // given
@@ -752,6 +778,33 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(findStudyMember.get().getStatus(), StudyMemberStatus.STUDY_REFUSED);  // 거부 상태로 변경
     }
 
+
+    @Test
+    @DisplayName("스터디장의 가입신청 거부 테스트 - 거부 알림")
+    public void leader_apply_refuse_notify() throws FirebaseMessagingException {
+
+        // given
+        boolean approve = false;
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+
+
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
+        studyMemberRepository.save(waitingMember);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
+
+        // then
+        verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+    }
+
     @Test
     @DisplayName("스터디장의 가입신청 테스트 - 대기중인 유저가 아닐때")
     public void leaderApplyRefuseTest_waiting() {
@@ -774,7 +827,7 @@ public class StudyMemberServiceTest extends TestConfig {
             studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), refusedMember.getUserId(), approve);
         });
 
-        assertEquals(ExceptionMessage.USER_NOT_STUDY_MEMBER.getText(), em.getMessage());
+        assertEquals(ExceptionMessage.STUDY_WAITING_NOT_MEMBER.getText(), em.getMessage());
     }
 
     @Test
