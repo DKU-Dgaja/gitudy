@@ -5,13 +5,13 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
@@ -36,7 +36,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StudyMemberService {
 
-    private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoRepository studyTodoRepository;
     private final StudyInfoService studyInfoService;
@@ -294,6 +293,29 @@ public class StudyMemberService {
         response.setNextCursorIdx();
 
         return response;
+    }
+
+
+    // 스터디 멤버에게 알림 메서드
+    public void notifyToStudyMember(Long studyInfoId, Long notifyUserId, MessageRequest messageRequest) {
+
+        // Todo: 알림테이블 구현후 알림추가
+
+        // 스터디 조회
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+        // 알림 받을 user 조회
+        User notifyUser = userService.findUserByIdOrThrowException(notifyUserId);
+
+        if (notifyUser.isPushAlarmYn()) {
+
+            eventPublisher.publishEvent(NotifyMemberEvent.builder()
+                    .notifyUserId(notifyUserId)
+                    .studyTopic(studyInfo.getTopic())
+                    .message(messageRequest.getMessage())
+                    .build());
+        }
+
     }
 
 

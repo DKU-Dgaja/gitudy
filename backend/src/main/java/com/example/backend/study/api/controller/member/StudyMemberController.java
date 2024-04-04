@@ -126,4 +126,17 @@ public class StudyMemberController {
         return JsonResult.successOf(studyMemberService.applyListStudyMember(studyInfoId, cursorIdx, limit));
     }
 
+
+    // 스터디 멤버에게 알림
+    @PostMapping("/{studyInfoId}/notify/{notifyUserId}")
+    public JsonResult<?> notifyToStudyMember(@AuthenticationPrincipal User user,
+                                             @PathVariable("studyInfoId") Long studyInfoId,
+                                             @PathVariable("notifyUserId") Long notifyUserId,
+                                             @Valid @RequestBody MessageRequest messageRequest) {
+
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyMemberService.notifyToStudyMember(studyInfoId, notifyUserId, messageRequest);
+        return JsonResult.successOf("Notify to StudyMember Success");
+    }
 }
