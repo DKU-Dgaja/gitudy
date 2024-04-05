@@ -63,7 +63,7 @@ public class StudyMemberController {
         // 스터디멤버 검증
         UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        studyMemberService.withdrawalStudyMember(studyInfoId, userInfo.getUserId());
+        studyMemberService.withdrawalStudyMember(studyInfoId, userInfo);
 
         return JsonResult.successOf("Withdrawal Member Success");
     }

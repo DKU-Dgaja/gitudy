@@ -312,7 +312,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember1));
 
         // when
-        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), UserInfoResponse.of(user1));
         Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
 
         // then
@@ -341,7 +341,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember1));
 
         // when
-        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), UserInfoResponse.of(user1));
         Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
 
         // then
@@ -435,7 +435,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyTodoMappingRepository.saveAll(List.of(mappingFuture1, mappingFuture2, mappingPast1));
 
         // when
-        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember.getUserId());
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), UserInfoResponse.of(user1));
         Optional<StudyMember> withdrawalMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember.getUserId());
         List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByUserId(activeMember.getUserId());
 

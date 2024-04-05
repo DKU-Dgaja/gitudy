@@ -121,21 +121,18 @@ public class StudyMemberService {
 
     // 스터디원 탈퇴 메서드
     @Transactional
-    public void withdrawalStudyMember(Long studyInfoId, Long userId) {
+    public void withdrawalStudyMember(Long studyInfoId, UserInfoResponse user) {
         // 스터디 조회
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 탈퇴 스터디원 조회
-        StudyMember withdrawalMember = findStudyMemberByStudyInfoIdAndUserIdOrThrowException(studyInfoId, userId);
+        StudyMember withdrawalMember = findStudyMemberByStudyInfoIdAndUserIdOrThrowException(studyInfoId, user.getUserId());
 
         // 탈퇴 스터디원 상태 메서드
         withdrawalMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_WITHDRAWAL);
 
         // 탈퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
-        studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, userId);
-
-        // 탈퇴 유저 조회
-        User withdrawalUser = userService.findUserByStudyMemberOrThrowException(withdrawalMember);
+        studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
 
         // 스터디장 조회
         User studyLeader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
@@ -144,7 +141,7 @@ public class StudyMemberService {
         if(studyLeader.isPushAlarmYn()){
             eventPublisher.publishEvent(WithdrawalMemberEvent.builder()
                     .studyLeaderId(studyInfo.getUserId())
-                    .withdrawalMemberName(withdrawalUser.getName())
+                    .withdrawalMemberName(user.getName())
                     .studyInfoTopic(studyInfo.getTopic())
                     .build());
         }
