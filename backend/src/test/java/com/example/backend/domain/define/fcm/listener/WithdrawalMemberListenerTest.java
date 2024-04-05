@@ -19,8 +19,6 @@ import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
 class WithdrawalMemberListenerTest extends TestConfig {
-    @Mock
-    private FcmTokenRepository fcmTokenRepository;
 
     @InjectMocks
     private WithdrawalMemberListener withdrawalMemberListener;
@@ -28,10 +26,6 @@ class WithdrawalMemberListenerTest extends TestConfig {
     @Mock
     private FcmService fcmService;
 
-    @AfterEach()
-    void tearDown() {
-        fcmTokenRepository.deleteAll();
-    }
 
     @Test
     void 스터디_탈퇴_알림_리스너_테스트() throws FirebaseMessagingException {
