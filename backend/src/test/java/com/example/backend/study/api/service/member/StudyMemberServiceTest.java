@@ -13,6 +13,7 @@ import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.listener.ApplyApproveRefuseMemberListener;
 import com.example.backend.domain.define.fcm.listener.ApplyMemberListener;
 import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
+import com.example.backend.domain.define.fcm.listener.WithdrawalMemberListener;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
@@ -23,6 +24,7 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
+import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -75,9 +77,12 @@ public class StudyMemberServiceTest extends TestConfig {
     @MockBean
     private ResignMemberListener resignMemberListener;
 
+    @MockBean
+    private WithdrawalMemberListener withdrawalMemberListener;
+
     @Autowired
     private FcmTokenRepository fcmTokenRepository;
-    
+
     @MockBean
     private ApplyMemberListener applyMemberListener;
 
@@ -95,7 +100,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
         studyTodoRepository.deleteAllInBatch();
-        fcmTokenRepository.deleteAll();;
+        fcmTokenRepository.deleteAll();
     }
 
 
@@ -227,8 +232,8 @@ public class StudyMemberServiceTest extends TestConfig {
 
 
     @Test
-    @DisplayName("스터디원 강퇴 성공 테스트")
-    public void resignStudyMember() throws FirebaseMessagingException {
+    @DisplayName("스터디원 강퇴 성공 테스트- 알람 true일 때")
+    public void resignStudyMemberWhenIsAlarmTrue() throws FirebaseMessagingException {
         // given
 
         User leaderuser = UserFixture.generateAuthUserByPlatformId("leader");
@@ -256,9 +261,10 @@ public class StudyMemberServiceTest extends TestConfig {
         // event 발생 검증
         verify(resignMemberListener).resignMemberListener(any(ResignMemberEvent.class));
     }
+
     @Test
-    @DisplayName("스터디원 강퇴 실패 테스트")
-    public void failResignStudyMember() throws FirebaseMessagingException {
+    @DisplayName("스터디원 강퇴 성공 테스트- 알람 false일 때")
+    public void ResignStudyMemberWhenIsAlarmFalse() throws FirebaseMessagingException {
         // given
 
         User leaderuser = UserFixture.generateAuthUserByPlatformId("leader");
@@ -284,15 +290,15 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(StudyMemberStatus.STUDY_RESIGNED, studyMember.get().getStatus());
 
         // 알람 여부 false이므로 event 발생하지 않는다.
-        verify(resignMemberListener, times(0) ).resignMemberListener(any(ResignMemberEvent.class));
+        verify(resignMemberListener, times(0)).resignMemberListener(any(ResignMemberEvent.class));
     }
 
     @Test
-    @DisplayName("스터디원 탈퇴 테스트")
-    public void withdrawalMember() {
+    @DisplayName("스터디원 탈퇴 성공 테스트 - 알람 true일 때")
+    public void withdrawalMemberWhenIsAlarmTrue() throws FirebaseMessagingException {
         // given
 
-        User leaderuser = UserFixture.generateAuthUser();
+        User leaderuser = UserFixture.generateAuthUserPushAlarmY();
         User user1 = UserFixture.generateGoogleUser();
         User user2 = UserFixture.generateKaKaoUser();
 
@@ -306,11 +312,43 @@ public class StudyMemberServiceTest extends TestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember1));
 
         // when
-        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember1.getUserId());
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), UserInfoResponse.of(user1));
         Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
 
         // then
         assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, studyMember.get().getStatus());
+
+        // event 발생 검증
+        verify(withdrawalMemberListener).withdrawalMemberListener(any(WithdrawalMemberEvent.class));
+    }
+
+    @Test
+    @DisplayName("스터디원 탈퇴 성공 테스트 - 알람 False일 때")
+    public void WithdrawalMemberWhenIsAlarmFalse() throws FirebaseMessagingException {
+        // given
+
+        User leaderuser = UserFixture.generateAuthUserPushAlarmN();
+        User user1 = UserFixture.generateGoogleUser();
+        User user2 = UserFixture.generateKaKaoUser();
+
+        userRepository.saveAll(List.of(leaderuser, user1, user2));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
+        StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(leader, activeMember1));
+
+        // when
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), UserInfoResponse.of(user1));
+        Optional<StudyMember> studyMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember1.getUserId());
+
+        // then
+        assertEquals(StudyMemberStatus.STUDY_WITHDRAWAL, studyMember.get().getStatus());
+
+        // 알람 여부 false이므로 event 발생하지 않는다.
+        verify(withdrawalMemberListener, times(0)).withdrawalMemberListener(any(WithdrawalMemberEvent.class));
     }
 
 
@@ -397,7 +435,7 @@ public class StudyMemberServiceTest extends TestConfig {
         studyTodoMappingRepository.saveAll(List.of(mappingFuture1, mappingFuture2, mappingPast1));
 
         // when
-        studyMemberService.withdrawalStudyMember(studyInfo.getId(), activeMember.getUserId());
+        studyMemberService.withdrawalStudyMember(studyInfo.getId(), UserInfoResponse.of(user1));
         Optional<StudyMember> withdrawalMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), activeMember.getUserId());
         List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByUserId(activeMember.getUserId());
 
