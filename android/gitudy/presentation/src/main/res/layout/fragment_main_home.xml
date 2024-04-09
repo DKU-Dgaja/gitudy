@@ -32,7 +32,7 @@
                 android:id="@+id/alarmBtn"
                 android:layout_width="36dp"
                 android:layout_height="36dp"
-                android:layout_marginTop="67dp"
+                android:layout_marginTop="20dp"
                 android:src="@drawable/ic_alarm_white"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -45,8 +45,7 @@
                 android:layout_centerInParent="true"
                 android:layout_marginTop="50dp"
                 android:padding="5dp"
-                android:progress="70"
-                android:progressDrawable="@drawable/progress_bar"
+                android:progressDrawable="@drawable/progress_bar_c"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/characterImg" />
@@ -55,40 +54,35 @@
                 android:id="@+id/characterImg"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
+                android:layout_marginTop="110dp"
                 android:padding="-30dp"
                 android:src="@drawable/character_bebe_to_15"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.495"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintVertical_bias="0.498" />
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <LinearLayout
-                android:id="@+id/nicknameLayout"
+            <TextView
+                android:id="@+id/nickname"
+                style="@style/B2_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:gravity="center"
+                android:text=""
+                android:textColor="@color/WHITE"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileProgressBar">
+                app:layout_constraintTop_toBottomOf="@+id/profileProgressBar" />
 
-                <TextView
-                    android:id="@+id/nickname"
-                    style="@style/B2_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/nickname"
-                    android:textColor="@color/WHITE" />
-
-                <ImageView
-                    android:id="@+id/editBtn"
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginLeft="3dp"
-                    android:src="@drawable/ic_pencil" />
-            </LinearLayout>
+            <ImageView
+                android:id="@+id/editBtn"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginLeft="3dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_pencil"
+                app:layout_constraintStart_toEndOf="@+id/nickname"
+                app:layout_constraintTop_toBottomOf="@+id/profileProgressBar" />
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -100,7 +94,7 @@
                 android:paddingRight="10dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nicknameLayout">
+                app:layout_constraintTop_toBottomOf="@+id/nickname">
 
                 <TextView
                     android:id="@+id/scoreAndRank"
@@ -117,17 +111,57 @@
 
     </androidx.cardview.widget.CardView>
 
+    <androidx.cardview.widget.CardView
+        android:id="@+id/isNoStudyLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="22dp"
+        android:layout_marginTop="32dp"
+        android:backgroundTint="@color/WHITE"
+        android:visibility="visible"
+        app:cardCornerRadius="12dp"
+        app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:orientation="vertical">
+
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:layout_gravity="center"
+                android:layout_marginBottom="5dp"
+                android:src="@drawable/logo_git" />
+
+            <TextView
+                style="@style/B3_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="@string/home_recommend"
+                android:textColor="@color/GS_400" />
+        </LinearLayout>
+
+    </androidx.cardview.widget.CardView>
+
+
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginLeft="22dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginTop="32dp"
         android:layout_marginRight="22dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout">
 
         <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myStudyList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
     </ScrollView>

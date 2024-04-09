@@ -10,6 +10,7 @@ plugins {
 
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -22,8 +23,8 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles("consumer-rules.pro")
 
-        buildConfigField("String", "LOGIN_PAGE_API", properties.getProperty("LOGIN_PAGE_API"))
-        buildConfigField("String", "TOKEN_API", properties.getProperty("TOKEN_API"))
+        buildConfigField("String", "GITUDY_BASE_URL", properties.getProperty("GITUDY_BASE_URL"))
+        buildConfigField("String", "GITHUB_BASE_URL", properties.getProperty("GITHUB_BASE_URL"))
     }
     buildFeatures {
         buildConfig = true
@@ -65,6 +66,11 @@ dependencies {
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")
     implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // firebase
+    implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-messaging:23.4.1")
 }
 
 kapt {

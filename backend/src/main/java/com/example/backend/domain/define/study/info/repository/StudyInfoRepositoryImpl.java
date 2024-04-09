@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.study.info.repository;
 
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.NumberExpression;
@@ -22,7 +22,7 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<MyStudyInfoListResponse> findMyStudyInfoListByParameter_CursorPaging(Long userId, Long cursorIdx, Long limit, String sortBy) {
+    public List<StudyInfoListResponse> findStudyInfoListByParameter_CursorPaging(Long userId, Long cursorIdx, Long limit, String sortBy, boolean myStudy) {
         OrderSpecifier<?> orderSpecifier;
 
         switch (sortBy) {
@@ -40,8 +40,8 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
 
         OrderSpecifier<Long> idOrder = studyInfo.id.desc(); // ID 내림차순으로 정렬
 
-        JPAQuery<MyStudyInfoListResponse> query = queryFactory
-                .select(Projections.constructor(MyStudyInfoListResponse.class,
+        JPAQuery<StudyInfoListResponse> query = queryFactory
+                .select(Projections.constructor(StudyInfoListResponse.class,
                         studyInfo.id,
                         studyInfo.userId,
                         studyInfo.topic,
@@ -53,10 +53,14 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                         studyInfo.profileImageUrl,
                         studyInfo.periodType,
                         studyInfo.createdDateTime))
-                .from(studyInfo)
-                .innerJoin(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
-                .where(studyMember.userId.eq(userId))
-                .orderBy(orderSpecifier, idOrder); // 다중 정렬 조건 적용
+                .from(studyInfo);
+        // myStudy에 따라서 동적으로 추가 또는 제거
+        if (myStudy) {
+            query.innerJoin(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
+                    .where(studyMember.userId.eq(userId));
+        }
+        query.orderBy(orderSpecifier, idOrder); // 다중 정렬 조건 적용
+
 
         if (cursorIdx != null) {
             NumberExpression<Integer> expression;

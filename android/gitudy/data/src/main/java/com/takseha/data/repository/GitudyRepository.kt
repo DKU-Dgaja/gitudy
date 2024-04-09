@@ -1,10 +1,42 @@
 package com.takseha.data.repository
 
-import com.takseha.data.api.GitudyApi
-import com.takseha.data.api.RetrofitInstance
+import com.takseha.data.api.gitudy.GitudyApi
+import com.takseha.data.api.gitudy.RetrofitInstance
+import com.takseha.data.dto.auth.register.RegisterRequest
+import com.takseha.data.dto.feed.MakeStudyRequest
 
 class GitudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyApi::class.java)
     suspend fun getLoginPage() = client.getLoginPage()
-    suspend fun getAllTokens(platformType: String, code: String, state: String) = client.getAllTokens(platformType, code, state)
+    suspend fun getLoginTokens(
+        platformType: String,
+        code: String,
+        state: String
+    ) = client.getLoginTokens(platformType, code, state)
+
+    suspend fun checkCorrectNickname(
+        request: String
+    ) = client.checkCorrectNickname(request)
+
+    suspend fun getRegisterTokens(
+        bearerToken: String,
+        request: RegisterRequest
+    ) = client.getRegisterTokens(bearerToken, request)
+
+    suspend fun getUserInfo(
+        bearerToken: String
+    ) = client.getUserInfo(bearerToken)
+
+    suspend fun getStudyList(
+        bearerToken: String,
+        cursorIdx: Long?,
+        limit: Long = 5,
+        sortBy: String = "createdDateTime",
+        myStudy: Boolean
+    ) = client.getStudyList(bearerToken, cursorIdx, limit, sortBy, myStudy)
+
+    suspend fun makeNewStudy(
+        bearerToken: String,
+        request: MakeStudyRequest
+    ) = client.makeNewStudy(bearerToken, request)
 }

@@ -28,16 +28,14 @@ public class StudyCommentFixture {
         }
         return studyComments;
     }
-    public static StudyCommentRegisterRequest createDefaultStudyCommentRegisterRequest(Long userId) {
+    public static StudyCommentRegisterRequest createDefaultStudyCommentRegisterRequest() {
         return StudyCommentRegisterRequest.builder()
-                .userId(userId)
                 .content("스터디 댓글")
                 .build();
     }
 
-    public static StudyCommentUpdateRequest createDefaultStudyCommentUpdateRequest(Long userId) {
+    public static StudyCommentUpdateRequest createDefaultStudyCommentUpdateRequest() {
         return StudyCommentUpdateRequest.builder()
-                .userId(userId)
                 .content("ChangedContent")
                 .build();
     }

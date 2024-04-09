@@ -1,13 +1,15 @@
 package com.example.backend.study.api.controller.info;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.info.response.MyStudyInfoListResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -20,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
@@ -36,8 +36,8 @@ public class StudyInfoController {
     @PostMapping("/")
     public JsonResult<?> registerStudy(@AuthenticationPrincipal User user,
                                        @Valid @RequestBody StudyInfoRegisterRequest studyInfoRequest) {
-        authService.authenticate(studyInfoRequest.getUserId(), user);
-        StudyInfoRegisterResponse response = studyInfoService.registerStudy(studyInfoRequest);
+        UserInfoResponse findUser = authService.findUserInfo(user);
+        studyInfoService.registerStudy(studyInfoRequest, findUser);
         return JsonResult.successOf("Study Register Success.");
     }
 
@@ -79,18 +79,28 @@ public class StudyInfoController {
         return JsonResult.successOf(studyInfoService.updateStudyInfoPage(studyInfoId));
     }
 
-    // 마이 스터디 조회
-    @ApiResponse(responseCode = "200", description = "마이 스터디 조회 성공", content = @Content(schema = @Schema(implementation =
-                    MyStudyInfoListResponse.class)))
-    @GetMapping("/{userId}")
-    public JsonResult<?> userStudyInfoListByParameter(@AuthenticationPrincipal User user,
-                                                      @PathVariable(name = "userId") Long userId,
-                                                      @Min(value = 0, message = "Cursor index cannot be negative")
-                                                      @RequestParam(name = "cursorIdx") Long cursorIdx,
-                                                      @RequestParam(name = "limit") Long limit,
-                                                      @RequestParam(name = "sortBy") String sortBy
+    // 스터디 조회
+    @ApiResponse(responseCode = "200", description = "스터디 조회 성공", content = @Content(schema = @Schema(implementation =
+            StudyInfoListAndCursorIdxResponse.class)))
+    @GetMapping("/")
+    public JsonResult<?> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
+                                                    @Min(value = 0, message = "Cursor index cannot be negative")
+                                                    @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
+                                                    @RequestParam(name = "limit", defaultValue = "20") Long limit,
+                                                    @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
+                                                    @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
     ) {
-        authService.authenticate(userId, user);
-        return JsonResult.successOf(studyInfoService.selectMyStudyInfoList(userId, cursorIdx, limit, sortBy));
+        UserInfoResponse findUser = authService.findUserInfo(user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoList(findUser.getUserId(), cursorIdx, limit, sortBy, myStudy));
+    }
+
+    // 스터디 상세정보 조회
+    @ApiResponse(responseCode = "200", description = "스터디 상세정보 조회 성공", content = @Content(schema = @Schema(implementation =
+            StudyInfoDetailResponse.class)))
+    @GetMapping("/{studyInfoId}")
+    public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
+                                      @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        authService.findUserInfo(user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId));
     }
 }

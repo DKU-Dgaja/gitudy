@@ -1,60 +1,78 @@
 package com.takseha.presentation.ui.home
 
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
-import androidx.fragment.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.AnimationUtils
+import androidx.annotation.RequiresApi
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
+import com.takseha.presentation.databinding.FragmentMainHomeBinding
+import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
+import com.takseha.presentation.viewmodel.home.MainHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
-/**
- * A simple [Fragment] subclass.
- * Use the [MainHomeFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
+// progress bar 끝 부분 둥글게 하는 건 추후 리팩토링 시 구현해보자..
 class MainHomeFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentMainHomeBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: MainHomeViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        requireActivity().window.statusBarColor = Color.argb(0xFF,0x1B,0x1B,0x25)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main_home, container, false)
+        _binding = FragmentMainHomeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MainHomeFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MainHomeFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    @RequiresApi(Build.VERSION_CODES.TIRAMISU)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collectLatest {
+                setUserInfo(it)
             }
+        }
+
+        val characterAnim = AnimationUtils.loadAnimation(context, R.anim.alpha_character)
+        binding.characterImg.startAnimation(characterAnim)
+    }
+
+    private fun setMyStudyList() {
+        // recyclerView 관련 기능 구현
+    }
+
+    private fun setUserInfo(
+        userInfo: MainHomeUserInfoUiState
+    ) {
+        val scoreAndRankText = getString(R.string.home_my_rank)
+
+        with(binding) {
+            nickname.text = userInfo.name
+            scoreAndRank.text = String.format(scoreAndRankText, userInfo.score, 0)
+            profileProgressBar.max = userInfo.progressMax
+            profileProgressBar.progress = userInfo.progressScore
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

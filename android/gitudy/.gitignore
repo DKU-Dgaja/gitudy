@@ -13,3 +13,10 @@
 .externalNativeBuild
 .cxx
 local.properties
+*.jks
+*.keystore
+*.log
+*.apk
+output.json
+*.hprof
+google-services.json

@@ -1,27 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background">
-        <shape
-            android:shape="oval">
-            <solid android:color="#331D232D"/>
-            <stroke
-                android:width="2dp"
-                android:color="#33505D5F"/>
-
+        <shape>
+            <corners android:radius="28dp"/>
+            <solid android:color="@color/GS_200"/>
         </shape>
     </item>
     <item android:id="@android:id/progress">
-        <rotate
-            android:fromDegrees="270"
-            android:toDegrees="270" >
-            <shape
-                android:innerRadiusRatio="2.15"
-                android:shape="ring"
-                android:thickness="13dp" >
+        <clip>
+            <shape>
+                <corners android:radius="28dp"/>
                 <gradient
-                    android:endColor="@color/BASIC_BLUE"
-                    android:startColor="@color/BASIC_GREEN"
-                    android:type="sweep"/>
+                    android:type="linear"
+                    android:startColor="@color/BASIC_GRADIENT_TOP"
+                    android:endColor="@color/BASIC_GRADIENT_BOTTOM"
+                    android:angle="270"/>
             </shape>
-        </rotate>
+        </clip>
     </item>
 </layer-list>

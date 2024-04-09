@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.comment.study;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -38,8 +39,8 @@ public class StudyCommentController {
     public JsonResult<?> registerStudyComment(@AuthenticationPrincipal User user,
                                            @PathVariable("studyInfoId") Long studyInfoId,
                                            @Valid @RequestBody StudyCommentRegisterRequest studyCommentRegisterRequest) {
-        authService.authenticate(studyCommentRegisterRequest.getUserId(), user);
-        studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfoId);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
+        studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfoId, userInfo.getUserId());
 
         return JsonResult.successOf("StudyComment register Success");
     }
@@ -50,8 +51,8 @@ public class StudyCommentController {
                                          @PathVariable(name = "studyInfoId") Long studyInfoId,
                                          @PathVariable(name = "studyCommentId") Long studyCommentId,
                                          @Valid @RequestBody StudyCommentUpdateRequest studyCommentUpdateRequest) {
-        authService.authenticate(studyCommentUpdateRequest.getUserId(), user);
-        studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfoId, studyCommentId);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
+        studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfoId, studyCommentId, userInfo.getUserId());
 
         return JsonResult.successOf("StudyComment update Success");
     }
@@ -73,7 +74,7 @@ public class StudyCommentController {
     @GetMapping("/{studyInfoId}/comments")
     public JsonResult<?> StudyCommentList(@AuthenticationPrincipal User user,
                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                          @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                          @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);

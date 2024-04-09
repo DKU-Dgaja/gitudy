@@ -46,18 +46,17 @@ class StudyBookmarkControllerTest extends TestConfig {
     void 마이_북마크_조회_성공_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long userId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyBookmarkService.selectUserBookmarkList(any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when
-        mockMvc.perform(get("/bookmarks/user/" + userId)
+        mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -73,20 +72,47 @@ class StudyBookmarkControllerTest extends TestConfig {
     }
 
     @Test
-    void 마이_북마크_조회_실패_테스트() throws Exception {
+    void cursorIdx가_null일_때_마이_북마크_조회_성공_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long userId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
-        when(authService.authenticate(any(Long.class), any(User.class)))
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(studyBookmarkService.selectUserBookmarkList(any(Long.class), any(Long.class), any(Long.class)))
+                .thenReturn(new ArrayList<>());
+
+        // when
+        mockMvc.perform(get("/bookmarks")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "")
+                        .param("limit", "5"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andDo(print());
+
+    }
+    @Test
+    void 마이_북마크_조회_실패_테스트() throws Exception {
+        // given
+        User user = generateAuthUser();
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(authService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
-        mockMvc.perform(get("/bookmarks/user/" + userId)
+        mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")
@@ -103,14 +129,13 @@ class StudyBookmarkControllerTest extends TestConfig {
     void 마이_북마크_조회_유효성_검증_실패_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long userId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
-        mockMvc.perform(get("/bookmarks/user/" + userId)
+        mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("cursorIdx", "1")

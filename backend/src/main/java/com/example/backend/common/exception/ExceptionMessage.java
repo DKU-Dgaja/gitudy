@@ -36,6 +36,7 @@ public enum ExceptionMessage {
 
     // UserException
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
+    USER_NAME_DUPLICATION("중복된 이름입니다."),
 
     // AuthException
     AUTH_INVALID_REGISTER("잘못된 회원가입 요청입니다."),
@@ -59,13 +60,25 @@ public enum ExceptionMessage {
 
     // StudyMemberException
     USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
+    STUDY_ALREADY_MEMBER("이미 해당 스터디의 멤버 입니다."),
+    STUDY_RESIGNED_MEMBER("이미 강퇴당한 스터디 입니다."),
+    STUDY_WAITING_MEMBER("이미 가입신청 완료하여 승인 대기중인 스터디 입니다."),
+    STUDY_WAITING_NOT_MEMBER("해당 스터디에 가입 대기중인 유저가 아닙니다."),
+    STUDY_JOIN_CODE_FAIL("스터디 참여 코드가 맞지 않습니다."),
+    STUDY_NOT_APPLY_LIST("해당 스터디에 가입신청이 없습니다"),
 
     // StudyCommentException
     STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),
     STUDY_COMMENT_NOT_AUTHORIZED("스터디 댓글을 수정할 권한이 없습니다."),
 
     // StudyConventionException
-    CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다.")
+    CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다."),
+
+    // CategoryException
+    CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),
+
+    // FCM Exception
+    FCM_DEVICE_NOT_FOUND("해당 유저의 기기를 찾을 수 없습니다.")
     ;
     private final String text;
 }

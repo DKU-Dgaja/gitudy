@@ -1,60 +1,98 @@
 package com.takseha.presentation.ui.feed
 
 import android.os.Bundle
+import android.text.BoringLayout
+import android.util.Log
+import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
+import com.takseha.presentation.databinding.FragmentMakeStudy2Binding
+import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MakeStudy2Fragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MakeStudy2Fragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
-
+    private var _binding: FragmentMakeStudy2Binding? = null
+    private val binding get() = _binding!!
+    private val viewModel: MakeStudyViewModel by activityViewModels()
+    private var memberNum = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_make_study2, container, false)
+        _binding = FragmentMakeStudy2Binding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MakeStudy2Fragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MakeStudy2Fragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        with(binding) {
+            memberNumber.text =
+                String.format(getString(R.string.feed_member_full_number), memberNum)
+            setMaxMember()
+
+            commitCntSelectRadioGroup.setOnClickListener {
+                nextBtn.isEnabled =
+                    commitCntSelectRadioGroup.checkedRadioButtonId != -1 && isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
             }
+            isStudyOpenRadioGroup.setOnClickListener {
+                nextBtn.isEnabled =
+                    commitCntSelectRadioGroup.checkedRadioButtonId != -1 && isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
+            }
+            nextBtn.setOnClickListener {
+                val commitTime =
+                    if (freeCheck.isChecked) StudyPeriod.STUDY_PERIOD_NONE else if (oneDayCheck.isChecked) StudyPeriod.STUDY_PERIOD_WEEK else StudyPeriod.STUDY_PERIOD_EVERYDAY
+                val isPublic =
+                    if (publicCheck.isChecked) StudyStatus.STUDY_PUBLIC else StudyStatus.STUDY_PRIVATE
+
+                viewModel.setStudyRule(commitTime, isPublic, memberNum)
+                Log.d("MakeStudy2Fragment", viewModel.newStudyInfoState.value.toString())
+                it.findNavController()
+                    .navigate(R.id.action_makeStudy2Fragment_to_makeStudy3Fragment)
+            }
+            exitBtn.setOnClickListener {
+                requireActivity().finish()
+            }
+        }
+    }
+
+    private fun setMaxMember() {
+        with(binding) {
+            memberMinusBtn.setOnClickListener {
+                if (memberNum > 0) memberNum--
+                memberNumber.text =
+                    String.format(getString(R.string.feed_member_full_number), memberNum)
+                nextBtn.isEnabled =
+                    commitCntSelectRadioGroup.checkedRadioButtonId != -1 && isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
+            }
+            memberPlusBtn.setOnClickListener {
+                if (memberNum < 10) memberNum++
+                memberNumber.text =
+                    String.format(getString(R.string.feed_member_full_number), memberNum)
+                nextBtn.isEnabled =
+                    commitCntSelectRadioGroup.checkedRadioButtonId != -1 && isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
+            }
+        }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

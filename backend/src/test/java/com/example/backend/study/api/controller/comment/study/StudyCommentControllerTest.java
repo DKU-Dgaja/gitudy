@@ -87,10 +87,10 @@ class StudyCommentControllerTest extends TestConfig {
 
         StudyMemberFixture.createStudyMemberLeader(savedUser.getId(), studyInfo.getId());
 
-        StudyCommentRegisterRequest studyCommentRegisterRequest = StudyCommentFixture.createDefaultStudyCommentRegisterRequest(savedUser.getId());
+        StudyCommentRegisterRequest studyCommentRegisterRequest = StudyCommentFixture.createDefaultStudyCommentRegisterRequest();
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyCommentService).registerStudyComment(any(StudyCommentRegisterRequest.class), any(Long.class));
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(studyCommentService).registerStudyComment(any(StudyCommentRegisterRequest.class), any(Long.class), any(Long.class));
 
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/comment")
@@ -115,12 +115,11 @@ class StudyCommentControllerTest extends TestConfig {
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
         StudyComment studyComment =
                 studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(savedUser.getId(), studyInfo.getId()));
-        StudyCommentUpdateRequest studyCommentUpdateRequest =
-                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(savedUser.getId());
+        StudyCommentUpdateRequest studyCommentUpdateRequest = StudyCommentFixture.createDefaultStudyCommentUpdateRequest();
 
         //when
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyCommentService).updateStudyComment(any(StudyCommentUpdateRequest.class), any(Long.class), any(Long.class));
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(studyCommentService).registerStudyComment(any(StudyCommentRegisterRequest.class), any(Long.class), any(Long.class));
 
         //then
         mockMvc.perform(patch("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
@@ -189,6 +188,37 @@ class StudyCommentControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andDo(print());
+    }
+
+    @Test
+    void cursorIdx가_null일_때_스터디_댓글_조회_성공_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+        StudyCommentListAndCursorIdxResponse response
+                = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
+
+        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(studyCommentService.selectStudyCommentList(any(Long.class), any(Long.class), any(Long.class)))
+                .thenReturn(response);
+
+        // when
+        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("cursorIdx", "")
+                        .param("limit", "5"))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isEmpty())
                 .andDo(print());
 
     }

@@ -10,7 +10,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudyCommentUpdateRequest {
-    private Long userId;                        // 사용자 ID
 
     private String content;                     // 댓글 내용
 }

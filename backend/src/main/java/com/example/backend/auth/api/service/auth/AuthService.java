@@ -1,11 +1,11 @@
 package com.example.backend.auth.api.service.auth;
 
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
-import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
@@ -31,7 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.HashMap;
-import java.util.Objects;
 
 @Slf4j
 @Service
@@ -65,6 +64,7 @@ public class AuthService {
                             .platformType(loginResponse.getPlatformType())
                             .role(UserRole.UNAUTH)
                             .name(name)
+                            .score(10)
                             .profileImageUrl(profileImageUrl)
                             .build();
 
@@ -150,8 +150,8 @@ public class AuthService {
     }
 
     @Transactional
-    public AuthServiceLoginResponse register(AuthServiceRegisterRequest request) {
-        User findUser = userRepository.findByPlatformIdAndPlatformType(request.getPlatformId(),request.getPlatformType()).orElseThrow(() -> {
+    public AuthLoginResponse register(AuthServiceRegisterRequest request, User user) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElseThrow(() -> {
             // UNAUTH인 토큰을 받고 회원 탈퇴 후 그 토큰으로 회원가입 요청시 예외 처리
             log.warn(">>>> User Not Exist : {}", ExceptionMessage.AUTH_INVALID_REGISTER.getText());
             throw new AuthException(ExceptionMessage.AUTH_INVALID_REGISTER);
@@ -164,12 +164,12 @@ public class AuthService {
         }
 
         // 회원가입 정보 DB 반영
-        findUser.updateRegister(request.getRole(), request.getName(), request.getGithubId());
+        findUser.updateRegister(request.getName(), request.getGithubId(), request.isPushAlarmYn());
 
         // JWT Access Token, Refresh Token 재발급
         JwtToken tokens = createJwtToken(findUser);
 
-        return AuthServiceLoginResponse.builder()
+        return AuthLoginResponse.builder()
                 .accessToken(tokens.getAccessToken())
                 .refreshToken(tokens.getRefreshToken())
                 .role(findUser.getRole())
@@ -285,5 +285,17 @@ public class AuthService {
                 });
 
         return UserInfoResponse.of(findUser);
+    }
+
+    // 닉네임 중복체크 메서드
+    public void nickNameDuplicationCheck(UserNameRequest request) {
+
+        boolean exists = userRepository.existsByName(request.getName());
+
+        if (exists) {
+            log.warn(">>>> {} : {} <<<<", request.getName(), ExceptionMessage.USER_NAME_DUPLICATION);
+            throw new UserException(ExceptionMessage.USER_NAME_DUPLICATION);
+        }
+
     }
 }

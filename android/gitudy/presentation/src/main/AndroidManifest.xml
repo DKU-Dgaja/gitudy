@@ -2,13 +2,19 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
     <application>
         <activity
-            android:name=".ui.login.SocialLoginCompleteActivity"
+            android:name=".ui.feed.MakeStudyActivity"
+            android:launchMode="singleTop"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".ui.auth.SocialLoginCompleteActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.login.LoginWebViewActivity"
+            android:name=".ui.auth.LoginWebViewActivity"
             android:exported="false" />
         <activity
             android:name=".ui.feed.StudyApplyActivity"
@@ -37,6 +43,7 @@
         <activity
             android:name=".ui.home.MainHomeActivity"
             android:exported="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.profile.MyCommitActivity"
@@ -47,28 +54,21 @@
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.InputNicknameActivity"
+            android:name=".ui.auth.PopupAgreementActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.InputIdActivity"
+            android:name=".ui.auth.SubLoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
-            android:name=".ui.login.AgreementActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.login.SubLoginActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
-            android:name=".ui.login.LoginActivity"
+            android:name=".ui.auth.LoginActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.SplashActivity"
-            android:exported="true">
+            android:exported="true"
+            android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

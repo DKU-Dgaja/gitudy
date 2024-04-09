@@ -1,6 +1,8 @@
 package com.example.backend.domain.define.study.StudyCategory.info;
 
 import com.example.backend.domain.define.study.category.info.StudyCategory;
+import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
+import com.example.backend.study.api.service.category.info.response.CategoryResponse;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -35,5 +37,29 @@ public class StudyCategoryFixture {
             sb.append(randomChar);
         }
         return sb.toString();
+    }
+
+    // CategoryListAndCursorIdxResponse 생성해주는 함수
+    public static CategoryListAndCursorIdxResponse generateCategoryListAndCursorIdxResponse(int length) {
+        CategoryListAndCursorIdxResponse categoryListAndCursorIdxResponse = CategoryListAndCursorIdxResponse.builder()
+                .cursorIdx(1L)
+                .categoryNames(createDefaultCategoryResponseList(length))
+                .build();
+        return categoryListAndCursorIdxResponse;
+    }
+
+    // CategoryResponseList 생성해주는 함수
+    public static List<CategoryResponse> createDefaultCategoryResponseList(int size) {
+        List<CategoryResponse> categoryResponseList = IntStream.range(0, size)
+                .mapToObj(i -> createDefaultCategoryResponse(generateRandomString(CATEGORY_RANDOM_CHAR_SIZE)))
+                .collect(Collectors.toList());
+        return categoryResponseList;
+    }
+
+    // CategoryResponse 생성해주는 함수
+    public static CategoryResponse createDefaultCategoryResponse(String name) {
+        return CategoryResponse.builder()
+                .name(name)
+                .build();
     }
 }

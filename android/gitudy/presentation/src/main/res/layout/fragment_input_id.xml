@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/BACKGROUND"
+    tools:context=".ui.auth.InputIdFragment">
+
+    <TextView
+        android:id="@+id/inputIdDescription1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="138dp"
+        android:fontFamily="@font/pretendard_semibold"
+        android:gravity="center"
+        android:text="연동할 깃허브 아이디를\n입력해주세요"
+        android:textColor="@color/GS_800"
+        android:textSize="26dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/inputIdDescription2"
+        style="@style/B6_3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="커밋을 기록하려면 깃허브 연동이 필요해요.\n정확한 아이디를 입력해주세요."
+        android:textColor="@color/GS_500"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputIdDescription1" />
+
+    <EditText
+        android:id="@+id/inputIdEditText"
+        style="@style/B1_2"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="59dp"
+        android:background="@null"
+        android:gravity="center"
+        android:hint="gittudy"
+        android:paddingLeft="22dp"
+        android:paddingRight="22dp"
+        android:textColor="@color/BLACK"
+        android:textColorHint="@color/GS_300"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/inputIdDescription2" />
+
+    <TextView
+        android:id="@+id/idCheckText"
+        style="@style/B5_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/inputIdEditText" />
+
+    <Button
+        android:id="@+id/isIdOkBtn"
+        style="@style/B7_2"
+        android:layout_width="40dp"
+        android:layout_height="25dp"
+        android:layout_marginLeft="10dp"
+        android:layout_marginTop="68dp"
+        android:background="@drawable/selector_btn_r6_enable"
+        android:enabled="false"
+        android:text="인증"
+        android:textColor="@drawable/selector_text_color_enable"
+        app:layout_constraintStart_toEndOf="@+id/inputIdEditText"
+        app:layout_constraintTop_toBottomOf="@+id/inputIdDescription2" />
+
+    <Button
+        android:id="@+id/confirmBtn"
+        style="@style/B5_1"
+        android:layout_width="match_parent"
+        android:layout_height="63dp"
+        android:background="@drawable/selector_btn_r0_enable"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="@string/confirm"
+        android:textColor="@drawable/selector_text_color_enable"
+        app:layout_constraintBottom_toBottomOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -64,39 +64,18 @@ class StudyCommentServiceTest extends TestConfig {
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
 
         studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(user.getId(), studyInfo.getId()));
-        StudyCommentRegisterRequest studyCommentRegisterRequest
-                = StudyCommentFixture.createDefaultStudyCommentRegisterRequest(user.getId());
+        StudyCommentRegisterRequest studyCommentRegisterRequest = StudyCommentFixture.createDefaultStudyCommentRegisterRequest();
 
         // when
-        studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfo.getId());
+        studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfo.getId(), user.getId());
 
         // then
         List<StudyComment> studyComment = studyCommentRepository.findAll();
         assertAll(
                 () -> assertEquals(studyComment.get(0).getStudyInfoId(), studyInfo.getId()),
-                () -> assertEquals(studyComment.get(0).getUserId(), studyCommentRegisterRequest.getUserId()),
+                () -> assertEquals(studyComment.get(0).getUserId(), user.getId()),
                 () -> assertEquals(studyComment.get(0).getContent(), studyCommentRegisterRequest.getContent())
         );
-    }
-
-    @Test
-    void StudyComment_등록_예외_테스트() {
-        // given
-        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
-        User otherUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
-
-        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
-
-        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(user.getId(), studyInfo.getId()));
-
-        // when
-        StudyCommentRegisterRequest studyCommentRegisterRequest
-                = StudyCommentFixture.createDefaultStudyCommentRegisterRequest(otherUser.getId());
-
-        // then
-        assertThrows(StudyCommentException.class, () -> {
-            studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfo.getId());
-        }, ExceptionMessage.USER_NOT_STUDY_MEMBER.getText());
     }
 
     @Test
@@ -108,17 +87,16 @@ class StudyCommentServiceTest extends TestConfig {
 
         StudyComment savedStudyComment =
                 studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
-        StudyCommentUpdateRequest studyCommentUpdateRequest =
-                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(user.getId());
+        StudyCommentUpdateRequest studyCommentUpdateRequest = StudyCommentFixture.createDefaultStudyCommentUpdateRequest();
 
         // when
-        studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(),savedStudyComment.getId());
+        studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(),savedStudyComment.getId(), user.getId());
 
         // then
         Optional<StudyComment> studyComment = studyCommentRepository.findById(savedStudyComment.getId());
         assertAll(
                 () -> assertEquals(studyComment.get().getStudyInfoId(), studyInfo.getId()),
-                () -> assertEquals(studyComment.get().getUserId(), studyCommentUpdateRequest.getUserId()),
+                () -> assertEquals(studyComment.get().getUserId(), user.getId()),
                 () -> assertEquals("ChangedContent", studyCommentUpdateRequest.getContent())
         );
     }
@@ -133,11 +111,11 @@ class StudyCommentServiceTest extends TestConfig {
 
         studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
         StudyCommentUpdateRequest studyCommentUpdateRequest =
-                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(otherUser.getId());
+                StudyCommentFixture.createDefaultStudyCommentUpdateRequest();
 
         // when, then
         assertThrows(StudyCommentException.class, () -> {
-            studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(), invalidStudyCommentId);
+            studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(), invalidStudyCommentId, user.getId());
         }, ExceptionMessage.STUDY_COMMENT_NOT_FOUND.getText());
     }
 
@@ -150,12 +128,11 @@ class StudyCommentServiceTest extends TestConfig {
 
         StudyComment savedStudyComment =
                 studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(user.getId(), studyInfo.getId()));
-        StudyCommentUpdateRequest studyCommentUpdateRequest =
-                StudyCommentFixture.createDefaultStudyCommentUpdateRequest(otherUser.getId());
+        StudyCommentUpdateRequest studyCommentUpdateRequest = StudyCommentFixture.createDefaultStudyCommentUpdateRequest();
 
         // when, then
         assertThrows(StudyCommentException.class, () -> {
-            studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(), savedStudyComment.getId());
+            studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfo.getId(), savedStudyComment.getId(), otherUser.getId());
         }, ExceptionMessage.STUDY_COMMENT_NOT_AUTHORIZED.getText());
     }
     @Test

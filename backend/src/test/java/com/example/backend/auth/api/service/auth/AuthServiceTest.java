@@ -1,15 +1,18 @@
 package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.auth.TestConfig;
+import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
-import com.example.backend.auth.api.service.auth.response.AuthServiceLoginResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
@@ -23,7 +26,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
+import static com.example.backend.auth.config.fixture.UserFixture.generateOauthResponse;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
@@ -122,6 +126,7 @@ class AuthServiceTest extends TestConfig {
         );
 
     }
+
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 성공 테스트")
     public void registerUnauthUserSuccessTest() {
@@ -130,36 +135,33 @@ class AuthServiceTest extends TestConfig {
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
         String githubId = "test@github.com";
+
         // UNAUTH 사용자 저장
-        User unauthUser = User.builder()
+        User unauthUser = userRepository.save(User.builder()
                 .role(UserRole.UNAUTH)
                 .platformId(platformId)
                 .platformType(platformType)
                 .name(name)
                 .profileImageUrl(profileImageUrl)
-                .build();
+                .build());
 
-        User findUser = userRepository.save(unauthUser);
-
-        // 회원가입 요청 생성 (CENTER)
+        // 회원가입 요청 생성
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(USER)
-                .platformId(platformId)
-                .platformType(platformType)
                 .githubId(githubId)
                 .name(name)
+                .pushAlarmYn(true)
                 .build();
 
         // when
-        AuthServiceLoginResponse response = authService.register(request);
+        AuthLoginResponse response = authService.register(request, unauthUser);
 
-        User savedUser = userRepository.findByPlatformIdAndPlatformType(request.getPlatformId(), request.getPlatformType()).orElse(null);
+        User savedUser = userRepository.findByPlatformIdAndPlatformType(unauthUser.getPlatformId(), unauthUser.getPlatformType()).orElse(null);
         boolean tokenValid = jwtService.isTokenValid(response.getAccessToken(), savedUser.getUsername());   // 발행한 토큰 검증
 
 
         // then
-        assertEquals(USER, response.getRole());
         assertThat(tokenValid).isTrue();
+        assertTrue(savedUser.isPushAlarmYn());
     }
 
     @Test
@@ -183,18 +185,16 @@ class AuthServiceTest extends TestConfig {
 
         // 회원가입 요청 생성
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .role(USER)
-                .platformId(platformId)
-                .platformType(platformType)
                 .name(name)
                 .githubId(githubId)
                 .build();
 
         // then
         assertThrows(RuntimeException.class, () -> {
-            authService.register(request);
+            authService.register(request, user);
         });
     }
+
     @Test
     @DisplayName("존재하지 않는 userName으로 계정삭제를 진행할 수 없다.")
     void isNotProcessingWhenUserNameIsNotExist() {
@@ -205,11 +205,12 @@ class AuthServiceTest extends TestConfig {
         assertThrows(AuthException.class,
                 () -> authService.userDelete(invalidUserName));
     }
+
     @Test
     @DisplayName("존재하는 계정의 userName으로 계정삭제를 진행할 수 있다.")
     void successProcessingWhenUserNameIsExistInDB() {
-        String platformId="1234";
-        String platformType="KAKAO";
+        String platformId = "1234";
+        String platformType = "KAKAO";
         // given
         User user = User.builder()
                 .platformId(platformId)
@@ -221,7 +222,7 @@ class AuthServiceTest extends TestConfig {
         userRepository.save(user);
 
         // when
-        authService.userDelete(platformId+"_"+platformType);
+        authService.userDelete(platformId + "_" + platformType);
         User deletedUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElse(null);
 
         // then
@@ -348,6 +349,35 @@ class AuthServiceTest extends TestConfig {
 
         // then
         assertFalse(updateUser2.isPushAlarmYn());
+    }
+
+    @Test
+    void 닉네임_중복체크_테스트_중복인경우() {
+        // given
+        userRepository.save(generateAuthUser());
+
+        UserNameRequest request = UserFixture.generateUserNameRequest("이름");
+
+        // then
+        UserException em = assertThrows(UserException.class, () -> {
+            authService.nickNameDuplicationCheck(request);
+        });
+
+        assertEquals(ExceptionMessage.USER_NAME_DUPLICATION.getText(), em.getMessage());
+    }
+
+    @Test
+    void 닉네임_중복체크_테스트_중복이아닌경우() {
+        // given
+        userRepository.save(generateAuthUser());
+
+        UserNameRequest request = UserFixture.generateUserNameRequest("이정우");
+
+        // when
+        authService.nickNameDuplicationCheck(request);
+
+        // then
+        assertDoesNotThrow(() -> authService.nickNameDuplicationCheck(request));
     }
 
 }

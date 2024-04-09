@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">gitudy</string>
+    <string name="app_name">Gitudy</string>
 
     <!-- Strings related to common -->
     <string name="confirm">확인</string>
@@ -15,52 +15,74 @@
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
 
 
+    <!-- Strings related to rv_item -->
+    <string name="study_score">%d점</string>
+    <string name="study_to_do_check">%d/%d</string>
+
+    <!-- Strings related to alert -->
+    <string name="alert_text_length">%d자 이하로 입력해주세요.</string>
+    <string name="alert_text_emoji">특수기호 및 이모티콘 입력은 불가해요.</string>
+    <string name="alert_id_ok">연동 가능한 아이디입니다</string>
+    <string name="alert_id_not_ok">존재하지 않는 아이디입니다</string>
+    <string name="alert_name_ok">사용 가능한 닉네임입니다</string>
+    <string name="alert_name_not_ok">이미 존재하는 닉네임입니다</string>
+
+
     <!-- Strings related to home -->
     <string name="home_my_rank">활동점수 %d점  |  랭킹 %d위</string>
+    <string name="home_recommend">새로운 스터디를\n시작해보세요</string>
+
 
     <!-- Strings related to study -->
-    <string name="study_my_cnt">마이스터디  %d</string>
+    <string name="study_my_cnt">마이스터디</string>
     <string name="study_name">단국알고깃터디</string>
+    <string name="study_no_my_study">가입 중인 스터디가 없습니다</string>
     <string name="study_commit_rule">월/수/금 커밋 필수</string>
-    <string name="study_lock">스터디 공개</string>
+    <string name="study_lock">스터디 비공개</string>
+    <string name="study_unlock">스터디 공개</string>
     <string name="study_team_rank">%d점 • %d등</string>
     <string name="study_github_link">https://github.com/DKU-Dgaja/gitudy</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>
     <string name="study_to_do">백준의 1253번 문제 풀기</string>
     <string name="study_to_do_body">본문내용이 그렇게 많으려나?? 글자 수 제한해서 2줄 이상 안넘게 막으면 접고 펼치는거 없앨 수 있어. 그럼 더 간결해보이긴 해</string>
-    <string name="to_do_time_check">남은 시간 </string>
-    <string name="to_do_time">24:00:00</string>
+    <string name="to_do_deadline">마감일 </string>
+    <string name="to_do_deadline_date">%d.%d.%d</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
     <string name="commit_convention">[닉네임]-#문제번호: 사용언어</string>
     <string name="message_select_noti">%님에게 전달할\n메시지를 선택해주세요</string>
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
-    <string name="to_do_close_time">%s %d:%d</string>
 
 
     <!-- Strings related to feed -->
-    <string name="feed_cnt">전체  %d</string>
+    <string name="feed_cnt">전체스터디</string>
     <string name="feed_explanation">"야금야금, 하지만 확실하게"\n이 스터디는 코딩 테스트를 준비하시는 분들이 각자 알고리즘 문제를 풀고, 서로 학습한 내용을 공유하며 동기부여 형성을 하도록 하는 스터디입니다.</string>
-    <string name="feed_rule">주 %d일 제출 • %s %d시 마감</string>
+    <string name="study_no_study">운영 중인 스터디가 없습니다</string>
+    <string name="feed_rule_week">주 1일 커밋</string>
+    <string name="feed_rule_everyday">매일 커밋</string>
+    <string name="feed_rule_free">커밋 횟수 제한 없음</string>
     <string name="feed_member_number">%d/%d 명</string>
     <string name="feed_member_full_number">%d명</string>
     <string name="feed_make_study_1">%s</string>
-    <string name="feed_make_study_2">주 %d일 커밋/%s %d시 마감/%d명</string>
+    <string name="feed_make_study_2">주 %d일 커밋/%s 마감/%d명</string>
+    <string name="feed_make_study_github_repo">연동할 깃허브 레포지토리 링크를 입력해주세요\n* main branch 커밋 내용이 현재 스터디와 연동됩니다</string>
 
 
     <!-- Strings related to login -->
     <string name="detail1_body">서비스 이용 약관 내용</string>
     <string name="detail2_body">개인정보 처리 방침 내용</string>
     <string name="detail3_body">본인 인증 서비스 이용 약관 내용</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="agreement">동의</string>
+
 
     <!-- Strings related to profile -->
     <string name="nickname">대머리깃터디</string>
-    <string name="github_id">\@boldgitudy</string>
+    <string name="github_id">\@%s</string>
     <string name="profile_github_link">www.github.com</string>
     <string name="profile_blog_link">www.naver.com</string>
     <string name="profile_linkedin_link">www.linkedin.com</string>
+    <string name="profile_no_commit_list">커밋 기록이 없습니다</string>
+    <string name="profile_no_saved_study">저장한 스터디가 없습니다</string>
 
 </resources>
