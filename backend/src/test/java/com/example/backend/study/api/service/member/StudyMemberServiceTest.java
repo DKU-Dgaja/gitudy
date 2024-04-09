@@ -12,6 +12,7 @@ import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.listener.ApplyApproveRefuseMemberListener;
 import com.example.backend.domain.define.fcm.listener.ApplyMemberListener;
+import com.example.backend.domain.define.fcm.listener.NotifyMemberListener;
 import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
 import com.example.backend.domain.define.fcm.listener.WithdrawalMemberListener;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
@@ -23,6 +24,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -31,7 +33,7 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -88,6 +90,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
     @MockBean
     private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
+
+    @MockBean
+    private NotifyMemberListener notifyMemberListener;
 
 
     public final static Long CursorIdx = null;
@@ -470,7 +475,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -499,7 +504,7 @@ public class StudyMemberServiceTest extends TestConfig {
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
         fcmTokenRepository.save(fcmToken);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -528,7 +533,7 @@ public class StudyMemberServiceTest extends TestConfig {
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
         fcmTokenRepository.save(fcmToken);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -555,7 +560,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -584,7 +589,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -611,7 +616,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), studyInfo.getJoinCode(), request);
@@ -639,7 +644,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -667,7 +672,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
         MemberException em = assertThrows(MemberException.class, () -> {
@@ -696,7 +701,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -724,7 +729,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         UserInfoResponse userInfo = authService.findUserInfo(user1);
 
-        ApplyMemberMessageRequest request = StudyMemberFixture.generateApplyMemberMessageRequest();
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
@@ -1065,4 +1070,55 @@ public class StudyMemberServiceTest extends TestConfig {
 
         assertEquals(ExceptionMessage.STUDY_NOT_APPLY_LIST.getText(), em.getMessage());
     }
+
+
+    @Test
+    @DisplayName("스터디 멤버에게 알림 테스트 - 알림여부 true")
+    void notify_member_test_true() throws FirebaseMessagingException {
+        // given
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
+
+        // when
+        studyMemberService.notifyToStudyMember(studyInfo.getId(), user1.getId(), request);
+
+        // then
+        verify(notifyMemberListener).notifyMemberListener(any(NotifyMemberEvent.class)); // notifyMemberListener 호출 검증
+    }
+
+
+    @Test
+    @DisplayName("스터디 멤버에게 알림 테스트 - 알림여부 false")
+    void notify_member_test_false() throws FirebaseMessagingException {
+        // given
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmN();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
+
+        // when
+        studyMemberService.notifyToStudyMember(studyInfo.getId(), user1.getId(), request);
+
+        // then
+        verify(notifyMemberListener, times(0)).notifyMemberListener(any(NotifyMemberEvent.class)); // notifyMemberListener 호출 검증
+    }
+
 }

@@ -5,18 +5,18 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.controller.member.request.ApplyMemberMessageRequest;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
@@ -37,7 +37,6 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StudyMemberService {
 
-    private final UserRepository userRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoRepository studyTodoRepository;
     private final StudyInfoService studyInfoService;
@@ -150,7 +149,7 @@ public class StudyMemberService {
 
     // 스터디 가입 메서드
     @Transactional
-    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, ApplyMemberMessageRequest memberMessageRequest) {
+    public void applyStudyMember(UserInfoResponse user, Long studyInfoId, String joinCode, MessageRequest messageRequest) {
 
         // 스터디 조회 예외처리
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
@@ -190,14 +189,14 @@ public class StudyMemberService {
         if (existingMember.isPresent()) {
             if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
                 existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경
-                existingMember.get().updateSignGreeting(memberMessageRequest.getMessage()); // 가입인사 수정
+                existingMember.get().updateSignGreeting(messageRequest.getMessage()); // 가입인사 수정
                 notifyLeader = true;  // 알림설정
             }
 
         } else {
 
             // '스터디 승인 대기중인 유저' 로 생성
-            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId(), memberMessageRequest.getMessage());
+            StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId(), messageRequest.getMessage());
             studyMemberRepository.save(studyMember);
             notifyLeader = true;
 
@@ -308,6 +307,29 @@ public class StudyMemberService {
         response.setNextCursorIdx();
 
         return response;
+    }
+
+
+    // 스터디 멤버에게 알림 메서드
+    public void notifyToStudyMember(Long studyInfoId, Long notifyUserId, MessageRequest messageRequest) {
+
+        // Todo: 알림테이블 구현후 알림추가
+
+        // 스터디 조회
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+        // 알림 받을 user 조회
+        User notifyUser = userService.findUserByIdOrThrowException(notifyUserId);
+
+        if (notifyUser.isPushAlarmYn()) {
+
+            eventPublisher.publishEvent(NotifyMemberEvent.builder()
+                    .notifyUserId(notifyUserId)
+                    .studyTopic(studyInfo.getTopic())
+                    .message(messageRequest.getMessage())
+                    .build());
+        }
+
     }
 
 
