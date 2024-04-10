@@ -1,74 +1,41 @@
-<img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=header" />
+![Group 483365 (1)](https://github.com/DKU-Dgaja/gitudy/assets/86196342/acd25236-e303-4ac2-ad2e-3d2b6e0a0e46)
 
 
-# Dgaja
+# 깃터디(Gitudy)
+> ### 깃허브를 이용한 알고리즘 스터디 관리 플랫폼, 깃터디
 
-
-![image](https://d2u3dcdbebyaiu.cloudfront.net/uploads/atch_img/889/5433339629c90bc59e5d7598ecd454fc_res.jpeg)
-
-
-# Dgaja Team Staff
-
-
-### Designer
-
-
-|                                           Noni Kim                                            |
-|:----------------------------------------------------------------------------------------:|
-| <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/86196342/b18c5c47-db9c-4a03-988f-7ada9be17222" width=100 height=100> |
-
-
-### Android
-
-
-|                                                                    [탁세하](https://github.com/saesang)                                                                     |
-|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| <a href="https://github.com/saesang"> <img src = "https://github.com/DKU-Dgaja/dku-dgaja/assets/86196342/f3249741-6353-42ed-9dc2-c923e97e419c" width=100 height=100></a> |
-
-
-### Backend
-
-
-|                                                                    [구영민](https://github.com/rndudals)                                                                    |                                                                    [이정우](https://github.com/j-ra1n)                                                                    |                                                                     [이주성](https://github.com/jusung-c)                                                                      |
-|:------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------:|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| <a href="https://github.com/rndudals"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/102203336/60f27f74-2426-482d-80b7-95e667cfa57b" width=100 height=100></a> | <a href="https://github.com/j-ra1n"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/118893707/ace52e32-503d-4d0e-b5ef-74b800687468" width=100 height=100></a> | <a href="https://github.com/jusung-c"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/62228433/f5f5ec45-24a9-415c-a383-65d9ec2bc88d" width="100" height="100"></a> |
-
-
-### Mentor
-
-
-|                                                                   [홍찬희](https://github.com/ghdcksgml1)                                                                    |
-|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------:|
-| <a href="https://github.com/ghdcksgml1"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/79779676/817cd7d2-95c3-4b5c-8f22-4a4b785ebf45" width=100 height=100></a> |
-
-
-# Project Architecture
-
-
-<div align="center">
-  <img src="https://previews.123rf.com/images/aquir/aquir1906/aquir190606651/125693673-%EC%98%88%EC%8B%9C-%EC%8A%A4%ED%83%AC%ED%94%84-%EC%98%88-%EC%82%AC%EA%B0%81%ED%98%95-%EA%B7%B8%EB%9F%B0-%EC%A7%80-%EA%B8%B0%ED%98%B8%EC%9E%85%EB%8B%88%EB%8B%A4-%EC%98%88%EC%8B%9C.jpg" width="500">
-</div>
-
+깃터디는 <b>깃허브(Github)를 이용한 개발자 알고리즘 스터디 관리 모바일 플랫폼</b>으로,<br>깃허브 레포지토리를 앱과 연동시켜 팀원들의 커밋 여부 및 참여도를 모바일로 쉽고 간편하게 관리할 수 있는 서비스입니다.
 <br><br>
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Java17-000000?style=flat-square&logo=java&color=F40D12">
-  <img src="https://img.shields.io/badge/Spring_Boot_3-0?style=flat-square&logo=spring-boot&logoColor=white&color=%236DB33F">
-  <img src="https://img.shields.io/badge/MySQL_8-0?style=flat-square&logo=mysql&logoColor=white&color=4479A1">
-  <img src="https://img.shields.io/badge/Nginx-0?style=flat-square&logo=nginx&logoColor=white&color=009639">
-  <img src="https://img.shields.io/badge/Hibernate-0?style=flat-square&logo=hibernate&logoColor=white&color=%2359666C">
-  <img src="https://img.shields.io/badge/Amazon_EC2-0?style=flat-square&logo=amazon-ec2&logoColor=white&color=%23FF9900">
-  <img src="https://img.shields.io/badge/Flyway-0?style=flat-square&logo=flyway&color=%23CC0200">
-  <br/>
-  <img src="https://img.shields.io/badge/Amazon_CloudWatch-0?style=flat-square&logo=amazon-cloudwatch&logoColor=white&color=%23FF4F8B">
-  <img src="https://img.shields.io/badge/OAuth2-0?style=flat-square&logo=oauth2&logoColor=white&color=%23000000">
-  <img src="https://img.shields.io/badge/Gradle-0?style=flat-square&logo=gradle&logoColor=white&color=%2302303A">
-  <img src="https://img.shields.io/badge/Swagger-0?style=flat-square&logo=Swagger&logoColor=white&color=%2385EA2D">
-  <img src="https://img.shields.io/badge/GitHub%20Actions-0?style=flat-square&logo=GitHub%20Actions&logoColor=white&color=%232088FF">
-  <img src="https://img.shields.io/badge/JUnit5-0?style=JUnit5-square&logo=junit5&logoColor=white&color=%2325A162">
-  <img src="https://img.shields.io/badge/Jenkins-0?style=flat-square&logo=Jenkins&logoColor=white&color=%23D24939">
-</div>
-<br/>
+
+<img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/4cd93513-a75b-418d-a36e-c75cd433b4ed" width="151" height="39.06">
+
+#### 🌟 연동된 Github Repository에서 발생하는 커밋을 앱에서 확인 및 리뷰
+
+- Gitudy 스터디 생성 시, 팀장이 연동시킬 Github Repository 등록
+- 팀장은 스터디에 To-Do(ex. 백준 #7569 풀기)를 등록
+- 팀원은 앱에서 To-Do를 확인하고, 문제를 푼 후 해당 코드를 연동된 Repository에 커밋: 커밋메세지에 해당 To-Do 번호 명시
+- 팀장은 앱에서 알림을 통해 해당 팀원의 커밋 사실을 확인하고, 앱 내 링크를 통해 팀원의 커밋 내용 확인 → 코드를 리뷰하거나 comment를 남길 수 있음
+
+#### 🌟 스터디 참여도에 대한 다양한 지표를 제공해 팀과 개인이 활발히 성장할 수 있는 환경 마련
+
+- 커밋 횟수, 스터디 참여 개수 등 스터디 참여도 관련 지표를 생성하여 귀여운 UI와 점수로 표현
+- 각 팀의 점수와 개인의 점수를 랭킹순으로 확인 가능 → 동기부여 제공
+- 스터디 내 커뮤니티 기능 제공(방명록 및 댓글)
+<br><br>
 
 
-<img src="https://capsule-render.vercel.app/api?type=waving&color=BDBDC8&height=150&section=footer" />
+<img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/e13a8763-1012-424f-8983-03d220b52178" width="130" height="39.06">
+<br><br>
+
+
+|Designer|Android|Backend|Backend|Backend|Mento|
+|:---:|:---:|:---:|:---:|:---:|:---:|
+| <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/86196342/b18c5c47-db9c-4a03-988f-7ada9be17222" width=100 height=100> | <a href="https://github.com/saesang"> <img src = "https://github.com/DKU-Dgaja/dku-dgaja/assets/86196342/f3249741-6353-42ed-9dc2-c923e97e419c" width=100 height=100></a> | <a href="https://github.com/rndudals"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/102203336/60f27f74-2426-482d-80b7-95e667cfa57b" width=100 height=100></a> | <a href="https://github.com/j-ra1n"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/118893707/ace52e32-503d-4d0e-b5ef-74b800687468" width=100 height=100></a> | <a href="https://github.com/jusung-c"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/62228433/f5f5ec45-24a9-415c-a383-65d9ec2bc88d" width="100" height="100"></a> |<a href="https://github.com/ghdcksgml1"> <img src="https://github.com/DKU-Dgaja/dku-dgaja/assets/79779676/817cd7d2-95c3-4b5c-8f22-4a4b785ebf45" width=100 height=100></a> |
+|Noni Kim|[탁세하](https://github.com/saesang)|[구영민](https://github.com/rndudals)|[이정우](https://github.com/j-ra1n)|[이주성](https://github.com/jusung-c)|[홍찬희](https://github.com/ghdcksgml1)|
+
+
+<br>
+
+
+![Group 483366](https://github.com/DKU-Dgaja/gitudy/assets/86196342/ec931c8c-b16e-4c46-83a6-b1bc020367e1)
