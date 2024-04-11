@@ -23,11 +23,7 @@
 <br/>
 
 <p align="center">
-  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/ca0dcd3c-2d54-4f2a-9d90-1250170b03a4" align="center" weight="200" height="430.77">
-  &nbsp&nbsp&nbsp
-  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/2b85af5a-e3a5-408b-a1c9-11b588ce10c6" align="center" weight="200" height="430.77">
-  &nbsp&nbsp&nbsp
-  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/88b2e50c-fd2e-401b-9724-a15029417d26" align="center" weight="200" height="430.77">
+  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/b8168504-3781-4d9a-b1d7-7a1e1a2a9c86" align="center">
 </p>
 
 #### 🌟 연동된 Github Repository에서 발생하는 커밋을 앱에서 확인 및 리뷰
@@ -40,13 +36,7 @@
 <br/><br/>
 
 <p align="center">
-  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/5222d47b-daa8-4292-aebf-dccf1195c5f1" align="center" weight="150" height="203.08">
-  &nbsp&nbsp&nbsp
-  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/29337050-6e63-44ee-856d-30a3c3c3e9e4" align="center" weight="150" height="203.08">
-  &nbsp&nbsp&nbsp
-  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/e80326cb-7ff1-46c2-b302-306c2de3b179" align="center" weight="150" height="203.08">
-  &nbsp&nbsp&nbsp
-  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/67a9cef4-679d-4022-af9f-22a70ac55d70" align="center" weight="150" height="203.08">
+  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/374e3ade-5240-4569-bcb0-42a27ebde93a" align="center" weight="" height="">
 </p>
 
 #### 🌟 스터디 참여도에 대한 다양한 지표를 제공해 팀과 개인이 활발히 성장할 수 있는 환경 마련
