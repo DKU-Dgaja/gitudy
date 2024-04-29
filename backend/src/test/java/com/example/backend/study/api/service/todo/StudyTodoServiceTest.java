@@ -5,6 +5,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.fcm.listener.TodoRegisterMemberListener;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -12,6 +13,7 @@ import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
+import com.example.backend.domain.define.study.todo.event.TodoRegisterMemberEvent;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
@@ -22,10 +24,12 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequ
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -33,9 +37,11 @@ import java.util.List;
 import java.util.Random;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
-import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 public class StudyTodoServiceTest extends TestConfig {
 
@@ -59,6 +65,9 @@ public class StudyTodoServiceTest extends TestConfig {
 
     @Autowired
     private StudyMemberRepository studyMemberRepository;
+
+    /*@MockBean
+    private TodoRegisterMemberListener todoRegisterMemberListener;*/
 
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
@@ -120,6 +129,64 @@ public class StudyTodoServiceTest extends TestConfig {
                 .anyMatch(mappingMember -> mappingMember.getUserId().equals(withdrawalMember.getId())));
 
     }
+
+   /* @Test
+    @DisplayName("Todo 등록 테스트 - 알림 true일 때")
+    public void Todo_register_notify_true_test() throws FirebaseMessagingException {
+        //given
+        User leader = userRepository.save(generateAuthUserPushAlarmY());
+        User user1 = userRepository.save(generateAuthUserPushAlarmYs("1"));
+        User user2 = userRepository.save(generateAuthUserPushAlarmYs("2"));
+        User user3 = userRepository.save(generateAuthUserPushAlarmNs("3"));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
+
+        studyMemberRepository.saveAll(List.of(
+                StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyInfo.getId())
+        ));
+
+        //when
+        studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
+        studyTodoService.registerStudyTodo(request, studyInfo.getId());
+
+        //then
+        verify(todoRegisterMemberListener).todoRegisterMemberListener(any(TodoRegisterMemberEvent.class));
+    }*/
+
+    /*@Test
+    @DisplayName("Todo 등록 테스트 - 알림이 모두 false일 때")
+    public void Todo_register_notify_false_test() throws FirebaseMessagingException {
+        //given
+        User leader = userRepository.save(generateAuthUserPushAlarmN());
+        User user1 = userRepository.save(generateAuthUserPushAlarmNs("1"));
+        User user2 = userRepository.save(generateAuthUserPushAlarmNs("2"));
+        User user3 = userRepository.save(generateAuthUserPushAlarmNs("3"));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
+
+        studyMemberRepository.saveAll(List.of(
+                StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()),
+                StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyInfo.getId())
+        ));
+
+        //when
+        studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
+        studyTodoService.registerStudyTodo(request, studyInfo.getId());
+
+        //then
+        verify(todoRegisterMemberListener, times(0)).todoRegisterMemberListener(any(TodoRegisterMemberEvent.class));
+    }*/
 
     @Test
     @DisplayName("Todo 수정 테스트")

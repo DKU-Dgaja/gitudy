@@ -31,4 +31,10 @@ public class FcmFixture {
                 .build();
     }
 
+    public static List<FcmToken> generateFcmTokens(List<Long> userIds) {
+        return userIds.stream()
+                .map(FcmFixture::generateDefaultFcmToken)
+                .toList();
+    }
+
 }
