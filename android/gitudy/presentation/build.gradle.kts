@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.cli.jvm.main
 plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
+    id("androidx.navigation.safeargs.kotlin")
 
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
@@ -57,8 +58,6 @@ dependencies {
     implementation("androidx.annotation:annotation:1.7.1")
     implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
     implementation("com.google.firebase:firebase-messaging-ktx:23.4.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -69,11 +68,14 @@ dependencies {
     kapt("com.google.dagger:hilt-android-compiler:2.50")
 
     // androidx webkit
-    implementation("androidx.webkit:webkit:1.8.0")
+    implementation("androidx.webkit:webkit:1.10.0")
 
     // navigation
-    implementation("androidx.navigation:navigation-fragment-ktx:2.7.6")
-    implementation("androidx.navigation:navigation-ui-ktx:2.7.6")
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
+    implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
+
+    // safe args
+    implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
 
     // security
     implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
@@ -84,4 +86,8 @@ dependencies {
 
     // recyclerView
     implementation("androidx.recyclerview:recyclerview:1.3.2")
+
+    // viewModel
+    implementation("androidx.fragment:fragment-ktx:1.6.2")
+    implementation("androidx.activity:activity-ktx:1.8.2")
 }

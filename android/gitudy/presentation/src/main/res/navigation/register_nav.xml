@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/popupBackgroundFragment"
-        android:name="com.takseha.presentation.ui.login.PopupBackgroundFragment"
+        android:name="com.takseha.presentation.ui.auth.PopupBackgroundFragment"
         android:label="fragment_popup_background"
         tools:layout="@layout/fragment_popup_background">
         <action
@@ -17,7 +17,7 @@
     </fragment>
     <fragment
         android:id="@+id/popupFragment"
-        android:name="com.takseha.presentation.ui.login.PopupAgreementFragment"
+        android:name="com.takseha.presentation.ui.auth.PopupAgreementFragment"
         android:label="fragment_agreement_popup"
         tools:layout="@layout/fragment_popup_agreement">
         <action
@@ -38,7 +38,7 @@
     </fragment>
     <fragment
         android:id="@+id/popupDetail1Fragment"
-        android:name="com.takseha.presentation.ui.login.PopupDetail1Fragment"
+        android:name="com.takseha.presentation.ui.auth.PopupDetail1Fragment"
         android:label="fragment_popup_detail1"
         tools:layout="@layout/fragment_popup_detail1">
         <action
@@ -47,7 +47,7 @@
     </fragment>
     <fragment
         android:id="@+id/popupDetail2Fragment"
-        android:name="com.takseha.presentation.ui.login.PopupDetail2Fragment"
+        android:name="com.takseha.presentation.ui.auth.PopupDetail2Fragment"
         android:label="fragment_popup_detail2"
         tools:layout="@layout/fragment_popup_detail2">
         <action
@@ -56,7 +56,7 @@
     </fragment>
     <fragment
         android:id="@+id/popupDetail3Fragment"
-        android:name="com.takseha.presentation.ui.login.PopupDetail3Fragment"
+        android:name="com.takseha.presentation.ui.auth.PopupDetail3Fragment"
         android:label="fragment_popup_detail3"
         tools:layout="@layout/fragment_popup_detail3">
         <action
@@ -65,7 +65,7 @@
     </fragment>
     <fragment
         android:id="@+id/inputIdFragment"
-        android:name="com.takseha.presentation.ui.login.InputIdFragment"
+        android:name="com.takseha.presentation.ui.auth.InputIdFragment"
         android:label="fragment_input_id"
         tools:layout="@layout/fragment_input_id">
         <action
@@ -74,16 +74,19 @@
     </fragment>
     <fragment
         android:id="@+id/inputNicknameFragment"
-        android:name="com.takseha.presentation.ui.login.InputNicknameFragment"
+        android:name="com.takseha.presentation.ui.auth.InputNicknameFragment"
         android:label="fragment_input_nickname"
         tools:layout="@layout/fragment_input_nickname">
         <action
             android:id="@+id/action_inputNicknameFragment_to_inputIdFragment"
             app:destination="@id/inputIdFragment" />
+        <argument
+            android:name="pushAlarmYn"
+            app:argType="boolean" />
     </fragment>
     <fragment
         android:id="@+id/loginCompleteFragment"
-        android:name="com.takseha.presentation.ui.login.RegisterCompleteFragment"
+        android:name="com.takseha.presentation.ui.auth.RegisterCompleteFragment"
         android:label="fragment_login_complete"
         tools:layout="@layout/fragment_register_complete" />
 </navigation>

@@ -106,7 +106,6 @@ public class StudyInfo extends BaseEntity {
     }
 
     public void updateStudyInfo(StudyInfoUpdateRequest request) {
-        this.userId = request.getUserId();
         this.topic = request.getTopic();
         this.endDate = request.getEndDate();
         this.info = request.getInfo();

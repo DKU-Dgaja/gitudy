@@ -60,7 +60,6 @@ class CategoryServiceTest extends TestConfig {
         User user = userRepository.save(generateAuthUser());
 
         CategoryRegisterRequest request = CategoryRegisterRequest.builder()
-                .userId(user.getId())
                 .name("categoryName")
                 .build();
 
@@ -81,7 +80,6 @@ class CategoryServiceTest extends TestConfig {
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
         CategoryUpdateRequest request = CategoryUpdateRequest.builder()
-                .userId(user.getId())
                 .name(updatedName)
                 .build();
 
@@ -102,7 +100,6 @@ class CategoryServiceTest extends TestConfig {
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
         CategoryUpdateRequest request = CategoryUpdateRequest.builder()
-                .userId(user.getId())
                 .name(updatedName)
                 .build();
 

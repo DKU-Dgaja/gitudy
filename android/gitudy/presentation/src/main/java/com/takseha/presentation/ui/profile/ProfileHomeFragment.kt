@@ -5,21 +5,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.flowWithLifecycle
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentProfileHomeBinding
-import com.takseha.presentation.viewmodel.ProfileHomeViewModel
+import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
+import com.takseha.presentation.viewmodel.home.MainHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ProfileHomeFragment : Fragment() {
     private var _binding: FragmentProfileHomeBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: ProfileHomeViewModel
+    private val viewModel: MainHomeViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,32 +35,20 @@ class ProfileHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[ProfileHomeViewModel::class.java]
 
-        collectUserInfoFlows()
-
-    }
-
-    private fun collectUserInfoFlows() {
-        viewModel.getUserInfo()
-        lifecycleScope.launch {
-            viewModel.uiState.flowWithLifecycle(
-                lifecycle = viewLifecycleOwner.lifecycle,
-                minActiveState = Lifecycle.State.STARTED
-            ).collect {
-                setUserInfo(it.name, it.githubId, it.profileImgUrl)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collectLatest {
+                setUserInfo(it)
             }
         }
     }
 
     private fun setUserInfo(
-        name: String,
-        githubId: String,
-        profileImgUrl: String
+        userInfo: MainHomeUserInfoUiState
     ) {
         with(binding) {
-            nickname.text = name
-            githubIdText.text = "@$githubId"
+            nickname.text = userInfo.name
+            githubIdText.text = "@${userInfo.githubId}"
         }
     }
 

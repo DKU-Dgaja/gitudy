@@ -13,8 +13,10 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +59,10 @@ public class StudyMemberControllerTest extends TestConfig {
 
     @MockBean
     private StudyMemberService studyMemberService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
 
     @AfterEach
     void tearDown() {
@@ -145,10 +151,9 @@ public class StudyMemberControllerTest extends TestConfig {
         doNothing().when(studyMemberService).resignStudyMember(any(Long.class), any(Long.class));
 
         //when , then
-        mockMvc.perform(patch("/member/" + studyInfo.getId() + "/withdrawal/" + studyMember.getUserId())
+        mockMvc.perform(patch("/member/" + studyInfo.getId() + "/withdrawal")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("userId", String.valueOf(studyMember.getUserId())))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -169,11 +174,14 @@ public class StudyMemberControllerTest extends TestConfig {
         studyInfoRepository.save(studyInfo);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyMemberService).applyStudyMember(any(UserInfoResponse.class), any(Long.class), any(String.class));
+        doNothing().when(studyMemberService).applyStudyMember(any(UserInfoResponse.class), any(Long.class), any(String.class), any(MessageRequest.class));
+
+        MessageRequest messageRequest = StudyMemberFixture.generateMessageRequest();
 
         //when , then
         mockMvc.perform(post("/member/" + studyInfo.getId() + "/apply")
                         .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(messageRequest))
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
@@ -304,5 +312,34 @@ public class StudyMemberControllerTest extends TestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isEmpty())
                 .andDo(print());
+    }
+
+    @Test
+    public void 스터디_멤버에게_알림_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+
+        MessageRequest messageRequest = StudyMemberFixture.generateMessageRequest();
+
+        //when , then
+        mockMvc.perform(post("/member/" + studyInfo.getId() + "/notify/" + 1L)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(messageRequest))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_obj").value("Notify to StudyMember Success"));
+
     }
 }

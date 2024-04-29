@@ -81,7 +81,7 @@ public class StudyConventionService {
     public StudyConventionListAndCursorIdxResponse readStudyConventionList(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        studyInfoService.findByIdOrThrowStudyInfoException(studyInfoId);
+        studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 

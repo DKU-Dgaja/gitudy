@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.commit;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -30,16 +31,15 @@ public class StudyCommitController {
     @ApiResponse(responseCode = "200",
             description = "마이 커밋 조회 성공",
             content = @Content(schema = @Schema(implementation = CommitInfoListAndCursorIdxResponse.class)))
-    @GetMapping("/user/{userId}")
+    @GetMapping("")
     public JsonResult<?> userCommitList(@AuthenticationPrincipal User user,
-                                        @PathVariable(name = "userId") Long userId,
                                         @RequestParam(name = "studyInfoId", required = false) Long studyInfoId,
                                         @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                         @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "20") Long limit) {
 
-        authService.authenticate(userId, user);
+        UserInfoResponse userInfo = authService.findUserInfo(user);
 
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userId, studyInfoId, cursorIdx, limit);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(userInfo.getUserId(), studyInfoId, cursorIdx, limit);
 
         CommitInfoListAndCursorIdxResponse response = CommitInfoListAndCursorIdxResponse.builder()
                 .commitInfoList(commitInfoList)

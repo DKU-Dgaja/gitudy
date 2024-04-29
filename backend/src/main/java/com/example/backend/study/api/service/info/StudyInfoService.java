@@ -1,5 +1,6 @@
 package com.example.backend.study.api.service.info;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
@@ -8,6 +9,7 @@ import com.example.backend.domain.define.study.category.info.repository.StudyCat
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -42,18 +44,18 @@ public class StudyInfoService {
     private final StudyCategoryRepository studyCategoryRepository;
     private final UserRepository userRepository;
     @Transactional
-    public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request) {
+    public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
         // 새로운 스터디 생성
-        StudyInfo studyInfo = saveStudyInfo(request);
+        StudyInfo studyInfo = saveStudyInfo(request, userInfo);
 
         // 스터디장 생성
-        saveStudyMember(request, studyInfo);
+        saveStudyMember(request, studyInfo, userInfo.getUserId());
 
         // 스터디 카테고리 매핑
         List<Long> categories = saveStudyCategoryMappings(request.getCategoriesId(), studyInfo);
 
         // 스터디 가입 시 User score +5
-        Optional<User> user = userRepository.findById(request.getUserId());
+        Optional<User> user = userRepository.findById(userInfo.getUserId());
         user.get().addUserScore(5);
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
@@ -63,7 +65,7 @@ public class StudyInfoService {
     @Transactional
     public void updateStudyInfo(StudyInfoUpdateRequest request, Long studyInfoId) {
         // 스터디 조회 예외처리
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 변경 전 카테고리 매핑 삭제
         studyCategoryMappingRepository.deleteByStudyInfoId(studyInfo.getId());
@@ -79,7 +81,7 @@ public class StudyInfoService {
     @Transactional
     public boolean deleteStudy(Long studyInfoId) {
         // 스터디 조회 예외처리
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 스터디 상태정보 변경
         studyInfo.updateDeletedStudy();
@@ -92,7 +94,7 @@ public class StudyInfoService {
 
     public UpdateStudyInfoPageResponse updateStudyInfoPage(Long studyInfoId) {
         // 스터디 조회 예외처리
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
 
@@ -131,7 +133,7 @@ public class StudyInfoService {
     // 스터디 상세정보 조회
     public StudyInfoDetailResponse selectStudyInfoDetail(Long studyInfoId) {
         // Study 조회
-        StudyInfo studyInfo = findByIdOrThrowStudyInfoException(studyInfoId);
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
         return getStudyInfoDetailResponse(studyInfo, categoryNames);
@@ -206,10 +208,10 @@ public class StudyInfoService {
     }
 
     // StudyMember를 leader로 생성해주는 함수
-    private StudyMember saveStudyMember(StudyInfoRegisterRequest request, StudyInfo studyInfo) {
+    private StudyMember saveStudyMember(StudyInfoRegisterRequest request, StudyInfo studyInfo, Long userId) {
         StudyMember studyMember = StudyMember.builder()
                 .studyInfoId(studyInfo.getId())
-                .userId(request.getUserId())
+                .userId(userId)
                 .role(STUDY_LEADER)
                 .status(STUDY_ACTIVE)
                 .score(0)
@@ -218,12 +220,11 @@ public class StudyInfoService {
     }
 
     // StudyInfo를 생성해주는 함수
-    private StudyInfo saveStudyInfo(StudyInfoRegisterRequest request) {
+    private StudyInfo saveStudyInfo(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
         StudyInfo studyInfo = StudyInfo.builder()
-                .userId(request.getUserId())
+                .userId(userInfo.getUserId())
                 .topic(request.getTopic())
                 .score(0)
-                .endDate(request.getEndDate())
                 .info(request.getInfo())
                 .status(request.getStatus())
                 .maximumMember(request.getMaximumMember())
@@ -231,13 +232,17 @@ public class StudyInfoService {
                 .lastCommitDay(null)
                 .profileImageUrl(request.getProfileImageUrl())
                 .notice(null)
-                .repositoryInfo(request.getRepositoryInfo())
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner(userInfo.getGithubId())
+                        .name(userInfo.getName())
+                        .branchName(request.getBranchName())
+                        .build())
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);
     }
 
-    public StudyInfo findByIdOrThrowStudyInfoException(Long studyInfoId) {
+    public StudyInfo findStudyInfoByIdOrThrowException(Long studyInfoId) {
         return studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);

@@ -3,9 +3,12 @@ package com.takseha.data.api.gitudy
 import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.login.LoginPageResponse
 import com.takseha.data.dto.auth.login.LoginResponse
+import com.takseha.data.dto.auth.register.NickNameResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.auth.register.RegisterResponse
-import com.takseha.data.dto.study.StudyListResponse
+import com.takseha.data.dto.feed.MakeStudyRequest
+import com.takseha.data.dto.feed.MakeStudyResponse
+import com.takseha.data.dto.mystudy.StudyListResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -24,6 +27,11 @@ interface GitudyApi {
         @Query("code") code: String,
         @Query("state") state: String
     ): Response<LoginResponse>
+
+    @POST("/auth/check-nickname")
+    suspend fun checkCorrectNickname(
+        @Body request: String
+    ): Response<NickNameResponse>
 
     @POST("/auth/register")
     suspend fun getRegisterTokens(
@@ -44,4 +52,10 @@ interface GitudyApi {
         @Query("sortBy") sortBy: String,
         @Query("myStudy") myStudy: Boolean
     ): Response<StudyListResponse>
+
+    @POST("/study/")
+    suspend fun makeNewStudy(
+        @Header("Authorization") bearerToken: String,
+        @Body request: MakeStudyRequest
+    ): Response<MakeStudyResponse>
 }

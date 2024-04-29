@@ -29,7 +29,7 @@ public class CategoryController {
     @PostMapping("")
     public JsonResult<?> registerCategory(@AuthenticationPrincipal User user,
                                           @Valid @RequestBody CategoryRegisterRequest categoryRegisterRequest) {
-        authService.authenticate(categoryRegisterRequest.getUserId(), user);
+        authService.findUserInfo(user);
         categoryService.registerCategory(categoryRegisterRequest);
         return JsonResult.successOf("Category Register Success.");
     }
@@ -38,7 +38,7 @@ public class CategoryController {
     public JsonResult<?> updateStudyComment(@AuthenticationPrincipal User user,
                                             @PathVariable(name = "categoryId") Long categoryId,
                                             @Valid @RequestBody CategoryUpdateRequest categoryUpdateRequest) {
-        authService.authenticate(categoryUpdateRequest.getUserId(), user);
+        authService.findUserInfo(user);
         categoryService.updateCategory(categoryUpdateRequest, categoryId);
         return JsonResult.successOf("Category update Success");
     }

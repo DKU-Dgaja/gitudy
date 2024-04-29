@@ -1,6 +1,12 @@
 package com.takseha.data.dto.auth.register
 
+import com.google.gson.annotations.SerializedName
+
 data class RegisterRequest(
-    val name: String,
-    val github_id: String
+    @SerializedName("name")
+    val name: String = "",
+    @SerializedName("github_id")
+    val githubId: String = "",
+    @SerializedName("push_alarm_yn")
+    val pushAlarmYn: Boolean = true
 )

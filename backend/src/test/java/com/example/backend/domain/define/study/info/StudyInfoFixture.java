@@ -87,83 +87,74 @@ public class StudyInfoFixture {
     }
 
     // generateStudyInfoRegisterRequest 생성 해주는 메소드
-    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequest(Long userId, List<StudyCategory> studyCategories) {
+    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequest(List<StudyCategory> studyCategories) {
         List<Long> categoriesId = getCategoriesId(studyCategories);
 
         return StudyInfoRegisterRequest.builder()
-                .userId(userId)
                 .topic("Sample Study")
-                .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .branchName("BRANCH_NAME")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
     }
 
     // MaximumMember가 10보다 클 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
-    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(Long userId, List<StudyCategory> studyCategories) {
+    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberExceed10(List<StudyCategory> studyCategories) {
         List<Long> categoriesId = getCategoriesId(studyCategories);
 
         return StudyInfoRegisterRequest.builder()
-                .userId(userId)
                 .topic("Sample Study")
-                .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(11)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .branchName("BRANCH_NAME")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
     }
 
     // MaximumMember가 1보다 작을 때, generateStudyInfoRegisterRequest 생성 해주는 메소드
-    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(Long userId, List<StudyCategory> studyCategories) {
+    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWhenMaximumMemberLessThan1(List<StudyCategory> studyCategories) {
         List<Long> categoriesId = getCategoriesId(studyCategories);
 
         return StudyInfoRegisterRequest.builder()
-                .userId(userId)
                 .topic("Sample Study")
-                .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(-1)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .branchName("BRANCH_NAME")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
     }
 
     // 카테고리를 받아 StudyInfoRegisterRequest요청을 생성해주는 함수
-    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWithCategory(Long userId, List<StudyCategory> studyCategories) {
+    public static StudyInfoRegisterRequest generateStudyInfoRegisterRequestWithCategory(List<StudyCategory> studyCategories) {
         List<Long> categoriesId = getCategoriesId(studyCategories);
 
         return StudyInfoRegisterRequest.builder()
-                .userId(userId)
                 .topic("Sample Study")
-                .endDate(LocalDate.now().plusMonths(3))
                 .info("This is a sample study.")
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .branchName("BRANCH_NAME")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
     }
 
     // 업데이트 된 StudyInfoUpdateRequest를 카테고리를 파라미터로 받아 생성해주는 함수
-    public static StudyInfoUpdateRequest generateUpdatedStudyInfoUpdateRequestWithCategory(Long userId, List<StudyCategory> studyCategories) {
+    public static StudyInfoUpdateRequest generateUpdatedStudyInfoUpdateRequestWithCategory(List<StudyCategory> studyCategories) {
         List<Long> categoriesId = getCategoriesId(studyCategories);
 
         return StudyInfoUpdateRequest.builder()
-                .userId(userId)
                 .topic("Updated : Sample Study")
                 .endDate(LocalDate.now().plusMonths(6)) // 3 -> 6으로 변경
                 .info("Updated : This is a sample study.")

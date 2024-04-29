@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
-    tools:context=".ui.login.InputIdFragment">
+    tools:context=".ui.auth.InputIdFragment">
 
     <TextView
         android:id="@+id/inputIdDescription1"
@@ -36,8 +36,8 @@
 
     <EditText
         android:id="@+id/inputIdEditText"
-        style="@style/B2_2"
-        android:layout_width="wrap_content"
+        style="@style/B1_2"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="59dp"
         android:background="@null"
@@ -67,7 +67,7 @@
         android:layout_width="40dp"
         android:layout_height="25dp"
         android:layout_marginLeft="10dp"
-        android:layout_marginTop="65dp"
+        android:layout_marginTop="68dp"
         android:background="@drawable/selector_btn_r6_enable"
         android:enabled="false"
         android:text="인증"

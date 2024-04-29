@@ -97,7 +97,6 @@ public class UserFixture {
     }
 
 
-
     public static User generateDefaultUser(String platformId, String name) {
 
         SocialInfo socialInfo = SocialInfo.builder()
@@ -116,11 +115,34 @@ public class UserFixture {
                 .profileImageUrl("이미지")
                 .build();
     }
-  
-   public static UserNameRequest generateUserNameRequest(String name) {
+
+    public static UserNameRequest generateUserNameRequest(String name) {
         return UserNameRequest.builder()
                 .name(name)
                 .build();
     }
 
+    public static User generateAuthUserPushAlarmY() {
+        return User.builder()
+                .platformId("test")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
+                .pushAlarmYn(true)
+                .build();
+    }
+
+    public static User generateAuthUserPushAlarmN() {
+        return User.builder()
+                .platformId("test")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
+                .pushAlarmYn(false)
+                .build();
+    }
 }

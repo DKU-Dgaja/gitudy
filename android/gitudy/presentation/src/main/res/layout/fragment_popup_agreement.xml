@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.login.PopupAgreementFragment">
+    tools:context=".ui.auth.PopupAgreementFragment">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/popupCardView"
@@ -197,7 +197,7 @@
                     style="@style/B5_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="[필수] 본인 인증 서비스 이용 약관 동의"
+                    android:text="[선택] Push 알림 수신 동의(서비스 알림)"
                     android:textColor="@color/GS_900"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -214,7 +214,7 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <CheckBox
-                    android:id="@+id/checkBtn4"
+                    android:id="@+id/pushAlarmYnBtn"
                     android:button="@null"
                     android:layout_width="32dp"
                     android:layout_height="32dp"

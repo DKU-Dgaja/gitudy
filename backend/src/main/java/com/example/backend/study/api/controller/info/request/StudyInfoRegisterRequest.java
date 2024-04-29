@@ -20,11 +20,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudyInfoRegisterRequest {
-    private Long userId;                            // 스터디장 ID
 
     private String topic;                           // 스터디 이름
-
-    private LocalDate endDate;                      // 스터디 종료일
 
     private String info;                            // 스터디 소개
 
@@ -36,21 +33,19 @@ public class StudyInfoRegisterRequest {
 
     private String profileImageUrl;                 // 스터디 프로필 사진
 
-    private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
+    private String branchName;                      // 브랜치 이름
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
-    private List<Long> categoriesId;              // 카테고리 ID 리스트
+    private List<Long> categoriesId;                // 카테고리 ID 리스트
     public static StudyInfoRegisterRequest of(StudyInfo request) {
         return StudyInfoRegisterRequest.builder()
-                .userId(request.getUserId())
                 .topic(request.getTopic())
-                .endDate(request.getEndDate())
                 .info(request.getInfo())
                 .status(request.getStatus())
                 .maximumMember(request.getMaximumMember())
                 .profileImageUrl(request.getProfileImageUrl())
-                .repositoryInfo(request.getRepositoryInfo())
+                .branchName(request.getRepositoryInfo().getBranchName())
                 .build();
     }
 }
