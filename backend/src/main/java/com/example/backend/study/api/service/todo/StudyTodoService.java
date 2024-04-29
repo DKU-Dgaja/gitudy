@@ -7,6 +7,7 @@ import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.event.TodoRegisterMemberEvent;
+import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
@@ -96,7 +97,10 @@ public class StudyTodoService {
 
     // Todo 수정
     @Transactional
-    public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId) {
+    public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId, Long studyInfoId) {
+        // 스터디에 속한 활동중인 스터디원 조회
+        List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
+
         // To do 조회
         StudyTodo studyTodo = findByIdOrThrowStudyTodoException(todoId);
 
@@ -106,6 +110,24 @@ public class StudyTodoService {
                 request.getDetail(),
                 request.getTodoLink(),
                 request.getTodoDate());
+
+        // 활동중인 멤버들의 userId 추출
+        List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
+
+        // FCM 알림을 받을 수 있는 사용자의 ID 추출
+        List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
+
+        // 비어있지 않으면 FCM 알림 전송
+        if (!isPushAlarmYUserIds.isEmpty()) {
+
+            StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+            eventPublisher.publishEvent(TodoUpdateMemberEvent.builder()
+                    .userIds(isPushAlarmYUserIds)
+                    .studyTopic(studyInfo.getTopic())
+                    .todoTitle(studyTodo.getTitle())
+                    .build());
+        }
     }
 
     // Todo 삭제
