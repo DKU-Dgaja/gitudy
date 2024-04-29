@@ -282,7 +282,7 @@ public class StudyTodoControllerTest extends TestConfig {
         StudyTodoResponse response = StudyTodoResponse.of(studyTodo);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodo(any(Long.class))).thenReturn(response);
+        when(studyTodoService.readStudyTodo(any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())

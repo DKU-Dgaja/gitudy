@@ -352,7 +352,7 @@ public class StudyTodoServiceTest extends TestConfig {
         studyTodoRepository.save(studyTodo);
 
         //when
-        studyTodoService.readStudyTodo(studyTodo.getId());
+        studyTodoService.readStudyTodo(studyInfo.getId(), studyTodo.getId());
 
         //then
         assertEquals("백준 1234번 풀기", studyTodo.getTitle());

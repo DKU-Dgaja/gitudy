@@ -63,22 +63,21 @@ public class GithubApiService {
         // 페이지네이션을 위해 list() 메서드에 페이지 및 페이지 크기 인수 제공
         PagedIterator<GHCommit> commitsIterable = getRepo.listCommits().withPageSize(pageSize).iterator();
 
-        // pageNumber - 1 만큼 페이지를 이동합니다.
+        // pageNumber - 1 만큼 페이지를 이동 (조회를 희망하는 페이지로 이동)
         for (int i = 0; i < pageNumber; i++) {
             if (commitsIterable.hasNext()) {
                 commitsIterable.nextPage();
             } else {
-                // 페이지가 없을 경우 예외 처리 또는 로그 등의 작업을 수행할 수 있습니다.
                 throw new IllegalArgumentException("Requested page does not exist");
             }
         }
 
-        // 현재 페이지의 데이터만 가져옵니다.
+        // 현재 페이지의 데이터만 가져온다.
         int count = 0;
         while (commitsIterable.hasNext() && count < pageSize) {
             GHCommit commit = commitsIterable.next();
 
-            // 투두에 해당하는 커밋만 필터링합니다.
+            // 투두에 해당하는 커밋만 필터링
             try {
                 if (commit.getCommitShortInfo().getMessage().startsWith(todoCode)) {
                     commits.add(commit);

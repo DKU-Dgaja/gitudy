@@ -96,8 +96,6 @@ public class StudyTodoService {
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
         studyCommitService.fetchRemoteCommitsAndSave(studyInfo, studyTodo);
-
-
     }
 
     // Todo 삭제
@@ -137,13 +135,13 @@ public class StudyTodoService {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
+
         studyTodoList.forEach(todo -> {
+            // 깃허브 api를 사용해 커밋 업데이트
             StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
                 log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
                 return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
             });
-
-            // 깃허브 api를 사용해 커밋 업데이트
             studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo);
 
             // TODO: 점수 부여 로직 필요
@@ -153,12 +151,24 @@ public class StudyTodoService {
     }
 
     // Todo 단일조회
-    public StudyTodoResponse readStudyTodo(Long todoId) {
+    public StudyTodoResponse readStudyTodo(Long studyInfoId, Long todoId) {
 
         // To do 조회
-        StudyTodo studyTodo = findByIdOrThrowStudyTodoException(todoId);
+        StudyTodo todo = findByIdOrThrowStudyTodoException(todoId);
 
-        return StudyTodoResponse.of(studyTodo);
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 깃허브 api를 사용해 커밋 업데이트
+        StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo);
+
+        return StudyTodoResponse.of(todo);
     }
 
     // 스터디원들의 Todo 완료여부 조회
