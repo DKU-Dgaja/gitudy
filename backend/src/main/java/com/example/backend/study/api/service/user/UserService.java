@@ -53,8 +53,8 @@ public class UserService {
 
         // users 비어있는경우 예외처리
         if (userIds == null || userIds.isEmpty()) {
-            log.warn(">>>> {} : {} <<<<", userIds, ExceptionMessage.USER_NOT_FOUND);
-            throw new EventException(ExceptionMessage.USER_NOT_FOUND);
+            log.warn(">>>> {} : {} <<<<", userIds, ExceptionMessage.USER_NOT_FOUND_ALARM_Y);
+            throw new EventException(ExceptionMessage.USER_NOT_FOUND_ALARM_Y);
         }
 
         return userRepository.findAllById(userIds).stream()
