@@ -52,7 +52,7 @@ public class StudyTodoController {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
-        studyTodoService.updateStudyTodo(studyTodoUpdateRequest, todoId);
+        studyTodoService.updateStudyTodo(studyTodoUpdateRequest, todoId, studyInfoId);
 
         return JsonResult.successOf("Todo update Success");
     }

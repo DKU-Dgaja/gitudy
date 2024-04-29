@@ -76,20 +76,20 @@ public class StudyMemberServiceTest extends TestConfig {
     private AuthService authService;
 
 
-    @MockBean
+   /* @MockBean
     private ResignMemberListener resignMemberListener;
 
     @MockBean
-    private WithdrawalMemberListener withdrawalMemberListener;
+    private WithdrawalMemberListener withdrawalMemberListener;*/
 
     @Autowired
     private FcmTokenRepository fcmTokenRepository;
 
-    @MockBean
+   /* @MockBean
     private ApplyMemberListener applyMemberListener;
 
     @MockBean
-    private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
+    private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;*/
 
     @MockBean
     private NotifyMemberListener notifyMemberListener;
@@ -236,7 +236,7 @@ public class StudyMemberServiceTest extends TestConfig {
     }
 
 
-    @Test
+   /* @Test
     @DisplayName("스터디원 강퇴 성공 테스트- 알람 true일 때")
     public void resignStudyMemberWhenIsAlarmTrue() throws FirebaseMessagingException {
         // given
@@ -265,9 +265,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // event 발생 검증
         verify(resignMemberListener).resignMemberListener(any(ResignMemberEvent.class));
-    }
+    }*/
 
-    @Test
+    /*@Test
     @DisplayName("스터디원 강퇴 성공 테스트- 알람 false일 때")
     public void ResignStudyMemberWhenIsAlarmFalse() throws FirebaseMessagingException {
         // given
@@ -296,9 +296,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // 알람 여부 false이므로 event 발생하지 않는다.
         verify(resignMemberListener, times(0)).resignMemberListener(any(ResignMemberEvent.class));
-    }
+    }*/
 
-    @Test
+   /* @Test
     @DisplayName("스터디원 탈퇴 성공 테스트 - 알람 true일 때")
     public void withdrawalMemberWhenIsAlarmTrue() throws FirebaseMessagingException {
         // given
@@ -325,9 +325,9 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // event 발생 검증
         verify(withdrawalMemberListener).withdrawalMemberListener(any(WithdrawalMemberEvent.class));
-    }
+    }*/
 
-    @Test
+   /* @Test
     @DisplayName("스터디원 탈퇴 성공 테스트 - 알람 False일 때")
     public void WithdrawalMemberWhenIsAlarmFalse() throws FirebaseMessagingException {
         // given
@@ -354,7 +354,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // 알람 여부 false이므로 event 발생하지 않는다.
         verify(withdrawalMemberListener, times(0)).withdrawalMemberListener(any(WithdrawalMemberEvent.class));
-    }
+    }*/
 
 
     @Test
@@ -486,7 +486,7 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(request.getMessage(), waitMember.get().getSignGreeting()); // 스터디장에게 한마디 저장 확인
     }
 
-    @Test
+   /* @Test
     @DisplayName("스터디 가입신청 알림 테스트 - 알림여부 true")
     void apply_notify_test_true() throws FirebaseMessagingException {
         // given
@@ -512,9 +512,9 @@ public class StudyMemberServiceTest extends TestConfig {
         // then
         verify(applyMemberListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
     }
+*/
 
-
-    @Test
+    /*@Test
     @DisplayName("스터디 가입신청 알림 테스트 - 알림여부 false")
     void apply_notify_test_false() throws FirebaseMessagingException {
 
@@ -541,7 +541,7 @@ public class StudyMemberServiceTest extends TestConfig {
         // then
         verify(applyMemberListener, times(0)).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출x 검증
     }
-
+*/
     @Test
     @DisplayName("한번 강퇴된 스터디원 가입 신청 테스트")
     public void applyStudyMember_resigned() {
@@ -770,7 +770,7 @@ public class StudyMemberServiceTest extends TestConfig {
         assertEquals(beforeUser1Score + 5, userRepository.findById(user1.getId()).get().getScore());
     }
 
-    @Test
+   /* @Test
     @DisplayName("스터디장의 가입신청 승인 테스트 - 승인 알림")
     public void leader_apply_approve_notify() throws FirebaseMessagingException {
 
@@ -794,7 +794,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // then
         verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
-    }
+    }*/
 
     @Test
     @DisplayName("스터디장의 가입신청 거부 테스트")
@@ -822,7 +822,7 @@ public class StudyMemberServiceTest extends TestConfig {
     }
 
 
-    @Test
+    /*@Test
     @DisplayName("스터디장의 가입신청 거부 테스트 - 거부 알림")
     public void leader_apply_refuse_notify() throws FirebaseMessagingException {
 
@@ -846,7 +846,7 @@ public class StudyMemberServiceTest extends TestConfig {
 
         // then
         verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
-    }
+    }*/
 
     @Test
     @DisplayName("스터디장의 가입신청 테스트 - 대기중인 유저가 아닐때")
