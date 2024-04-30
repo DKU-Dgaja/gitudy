@@ -137,7 +137,7 @@ public class StudyMemberService {
         User studyLeader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
 
         // 탈퇴 알림
-        if(studyLeader.isPushAlarmYn()){
+        if (studyLeader.isPushAlarmYn()) {
             eventPublisher.publishEvent(WithdrawalMemberEvent.builder()
                     .studyLeaderId(studyInfo.getUserId())
                     .withdrawalMemberName(user.getName())
@@ -343,11 +343,11 @@ public class StudyMemberService {
     }
 
     public StudyMember findStudyMemberByStudyInfoIdAndUserIdOrThrowException(Long studyInfoId, Long userId) {
-        StudyMember withdrawalMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, userId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
-            return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
-        });
-        return withdrawalMember;
+        return studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, userId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_STUDY_MEMBER);
+                    return new MemberException(ExceptionMessage.USER_NOT_STUDY_MEMBER);
+                });
     }
 
 

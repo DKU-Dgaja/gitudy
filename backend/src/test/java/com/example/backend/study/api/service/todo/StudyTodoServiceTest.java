@@ -23,7 +23,6 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
-import com.example.backend.study.api.event.service.FcmService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;

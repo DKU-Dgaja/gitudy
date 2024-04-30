@@ -10,12 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static com.example.backend.domain.define.account.user.constant.UserRole.UNAUTH;
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class UserRepositoryTest extends TestConfig {

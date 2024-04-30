@@ -18,7 +18,6 @@ import com.example.backend.study.api.controller.convention.request.StudyConventi
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.controller.convention.response.StudyConventionListAndCursorIdxResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
-import io.lettuce.core.Limit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

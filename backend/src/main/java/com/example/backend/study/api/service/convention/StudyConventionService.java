@@ -93,10 +93,10 @@ public class StudyConventionService {
     }
 
     public StudyConvention findByIdOrThrowStudyConventionException(Long conventionId) {
-        StudyConvention studyConvention = studyConventionRepository.findById(conventionId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
-            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
-        });
-        return studyConvention;
+        return studyConventionRepository.findById(conventionId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", conventionId, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
+                    return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
+                });
     }
 }

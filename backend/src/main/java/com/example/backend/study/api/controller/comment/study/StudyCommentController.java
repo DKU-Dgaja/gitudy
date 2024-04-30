@@ -4,11 +4,9 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.study.comment.study.StudyComment;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import com.example.backend.study.api.service.comment.study.StudyCommentService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,8 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Slf4j
 @RestController
