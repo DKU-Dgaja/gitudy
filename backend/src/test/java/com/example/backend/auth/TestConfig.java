@@ -19,16 +19,14 @@ import org.junit.jupiter.api.DisplayNameGeneration;
 import org.junit.jupiter.api.DisplayNameGenerator;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.event.RecordApplicationEvents;
 
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @ActiveProfiles("test")
 @AutoConfigureMockMvc
-@RecordApplicationEvents
-@EnableAsync
+/*@RecordApplicationEvents
+@EnableAsync*/
 public class TestConfig {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer";
