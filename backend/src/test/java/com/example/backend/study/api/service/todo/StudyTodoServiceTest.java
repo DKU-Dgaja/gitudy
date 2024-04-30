@@ -31,6 +31,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -41,14 +42,12 @@ import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-<<<<<<< HEAD
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
-=======
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
->>>>>>> dev
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class StudyTodoServiceTest extends TestConfig {
 
     @Autowired
@@ -72,13 +71,8 @@ public class StudyTodoServiceTest extends TestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
-<<<<<<< HEAD
     @MockBean
     private StudyCommitService studyCommitService;
-=======
-    /*@MockBean
-    private TodoRegisterMemberListener todoRegisterMemberListener;*/
->>>>>>> dev
 
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";

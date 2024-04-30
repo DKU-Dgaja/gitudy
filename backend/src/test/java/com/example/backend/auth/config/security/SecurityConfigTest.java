@@ -29,7 +29,7 @@ class SecurityConfigTest extends TestConfig {
 
     @AfterEach
     void tearDown() {
-//        userRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @Test
