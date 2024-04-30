@@ -3,7 +3,6 @@ package com.example.backend.domain.define.fcm.listener;
 import com.example.backend.auth.TestConfig;
 import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
-import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyEventFixture;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
@@ -13,26 +12,22 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.ApplicationEventPublisher;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @SuppressWarnings("NonAsciiCharacters")
 public class ApplyApproveRefuseMemberListenerTest extends TestConfig {
 
-    @Autowired
+    @InjectMocks
     private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
 
-
-    @MockBean
+    @Mock
     private FcmService fcmService;
 
-    @MockBean
-    private ApplicationEventPublisher applicationEventPublisher;
-
+    @Mock
+    private FirebaseMessaging firebaseMessaging;
 
     @Test
     @DisplayName("스터디 가입 신청 승인/거부 리스너 테스트")
@@ -44,19 +39,14 @@ public class ApplyApproveRefuseMemberListenerTest extends TestConfig {
 
         FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(applyUserId);
 
-        when(fcmService.findFcmTokenByIdOrThrowException(any(Long.class))).thenReturn(fcmToken);
+        when(fcmService.findFcmTokenByIdOrThrowException(applyUserId)).thenReturn(fcmToken);
 
-        applicationEventPublisher.publishEvent(applyApproveRefuseMemberEvent);
+        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
 
         // when
         applyApproveRefuseMemberListener.applyApproveRefuseMemberListener(applyApproveRefuseMemberEvent);
 
         // then
-
-        /*
-        timeout 을 사용하여 비동기 메서드 호출검증
-        3초내에 sendMessageSingleDevice 가 호출되었는지 검증
-         */
-        verify(fcmService, timeout(3000)).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증
+        verify(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증
     }
 }
