@@ -23,6 +23,7 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.event.service.FcmService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
@@ -30,6 +31,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -43,6 +45,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
 public class StudyTodoServiceTest extends TestConfig {
 
     @Autowired
@@ -66,8 +69,8 @@ public class StudyTodoServiceTest extends TestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
-    /*@MockBean
-    private TodoRegisterMemberListener todoRegisterMemberListener;*/
+    @MockBean
+    private TodoRegisterMemberListener todoRegisterMemberListener;
 
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
@@ -130,7 +133,7 @@ public class StudyTodoServiceTest extends TestConfig {
 
     }
 
-   /* @Test
+    @Test
     @DisplayName("Todo 등록 테스트 - 알림 true일 때")
     public void Todo_register_notify_true_test() throws FirebaseMessagingException {
         //given
@@ -157,11 +160,11 @@ public class StudyTodoServiceTest extends TestConfig {
 
         //then
         verify(todoRegisterMemberListener).todoRegisterMemberListener(any(TodoRegisterMemberEvent.class));
-    }*/
+    }
 
-    /*@Test
+    @Test
     @DisplayName("Todo 등록 테스트 - 알림이 모두 false일 때")
-    public void Todo_register_notify_false_test() throws FirebaseMessagingException {
+    public void Todo_register_notify_false_test() throws Exception {
         //given
         User leader = userRepository.save(generateAuthUserPushAlarmN());
         User user1 = userRepository.save(generateAuthUserPushAlarmNs("1"));
@@ -186,7 +189,7 @@ public class StudyTodoServiceTest extends TestConfig {
 
         //then
         verify(todoRegisterMemberListener, times(0)).todoRegisterMemberListener(any(TodoRegisterMemberEvent.class));
-    }*/
+    }
 
     @Test
     @DisplayName("Todo 수정 테스트")
