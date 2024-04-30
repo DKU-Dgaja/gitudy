@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.member;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
@@ -10,23 +11,15 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
-import com.example.backend.domain.define.fcm.listener.ApplyApproveRefuseMemberListener;
-import com.example.backend.domain.define.fcm.listener.ApplyMemberListener;
 import com.example.backend.domain.define.fcm.listener.NotifyMemberListener;
-import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
-import com.example.backend.domain.define.fcm.listener.WithdrawalMemberListener;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
-import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
-import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
-import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
-import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
@@ -52,7 +45,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class StudyMemberServiceTest extends TestConfig {
+public class StudyMemberServiceTest extends MockTestConfig {
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;

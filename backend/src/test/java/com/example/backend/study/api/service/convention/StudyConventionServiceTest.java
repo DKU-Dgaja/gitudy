@@ -1,6 +1,6 @@
 package com.example.backend.study.api.service.convention;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.domain.define.account.user.User;
@@ -18,7 +18,6 @@ import com.example.backend.study.api.controller.convention.request.StudyConventi
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.controller.convention.response.StudyConventionListAndCursorIdxResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
-import io.lettuce.core.Limit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

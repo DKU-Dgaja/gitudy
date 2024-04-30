@@ -1,7 +1,7 @@
 package com.example.backend.auth.api.service.oauth.adapter.google;
 
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.service.oauth.builder.google.GoogleURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.ExceptionMessage;

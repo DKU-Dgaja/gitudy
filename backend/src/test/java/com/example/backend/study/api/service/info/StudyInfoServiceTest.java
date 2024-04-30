@@ -1,6 +1,6 @@
 package com.example.backend.study.api.service.info;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.study.StudyInfoException;

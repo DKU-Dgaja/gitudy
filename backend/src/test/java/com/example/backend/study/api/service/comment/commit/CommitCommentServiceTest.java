@@ -1,6 +1,6 @@
 package com.example.backend.study.api.service.comment.commit;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.commit.CommitException;
@@ -12,8 +12,6 @@ import com.example.backend.domain.define.study.comment.commit.repository.CommitC
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.comment.commit.request.AddCommitCommentRequest;
 import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;

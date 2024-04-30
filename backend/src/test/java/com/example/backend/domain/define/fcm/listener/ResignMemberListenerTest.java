@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.fcm.listener;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;

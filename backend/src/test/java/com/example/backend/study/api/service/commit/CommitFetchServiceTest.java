@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.commit;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -43,8 +44,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class CommitFetchServiceTest extends TestConfig {
+public class CommitFetchServiceTest extends MockTestConfig {
     private final String REPOSITORY_OWNER = "jusung-c";
     private final String REPOSITORY_NAME = "Github-Api-Test";
 
