@@ -58,6 +58,9 @@ public enum ExceptionMessage {
     STUDY_NOT_MEMBER("해당 스터디 멤버가 아닙니다."),
     TODO_NOT_FOUND("해당 Todo를 찾을 수 없습니다."),
 
+    // TodoMappingException
+    STUDY_TODO_MAPPING_NOT_FOUND("해당 스터디원에 할당된 투두 정보를 찾을 수 없습니다."),
+
     // StudyMemberException
     USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
     STUDY_ALREADY_MEMBER("이미 해당 스터디의 멤버 입니다."),
@@ -73,6 +76,12 @@ public enum ExceptionMessage {
 
     // StudyConventionException
     CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다."),
+
+    // GithubApiException
+    GITHUB_API_CONNECTION_ERROR("Github Api 통신에 실패했습니다."),
+    GITHUB_API_GET_REPOSITORY_ERROR("Repository 정보를 불러오는 데에 실패했습니다."),
+    GITHUB_API_GET_COMMITS_ERROR("커밋 리스트를 불러오는데 실패했습니다."),
+    GITHUB_API_GET_COMMIT_ERROR("커밋을 불러오는데 실패했습니다."),
 
     // CategoryException
     CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),

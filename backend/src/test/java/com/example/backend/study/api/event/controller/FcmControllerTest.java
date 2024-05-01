@@ -1,6 +1,7 @@
 package com.example.backend.study.api.event.controller;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
@@ -29,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings("NonAsciiCharacters")
-class FcmControllerTest extends TestConfig {
+class FcmControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 

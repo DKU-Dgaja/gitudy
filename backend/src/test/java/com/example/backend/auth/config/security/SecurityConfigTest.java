@@ -1,6 +1,6 @@
 package com.example.backend.auth.config.security;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
@@ -14,10 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-class SecurityConfigTest extends TestConfig {
+class SecurityConfigTest extends MockTestConfig {
     @Autowired
     MockMvc mockMvc;
 
@@ -29,7 +29,7 @@ class SecurityConfigTest extends TestConfig {
 
     @AfterEach
     void tearDown() {
-//        userRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @Test

@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.study.commit.repository;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -11,7 +11,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Stream;
 
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
 import static org.junit.jupiter.api.Assertions.*;

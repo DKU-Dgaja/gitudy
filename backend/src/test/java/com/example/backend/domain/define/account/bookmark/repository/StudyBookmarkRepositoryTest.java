@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.account.bookmark.repository;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.bookmark.StudyBookmark;
 import com.example.backend.domain.define.account.bookmark.StudyBookmarkFixture;

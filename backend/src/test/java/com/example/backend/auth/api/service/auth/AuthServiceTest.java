@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.service.auth;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
@@ -12,7 +13,6 @@ import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
-import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
@@ -36,7 +36,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class AuthServiceTest extends TestConfig {
+class AuthServiceTest extends MockTestConfig {
 
     @MockBean
     private OAuthService oAuthService;

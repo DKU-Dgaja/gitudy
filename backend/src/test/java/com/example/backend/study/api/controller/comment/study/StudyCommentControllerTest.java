@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.comment.study;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -40,7 +41,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings("NonAsciiCharacters")
-class StudyCommentControllerTest extends TestConfig {
+class StudyCommentControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
     @Autowired

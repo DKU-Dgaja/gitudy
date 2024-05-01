@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.member;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
@@ -49,8 +50,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_CLASS)
-public class StudyMemberServiceTest extends TestConfig {
+public class StudyMemberServiceTest extends MockTestConfig {
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;

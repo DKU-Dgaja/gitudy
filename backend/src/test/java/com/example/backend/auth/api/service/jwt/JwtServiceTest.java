@@ -1,6 +1,6 @@
 package com.example.backend.auth.api.service.jwt;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
