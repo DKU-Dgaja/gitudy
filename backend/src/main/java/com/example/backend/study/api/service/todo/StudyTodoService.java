@@ -196,19 +196,19 @@ public class StudyTodoService {
     }
 
     public StudyTodo findByIdOrThrowStudyTodoException(Long todoId) {
-        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
-        return studyTodo;
+        return studyTodoRepository.findById(todoId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+                    return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+                });
     }
 
     public StudyTodo findByIdWithStudyInfoIdOrThrowStudyTodoException(Long studyInfoId, Long todoId) {
-        StudyTodo studyTodo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
-        return studyTodo;
+        return studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+                    return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+                });
     }
 
     // 멤버들의 userId만 추출

@@ -2,7 +2,6 @@ package com.example.backend.study.api.controller.comment.commit;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
-import com.example.backend.common.exception.GitudyException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.comment.commit.request.AddCommitCommentRequest;

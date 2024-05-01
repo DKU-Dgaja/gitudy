@@ -36,7 +36,6 @@ public class FcmService {
 
     public void sendMessageSingleDevice(FcmSingleTokenRequest token) throws FirebaseMessagingException {
 
-        //Todo: 가져온 userId와 token 예외처리 구현
 
         Notification notification = Notification.builder()
                 .setTitle(token.getTitle())
@@ -54,7 +53,6 @@ public class FcmService {
 
     public void sendMessageMultiDevice(FcmMultiTokenRequest token) throws FirebaseMessagingException {
 
-        //Todo: 가져온 userId와 token 예외처리 구현
 
         Notification notification = Notification.builder()
                 .setTitle(token.getTitle())

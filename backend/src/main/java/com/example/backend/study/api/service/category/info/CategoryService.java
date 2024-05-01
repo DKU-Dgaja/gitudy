@@ -4,7 +4,6 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.category.CategoryException;
 import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
-import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.category.info.request.CategoryRegisterRequest;
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
 import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
@@ -12,7 +11,6 @@ import com.example.backend.study.api.service.category.info.response.CategoryResp
 import com.example.backend.study.api.service.info.StudyInfoService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

@@ -43,6 +43,7 @@ public class StudyInfoService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyCategoryRepository studyCategoryRepository;
     private final UserRepository userRepository;
+
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
         // 새로운 스터디 생성
@@ -243,9 +244,10 @@ public class StudyInfoService {
     }
 
     public StudyInfo findStudyInfoByIdOrThrowException(Long studyInfoId) {
-        return studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        return studyInfoRepository.findById(studyInfoId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+                    return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+                });
     }
 }
