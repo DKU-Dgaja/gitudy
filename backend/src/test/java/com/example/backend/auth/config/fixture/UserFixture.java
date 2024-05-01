@@ -20,6 +20,17 @@ public class UserFixture {
                 .build();
     }
 
+    public static User generateAuthUserByGithubId(String githubId) {
+        return User.builder()
+                .platformId("1")
+                .platformType(KAKAO)
+                .role(USER)
+                .name("이름")
+                .githubId(githubId)
+                .profileImageUrl("프로필이미지")
+                .build();
+    }
+
     public static User generateAuthUserByPlatformId(String platformId) {
         return User.builder()
                 .platformId(platformId)
@@ -126,6 +137,30 @@ public class UserFixture {
     public static User generateAuthUserPushAlarmN() {
         return User.builder()
                 .platformId("test")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
+                .pushAlarmYn(false)
+                .build();
+    }
+
+    public static User generateAuthUserPushAlarmYs(String platformId) {
+        return User.builder()
+                .platformId(platformId)
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId("깃허브아이디")
+                .profileImageUrl("프로필이미지")
+                .pushAlarmYn(true)
+                .build();
+    }
+
+    public static User generateAuthUserPushAlarmNs(String platformId) {
+        return User.builder()
+                .platformId(platformId)
                 .platformType(GITHUB)
                 .role(USER)
                 .name("이름")

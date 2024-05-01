@@ -1,6 +1,7 @@
 package com.example.backend.domain.define.study.convention.repository;
 
 
+import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -39,6 +40,22 @@ public class StudyConventionRepositoryImpl implements StudyConventionRepositoryC
 
         return query.limit(limit)
                 .fetch();
+    }
+
+    @Override
+    public StudyConventionResponse findActiveConventionByStudyInId(Long studyInfoId) {
+
+        return queryFactory.select(Projections.constructor(StudyConventionResponse.class,
+                        studyConvention.id,
+                        studyConvention.studyInfoId,
+                        studyConvention.name,
+                        studyConvention.description,
+                        studyConvention.content,
+                        studyConvention.isActive))
+                .from(studyConvention)
+                .where(studyConvention.studyInfoId.eq(studyInfoId)
+                        .and(studyConvention.isActive))
+                .fetchFirst();
     }
 
 }

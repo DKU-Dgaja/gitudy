@@ -1,6 +1,6 @@
 package com.example.backend.auth.api.service.oauth.builder.kakao;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

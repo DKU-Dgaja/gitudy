@@ -1,21 +1,24 @@
 package com.example.backend.study.api.event.service;
 
 
-import com.example.backend.common.exception.event.EventException;
-import com.example.backend.study.api.event.FcmMultiTokenRequest;
-import com.example.backend.study.api.event.FcmSingleTokenRequest;
-import com.google.firebase.messaging.*;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.event.EventException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
+import com.example.backend.study.api.event.FcmMultiTokenRequest;
+import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.controller.request.FcmTokenSaveRequest;
+import com.google.firebase.messaging.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @Service
@@ -33,7 +36,6 @@ public class FcmService {
 
     public void sendMessageSingleDevice(FcmSingleTokenRequest token) throws FirebaseMessagingException {
 
-        //Todo: 가져온 userId와 token 예외처리 구현
 
         Notification notification = Notification.builder()
                 .setTitle(token.getTitle())
@@ -51,7 +53,6 @@ public class FcmService {
 
     public void sendMessageMultiDevice(FcmMultiTokenRequest token) throws FirebaseMessagingException {
 
-        //Todo: 가져온 userId와 token 예외처리 구현
 
         Notification notification = Notification.builder()
                 .setTitle(token.getTitle())
@@ -95,6 +96,20 @@ public class FcmService {
                     log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.FCM_DEVICE_NOT_FOUND);
                     return new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
                 });
+    }
+
+    public List<FcmToken> findFcmTokensByIdsOrThrowException(List<Long> userIds) {
+
+        // users 비어있는경우 예외처리
+        if (userIds == null || userIds.isEmpty()) {
+            log.warn(">>>> {} : {} <<<<", userIds, ExceptionMessage.FCM_DEVICE_NOT_FOUND);
+            throw new EventException(ExceptionMessage.FCM_DEVICE_NOT_FOUND);
+        }
+
+        Iterable<FcmToken> fcmTokens = fcmTokenRepository.findAllById(userIds);
+
+        return StreamSupport.stream(fcmTokens.spliterator(), false)
+                .toList();
     }
 
 }

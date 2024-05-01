@@ -52,7 +52,7 @@ public class StudyTodoController {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
-        studyTodoService.updateStudyTodo(studyTodoUpdateRequest, todoId);
+        studyTodoService.updateStudyTodo(studyTodoUpdateRequest, todoId, studyInfoId);
 
         return JsonResult.successOf("Todo update Success");
     }
@@ -96,7 +96,7 @@ public class StudyTodoController {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        return JsonResult.successOf(studyTodoService.readStudyTodo(todoId));
+        return JsonResult.successOf(studyTodoService.readStudyTodo(studyInfoId, todoId));
     }
 
     // 스터디원들의 Todo 완료여부 조회

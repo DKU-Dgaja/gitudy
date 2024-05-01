@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.service.oauth;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.service.oauth.adapter.github.GithubAdapter;
 import com.example.backend.auth.api.service.oauth.adapter.kakao.KakaoAdapter;
@@ -26,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class OAuthServiceTest extends TestConfig {
+class OAuthServiceTest extends MockTestConfig {
     @Autowired
     private GithubURLBuilder githubUrlBuilder;
 

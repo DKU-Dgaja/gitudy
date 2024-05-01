@@ -38,4 +38,8 @@ public class StudyTodoMapping extends BaseEntity {
         this.userId = userId;
         this.status = status;
     }
+
+    public void updateTodoMappingStatus(StudyTodoStatus status) {
+        this.status = status;
+    }
 }

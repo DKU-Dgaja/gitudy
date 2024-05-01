@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.user;
 
 
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.event.EventException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -10,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,4 +46,15 @@ public class UserService {
                     return new UserException(ExceptionMessage.USER_NOT_FOUND);
                 });
     }
+
+
+    // isPushAlarmYn가 true인 사용자의 ID 목록을 반환하는 메서드
+    public List<Long> findIsPushAlarmYsByIdsOrThrowException(List<Long> userIds) {
+
+        return userRepository.findAllById(userIds).stream()
+                .filter(User::isPushAlarmYn)
+                .map(User::getId)
+                .toList();
+    }
+
 }

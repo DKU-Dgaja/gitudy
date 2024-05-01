@@ -1,9 +1,7 @@
 package com.example.backend.study.api.service.bookmark;
 
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.common.exception.bookmark.BookmarkException;
-import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.bookmark.StudyBookmark;
 import com.example.backend.domain.define.account.bookmark.repository.StudyBookmarkRepository;
 import com.example.backend.study.api.service.bookmark.response.BookmarkInfoResponse;

@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.study.category.mapping.repository;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture;
 import com.example.backend.domain.define.study.StudyCategory.mapping.StudyCategoryMappingFixture;
 import com.example.backend.domain.define.study.category.info.StudyCategory;

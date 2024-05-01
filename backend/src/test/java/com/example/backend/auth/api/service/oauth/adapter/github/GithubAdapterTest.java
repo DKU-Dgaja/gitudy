@@ -1,6 +1,6 @@
 package com.example.backend.auth.api.service.oauth.adapter.github;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.service.oauth.builder.github.GithubURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.ExceptionMessage;

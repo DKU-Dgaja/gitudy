@@ -1,6 +1,6 @@
 package com.example.backend.study.api.service.comment.study;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.comment.study.StudyCommentException;

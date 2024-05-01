@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.study.comment.commit.repository;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.comment.commit.CommitCommentFixture;

@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.member;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
@@ -10,11 +11,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
-import com.example.backend.domain.define.fcm.listener.ApplyApproveRefuseMemberListener;
-import com.example.backend.domain.define.fcm.listener.ApplyMemberListener;
-import com.example.backend.domain.define.fcm.listener.NotifyMemberListener;
-import com.example.backend.domain.define.fcm.listener.ResignMemberListener;
-import com.example.backend.domain.define.fcm.listener.WithdrawalMemberListener;
+import com.example.backend.domain.define.fcm.listener.*;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
@@ -42,6 +39,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -52,7 +50,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
-public class StudyMemberServiceTest extends TestConfig {
+public class StudyMemberServiceTest extends MockTestConfig {
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;
@@ -513,7 +511,6 @@ public class StudyMemberServiceTest extends TestConfig {
         verify(applyMemberListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
     }
 
-
     @Test
     @DisplayName("스터디 가입신청 알림 테스트 - 알림여부 false")
     void apply_notify_test_false() throws FirebaseMessagingException {
@@ -541,7 +538,6 @@ public class StudyMemberServiceTest extends TestConfig {
         // then
         verify(applyMemberListener, times(0)).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출x 검증
     }
-
     @Test
     @DisplayName("한번 강퇴된 스터디원 가입 신청 테스트")
     public void applyStudyMember_resigned() {

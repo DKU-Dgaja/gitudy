@@ -1,7 +1,7 @@
 package com.example.backend.auth.api.controller.auth;
 
-import com.example.backend.auth.TestConfig;
-import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
+import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
@@ -34,7 +34,6 @@ import java.util.Map;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.auth.config.fixture.UserFixture.*;
-import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -43,7 +42,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @SuppressWarnings("NonAsciiCharacters")
-class AuthControllerTest extends TestConfig {
+class AuthControllerTest extends MockTestConfig {
 
     @Autowired
     private MockMvc mockMvc;

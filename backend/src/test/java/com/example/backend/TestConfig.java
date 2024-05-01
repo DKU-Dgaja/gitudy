@@ -1,4 +1,4 @@
-package com.example.backend.auth;
+package com.example.backend;
 
 /*
 * static 모음 *
@@ -26,7 +26,6 @@ import org.springframework.test.context.event.RecordApplicationEvents;
 @DisplayNameGeneration(DisplayNameGenerator.ReplaceUnderscores.class)
 @SpringBootTest
 @ActiveProfiles("test")
-@AutoConfigureMockMvc
 @RecordApplicationEvents
 @EnableAsync
 public class TestConfig {

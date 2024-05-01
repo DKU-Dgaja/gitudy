@@ -1,20 +1,30 @@
 package com.example.backend.domain.define.study.commit.repository;
 
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.user.UserException;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+    private final UserRepository userRepository;
 
     @Override
     public List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long studyId, Long cursorIdx, Long limit) {
@@ -49,5 +59,22 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
         return query
                 .limit(limit)
                 .fetch();
+    }
+
+    @Override
+    public List<GithubCommitResponse> findUnsavedGithubCommits(List<GithubCommitResponse> githubCommitList) {
+        // 저장되지 않은 커밋 조회
+        List<String> savedCommitShaList = queryFactory.select(studyCommit.commitSHA)
+                .from(studyCommit)
+                .where(studyCommit.commitSHA.in(
+                        githubCommitList.stream()
+                                .map(GithubCommitResponse::getSha)
+                                .toList())
+                ).fetch();
+
+        // 저장된 커밋을 제외한 커밋 리스트 반환
+        return githubCommitList.stream()
+                .filter(commit -> !savedCommitShaList.contains(commit.getSha()))
+                .toList();
     }
 }

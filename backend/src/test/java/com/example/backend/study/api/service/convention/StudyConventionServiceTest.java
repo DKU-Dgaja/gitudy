@@ -1,6 +1,6 @@
 package com.example.backend.study.api.service.convention;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.domain.define.account.user.User;
@@ -18,7 +18,6 @@ import com.example.backend.study.api.controller.convention.request.StudyConventi
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 import com.example.backend.study.api.controller.convention.response.StudyConventionListAndCursorIdxResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
-import io.lettuce.core.Limit;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -204,5 +203,58 @@ public class StudyConventionServiceTest extends TestConfig {
         assertEquals(4, responses.getStudyConventionList().size());
         assertEquals("4번째 컨벤션", responses.getStudyConventionList().get(0).getName()); // 최신 컨벤션 확인
 
+    }
+
+    @Test
+    void 정규식_통과_테스트() {
+        // given
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^\\[[A-Za-z가-힣0-9]+\\] [A-Za-z가-힣]+: .+$";
+        String conventionDescription = "커밋 메세지 규칙: [이름] 플랫폼 \":\" + \" \" + 문제 이름 \n" +
+                "예시 1) [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) [이주성] 프로그래머스: 두 수의 곱";
+
+        StudyConvention sc = StudyConvention.builder()
+                .studyInfoId(1L)
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build();
+
+        String commitMag = "[이주성] 백준: 크리스마스 트리";
+
+        // when
+        boolean result = studyConventionService.checkConvention(convention, commitMag);
+
+        // then
+        assertTrue(result);
+
+    }
+
+    @Test
+    void 정규식_실패_테스트() {
+        // given
+        String conventionName = "커밋 메세지 규칙";
+        String convention = "^\\[[A-Za-z가-힣0-9]+\\] [A-Za-z가-힣]+: .+$";
+        String conventionDescription = "커밋 메세지 규칙: [이름] 플랫폼 \":\" + \" \" + 문제 이름 \n" +
+                "예시 1) [이주성] 백준: 크리스마스 트리 \n" +
+                "예시 2) [이주성] 프로그래머스: 두 수의 곱";
+
+        StudyConvention sc = StudyConvention.builder()
+                .studyInfoId(1L)
+                .name(conventionName)
+                .description(conventionDescription)
+                .content(convention)
+                .isActive(true)
+                .build();
+
+        String invalidCommitMag = "[이주성] 백준:크리스마스 트리";
+
+        // when
+        boolean result = studyConventionService.checkConvention(convention, invalidCommitMag);
+
+        // then
+        assertFalse(result);
     }
 }

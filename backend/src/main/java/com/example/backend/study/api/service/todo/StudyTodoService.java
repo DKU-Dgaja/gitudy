@@ -2,9 +2,14 @@ package com.example.backend.study.api.service.todo;
 
 
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.domain.define.study.todo.event.TodoRegisterMemberEvent;
+import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
@@ -15,9 +20,12 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequ
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.service.commit.StudyCommitService;
 import com.example.backend.study.api.service.info.StudyInfoService;
+import com.example.backend.study.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,11 +38,15 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class StudyTodoService {
 
-
     private final StudyTodoRepository studyTodoRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyInfoRepository studyInfoRepository;
+    private final StudyCommitService studyCommitService;
     private final StudyInfoService studyInfoService;
+    private final UserService userService;
+    private final ApplicationEventPublisher eventPublisher;
+    
     private final static Long MAX_LIMIT = 10L;
 
     // Todo 등록
@@ -57,6 +69,23 @@ public class StudyTodoService {
 
         // 한 번의 쿼리로 모든 매핑 저장
         studyTodoMappingRepository.saveAll(todoMappings);
+
+        // 활동중인 멤버들의 userId 추출
+        List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
+
+        // FCM 알림을 받을 수 있는 사용자의 ID 추출
+        List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
+
+        // 비어있지 않으면 FCM 알림 전송
+        if (!isPushAlarmYUserIds.isEmpty()) {
+
+            StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+            eventPublisher.publishEvent(TodoRegisterMemberEvent.builder()
+                    .userIds(isPushAlarmYUserIds)
+                    .studyTopic(studyInfo.getTopic())
+                    .build());
+        }
     }
 
     // StudyTodo 생성 로직
@@ -73,7 +102,10 @@ public class StudyTodoService {
 
     // Todo 수정
     @Transactional
-    public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId) {
+    public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId, Long studyInfoId) {
+        // 스터디에 속한 활동중인 스터디원 조회
+        List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
+
         // To do 조회
         StudyTodo studyTodo = findByIdOrThrowStudyTodoException(todoId);
 
@@ -83,6 +115,27 @@ public class StudyTodoService {
                 request.getDetail(),
                 request.getTodoLink(),
                 request.getTodoDate());
+
+        // 깃허브 api를 사용해 커밋 업데이트
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, studyTodo);
+
+        // 활동중인 멤버들의 userId 추출
+        List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
+
+        // FCM 알림을 받을 수 있는 사용자의 ID 추출
+        List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
+
+        // 비어있지 않으면 FCM 알림 전송
+        if (!isPushAlarmYUserIds.isEmpty()) {
+
+            eventPublisher.publishEvent(TodoUpdateMemberEvent.builder()
+                    .userIds(isPushAlarmYUserIds)
+                    .studyTopic(studyInfo.getTopic())
+                    .todoTitle(studyTodo.getTitle())
+                    .build());
+        }
+
     }
 
     // Todo 삭제
@@ -117,23 +170,52 @@ public class StudyTodoService {
         // 다음 페이지 조회를 위한 cursorIdx 설정
         response.setNextCursorIdx();
 
+        // 커밋 fetch 업데이트
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        studyTodoList.forEach(todo -> {
+            // 깃허브 api를 사용해 커밋 업데이트
+            StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
+                log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
+                return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+            });
+            studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo);
+
+            // TODO: 점수 부여 로직 필요
+        });
+
         return response;
     }
 
     // Todo 단일조회
-    public StudyTodoResponse readStudyTodo(Long todoId) {
+    public StudyTodoResponse readStudyTodo(Long studyInfoId, Long todoId) {
 
         // To do 조회
-        StudyTodo studyTodo = findByIdOrThrowStudyTodoException(todoId);
+        StudyTodo todo = findByIdOrThrowStudyTodoException(todoId);
 
-        return StudyTodoResponse.of(studyTodo);
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+
+        // 깃허브 api를 사용해 커밋 업데이트
+        StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
+            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo);
+
+        return StudyTodoResponse.of(todo);
     }
 
     // 스터디원들의 Todo 완료여부 조회
     public List<StudyTodoStatusResponse> readStudyTodoStatus(Long studyInfoId, Long todoId) {
 
         // 스터디와 관련된 To do 예외처리
-        findByIdWithStudyInfoIdOrThrowStudyTodoException(studyInfoId, todoId);
+        StudyTodo todo = findByIdWithStudyInfoIdOrThrowStudyTodoException(studyInfoId, todoId);
 
         // 스터디 active 멤버들 찾기
         List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
@@ -144,6 +226,15 @@ public class StudyTodoService {
         // active 멤버들에 대한 특정 Todo의 완료 상태를 조회
         List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoIdAndUserIds(todoId, userIds);
 
+        // 깃허브 api를 사용해 커밋 업데이트
+        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
+            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
+        });
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, todo);
+
+        // TODO: 점수 부여 로직 필요
+
         // 조회된 정보를 바탕으로 응답 객체를 생성
         return todoMappings.stream()
                 .map(mapping -> new StudyTodoStatusResponse(mapping.getUserId(), mapping.getStatus()))
@@ -151,19 +242,19 @@ public class StudyTodoService {
     }
 
     public StudyTodo findByIdOrThrowStudyTodoException(Long todoId) {
-        StudyTodo studyTodo = studyTodoRepository.findById(todoId).orElseThrow(() ->{
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
-        return studyTodo;
+        return studyTodoRepository.findById(todoId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+                    return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+                });
     }
 
     public StudyTodo findByIdWithStudyInfoIdOrThrowStudyTodoException(Long studyInfoId, Long todoId) {
-        StudyTodo studyTodo = studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
-        return studyTodo;
+        return studyTodoRepository.findByIdAndStudyInfoId(todoId, studyInfoId)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", todoId, ExceptionMessage.TODO_NOT_FOUND);
+                    return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+                });
     }
 
     // 멤버들의 userId만 추출

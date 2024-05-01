@@ -10,7 +10,7 @@ import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import io.jsonwebtoken.Claims;
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;

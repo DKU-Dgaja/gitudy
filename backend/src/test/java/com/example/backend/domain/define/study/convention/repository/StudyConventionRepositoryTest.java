@@ -1,6 +1,6 @@
 package com.example.backend.domain.define.study.convention.repository;
 
-import com.example.backend.auth.TestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.StudyConventionFixture;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
@@ -64,5 +64,20 @@ public class StudyConventionRepositoryTest extends TestConfig {
 
     }
 
+    @Test
+    void 활성화된_컨벤션_조회_테스트() {
+        // given
+        Long studyId = 1L;
+
+        studyConventionRepository.save(StudyConventionFixture.createStudyDefaultConvention(studyId));
+        studyConventionRepository.save(StudyConventionFixture.createNonActiveConvention(studyId));
+
+        // when
+        var convention = studyConventionRepository.findActiveConventionByStudyInId(studyId);
+
+        // then
+        assertEquals(convention.getStudyInfoId(), studyId);
+        assertTrue(convention.isActive());
+    }
 
 }
