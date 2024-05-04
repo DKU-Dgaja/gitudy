@@ -150,20 +150,14 @@ public class StudyCommitService {
 
     @Transactional
     public void approveCommit(Long commitId) {
-        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
-            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
-            return new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
-        });
+        StudyCommit commit = findStudyCommitByIdOrThrowException(commitId);
 
         commit.approveCommit();
     }
 
     @Transactional
     public void rejectCommit(Long commitId, String rejectionReason) {
-        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
-            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
-            return new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
-        });
+        StudyCommit commit = findStudyCommitByIdOrThrowException(commitId);
 
         commit.rejectCommit(rejectionReason);
     }
