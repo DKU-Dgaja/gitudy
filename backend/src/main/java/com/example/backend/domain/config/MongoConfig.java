@@ -17,9 +17,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 public class MongoConfig extends AbstractMongoClientConfiguration {
 
+    @Value("${spring.data.mongodb.host}")
+    private String host;
 
-    @Value("${spring.data.mongodb.uri}")
-    private String uri;
+    @Value("${spring.data.mongodb.port}")
+    private int port;
 
     @Value("${spring.data.mongodb.database}")
     private String databaseName;
@@ -31,10 +33,11 @@ public class MongoConfig extends AbstractMongoClientConfiguration {
 
     @Override
     public MongoClient mongoClient() {
-        ConnectionString connectionString = new ConnectionString(uri);
+        String connectionString = String.format("mongodb://%s:%d", host, port);
+        ConnectionString connection = new ConnectionString(connectionString);
 
         MongoClientSettings mongoClientSettings = MongoClientSettings.builder()
-                .applyConnectionString(connectionString)
+                .applyConnectionString(connection)
                 .build();
 
         return MongoClients.create(mongoClientSettings);
