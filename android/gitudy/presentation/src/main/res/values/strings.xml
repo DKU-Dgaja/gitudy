@@ -15,10 +15,6 @@
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
 
 
-    <!-- Strings related to rv_item -->
-    <string name="study_score">%d점</string>
-    <string name="study_to_do_check">%d/%d</string>
-
     <!-- Strings related to alert -->
     <string name="alert_text_length">%d자 이하로 입력해주세요.</string>
     <string name="alert_text_emoji">특수기호 및 이모티콘 입력은 불가해요.</string>
@@ -37,10 +33,11 @@
     <string name="study_my_cnt">마이스터디</string>
     <string name="study_name">단국알고깃터디</string>
     <string name="study_no_my_study">가입 중인 스터디가 없습니다</string>
-    <string name="study_commit_rule">월/수/금 커밋 필수</string>
+    <string name="study_commit_rule">주 %d회 커밋 필수</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
     <string name="study_team_rank">%d점 • %d등</string>
+    <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %d.%d.%d</string>
     <string name="study_github_link">https://github.com/DKU-Dgaja/gitudy</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>
     <string name="study_to_do">백준의 1253번 문제 풀기</string>
@@ -53,6 +50,9 @@
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
+    <!-- Strings related to rv_item -->
+    <string name="study_score">%d점</string>
+    <string name="study_to_do_check">/%d명</string>
 
 
     <!-- Strings related to feed -->
