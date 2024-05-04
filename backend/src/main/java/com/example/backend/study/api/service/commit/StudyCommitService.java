@@ -158,3 +158,13 @@ public class StudyCommitService {
         commit.approveCommit();
     }
 
+    @Transactional
+    public void rejectCommit(Long commitId, String rejectionReason) {
+        StudyCommit commit = studyCommitRepository.findById(commitId).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
+            return new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
+        });
+
+        commit.rejectCommit(rejectionReason);
+    }
+}
