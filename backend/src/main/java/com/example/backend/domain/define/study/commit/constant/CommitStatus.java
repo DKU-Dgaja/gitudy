@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum CommitStatus {
     COMMIT_APPROVAL("승인된 커밋"),
     COMMIT_REJECTION("거절된 커밋"),
-    COMMIT_INVALID("컨벤션이 지켜지지 않은 커밋"),
+    COMMIT_WAITING("팀장의 승인을 기다리는 커밋"),
     COMMIT_DELETE("삭제된 커밋")
     ;
 

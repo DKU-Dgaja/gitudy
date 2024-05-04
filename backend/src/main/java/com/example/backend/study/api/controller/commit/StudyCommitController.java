@@ -62,4 +62,18 @@ public class StudyCommitController {
         return JsonResult.successOf(studyCommitService.getCommitDetailsById(commitId));
     }
 
+    @ApiResponse(responseCode = "200", description = "커밋 승인 성공")
+    @GetMapping("/{commitId}/approve")
+    public JsonResult<?> approveCommit(@AuthenticationPrincipal User user,
+                                       @RequestParam(name = "studyInfoId") Long studyInfoId,
+                                       @PathVariable(name = "commitId") Long commitId) {
+
+        // 팀장 권한 검사
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyCommitService.approveCommit(commitId);
+
+        return JsonResult.successOf("커밋 승인이 완료되었습니다.");
+    }
+
 }
