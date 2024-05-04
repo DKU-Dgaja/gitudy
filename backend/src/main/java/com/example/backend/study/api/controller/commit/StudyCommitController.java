@@ -4,6 +4,7 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.study.api.controller.commit.request.CommitRejectionRequest;
 import com.example.backend.study.api.controller.commit.response.CommitInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.service.commit.StudyCommitService;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
@@ -11,6 +12,7 @@ import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,4 +64,32 @@ public class StudyCommitController {
         return JsonResult.successOf(studyCommitService.getCommitDetailsById(commitId));
     }
 
+    @ApiResponse(responseCode = "200", description = "커밋 승인 성공")
+    @GetMapping("/{commitId}/approve")
+    public JsonResult<?> approveCommit(@AuthenticationPrincipal User user,
+                                       @RequestParam(name = "studyInfoId") Long studyInfoId,
+                                       @PathVariable(name = "commitId") Long commitId) {
+
+        // 팀장 권한 검사
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyCommitService.approveCommit(commitId);
+
+        return JsonResult.successOf("커밋 승인이 완료되었습니다.");
+    }
+
+    @ApiResponse(responseCode = "200", description = "커밋 거절 성공")
+    @GetMapping("/{commitId}/reject")
+    public JsonResult<?> rejectCommit(@AuthenticationPrincipal User user,
+                                      @RequestParam(name = "studyInfoId") Long studyInfoId,
+                                      @Valid @RequestBody CommitRejectionRequest request,
+                                      @PathVariable(name = "commitId") Long commitId) {
+
+        // 팀장 권한 검사
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+
+        studyCommitService.rejectCommit(commitId, request.getRejectionReason());
+
+        return JsonResult.successOf("커밋 거절이 완료되었습니다.");
+    }
 }

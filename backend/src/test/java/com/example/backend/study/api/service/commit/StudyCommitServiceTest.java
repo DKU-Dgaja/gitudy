@@ -253,4 +253,43 @@ class StudyCommitServiceTest extends TestConfig {
 
     }
 
+    @Test
+    void 커밋_승인_성공_테스트() {
+        // given
+        Long studyId = 1L;
+        Long userId = 1L;
+        Long studyTodoId = 1L;
+        String commitSha = "123";
+
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyId, studyTodoId, commitSha));
+
+        // when
+        studyCommitService.approveCommit(savedCommit.getId());
+
+        // then
+        StudyCommit commit = studyCommitRepository.findById(savedCommit.getId()).get();
+        assertEquals(commit.getStatus(), CommitStatus.COMMIT_APPROVAL);
+    }
+
+    @Test
+    void 커밋_거절_성공_테스트() {
+        // given
+        Long studyId = 1L;
+        Long userId = 1L;
+        Long studyTodoId = 1L;
+        String commitSha = "123";
+
+        String rejectionReason = "동작하지 않는 코드입니다.";
+
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyId, studyTodoId, commitSha));
+
+        // when
+        studyCommitService.rejectCommit(savedCommit.getId(), rejectionReason);
+
+        // then
+        StudyCommit commit = studyCommitRepository.findById(savedCommit.getId()).get();
+        assertEquals(commit.getStatus(), CommitStatus.COMMIT_REJECTION);
+        assertEquals(commit.getRejectionReason(), rejectionReason);
+    }
+
 }
