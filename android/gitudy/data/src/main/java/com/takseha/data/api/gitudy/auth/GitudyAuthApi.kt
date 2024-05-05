@@ -1,4 +1,4 @@
-package com.takseha.data.api.gitudy
+package com.takseha.data.api.gitudy.auth
 
 import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.login.LoginPageResponse
@@ -17,7 +17,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface GitudyApi {
+interface GitudyAuthApi {
     @GET("/auth/loginPage")
     suspend fun getLoginPage(): Response<LoginPageResponse>
 
@@ -43,19 +43,4 @@ interface GitudyApi {
     suspend fun getUserInfo(
         @Header("Authorization") bearerToken: String
     ): Response<UserInfoResponse>
-
-    @GET("/study/")
-    suspend fun getStudyList(
-        @Header("Authorization") bearerToken: String,
-        @Query("cursorIdx") cursorIdx: Long?,
-        @Query("limit") limit: Long,
-        @Query("sortBy") sortBy: String,
-        @Query("myStudy") myStudy: Boolean
-    ): Response<StudyListResponse>
-
-    @POST("/study/")
-    suspend fun makeNewStudy(
-        @Header("Authorization") bearerToken: String,
-        @Body request: MakeStudyRequest
-    ): Response<MakeStudyResponse>
 }

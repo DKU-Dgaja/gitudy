@@ -1,12 +1,12 @@
 package com.takseha.data.repository
 
-import com.takseha.data.api.gitudy.GitudyApi
+import com.takseha.data.api.gitudy.auth.GitudyAuthApi
 import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 
 class GitudyRepository {
-    private val client = RetrofitInstance.getInstance().create(GitudyApi::class.java)
+    private val client = RetrofitInstance.getInstance().create(GitudyAuthApi::class.java)
     suspend fun getLoginPage() = client.getLoginPage()
     suspend fun getLoginTokens(
         platformType: String,
