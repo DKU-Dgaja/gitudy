@@ -38,11 +38,6 @@ public class ProjectConfig implements WebMvcConfigurer {
 
         JavaTimeModule javaTimeModule = new JavaTimeModule();
 
-        // LocalDateTime과 ZonedDateTime을 위한 포맷터 설정
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss").withZone(ZoneId.of("Asia/Seoul"));
-        javaTimeModule.addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
-        javaTimeModule.addSerializer(ZonedDateTime.class, new ZonedDateTimeSerializer(formatter));
-
         ObjectMapper mapper = new ObjectMapper();
 
         // 객체의 속성 이름을 snake-case로 설정
