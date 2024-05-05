@@ -92,7 +92,7 @@
                         android:background="@drawable/box_non_stroke_r6"
                         android:backgroundTint="#40F2F6FA"
                         android:gravity="center"
-                        android:text="%d"
+                        android:text="@string/study_total_day_cnt"
                         android:textColor="@color/WHITE" />
                 </LinearLayout>
 
