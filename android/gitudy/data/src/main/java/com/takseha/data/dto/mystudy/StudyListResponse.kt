@@ -35,7 +35,7 @@ data class StudyCategoryMappingMap(
 
 data class StudyInfo(
     @SerializedName("created_date_time")
-    val createdDateTime: LocalDateTime,
+    val createdDateTime: String,
     @SerializedName("current_member")
     val currentMember: Int,
     @SerializedName("id")
