@@ -8,7 +8,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
-import com.takseha.data.repository.GitudyRepository
+import com.takseha.data.repository.auth.GitudyAuthRepository
+import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -17,7 +18,8 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 
 class MainHomeViewModel(application: Application) : AndroidViewModel(application) {
-    private var gitudyRepository: GitudyRepository = GitudyRepository()
+    private var gitudyAuthRepository: GitudyAuthRepository = GitudyAuthRepository()
+    private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
     private val prefs = SP(getApplication())
 
     private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
@@ -32,7 +34,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         get() = _cursorIdx
 
     suspend fun getUserInfo() {
-        val userInfoResponse = gitudyRepository.getUserInfo(bearerToken)
+        val userInfoResponse = gitudyAuthRepository.getUserInfo(bearerToken)
 
         if (userInfoResponse.isSuccessful) {
             val resCode = userInfoResponse.body()!!.resCode
@@ -63,7 +65,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getMyStudyList(cursorIdx: Long?) = viewModelScope.launch {
-        val myStudyListResponse = gitudyRepository.getStudyList(bearerToken, cursorIdx, myStudy = true)
+        val myStudyListResponse = gitudyStudyRepository.getStudyList(bearerToken, cursorIdx, myStudy = true)
 
         if (myStudyListResponse.isSuccessful) {
             val resCode = myStudyListResponse.body()!!.resCode
