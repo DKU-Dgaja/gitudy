@@ -6,7 +6,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp">
+        app:cardCornerRadius="12dp"
+        android:layout_marginTop="24dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -16,7 +17,7 @@
                 android:id="@+id/studyInfoLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="#4B5059"
+                android:background="#459BFF"
                 android:orientation="vertical"
                 android:paddingLeft="20dp"
                 android:paddingTop="25dp"
