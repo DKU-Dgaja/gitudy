@@ -86,8 +86,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:layout_marginLeft="4dp
-"
+            android:layout_marginLeft="4dp"
             android:text="참여 가능한 스터디만 보기"
             android:textColor="@color/GS_800"
             app:layout_constraintStart_toEndOf="@+id/enableStudyCheckBtn"
@@ -146,17 +145,13 @@
             android:textColor="@color/GS_400" />
     </LinearLayout>
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feedList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:scrollbars="none"
+        android:layout_height="0dp"
         android:layout_marginTop="24dp"
-        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/feedList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        android:layout_marginBottom="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
