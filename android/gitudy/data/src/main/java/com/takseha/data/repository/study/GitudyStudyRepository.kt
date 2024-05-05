@@ -12,8 +12,8 @@ class GitudyStudyRepository {
     suspend fun getStudyList(
         bearerToken: String,
         cursorIdx: Long?,
-        limit: Long = 5,
-        sortBy: String = "createdDateTime",
+        limit: Long,
+        sortBy: String,
         myStudy: Boolean
     ) = client.getStudyList(bearerToken, cursorIdx, limit, sortBy, myStudy)
 
