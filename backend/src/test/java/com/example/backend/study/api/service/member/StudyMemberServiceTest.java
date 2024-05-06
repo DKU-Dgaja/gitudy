@@ -280,6 +280,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
         studyInfoRepository.save(studyInfo);
 
+        int beforeCurrentMember = studyInfo.getCurrentMember();
+
         StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
         StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
         StudyMember activeMember2 = StudyMemberFixture.createStudyMemberResigned(user2.getId(), studyInfo.getId());
@@ -294,6 +296,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // 알람 여부 false이므로 event 발생하지 않는다.
         verify(resignMemberListener, times(0)).resignMemberListener(any(ResignMemberEvent.class));
+
+        // 스터디원 강퇴시 현재인원 감소
+        assertEquals(beforeCurrentMember - 1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
     }
 
     @Test
@@ -339,6 +344,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leaderuser.getId());
         studyInfoRepository.save(studyInfo);
 
+        int beforeCurrentMember = studyInfo.getCurrentMember();
+
         StudyMember leader = StudyMemberFixture.createStudyMemberLeader(leaderuser.getId(), studyInfo.getId());
         StudyMember activeMember1 = StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId());
         studyMemberRepository.saveAll(List.of(leader, activeMember1));
@@ -352,6 +359,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // 알람 여부 false이므로 event 발생하지 않는다.
         verify(withdrawalMemberListener, times(0)).withdrawalMemberListener(any(WithdrawalMemberEvent.class));
+
+        // 스터디원 탈퇴시 현재인원 감소
+        assertEquals(beforeCurrentMember - 1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
     }
 
 
@@ -751,6 +761,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
+        int beforeCurrentMember = studyInfo.getCurrentMember();
+
         StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
         studyMemberRepository.save(waitingMember);
 
@@ -764,6 +776,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // 스터디 가입 시 User score +5점
         assertEquals(beforeUser1Score + 5, userRepository.findById(user1.getId()).get().getScore());
+
+        // 스터디 가입 시 현재인원 증가
+        assertEquals(beforeCurrentMember +1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
     }
 
     @Test

@@ -26,6 +26,7 @@ public class StudyInfoFixture {
                 .userId(userId)
                 .topic("토픽")
                 .status(STUDY_PUBLIC)
+                .maximumMember(10)
                 .build();
     }
 
