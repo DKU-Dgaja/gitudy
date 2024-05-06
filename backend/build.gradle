@@ -76,6 +76,9 @@ dependencies {
 
     // Firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
+
+    // Mongo
+    implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
 }
 
 // Querydsl 설정
