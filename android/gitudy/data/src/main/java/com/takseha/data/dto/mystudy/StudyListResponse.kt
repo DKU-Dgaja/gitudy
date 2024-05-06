@@ -1,6 +1,8 @@
 package com.takseha.data.dto.mystudy
 
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.feed.StudyPeriod
+import java.time.LocalDateTime
 
 data class StudyListResponse(
     @SerializedName("res_code")
@@ -13,7 +15,7 @@ data class StudyListResponse(
 
 data class StudyListInfo(
     @SerializedName("cursor_idx")
-    val cursorIdx: Long,
+    val cursorIdx: Long?,
     @SerializedName("study_category_mapping_map")
     val studyCategoryMappingMap: StudyCategoryMappingMap,
     @SerializedName("study_info_list")
@@ -45,7 +47,7 @@ data class StudyInfo(
     @SerializedName("maximum_member")
     val maximumMember: Int,
     @SerializedName("period_type")
-    val periodType: String,
+    val periodType: StudyPeriod,
     @SerializedName("profile_image_url")
     val profileImageUrl: String,
     @SerializedName("score")
@@ -58,14 +60,14 @@ data class StudyInfo(
 
 data class StudyUserInfoMap(
     @SerializedName("additionalProp1")
-    val additionalProp1: List<AdditionalProp1>,
+    val additionalProp1: List<AdditionalProp>,
     @SerializedName("additionalProp2")
-    val additionalProp2: List<AdditionalProp1>,
+    val additionalProp2: List<AdditionalProp>,
     @SerializedName("additionalProp3")
-    val additionalProp3: List<AdditionalProp1>
+    val additionalProp3: List<AdditionalProp>
 )
 
-data class AdditionalProp1(
+data class AdditionalProp(
     @SerializedName("id")
     val id: Int,
     @SerializedName("name")
