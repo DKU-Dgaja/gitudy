@@ -108,13 +108,13 @@ public class StudyMemberService {
         // 강퇴할 유저 조회
         User resignUser = userService.findUserByStudyMemberOrThrowException(resignMember);
 
-        // 강퇴 알림
-        if (resignUser.isPushAlarmYn()) {
-            eventPublisher.publishEvent(ResignMemberEvent.builder()
-                    .resignMemberId(resignUserId)
-                    .studyInfoTopic(studyInfo.getTopic())
-                    .build());
-        }
+        // 알림 비동기처리
+        eventPublisher.publishEvent(ResignMemberEvent.builder()
+                .isPushAlarmYn(resignUser.isPushAlarmYn())
+                .resignMemberId(resignUserId)
+                .studyInfoTopic(studyInfo.getTopic())
+                .build());
+
     }
 
 
@@ -136,14 +136,14 @@ public class StudyMemberService {
         // 스터디장 조회
         User studyLeader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
 
-        // 탈퇴 알림
-        if (studyLeader.isPushAlarmYn()) {
-            eventPublisher.publishEvent(WithdrawalMemberEvent.builder()
-                    .studyLeaderId(studyInfo.getUserId())
-                    .withdrawalMemberName(user.getName())
-                    .studyInfoTopic(studyInfo.getTopic())
-                    .build());
-        }
+        // 알림 비동기처리
+        eventPublisher.publishEvent(WithdrawalMemberEvent.builder()
+                .isPushAlarmYn(studyLeader.isPushAlarmYn())
+                .studyLeaderId(studyInfo.getUserId())
+                .withdrawalMemberName(user.getName())
+                .studyInfoTopic(studyInfo.getTopic())
+                .build());
+
     }
 
 
@@ -179,10 +179,6 @@ public class StudyMemberService {
             throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
         }
 
-        // Todo: 알림 페이지에 보여줄 정보 반환 로직
-
-        // 알림 여부
-        boolean notifyLeader = false;
 
         // 탈퇴한 멤버인지 확인, 승인 거부된 유저인지 확인
         Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
@@ -190,7 +186,6 @@ public class StudyMemberService {
             if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
                 existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경
                 existingMember.get().updateSignGreeting(messageRequest.getMessage()); // 가입인사 수정
-                notifyLeader = true;  // 알림설정
             }
 
         } else {
@@ -198,25 +193,17 @@ public class StudyMemberService {
             // '스터디 승인 대기중인 유저' 로 생성
             StudyMember studyMember = StudyMember.waitingStudyMember(studyInfoId, user.getUserId(), messageRequest.getMessage());
             studyMemberRepository.save(studyMember);
-            notifyLeader = true;
-
         }
 
-        // fcm 백그라운드 알림
-        if (notifyLeader) {
+        User leader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
 
-            User leader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
-
-            // 알림여부 확인
-            if (leader.isPushAlarmYn()) {
-
-                eventPublisher.publishEvent(ApplyMemberEvent.builder()
-                        .studyLeaderId(leader.getId())
-                        .studyTopic(studyInfo.getTopic())
-                        .name(user.getName())
-                        .build());
-            }
-        }
+        // 알림 비동기처리
+        eventPublisher.publishEvent(ApplyMemberEvent.builder()
+                .isPushAlarmYn(leader.isPushAlarmYn())
+                .studyLeaderId(leader.getId())
+                .studyTopic(studyInfo.getTopic())
+                .name(user.getName())
+                .build());
     }
 
     // 스터디 가입 취소 메서드
@@ -271,16 +258,15 @@ public class StudyMemberService {
 
         User applyUser = userService.findUserByIdOrThrowException(applyUserId);
 
-        // fcm 백그라운드 알림
-        if (applyUser.isPushAlarmYn()) {
+        // 알림 비동기처리
+        eventPublisher.publishEvent(ApplyApproveRefuseMemberEvent.builder()
+                .isPushAlarmYn(applyUser.isPushAlarmYn())
+                .approve(approve)
+                .applyUserId(applyUserId)
+                .studyTopic(studyInfo.getTopic())
+                .name(applyUser.getName())
+                .build());
 
-            eventPublisher.publishEvent(ApplyApproveRefuseMemberEvent.builder()
-                    .approve(approve)
-                    .applyUserId(applyUserId)
-                    .studyTopic(studyInfo.getTopic())
-                    .name(applyUser.getName())
-                    .build());
-        }
     }
 
     // 스터디 가입신청 목록 조회 메서드
@@ -313,22 +299,19 @@ public class StudyMemberService {
     // 스터디 멤버에게 알림 메서드
     public void notifyToStudyMember(Long studyInfoId, Long notifyUserId, MessageRequest messageRequest) {
 
-        // Todo: 알림테이블 구현후 알림추가
-
         // 스터디 조회
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 알림 받을 user 조회
         User notifyUser = userService.findUserByIdOrThrowException(notifyUserId);
 
-        if (notifyUser.isPushAlarmYn()) {
-
-            eventPublisher.publishEvent(NotifyMemberEvent.builder()
-                    .notifyUserId(notifyUserId)
-                    .studyTopic(studyInfo.getTopic())
-                    .message(messageRequest.getMessage())
-                    .build());
-        }
+        // 알림 비동기처리
+        eventPublisher.publishEvent(NotifyMemberEvent.builder()
+                .isPushAlarmYn(notifyUser.isPushAlarmYn())
+                .notifyUserId(notifyUserId)
+                .studyTopic(studyInfo.getTopic())
+                .message(messageRequest.getMessage())
+                .build());
 
     }
 
