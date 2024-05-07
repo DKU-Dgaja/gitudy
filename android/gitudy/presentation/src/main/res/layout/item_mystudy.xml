@@ -49,7 +49,7 @@
                 android:paddingRight="10dp"
                 android:text="팀장"
                 android:textColor="@color/WHITE"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/studyName"
                 app:layout_constraintTop_toTopOf="parent" />
 
