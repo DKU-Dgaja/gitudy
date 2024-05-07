@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         app:cardCornerRadius="12dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -154,6 +155,16 @@
 
             <TextView
                 android:id="@+id/todoCheckNum"
+                style="@style/B6_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="19dp"
+                android:text="%d"
+                android:textColor="@color/GS_500"
+                app:layout_constraintEnd_toStartOf="@+id/totalNum"
+                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
+            <TextView
+                android:id="@+id/totalNum"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
