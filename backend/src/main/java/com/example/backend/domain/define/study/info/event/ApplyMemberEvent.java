@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ApplyMemberEvent {
 
+    private boolean isPushAlarmYn; // fcm 알림여부 확인
+
     private Long studyLeaderId;  // 스터디 리더 Id
 
     private String studyTopic;  // 스터디 제목
