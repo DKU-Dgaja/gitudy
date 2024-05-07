@@ -140,6 +140,12 @@ public class StudyInfoService {
         return getStudyInfoDetailResponse(studyInfo, categoryNames);
     }
 
+    // 마이/전체스터디 개수 조회
+    public StudyInfoCountResponse getStudyInfoCount(Long userId, boolean myStudy) {
+        return StudyInfoCountResponse.builder()
+                .count(studyInfoRepository.findStudyInfoCount(userId, myStudy))
+                .build();
+    }
     // StudyInfoDetailResponse를 생성해주는 함수
     private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<String> categoryNames) {
         return StudyInfoDetailResponse.of(studyInfo, categoryNames);
