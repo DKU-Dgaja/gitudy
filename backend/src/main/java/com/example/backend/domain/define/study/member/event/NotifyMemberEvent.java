@@ -12,6 +12,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class NotifyMemberEvent {
 
+    private boolean isPushAlarmYn; // fcm 알림여부 확인
+
     private Long notifyUserId;   // 알림받는 UserId
 
     private String studyTopic;   // 알림보내는 스터디
