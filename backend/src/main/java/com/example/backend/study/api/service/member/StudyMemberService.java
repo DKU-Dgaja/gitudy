@@ -200,6 +200,7 @@ public class StudyMemberService {
         // 알림 비동기처리
         eventPublisher.publishEvent(ApplyMemberEvent.builder()
                 .isPushAlarmYn(leader.isPushAlarmYn())
+                .studyInfoId(studyInfoId)
                 .studyLeaderId(leader.getId())
                 .studyTopic(studyInfo.getTopic())
                 .name(user.getName())

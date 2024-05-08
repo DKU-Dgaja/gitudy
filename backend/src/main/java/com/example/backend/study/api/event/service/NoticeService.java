@@ -1,6 +1,7 @@
 package com.example.backend.study.api.event.service;
 
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.domain.define.notice.Notice;
 import com.example.backend.domain.define.notice.repository.NoticeRepository;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
@@ -31,6 +32,7 @@ public class NoticeService {
     public void ApplyMemberNotice(ApplyMemberEvent event) {
         Notice notice = Notice.builder()
                 .userId(event.getStudyLeaderId())
+                .studyInfoId(event.getStudyInfoId())
                 .title("[" + event.getStudyTopic() + "] 스터디 신청")
                 .message(event.getName() + "님이 스터디를 신청했습니다.\n" + "프로필과 메시지를 확인 후, 수락해주세요!")
                 .localDateTime(LocalDateTime.now())
