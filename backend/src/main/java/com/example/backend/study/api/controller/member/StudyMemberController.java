@@ -128,6 +128,7 @@ public class StudyMemberController {
 
 
     // 스터디 멤버에게 알림
+    @ApiResponse(responseCode = "200", description = "멤버에게 알림 전송 성공")
     @PostMapping("/{studyInfoId}/notify/{notifyUserId}")
     public JsonResult<?> notifyToStudyMember(@AuthenticationPrincipal User user,
                                              @PathVariable("studyInfoId") Long studyInfoId,

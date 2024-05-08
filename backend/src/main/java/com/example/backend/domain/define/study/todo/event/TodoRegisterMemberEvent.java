@@ -14,7 +14,9 @@ import java.util.List;
 @AllArgsConstructor
 public class TodoRegisterMemberEvent {
 
-    private List<Long> userIds;  // isPushAlarmY인 멤버
+    private List<Long> activesMemberIds; // 활동중인 멤버들 id
+
+    private List<Long> pushAlarmYMemberIds;  // isPushAlarmY인 멤버
 
     private String studyTopic; // 스터디 Topic
 }

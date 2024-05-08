@@ -8,6 +8,7 @@ import com.example.backend.domain.define.study.member.MemberEventFixture;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
+import com.example.backend.study.api.event.service.NoticeService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -15,8 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class ResignMemberListenerTest extends TestConfig {
@@ -26,6 +26,9 @@ class ResignMemberListenerTest extends TestConfig {
 
     @InjectMocks
     private ResignMemberListener resignMemberListener;
+
+    @Mock
+    private NoticeService noticeService;
 
     @Mock
     private FcmService fcmService;
@@ -44,6 +47,8 @@ class ResignMemberListenerTest extends TestConfig {
         FcmToken mockFcmTokenObj = FcmFixture.generateDefaultFcmToken(resignMemberId);
 
         when(fcmService.findFcmTokenByIdOrThrowException(resignMemberId)).thenReturn(mockFcmTokenObj);
+
+        doNothing().when(noticeService).ResignMemberNotice(any(ResignMemberEvent.class));
 
         // when
         resignMemberListener.resignMemberListener(mockEvent);

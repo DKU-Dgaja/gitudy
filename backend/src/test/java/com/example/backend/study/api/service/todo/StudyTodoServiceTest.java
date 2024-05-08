@@ -166,35 +166,6 @@ public class StudyTodoServiceTest extends MockTestConfig {
     }
 
     @Test
-    @DisplayName("Todo 등록 테스트 - 알림이 모두 false일 때")
-    public void Todo_register_notify_false_test() throws Exception {
-        //given
-        User leader = userRepository.save(generateAuthUserPushAlarmN());
-        User user1 = userRepository.save(generateAuthUserPushAlarmNs("1"));
-        User user2 = userRepository.save(generateAuthUserPushAlarmNs("2"));
-        User user3 = userRepository.save(generateAuthUserPushAlarmNs("3"));
-
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
-        studyInfoRepository.save(studyInfo);
-
-        StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
-
-        studyMemberRepository.saveAll(List.of(
-                StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
-                StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId()),
-                StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()),
-                StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyInfo.getId())
-        ));
-
-        //when
-        studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
-        studyTodoService.registerStudyTodo(request, studyInfo.getId());
-
-        //then
-        verify(todoRegisterMemberListener, times(0)).todoRegisterMemberListener(any(TodoRegisterMemberEvent.class));
-    }
-
-    @Test
     @DisplayName("Todo 수정 테스트")
     public void updateTodo() {
 

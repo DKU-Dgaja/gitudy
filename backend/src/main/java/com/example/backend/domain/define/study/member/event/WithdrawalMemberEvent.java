@@ -10,7 +10,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class WithdrawalMemberEvent {
-    private Long studyLeaderId;
-    private String withdrawalMemberName;
-    private String studyInfoTopic;
+
+    private boolean isPushAlarmYn;  // fcm 알림 여부
+
+    private Long studyLeaderId;  // 스터디장 id
+
+    private String withdrawalMemberName; // 탈퇴한 멤버 이름
+
+    private String studyInfoTopic; // 스터디 제목
 }
