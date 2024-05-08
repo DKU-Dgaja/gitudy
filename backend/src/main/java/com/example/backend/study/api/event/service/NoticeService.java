@@ -2,17 +2,25 @@ package com.example.backend.study.api.event.service;
 
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.fcm.listener.NotifyLeaderListener;
 import com.example.backend.domain.define.notice.Notice;
 import com.example.backend.domain.define.notice.repository.NoticeRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
+import com.example.backend.domain.define.study.member.event.NotifyLeaderEvent;
 import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.todo.event.TodoRegisterMemberEvent;
 import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
+import com.example.backend.study.api.service.info.StudyInfoService;
+import com.example.backend.study.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,6 +33,9 @@ import java.time.LocalDateTime;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
+    private final StudyInfoService studyInfoService;
+    private final ApplicationEventPublisher eventPublisher;
+    private final UserService userService;
 
 
     // 가입신청 알림 생성 메서드
@@ -133,4 +144,18 @@ public class NoticeService {
                 .build();
         noticeRepository.save(notice);
     }
+
+    // 팀원이 팀장에게 알림 생성 메서드
+    @Transactional
+    public void NotifyLeaderNotice(NotifyLeaderEvent event) {
+
+        Notice notice = Notice.builder()
+                .userId(event.getNotifyUserId())
+                .title("[" + event.getStudyTopic() + "] 스터디 에서 알림")
+                .message(event.getStudyMemberName() + "님의 알림" + event.getMessage())
+                .localDateTime(LocalDateTime.now())
+                .build();
+        noticeRepository.save(notice);
+    }
+
 }
