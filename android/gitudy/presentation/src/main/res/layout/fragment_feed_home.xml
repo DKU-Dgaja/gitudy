@@ -5,9 +5,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
+    android:clipToPadding="false"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
-    android:clipToPadding="false"
     tools:context=".ui.feed.FeedHomeFragment">
 
     <ImageView
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:text="@string/feed_cnt"
             android:textColor="@color/GS_900"
-            app:layout_constraintBottom_toBottomOf="parent"
+
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,16 +63,60 @@
             style="@style/B7_1"
             android:layout_width="98dp"
             android:layout_height="36dp"
-            android:scaleType="fitCenter"
-            android:padding="10dp"
             android:background="@drawable/box_non_stroke_r6"
             android:backgroundTint="@color/GS_700"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
             android:src="@drawable/ic_btn_make_study"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <CheckBox
+            android:id="@+id/enableStudyCheckBtn"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="24dp"
+            android:background="@drawable/selector_ic_check_sq_checked"
+            android:button="@null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/feedTitle" />
+
+        <TextView
+            style="@style/B6_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginLeft="4dp"
+            android:text="참여 가능한 스터디만 보기"
+            android:textColor="@color/GS_800"
+            app:layout_constraintStart_toEndOf="@+id/enableStudyCheckBtn"
+            app:layout_constraintTop_toBottomOf="@id/feedTitle" />
+
+        <LinearLayout
+            android:id="@+id/sortBtn"
+            android:layout_width="64dp"
+            android:layout_height="28dp"
+            android:background="@drawable/box_stroke_300_r12"
+            android:gravity="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent">
+
+            <ImageView
+                android:layout_width="12dp"
+                android:layout_height="12dp"
+                android:layout_marginRight="4dp"
+                android:src="@drawable/ic_sort" />
+
+            <TextView
+                style="@style/B7_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="정렬"
+                android:textColor="@color/GS_800" />
+        </LinearLayout>
+
     </androidx.constraintlayout.widget.ConstraintLayout>
+
     <LinearLayout
         android:id="@+id/isNoStudyLayout"
         android:layout_width="wrap_content"
@@ -101,17 +145,13 @@
             android:textColor="@color/GS_400" />
     </LinearLayout>
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/feedList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout"
-        tools:layout_editor_absoluteX="22dp">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/feedList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
+        android:layout_height="0dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="70dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -147,4 +147,18 @@ public class StudyCommitService {
 
         log.info(">>>> [ 원격 레포지토리로부터 커밋 업데이트를 성공하였습니다. ] <<<<");
     }
+
+    @Transactional
+    public void approveCommit(Long commitId) {
+        StudyCommit commit = findStudyCommitByIdOrThrowException(commitId);
+
+        commit.approveCommit();
+    }
+
+    @Transactional
+    public void rejectCommit(Long commitId, String rejectionReason) {
+        StudyCommit commit = findStudyCommitByIdOrThrowException(commitId);
+
+        commit.rejectCommit(rejectionReason);
+    }
 }

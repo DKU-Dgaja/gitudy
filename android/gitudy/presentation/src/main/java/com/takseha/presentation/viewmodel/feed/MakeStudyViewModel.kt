@@ -9,14 +9,15 @@ import com.takseha.common.util.SP
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriod
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.repository.GitudyRepository
+import com.takseha.data.repository.auth.GitudyAuthRepository
+import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MakeStudyViewModel(application: Application) : AndroidViewModel(application) {
-    private lateinit var gitudyRepository : GitudyRepository
+    private lateinit var gitudyStudyRepository: GitudyStudyRepository
     private val prefs = SP(getApplication())
 
     private val _newStudyInfoState = MutableStateFlow(MakeStudyRequest())
@@ -29,7 +30,7 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
         _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember) }
     }
     fun makeNewStudy() = viewModelScope.launch {
-        gitudyRepository = GitudyRepository()
+        gitudyStudyRepository = GitudyStudyRepository()
 
         val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
             prefs.loadPref(
@@ -41,7 +42,7 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
         val request = newStudyInfoState.value
         Log.d("MakeStudyViewModel", request.toString())
 
-        val newStudyResponse = gitudyRepository.makeNewStudy(bearerToken, request)
+        val newStudyResponse = gitudyStudyRepository.makeNewStudy(bearerToken, request)
 
         if (newStudyResponse.isSuccessful) {
             val resCode = newStudyResponse.body()!!.resCode

@@ -9,15 +9,15 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.data.dto.auth.register.RegisterRequest
-import com.takseha.data.repository.GithubRepository
-import com.takseha.data.repository.GitudyRepository
+import com.takseha.data.repository.auth.GithubRepository
+import com.takseha.data.repository.auth.GitudyAuthRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class RegisterViewModel(application: Application) : AndroidViewModel(application) {
-    private lateinit var gitudyRepository: GitudyRepository
+    private lateinit var gitudyAuthRepository: GitudyAuthRepository
     private lateinit var githubRepository: GithubRepository
     private val prefs = SP(getApplication())
 
@@ -46,9 +46,9 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     }
 
     suspend fun checkNickname(name: String) {
-        gitudyRepository = GitudyRepository()
+        gitudyAuthRepository = GitudyAuthRepository()
 
-        val correctNameResponse = gitudyRepository.checkCorrectNickname(name)
+        val correctNameResponse = gitudyAuthRepository.checkCorrectNickname(name)
         val resCode = correctNameResponse.body()!!.resCode
         val resMsg = correctNameResponse.body()!!.resMsg
         val resObj = correctNameResponse.body()!!.resObj
@@ -77,7 +77,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getRegisterTokens() = viewModelScope.launch {
-        gitudyRepository = GitudyRepository()
+        gitudyAuthRepository = GitudyAuthRepository()
 
         val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
             prefs.loadPref(
@@ -88,7 +88,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         Log.d("RegisterViewModel", bearerToken)
         val request = registerInfoState.value
 
-        val tokenResponse = gitudyRepository.getRegisterTokens(bearerToken, request)
+        val tokenResponse = gitudyAuthRepository.getRegisterTokens(bearerToken, request)
 
         if (tokenResponse.isSuccessful) {
             val resCode = tokenResponse.body()!!.resCode

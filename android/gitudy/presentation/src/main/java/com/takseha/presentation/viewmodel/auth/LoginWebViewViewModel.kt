@@ -8,12 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
-import com.takseha.data.repository.GitudyRepository
+import com.takseha.data.repository.auth.GitudyAuthRepository
 import kotlinx.coroutines.launch
 
 // viewModel에서 context 참조 필요한 경우 AndroidViewModel(application) 상속!
 class LoginWebViewViewModel(application: Application) : AndroidViewModel(application) {
-    private val gitudyRepository = GitudyRepository()
+    private val gitudyAuthRepository = GitudyAuthRepository()
     private lateinit var prefs: SP
 
     private var _role = MutableLiveData<String>()
@@ -23,7 +23,7 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
     fun saveAllTokens(platformType: String, code: String, state: String) = viewModelScope.launch {
         prefs = SP(getApplication())
 
-        val tokenResponse = gitudyRepository.getLoginTokens(platformType, code, state)
+        val tokenResponse = gitudyAuthRepository.getLoginTokens(platformType, code, state)
 
         if (tokenResponse.isSuccessful) {
             val resCode = tokenResponse.body()!!.resCode

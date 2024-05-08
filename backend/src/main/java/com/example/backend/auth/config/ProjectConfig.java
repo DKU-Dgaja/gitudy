@@ -2,7 +2,10 @@ package com.example.backend.auth.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.ZonedDateTimeSerializer;
 import io.swagger.v3.core.jackson.ModelResolver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -10,6 +13,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 
 
 @Configuration
@@ -28,11 +36,18 @@ public class ProjectConfig implements WebMvcConfigurer {
     @Bean
     public ObjectMapper objectMapper() {
 
-        return new ObjectMapper()
-                // 객체의 속성 이름을 snake-case로 설정
-                .setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE)
-                // Java 8 날짜/시간 모듈 등록
-                .registerModule(new JavaTimeModule());
+        JavaTimeModule javaTimeModule = new JavaTimeModule();
+
+        ObjectMapper mapper = new ObjectMapper();
+
+        // 객체의 속성 이름을 snake-case로 설정
+        mapper.setPropertyNamingStrategy(PropertyNamingStrategies.SNAKE_CASE);
+
+        // Java 8 날짜/시간 모듈 등록
+        mapper.registerModule(javaTimeModule);
+        mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+
+        return mapper;
     }
     @Override
     public void addCorsMappings(CorsRegistry registry) {

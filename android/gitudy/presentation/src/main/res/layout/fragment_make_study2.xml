@@ -302,52 +302,6 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/makeStudy1Layout"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginBottom="22dp"
-        android:background="@drawable/box_stroke_200_r8"
-        android:backgroundTint="#F4F5F5"
-        android:gravity="center_vertical"
-        android:padding="16dp"
-        app:layout_constraintBottom_toTopOf="@+id/nextBtn"
-        tools:layout_editor_absoluteX="22dp">
-
-        <TextView
-            android:id="@+id/studyNameTitle"
-            style="@style/B6_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="스터디 소개: "
-            android:textColor="@color/GS_600"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/studyName"
-            style="@style/B6_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/feed_make_study_1"
-            android:textColor="@color/BLACK"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/studyNameTitle"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:id="@+id/imageView"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/ic_pencil"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-
     <Button
         android:id="@+id/nextBtn"
         style="@style/B5_1"
