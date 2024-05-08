@@ -292,4 +292,29 @@ class StudyCommitServiceTest extends TestConfig {
         assertEquals(commit.getRejectionReason(), rejectionReason);
     }
 
+    @Test
+    void 대기중인_커밋_리스트_조회_테스트() {
+        // given
+        Long studyId = 1L;
+        Long userId = 1L;
+        Long studyTodoId = 1L;
+        Set<Integer> usedValues = new HashSet<>();
+
+        List<StudyCommit> waitingCommits = StudyCommitFixture.createWaitingStudyCommitList(15, userId, studyId, studyTodoId, usedValues);
+        List<StudyCommit> commits = StudyCommitFixture.createDefaultStudyCommitList(10, userId, studyId, studyTodoId, usedValues);
+
+        studyCommitRepository.saveAll(waitingCommits);
+        studyCommitRepository.saveAll(commits);
+
+        // when
+        List<CommitInfoResponse> waintingList = studyCommitService.selectWaitingCommit(studyId);
+
+        // then
+        assertEquals(waintingList.size(), waitingCommits.size());
+        for (var a : waintingList) {
+            assertEquals(a.getStatus(), CommitStatus.COMMIT_WAITING);
+        }
+
+    }
+
 }

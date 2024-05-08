@@ -161,4 +161,11 @@ public class StudyCommitService {
 
         commit.rejectCommit(rejectionReason);
     }
+
+    public List<CommitInfoResponse> selectWaitingCommit(Long studyInfoId) {
+        return studyCommitRepository.findStudyCommitListByStudyInfoIdAndStatus(studyInfoId, CommitStatus.COMMIT_WAITING)
+                .stream()
+                .map(CommitInfoResponse::of)
+                .toList();
+    }
 }
