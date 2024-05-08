@@ -2,6 +2,8 @@ package com.example.backend.study.api.event.service;
 
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.notice.NoticeException;
 import com.example.backend.domain.define.notice.Notice;
 import com.example.backend.domain.define.notice.repository.NoticeRepository;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
@@ -52,6 +54,26 @@ public class NoticeService {
                         .localDateTime(notice.getLocalDateTime())
                         .build())
                 .toList();
+    }
+
+    // 특정알림 삭제
+    @Transactional
+    public void DeleteNotice(String id) {
+
+        // 알림 예외처리
+        Notice notice = findByIdOrThrowNoticeException(id);
+
+        noticeRepository.deleteById(notice.getId());
+    }
+
+    // 유저 알림 모두 삭제
+    @Transactional
+    public void DeleteNoticeAll(Long userId) {
+
+        // 알림 예외처리
+        findByIdOrThrowNoticesException(userId);
+
+        noticeRepository.deleteAllByUserId(userId);
     }
 
 
@@ -160,5 +182,23 @@ public class NoticeService {
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
+    }
+
+
+    public Notice findByIdOrThrowNoticeException(String id) {
+        return noticeRepository.findById(id)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", id, ExceptionMessage.NOTICE_NOT_FOUND);
+                    return new NoticeException(ExceptionMessage.NOTICE_NOT_FOUND);
+                });
+
+    }
+
+    public void findByIdOrThrowNoticesException(Long userId) {
+        List<Notice> notices = noticeRepository.findByUserId(userId);
+        if (notices.isEmpty()) {
+            log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.NOTICE_NOT_FOUND);
+            throw new NoticeException(ExceptionMessage.NOTICE_NOT_FOUND);
+        }
     }
 }
