@@ -90,6 +90,12 @@ public class StudyMemberServiceTest extends MockTestConfig {
     @MockBean
     private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
 
+    @MockBean
+    private NotifyMemberListener notifyMemberListener;
+
+    @MockBean
+    private NotifyLeaderListener notifyLeaderListener;
+
 
     public final static Long CursorIdx = null;
     public final static Long Limit = 3L;
@@ -982,6 +988,56 @@ public class StudyMemberServiceTest extends MockTestConfig {
         });
 
         assertEquals(ExceptionMessage.STUDY_NOT_APPLY_LIST.getText(), em.getMessage());
+    }
+
+    @Test
+    @DisplayName("스터디 멤버에게 알림 테스트 - 알림여부 true")
+    void notify_member_test_true() throws FirebaseMessagingException {
+        // given
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
+
+        // when
+        studyMemberService.notifyToStudyMember(studyInfo.getId(), user1.getId(), request);
+
+        // then
+        verify(notifyMemberListener).notifyMemberListener(any(NotifyMemberEvent.class)); // notifyMemberListener 호출 검증
+    }
+
+    @Test
+    @DisplayName("스터디 멤버가 팀장에게 알림 테스트 - 알림여부 true")
+    void notify_leader_test_true() throws FirebaseMessagingException {
+        // given
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        UserInfoResponse userInfo = UserInfoResponse.of(user1);
+
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
+
+        // when
+        studyMemberService.notifyToStudyLeader(studyInfo.getId(), userInfo, request);
+
+        // then
+        verify(notifyLeaderListener).notifyLeaderListener(any(NotifyLeaderEvent.class)); // notifyLeaderListener 호출 검증
     }
 
 }
