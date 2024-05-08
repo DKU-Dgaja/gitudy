@@ -102,6 +102,9 @@ public class StudyMemberService {
         // 강퇴 스터디원 상태 업데이트
         resignMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_RESIGNED);
 
+        // 스터디원 감소
+        studyInfo.updateCurrentMember(-1);
+
         // 강퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
         studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, resignUserId);
 
@@ -129,6 +132,9 @@ public class StudyMemberService {
 
         // 탈퇴 스터디원 상태 메서드
         withdrawalMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_WITHDRAWAL);
+
+        // 스터디원 감소
+        studyInfo.updateCurrentMember(-1);
 
         // 탈퇴 스터디원에게 할당된 마감기한이 지나지 않은 To do 삭제
         studyTodoRepository.deleteTodoIdsByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
@@ -243,7 +249,11 @@ public class StudyMemberService {
         // 신청대기중인 유저가 아닌경우 예외처리
         checkMemberStatusWaiting(applyMember);
 
-        if (approve) {
+        if (approve && studyInfo.isMaximumMember()) {
+
+            // 스터디원 증가
+            studyInfo.updateCurrentMember(1);
+
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_ACTIVE);
 
             // User 조회

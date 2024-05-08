@@ -265,6 +265,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         verify(resignMemberListener).resignMemberListener(any(ResignMemberEvent.class));
     }
 
+    
     @Test
     @DisplayName("스터디원 탈퇴 성공 테스트 - 알람 true일 때")
     public void withdrawalMemberWhenIsAlarmTrue() throws FirebaseMessagingException {
@@ -663,6 +664,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
+        int beforeCurrentMember = studyInfo.getCurrentMember();
+
         StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
         studyMemberRepository.save(waitingMember);
 
@@ -676,6 +679,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // 스터디 가입 시 User score +5점
         assertEquals(beforeUser1Score + 5, userRepository.findById(user1.getId()).get().getScore());
+
+        // 스터디 가입 시 현재인원 증가
+        assertEquals(beforeCurrentMember +1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
     }
 
     @Test
