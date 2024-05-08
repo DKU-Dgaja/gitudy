@@ -19,6 +19,8 @@ public class Notice {
     @Id
     private String id;
 
+    private Long studyInfoId;
+
     private Long userId;
 
     private String title;

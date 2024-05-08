@@ -7,7 +7,7 @@ import com.example.backend.domain.define.study.info.StudyEventFixture;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.example.backend.study.api.event.service.NoticeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -25,7 +25,7 @@ public class ApplyMemberListenerTest extends TestConfig {
     private FcmService fcmService;
 
     @Mock
-    private FirebaseMessaging firebaseMessaging;
+    private NoticeService noticeService;
 
     @Test
     @DisplayName("스터디 가입 신청 리스너 테스트")
@@ -39,7 +39,7 @@ public class ApplyMemberListenerTest extends TestConfig {
 
         when(fcmService.findFcmTokenByIdOrThrowException(leaderId)).thenReturn(fcmToken);
 
-        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
+        doNothing().when(noticeService).ApplyMemberNotice(any(ApplyMemberEvent.class));
 
         // when
         applyMemberListener.applyMemberListener(applyMemberEvent);

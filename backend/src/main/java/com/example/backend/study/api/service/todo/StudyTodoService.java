@@ -46,7 +46,7 @@ public class StudyTodoService {
     private final StudyInfoService studyInfoService;
     private final UserService userService;
     private final ApplicationEventPublisher eventPublisher;
-    
+
     private final static Long MAX_LIMIT = 10L;
 
     // Todo 등록
@@ -76,16 +76,15 @@ public class StudyTodoService {
         // FCM 알림을 받을 수 있는 사용자의 ID 추출
         List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
 
-        // 비어있지 않으면 FCM 알림 전송
-        if (!isPushAlarmYUserIds.isEmpty()) {
 
-            StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
-            eventPublisher.publishEvent(TodoRegisterMemberEvent.builder()
-                    .userIds(isPushAlarmYUserIds)
-                    .studyTopic(studyInfo.getTopic())
-                    .build());
-        }
+        // 알림 비동기처리
+        eventPublisher.publishEvent(TodoRegisterMemberEvent.builder()
+                .activesMemberIds(activeMemberUserIds)
+                .pushAlarmYMemberIds(isPushAlarmYUserIds)
+                .studyTopic(studyInfo.getTopic())
+                .build());
     }
 
     // StudyTodo 생성 로직
@@ -126,15 +125,13 @@ public class StudyTodoService {
         // FCM 알림을 받을 수 있는 사용자의 ID 추출
         List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
 
-        // 비어있지 않으면 FCM 알림 전송
-        if (!isPushAlarmYUserIds.isEmpty()) {
-
-            eventPublisher.publishEvent(TodoUpdateMemberEvent.builder()
-                    .userIds(isPushAlarmYUserIds)
-                    .studyTopic(studyInfo.getTopic())
-                    .todoTitle(studyTodo.getTitle())
-                    .build());
-        }
+        // 알림 비동기처리
+        eventPublisher.publishEvent(TodoUpdateMemberEvent.builder()
+                .activesMemberIds(activeMemberUserIds)
+                .pushAlarmYMemberIds(isPushAlarmYUserIds)
+                .studyTopic(studyInfo.getTopic())
+                .todoTitle(studyTodo.getTitle())
+                .build());
 
     }
 
