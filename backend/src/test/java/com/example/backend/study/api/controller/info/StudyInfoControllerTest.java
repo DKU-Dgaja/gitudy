@@ -15,6 +15,7 @@ import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoCountResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoRegisterResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -421,6 +422,61 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
+                        .param("myStudy", "false")
+                )
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andDo(print());
+    }
+
+    @Test
+    void 마이스터디_개수_조회_성공_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(studyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))
+                .thenReturn(StudyInfoCountResponse.builder()
+                        .count(1)
+                        .build());
+
+        // when
+        mockMvc.perform(get("/study/count")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .param("myStudy", "true")
+                )
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andDo(print());
+    }
+
+    @Test
+    void 전체스터디_개수_조회_성공_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(studyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))
+                .thenReturn(StudyInfoCountResponse.builder()
+                        .count(1)
+                        .build());
+
+        // when
+        mockMvc.perform(get("/study/count")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .param("myStudy", "false")
                 )
                 // then

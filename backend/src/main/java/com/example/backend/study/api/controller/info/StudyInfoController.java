@@ -7,6 +7,7 @@ import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
+import com.example.backend.study.api.controller.info.response.StudyInfoCountResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -100,5 +101,15 @@ public class StudyInfoController {
                                       @PathVariable(name = "studyInfoId") Long studyInfoId) {
         authService.findUserInfo(user);
         return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId));
+    }
+
+    // 마이/전체스터디 개수 조회
+    @ApiResponse(responseCode = "200", description = " 마이/전체스터디 개수 조회 성공", content = @Content(schema = @Schema(implementation =
+            StudyInfoCountResponse.class)))
+    @GetMapping("/count")
+    public JsonResult<?> getStudyInfoCount(@AuthenticationPrincipal User user,
+                                      @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy) {
+        UserInfoResponse findUser = authService.findUserInfo(user);
+        return JsonResult.successOf(studyInfoService.getStudyInfoCount(findUser.getUserId(), myStudy));
     }
 }
