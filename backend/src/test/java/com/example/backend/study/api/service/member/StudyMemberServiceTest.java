@@ -21,6 +21,7 @@ import com.example.backend.domain.define.study.info.repository.StudyInfoReposito
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.event.NotifyLeaderEvent;
 import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
@@ -91,6 +92,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
     @MockBean
     private NotifyMemberListener notifyMemberListener;
+
+    @MockBean
+    private NotifyLeaderListener notifyLeaderListener;
 
 
     public final static Long CursorIdx = null;
@@ -265,7 +269,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         verify(resignMemberListener).resignMemberListener(any(ResignMemberEvent.class));
     }
 
-    
+
     @Test
     @DisplayName("스터디원 탈퇴 성공 테스트 - 알람 true일 때")
     public void withdrawalMemberWhenIsAlarmTrue() throws FirebaseMessagingException {
@@ -451,6 +455,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         // then
         verify(applyMemberListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
     }
+
     @Test
     @DisplayName("한번 강퇴된 스터디원 가입 신청 테스트")
     public void applyStudyMember_resigned() {
@@ -681,7 +686,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(beforeUser1Score + 5, userRepository.findById(user1.getId()).get().getScore());
 
         // 스터디 가입 시 현재인원 증가
-        assertEquals(beforeCurrentMember +1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
+        assertEquals(beforeCurrentMember + 1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
     }
 
     @Test
@@ -985,7 +990,6 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(ExceptionMessage.STUDY_NOT_APPLY_LIST.getText(), em.getMessage());
     }
 
-
     @Test
     @DisplayName("스터디 멤버에게 알림 테스트 - 알림여부 true")
     void notify_member_test_true() throws FirebaseMessagingException {
@@ -1008,6 +1012,32 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // then
         verify(notifyMemberListener).notifyMemberListener(any(NotifyMemberEvent.class)); // notifyMemberListener 호출 검증
+    }
+
+    @Test
+    @DisplayName("스터디 멤버가 팀장에게 알림 테스트 - 알림여부 true")
+    void notify_leader_test_true() throws FirebaseMessagingException {
+        // given
+
+        User leader = UserFixture.generateAuthUser();
+        User user1 = UserFixture.generateAuthUserPushAlarmY();
+        userRepository.saveAll(List.of(leader, user1));
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        FcmToken fcmToken = FcmFixture.generateDefaultFcmToken(leader.getId());
+        fcmTokenRepository.save(fcmToken);
+
+        UserInfoResponse userInfo = UserInfoResponse.of(user1);
+
+        MessageRequest request = StudyMemberFixture.generateMessageRequest();
+
+        // when
+        studyMemberService.notifyToStudyLeader(studyInfo.getId(), userInfo, request);
+
+        // then
+        verify(notifyLeaderListener).notifyLeaderListener(any(NotifyLeaderEvent.class)); // notifyLeaderListener 호출 검증
     }
 
 }
