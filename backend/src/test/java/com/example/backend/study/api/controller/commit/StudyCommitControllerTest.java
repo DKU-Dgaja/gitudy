@@ -8,6 +8,7 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.common.exception.commit.CommitException;
+import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.commit.request.CommitRejectionRequest;
@@ -22,6 +23,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
@@ -306,6 +308,58 @@ class StudyCommitControllerTest extends MockTestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(errorMsg))
+                .andDo(print());
+    }
+
+    @Test
+    void 대기중인_커밋_리스트_조회_성공() throws Exception {
+        // given
+        User user = generateAuthUser();
+        String commitSha = "abc";
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(user));
+        when(studyCommitService.selectWaitingCommit(any(Long.class))).thenReturn(List.of(CommitInfoResponse.builder().commitSHA(commitSha).build()));
+
+        // when
+        mockMvc.perform(get("/commits/waiting")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("studyInfoId", "1")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj[0].commit_sha").value(commitSha))
+                .andDo(print());
+    }
+
+    @Test
+    void 대기중인_커밋_리스트_조회_실패() throws Exception {
+        // given
+        User user = generateAuthUser();
+        String commitSha = "abc";
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
+
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenThrow(new MemberException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER));
+
+        // when
+        mockMvc.perform(get("/commits/waiting")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .param("studyInfoId", "1")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.STUDY_MEMBER_NOT_LEADER.getText()))
                 .andDo(print());
     }
 }
