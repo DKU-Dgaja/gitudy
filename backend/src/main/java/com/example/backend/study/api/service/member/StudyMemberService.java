@@ -11,6 +11,7 @@ import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemb
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.event.NotifyLeaderEvent;
 import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
@@ -324,6 +325,25 @@ public class StudyMemberService {
                 .message(messageRequest.getMessage())
                 .build());
 
+    }
+
+
+    // 스터디 팀장에게 알림 메서드
+    public void notifyToStudyLeader(Long studyInfoId, UserInfoResponse userInfo, MessageRequest messageRequest) {
+
+        // 스터디 조회
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+        // 알림 받을 user 조회
+        User notifyUser = userService.findUserByIdOrThrowException(studyInfo.getUserId());
+
+        // 알림 비동기처리
+        eventPublisher.publishEvent(NotifyLeaderEvent.builder()
+                .isPushAlarmYn(notifyUser.isPushAlarmYn())
+                .notifyUserId(studyInfo.getUserId())
+                .studyMemberName(userInfo.getName())
+                .message(messageRequest.getMessage())
+                .build());
     }
 
 
