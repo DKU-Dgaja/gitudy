@@ -18,6 +18,7 @@ import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
 import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.user.UserService;
+import com.example.backend.study.api.event.controller.response.UserNoticeList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @Service
@@ -36,6 +38,32 @@ public class NoticeService {
     private final StudyInfoService studyInfoService;
     private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
+
+
+    // 알림 목록 조회
+    public List<UserNoticeList> ReadNoticeList(UserInfoResponse userInfo, LocalDateTime time, Long limit) {
+
+        // 현재 시간을 기본값으로 설정
+        if (time == null) {
+            time = LocalDateTime.now();
+        }
+
+        List<Notice> noticeList = noticeRepository.findUserNoticeListByUserId(userInfo.getUserId(), time, limit);
+
+        return convertNoticeListToUserNoticeList(noticeList);
+    }
+
+    private List<UserNoticeList> convertNoticeListToUserNoticeList(List<Notice> noticeList) {
+        return noticeList.stream()
+                .map(notice -> UserNoticeList.builder()
+                        .id(notice.getId())
+                        .studyInfoId(notice.getStudyInfoId())
+                        .title(notice.getTitle())
+                        .message(notice.getMessage())
+                        .localDateTime(notice.getLocalDateTime())
+                        .build())
+                .toList();
+    }
 
 
     // 가입신청 알림 생성 메서드
