@@ -10,6 +10,7 @@ public class StudyEventFixture {
     public static ApplyMemberEvent generateApplyMemberEvent(Long studyLeaderId) {
         return ApplyMemberEvent.builder()
                 .studyLeaderId(studyLeaderId)
+                .isPushAlarmYn(true)
                 .studyTopic("스터디제목")
                 .name("가입자이름")
                 .build();
@@ -19,6 +20,7 @@ public class StudyEventFixture {
         return ApplyApproveRefuseMemberEvent.builder()
                 .applyUserId(applyUserId)
                 .studyTopic("스터디제목")
+                .isPushAlarmYn(true)
                 .approve(true)
                 .name("가입자이름")
                 .build();

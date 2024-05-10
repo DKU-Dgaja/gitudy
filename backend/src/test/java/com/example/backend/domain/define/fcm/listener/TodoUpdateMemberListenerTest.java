@@ -7,7 +7,7 @@ import com.example.backend.domain.define.study.todo.TodoEventFixture;
 import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
-import com.google.firebase.messaging.FirebaseMessaging;
+import com.example.backend.study.api.event.service.NoticeService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -17,10 +17,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-class TodoUpdateMemberListenerTest extends TestConfig{
+class TodoUpdateMemberListenerTest extends TestConfig {
     @InjectMocks
     private TodoUpdateMemberListener todoUpdateMemberListener;
 
@@ -28,7 +27,7 @@ class TodoUpdateMemberListenerTest extends TestConfig{
     private FcmService fcmService;
 
     @Mock
-    private FirebaseMessaging firebaseMessaging;
+    private NoticeService noticeService;
 
     @Test
     @DisplayName("Todo 수정 시 알림 리스너 테스트")
@@ -42,7 +41,7 @@ class TodoUpdateMemberListenerTest extends TestConfig{
 
         when(fcmService.findFcmTokensByIdsOrThrowException(userIds)).thenReturn(fcmTokens);
 
-        when(firebaseMessaging.send(any())).thenReturn("메시지 전송 완료");
+        doNothing().when(noticeService).TodoUpdateMemberNotice(any(TodoUpdateMemberEvent.class));
 
         // when
         todoUpdateMemberListener.todoUpdateMemberListener(todoUpdateMemberEvent);

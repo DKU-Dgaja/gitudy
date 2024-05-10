@@ -780,4 +780,64 @@ class StudyInfoServiceTest extends TestConfig {
         IntStream.range(0, response.getCategoryNames().size())
                 .forEach(i -> assertEquals(studyCategories.get(i).getName(), response.getCategoryNames().get(i)));
     }
+
+    @Test
+    public void 전체_스터디_개수_조회_테스트() {
+        // given
+        int expectedStudySize = 4;
+
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user3 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+
+        // StudyInfo 생성
+        studyInfoRepository.save(generateStudyInfo(user1.getId()));
+        studyInfoRepository.save(generateStudyInfo(user1.getId()));
+        studyInfoRepository.save(generateStudyInfo(user2.getId()));
+        studyInfoRepository.save(generateStudyInfo(user3.getId()));
+
+
+        // when
+        StudyInfoCountResponse response = studyInfoService.getStudyInfoCount(user1.getId(), false);
+
+        // then
+        assertEquals(expectedStudySize, response.getCount());
+    }
+
+    @Test
+    public void 마이_스터디_개수_조회_테스트() {
+        // given
+        int expectedMyStudySize = 2;
+
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user3 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+
+        // StudyInfo 생성
+        StudyInfo studyA = studyInfoRepository.save(generateStudyInfo(user1.getId()));
+        StudyInfo studyB = studyInfoRepository.save(generateStudyInfo(user1.getId()));
+        StudyInfo studyC = studyInfoRepository.save(generateStudyInfo(user2.getId()));
+
+        // StudyMemberA 생성
+        List<StudyMember> studyMembers = new ArrayList<>();
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(user1.getId(), studyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyA.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyA.getId()));
+
+
+        // StudyMemberB 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(user2.getId(), studyB.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyB.getId()));
+
+        // StudyMemberC 생성
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(user3.getId(), studyC.getId()));
+
+        studyMemberRepository.saveAll(studyMembers);
+
+        // when
+        StudyInfoCountResponse response = studyInfoService.getStudyInfoCount(user2.getId(), true);
+
+        // then
+        assertEquals(expectedMyStudySize, response.getCount());
+    }
 }

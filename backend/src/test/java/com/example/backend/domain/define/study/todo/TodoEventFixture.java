@@ -10,7 +10,8 @@ public class TodoEventFixture {
     public static TodoRegisterMemberEvent generateTodoRegisterEvent(List<Long> userIds) {
 
         return TodoRegisterMemberEvent.builder()
-                .userIds(userIds)
+                .pushAlarmYMemberIds(userIds)
+                .activesMemberIds(userIds)
                 .studyTopic("스터디제목")
                 .build();
     }
@@ -18,7 +19,8 @@ public class TodoEventFixture {
     public static TodoUpdateMemberEvent generateTodoUpdateEvent(List<Long> userIds) {
 
         return TodoUpdateMemberEvent.builder()
-                .userIds(userIds)
+                .pushAlarmYMemberIds(userIds)
+                .activesMemberIds(userIds)
                 .studyTopic("스터디제목")
                 .todoTitle("투두 제목")
                 .build();

@@ -14,6 +14,8 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 
 import static com.example.backend.domain.define.study.info.QStudyInfo.studyInfo;
+import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PRIVATE;
+import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PUBLIC;
 import static com.example.backend.domain.define.study.member.QStudyMember.studyMember;
 
 @Component
@@ -95,4 +97,21 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
         }
         return query.limit(limit).fetch();
     }
+
+    @Override
+    public int findStudyInfoCount(Long userId, boolean myStudy) {
+        JPAQuery<Long> query = queryFactory
+                .select(studyInfo.count())
+                .from(studyInfo)
+                .where(studyInfo.status.eq(STUDY_PUBLIC)
+                        .or(studyInfo.status.eq(STUDY_PRIVATE)));
+
+        if (myStudy) {
+            query.join(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
+                    .where(studyMember.userId.eq(userId));
+        }
+
+        return query.fetchOne().intValue(); // 결과를 int로 변환하여 리턴
+    }
+
 }

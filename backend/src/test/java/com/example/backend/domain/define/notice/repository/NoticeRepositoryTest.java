@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,13 +41,13 @@ class NoticeRepositoryTest extends TestConfig {
 
         // when
         noticeRepository.save(notice);
-        Notice foundNotice = noticeRepository.findByUserId(userId);
+        List<Notice> foundNotice = noticeRepository.findByUserId(userId);
 
         // then
         assertThat(foundNotice).isNotNull();
-        assertThat(foundNotice.getUserId()).isEqualTo(userId);
-        assertThat(foundNotice.getTitle()).isEqualTo(title);
-        assertThat(foundNotice.getMessage()).isEqualTo(message);
-        assertThat(foundNotice.getLocalDateTime()).isEqualTo(localDateTime);
+        assertThat(foundNotice.get(0).getUserId()).isEqualTo(userId);
+        assertThat(foundNotice.get(0).getTitle()).isEqualTo(title);
+        assertThat(foundNotice.get(0).getMessage()).isEqualTo(message);
+        assertThat(foundNotice.get(0).getLocalDateTime()).isEqualTo(localDateTime);
     }
 }

@@ -128,6 +128,7 @@ public class StudyMemberController {
 
 
     // 스터디 멤버에게 알림
+    @ApiResponse(responseCode = "200", description = "멤버에게 알림 전송 성공")
     @PostMapping("/{studyInfoId}/notify/{notifyUserId}")
     public JsonResult<?> notifyToStudyMember(@AuthenticationPrincipal User user,
                                              @PathVariable("studyInfoId") Long studyInfoId,
@@ -138,5 +139,18 @@ public class StudyMemberController {
 
         studyMemberService.notifyToStudyMember(studyInfoId, notifyUserId, messageRequest);
         return JsonResult.successOf("Notify to StudyMember Success");
+    }
+
+    // 스터디 멤버가 팀장에게 알림
+    @ApiResponse(responseCode = "200", description = "팀장에게 알림 전송 성공")
+    @PostMapping("/{studyInfoId}/notify/leader")
+    public JsonResult<?> notifyToStudyLeader(@AuthenticationPrincipal User user,
+                                             @PathVariable("studyInfoId") Long studyInfoId,
+                                             @Valid @RequestBody MessageRequest messageRequest) {
+
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
+
+        studyMemberService.notifyToStudyLeader(studyInfoId, userInfo, messageRequest);
+        return JsonResult.successOf("Notify to StudyLeader Success");
     }
 }

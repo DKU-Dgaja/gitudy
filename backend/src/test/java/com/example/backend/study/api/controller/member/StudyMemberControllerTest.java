@@ -343,4 +343,34 @@ public class StudyMemberControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Notify to StudyMember Success"));
 
     }
+
+
+    @Test
+    public void 스터디_팀장에게_알림_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId());
+        studyInfoRepository.save(studyInfo);
+
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+
+        MessageRequest messageRequest = StudyMemberFixture.generateMessageRequest();
+
+        //when , then
+        mockMvc.perform(post("/member/" + studyInfo.getId() + "/notify/leader")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(messageRequest))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_obj").value("Notify to StudyLeader Success"));
+
+    }
 }
