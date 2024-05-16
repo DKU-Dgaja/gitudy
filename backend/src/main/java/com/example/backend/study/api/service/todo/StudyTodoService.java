@@ -117,7 +117,7 @@ public class StudyTodoService {
 
         // 깃허브 api를 사용해 커밋 업데이트
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
-        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, studyTodo);
+        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, studyTodo);
 
         // 활동중인 멤버들의 userId 추출
         List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
@@ -179,7 +179,7 @@ public class StudyTodoService {
                 log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
                 return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
             });
-            studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo);
+            studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo);
 
             // TODO: 점수 부여 로직 필요
         });
@@ -203,7 +203,7 @@ public class StudyTodoService {
             log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
             return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
-        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo);
+        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo);
 
         return StudyTodoResponse.of(todo);
     }
@@ -228,7 +228,7 @@ public class StudyTodoService {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
-        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, todo);
+        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, todo);
 
         // TODO: 점수 부여 로직 필요
 

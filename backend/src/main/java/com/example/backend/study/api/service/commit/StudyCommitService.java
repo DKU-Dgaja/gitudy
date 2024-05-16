@@ -23,11 +23,13 @@ import com.example.backend.study.api.service.github.response.GithubCommitRespons
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -65,6 +67,13 @@ public class StudyCommitService {
                     log.error(">>>> {} : {} <<<<", commitId, ExceptionMessage.COMMIT_NOT_FOUND.getText());
                     return new CommitException(ExceptionMessage.COMMIT_NOT_FOUND);
                 });
+    }
+
+    @Async
+    @Transactional
+    public CompletableFuture<Void> fetchRemoteCommitsAndSaveAsync(StudyInfo study, StudyTodo todo) {
+        fetchRemoteCommitsAndSave(study, todo);
+        return CompletableFuture.completedFuture(null);
     }
 
     // 커밋 업데이트
