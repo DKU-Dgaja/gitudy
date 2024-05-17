@@ -153,11 +153,15 @@ public class StudyCommitService {
                 .filter(commit -> {
                     User user = userMap.get(commit.getAuthorName());
 
+                    // 커밋 중복 체크
+                    boolean isDuplicate = studyCommitRepository.existsByCommitSHA(commit.getSha());
+
                     return user != null &&
                             // 활동중인 스터디 멤버인지
                             studyMemberMap.containsKey(user.getId()) &&
                             // 컨벤션을 지켰는지
-                            studyConventionService.checkConvention(conventions.getContent(), commit.getMessage());
+                            studyConventionService.checkConvention(conventions.getContent(), commit.getMessage()) &&
+                            !isDuplicate;
                 })
                 .map(commit -> {
                     User findUser = userMap.get(commit.getAuthorName());

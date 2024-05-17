@@ -17,7 +17,7 @@ public class ScheduledCommitFetchService {
     @Value("${scheduling.fixedRate}")
     private long fixedRate;
 
-    @Scheduled(fixedRateString = "${scheduling.fixedRate}")
+    @Scheduled(fixedRateString = "${scheduling.fixedRate}", initialDelay = 1800000)
     @Transactional
     public void fetchCommitsForAllStudies() {
         log.info(">>>> 스케줄링 시작");

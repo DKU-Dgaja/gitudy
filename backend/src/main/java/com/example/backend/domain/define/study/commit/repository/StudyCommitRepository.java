@@ -10,4 +10,6 @@ public interface StudyCommitRepository extends JpaRepository<StudyCommit, Long>,
     List<StudyCommit> findByStudyTodoId(long todoId);
 
     List<StudyCommit> findStudyCommitListByStudyInfoIdAndStatus(Long studyInfoId, CommitStatus status);
+
+    boolean existsByCommitSHA(String commitSha);
 }
