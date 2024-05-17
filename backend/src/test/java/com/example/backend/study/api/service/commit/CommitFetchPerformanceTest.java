@@ -162,12 +162,12 @@ public class CommitFetchPerformanceTest extends MockTestConfig {
 
         // when
         long startTime = System.currentTimeMillis();
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, 5);
         long endTime = System.currentTimeMillis();
 
         // when
         long asyncStartTime = System.currentTimeMillis();
-        CompletableFuture<Void> future = studyCommitService.fetchRemoteCommitsAndSaveAsync(study, todo);
+        CompletableFuture<Void> future = studyCommitService.fetchRemoteCommitsAndSaveAsync(study, todo, 5);
         future.get(); // 비동기 작업이 완료될 때까지 기다림
         long asyncEndTime = System.currentTimeMillis();
 

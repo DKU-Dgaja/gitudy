@@ -259,7 +259,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyTodo studyTodo4 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2, studyTodo3, studyTodo4));
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         StudyTodoListAndCursorIdxResponse responses = studyTodoService.readStudyTodoList(studyInfo.getId(), cursorIdx, Limit);
@@ -286,7 +286,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         }
         studyTodoRepository.saveAll(createdTodos);
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         StudyTodoListAndCursorIdxResponse firstPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit);
@@ -296,7 +296,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertNotNull(firstPageResponse);
         assertEquals(3, firstPageResponse.getTodoList().size());  // 3개만 가져와야함
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
@@ -308,7 +308,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertNotNull(secondPageResponse);
         assertEquals(3, secondPageResponse.getTodoList().size());
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
@@ -349,7 +349,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         // 합친 리스트 저장
         studyTodoRepository.saveAll(allTodos);
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         StudyTodoListAndCursorIdxResponse responseForStudy1 = studyTodoService.readStudyTodoList(studyInfo1.getId(), CursorIdx, Limit);
@@ -361,7 +361,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         responseForStudy1.getTodoList().forEach(todo ->
                 assertTrue(todo.getTitle().contains("1번 투두 제목"), "모든 투두 항목은 '1번 투두 제목' 을 포함해야 한다"));
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         StudyTodoListAndCursorIdxResponse responseForStudy2 = studyTodoService.readStudyTodoList(studyInfo2.getId(), CursorIdx, Limit);
@@ -419,7 +419,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2));
 
         // when
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
         List<StudyTodoStatusResponse> results = studyTodoService.readStudyTodoStatus(studyInfo.getId(), studyTodo.getId());
 
 

@@ -9,12 +9,14 @@ import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.convention.StudyConventionService;
@@ -27,6 +29,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -46,6 +49,8 @@ public class StudyCommitService {
     private final GithubApiService githubApiService;
     private final StudyConventionService studyConventionService;
     private final StudyConventionRepository studyConventionRepository;
+    private final StudyInfoRepository studyInfoRepository;
+    private final StudyTodoRepository studyTodoRepository;
 
     public CommitInfoResponse getCommitDetailsById(Long commitId) {
         // 커밋 조회 예외처리
@@ -71,16 +76,37 @@ public class StudyCommitService {
 
     @Async
     @Transactional
-    public CompletableFuture<Void> fetchRemoteCommitsAndSaveAsync(StudyInfo study, StudyTodo todo) {
-        fetchRemoteCommitsAndSave(study, todo);
+    public CompletableFuture<Void> fetchRemoteCommitsAndSaveAsync(StudyInfo study, StudyTodo todo, int pageSize) {
+        fetchRemoteCommitsAndSave(study, todo, pageSize);
         return CompletableFuture.completedFuture(null);
     }
 
+    // 스케줄링 전용 메서드
+    @Async("commitFetchExecutor")
+    @Transactional
+    public CompletableFuture<Void> fetchRemoteCommitsForAllStudiesAsync() {
+        int pageSize = 10;
+        LocalDate today = LocalDate.now();
+        LocalDate threeDaysAgo = today.minusDays(3);
+
+        List<StudyInfo> studies = studyInfoRepository.findAll();
+
+        for (StudyInfo study : studies) {
+            List<StudyTodo> todos = studyTodoRepository.findByStudyInfoIdAndTodoDateBetween(
+                    study.getId(), threeDaysAgo, today);
+            for (StudyTodo todo : todos) {
+                fetchRemoteCommitsAndSave(study, todo, pageSize);
+            }
+        }
+
+        return CompletableFuture.completedFuture(null);
+    }
+
+
     // 커밋 업데이트
     @Transactional
-    public void fetchRemoteCommitsAndSave(StudyInfo study, StudyTodo todo) {
+    public void fetchRemoteCommitsAndSave(StudyInfo study, StudyTodo todo, int pageSize) {
         int pageNumber = 0;
-        int pageSize = 10;
 
         // 스터디의 활동중인 모든 멤버의 Id를 미리 조회
         Map<Long, StudyMember> studyMemberMap = studyMemberRepository.findActiveMembersByStudyInfoId(study.getId()).stream()
