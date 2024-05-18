@@ -5,6 +5,9 @@ import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.api.gitudy.study.GitudyStudyApi
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
+import retrofit2.http.Header
+import retrofit2.http.Path
+import retrofit2.http.Query
 
 class GitudyStudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyStudyApi::class.java)
@@ -21,4 +24,11 @@ class GitudyStudyRepository {
         bearerToken: String,
         request: MakeStudyRequest
     ) = client.makeNewStudy(bearerToken, request)
+
+    suspend fun getTodoList(
+        bearerToken: String,
+        studyInfoId: Int,
+        cursorIdx: Long?,
+        limit: Long,
+    ) = client.getTodoList(bearerToken, studyInfoId, cursorIdx, limit)
 }
