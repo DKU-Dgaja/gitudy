@@ -18,6 +18,7 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoProgressResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
 import com.example.backend.study.api.service.commit.StudyCommitService;
@@ -30,6 +31,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -225,10 +227,7 @@ public class StudyTodoService {
         List<StudyTodoMapping> todoMappings = studyTodoMappingRepository.findByTodoIdAndUserIds(todoId, userIds);
 
         // 깃허브 api를 사용해 커밋 업데이트
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
         studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, todo, PAGE_SIZE);
 
         // TODO: 점수 부여 로직 필요
@@ -262,5 +261,33 @@ public class StudyTodoService {
                 .toList();
     }
 
+    @Transactional
+    public StudyTodoProgressResponse readStudyTodoProgress(Long studyInfoId) {
+        // 해당 스터디에서 활동중인 스터디원 인원수
+        int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
+
+        // 오늘이거나 오늘 이후의 To-do 중 가장 마감일이 빠른 To-do
+        Optional<StudyTodo> todo = studyTodoRepository.findStudyTodoByStudyInfoIdWithEarliestDueDate(studyInfoId);
+
+        // To-do가 없을 경우 null 반환
+        if (todo.isEmpty()) {
+            return null;
+        }
+
+        StudyTodo findTodo = todo.get();
+
+        // 투두 완료 멤버 인원 수
+        int completeMemberCount = studyTodoMappingRepository.findCompleteTodoMappingCountByTodoId(findTodo.getId());
+
+        // 깃허브 api를 사용해 커밋 업데이트
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo, PAGE_SIZE);
+
+        return StudyTodoProgressResponse.builder()
+                .todoId(findTodo.getId())
+                .totalMemberCount(memberCount)
+                .completeMemberCount(completeMemberCount)
+                .build();
+    }
 
 }
