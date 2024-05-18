@@ -6,9 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.activityViewModels
 import com.takseha.presentation.R
+import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
 
 class MyStudyHomeFragment : Fragment() {
+    private var _binding: FragmentMyStudyHomeBinding? = null
+    private val binding get() = _binding!!
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
