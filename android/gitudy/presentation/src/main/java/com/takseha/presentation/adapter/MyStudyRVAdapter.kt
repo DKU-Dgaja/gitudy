@@ -6,11 +6,11 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.mystudy.StudyInfo
+import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.databinding.ItemMystudyBinding
 
 // itemImageView.clipToOutline = true 이거 프로필 이미지 둥글게 할 때 사용
-class MyStudyRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) : RecyclerView.Adapter<MyStudyRVAdapter.ViewHolder>() {
+class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWithTodo>) : RecyclerView.Adapter<MyStudyRVAdapter.ViewHolder>() {
     class ViewHolder(val binding: ItemMystudyBinding) : RecyclerView.ViewHolder(binding.root) {
         val studyName = binding.studyName
         val teamScore = binding.studyScore
@@ -32,6 +32,13 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<StudyInfo
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.studyName.text = studyInfoList[position].topic
         holder.teamScore.text = studyInfoList[position].score.toString()
+        holder.todoTitle.text = studyInfoList[position].todoTitle
+        holder.todoCheck.text = studyInfoList[position].todoCheck
+        holder.todoTime.text = studyInfoList[position].todoTime
+        holder.todoCheckNum.text = studyInfoList[position].todoCheckNum.toString()
+        holder.totalNum.text = studyInfoList[position].totalNum.toString()
+        holder.progressBar.progress = studyInfoList[position].todoCheckNum
+        holder.progressBar.max = studyInfoList[position].totalNum
     }
 
     override fun getItemCount(): Int {
