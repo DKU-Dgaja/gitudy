@@ -1,13 +1,8 @@
 package com.takseha.data.repository.study
 
-import com.takseha.data.api.gitudy.auth.GitudyAuthApi
 import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.api.gitudy.study.GitudyStudyApi
-import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
-import retrofit2.http.Header
-import retrofit2.http.Path
-import retrofit2.http.Query
 
 class GitudyStudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyStudyApi::class.java)
