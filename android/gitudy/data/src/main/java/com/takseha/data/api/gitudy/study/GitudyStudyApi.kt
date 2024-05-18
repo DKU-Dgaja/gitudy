@@ -2,7 +2,7 @@ package com.takseha.data.api.gitudy.study
 
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.MakeStudyResponse
-import com.takseha.data.dto.mystudy.StudyListResponse
+import com.takseha.data.dto.feed.StudyListResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

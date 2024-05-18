@@ -8,7 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
-import com.takseha.data.dto.mystudy.StudyInfo
+import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.launch
 

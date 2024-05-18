@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.feed.StudyPeriod
-import com.takseha.data.dto.mystudy.StudyInfo
+import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
