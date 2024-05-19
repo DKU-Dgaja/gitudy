@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         app:cardCornerRadius="12dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -12,16 +14,22 @@
             android:paddingLeft="20dp"
             android:paddingTop="20dp"
             android:paddingRight="20dp"
-            android:paddingBottom="30dp">
+            android:paddingBottom="20dp">
 
-            <ImageView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/studyImg"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:background="@drawable/square_r8_non_stroke"
-                android:src="@drawable/ic_study_pink"
+                app:cardCornerRadius="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+
+                <ImageView
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_git_white" />
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/studyName"
@@ -49,7 +57,7 @@
                 android:paddingRight="10dp"
                 android:text="팀장"
                 android:textColor="@color/WHITE"
-                android:visibility="visible"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/studyName"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -85,6 +93,20 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
 
+            <TextView
+                android:id="@+id/noTodoAlarm"
+                android:visibility="gone"
+                style="@style/B6_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:text="@string/study_to_do_empty"
+                android:textColor="@color/BASIC_RED"
+                app:layout_constraintBottom_toTopOf="@+id/progressBar"
+                app:layout_constraintStart_toEndOf="@+id/todoImg"
+                app:layout_constraintTop_toTopOf="@+id/divider" />
+
+
             <LinearLayout
                 android:id="@+id/todoDetailLayout"
                 android:layout_width="wrap_content"
@@ -111,6 +133,7 @@
                     android:layout_height="wrap_content">
 
                     <TextView
+                        android:id="@+id/todoTimeText"
                         style="@style/B7_2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -143,7 +166,7 @@
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="310dp"
+                android:layout_width="290dp"
                 android:layout_height="16dp"
                 android:layout_marginTop="20dp"
                 android:max="100"
@@ -154,6 +177,17 @@
 
             <TextView
                 android:id="@+id/todoCheckNum"
+                style="@style/B6_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="19dp"
+                android:text="%d"
+                android:textColor="@color/GS_500"
+                app:layout_constraintEnd_toStartOf="@+id/totalNum"
+                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
+
+            <TextView
+                android:id="@+id/totalNum"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

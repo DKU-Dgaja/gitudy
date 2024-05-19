@@ -8,8 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
-import com.takseha.data.dto.mystudy.StudyInfo
+import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.repository.study.GitudyStudyRepository
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedHomeViewModel(application: Application) : AndroidViewModel(application) {
@@ -20,9 +23,8 @@ class FeedHomeViewModel(application: Application) : AndroidViewModel(application
         prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
     }"
 
-    private var _feedStudyInfo = MutableLiveData<List<StudyInfo>>()
-    val feedStudyInfo: LiveData<List<StudyInfo>>
-        get() = _feedStudyInfo
+    private var _uiState = MutableStateFlow(FeedHomeUiState())
+    val uiState = _uiState.asStateFlow()
 
     // stateflow로 바꾸는 거도 고민해보기~ 초기값 null 설정 가정
     private var _cursorIdxRes = MutableLiveData<Long?>()
@@ -45,7 +47,7 @@ class FeedHomeViewModel(application: Application) : AndroidViewModel(application
 
             if (resCode == 200 && resMsg == "OK") {
                 _cursorIdxRes.value = feedStudyListInfo.cursorIdx
-                _feedStudyInfo.value = feedStudyListInfo.studyInfoList
+                _uiState.update { it.copy(studyInfoList = feedStudyListInfo.studyInfoList) }
 
                 Log.d("FeedHomeViewModel", _cursorIdxRes.value.toString())
             } else {
@@ -59,3 +61,7 @@ class FeedHomeViewModel(application: Application) : AndroidViewModel(application
         }
     }
 }
+
+data class FeedHomeUiState(
+    var studyInfoList: List<StudyInfo> = listOf()
+)

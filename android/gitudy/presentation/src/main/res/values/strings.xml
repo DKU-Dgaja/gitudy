@@ -52,9 +52,10 @@
     <string name="quit_study">탈퇴하기</string>
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
-    <string name="study_to_do_check">%d/%d</string>
+    <string name="study_to_do_check">/%d</string>
     <string name="study_member_rv">/%d명</string>
     <string name="study_total_day_cnt">D+%d</string>
+    <string name="study_to_do_empty">마감 예정인 To-Do가 없습니다!</string>
 
 
     <!-- Strings related to feed -->

@@ -11,9 +11,11 @@ import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
 import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
@@ -37,6 +39,9 @@ class MainHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMainHomeBinding.inflate(inflater, container, false)
+
+        setViewModel()
+
         return binding.root
     }
 
@@ -45,8 +50,11 @@ class MainHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.uiState.collectLatest {
-                setUserInfo(it)
+            viewModel.apply {
+                uiState.collectLatest {
+                    setUserInfo(it)
+                    setMyStudyList(it.myStudiesWithTodo)
+                }
             }
         }
 
@@ -54,8 +62,26 @@ class MainHomeFragment : Fragment() {
         binding.characterImg.startAnimation(characterAnim)
     }
 
-    private fun setMyStudyList() {
-        // recyclerView 관련 기능 구현
+    private fun setViewModel() {
+        lifecycleScope.launch {
+            viewModel.apply {
+                getUserInfo()
+                getMyStudyList(null, 7)
+            }
+        }
+    }
+
+    private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
+        with(binding) {
+            val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
+
+            if (myStudyRVAdapter.itemCount > 0) {
+                isNoStudyLayout.visibility = View.GONE
+            }
+
+            myStudyList.adapter = myStudyRVAdapter
+            myStudyList.layoutManager = LinearLayoutManager(requireContext())
+        }
     }
 
     private fun setUserInfo(
@@ -68,6 +94,7 @@ class MainHomeFragment : Fragment() {
             scoreAndRank.text = String.format(scoreAndRankText, userInfo.score, 0)
             profileProgressBar.max = userInfo.progressMax
             profileProgressBar.progress = userInfo.progressScore
+            characterImg.setImageResource(userInfo.characterImgSrc)
         }
     }
 

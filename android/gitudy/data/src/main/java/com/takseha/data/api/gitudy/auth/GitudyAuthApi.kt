@@ -6,9 +6,6 @@ import com.takseha.data.dto.auth.login.LoginResponse
 import com.takseha.data.dto.auth.register.NickNameResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.auth.register.RegisterResponse
-import com.takseha.data.dto.feed.MakeStudyRequest
-import com.takseha.data.dto.feed.MakeStudyResponse
-import com.takseha.data.dto.mystudy.StudyListResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET

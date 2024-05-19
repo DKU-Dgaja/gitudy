@@ -8,8 +8,13 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
+import com.takseha.data.dto.mystudy.MyStudyWithTodo
+import com.takseha.data.dto.mystudy.Todo
+import com.takseha.data.dto.mystudy.TodoProgress
+import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.data.repository.auth.GitudyAuthRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
+import com.takseha.presentation.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -23,15 +28,16 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     private val prefs = SP(getApplication())
 
     private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}"
+        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
+    }"
 
     private val _uiState = MutableStateFlow(MainHomeUserInfoUiState())
     val uiState = _uiState.asStateFlow()
 
-    //live data로 할까?
-    private var _cursorIdx = MutableLiveData<Long?>()
-    val cursorIdx : LiveData<Long?>
-        get() = _cursorIdx
+    // stateflow로 바꾸는 거도 고민해보기~ 초기값 null 설정 가정
+    private var _cursorIdxRes = MutableLiveData<Long?>()
+    val cursorIdxRes: LiveData<Long?>
+        get() = _cursorIdxRes
 
     suspend fun getUserInfo() {
         val userInfoResponse = gitudyAuthRepository.getUserInfo(bearerToken)
@@ -42,30 +48,86 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
             val userInfo = userInfoResponse.body()!!.userInfo
 
             if (resCode == 200 && resMsg == "OK") {
-                _uiState.update { it.copy(name = userInfo.name, score = userInfo.score, githubId = userInfo.githubId, profileImgUrl = userInfo.profileImageUrl) }
+                _uiState.update {
+                    it.copy(
+                        name = userInfo.name,
+                        score = userInfo.score,
+                        githubId = userInfo.githubId,
+                        profileImgUrl = userInfo.profileImageUrl
+                    )
+                }
                 getProgressInfo(uiState)
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
         } else {
-            Log.e("MainHomeViewModel", "tokenResponse status: ${userInfoResponse.code()}\ntokenResponse message: ${userInfoResponse.message()}")
+            Log.e(
+                "MainHomeViewModel",
+                "tokenResponse status: ${userInfoResponse.code()}\ntokenResponse message: ${userInfoResponse.message()}"
+            )
         }
     }
 
     private fun getProgressInfo(state: StateFlow<MainHomeUserInfoUiState>) {
         when (state.value.score) {
             in 0..15 -> _uiState.update { it.copy(progressScore = it.score) }
-            in 16..30 -> _uiState.update { it.copy(progressScore = it.score - 15) }
-            in 31..50 -> _uiState.update { it.copy(progressScore = it.score - 30, progressMax = 20) }
-            in 51..70 -> _uiState.update { it.copy(progressScore = it.score - 50, progressMax = 20) }
-            in 71..100 -> _uiState.update { it.copy(progressScore = it.score - 70, progressMax = 30) }
-            in 101..130 -> _uiState.update { it.copy(progressScore = it.score - 100, progressMax = 30) }
-            else -> _uiState.update { it.copy(progressScore = 1, progressMax = 1) }
+            in 16..30 -> _uiState.update {
+                it.copy(
+                    progressScore = it.score - 15,
+                    characterImgSrc = R.drawable.character_bebe_to_30
+                )
+            }
+
+            in 31..50 -> _uiState.update {
+                it.copy(
+                    progressScore = it.score - 30,
+                    progressMax = 20,
+                    characterImgSrc = R.drawable.character_bebe_to_50
+                )
+            }
+
+            in 51..70 -> _uiState.update {
+                it.copy(
+                    progressScore = it.score - 50,
+                    progressMax = 20,
+                    characterImgSrc = R.drawable.character_bebe_to_70
+                )
+            }
+
+            in 71..100 -> _uiState.update {
+                it.copy(
+                    progressScore = it.score - 70,
+                    progressMax = 30,
+                    characterImgSrc = R.drawable.character_bebe_to_100
+                )
+            }
+
+            in 101..130 -> _uiState.update {
+                it.copy(
+                    progressScore = it.score - 100,
+                    progressMax = 30,
+                    characterImgSrc = R.drawable.character_bebe_to_130
+                )
+            }
+
+            else -> _uiState.update {
+                it.copy(
+                    progressScore = 1,
+                    progressMax = 1,
+                    characterImgSrc = R.drawable.character_bebe_to_130
+                )
+            }
         }
     }
 
-    fun getMyStudyList(cursorIdx: Long?) = viewModelScope.launch {
-        val myStudyListResponse = gitudyStudyRepository.getStudyList(bearerToken, cursorIdx, myStudy = true)
+    fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+        val myStudyListResponse = gitudyStudyRepository.getStudyList(
+            bearerToken,
+            cursorIdx,
+            limit,
+            sortBy = "createdDateTime",
+            myStudy = true
+        )
 
         if (myStudyListResponse.isSuccessful) {
             val resCode = myStudyListResponse.body()!!.resCode
@@ -74,16 +136,104 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
 
 
             if (resCode == 200 && resMsg == "OK") {
-                _cursorIdx.value = myStudyListInfo.cursorIdx
-                // recyclerview 관련 myStudyList 업데이트 기능 구현
+                _cursorIdxRes.value = myStudyListInfo.cursorIdx
 
-                Log.d("MainHomeViewModel", _cursorIdx.value.toString())
+                val studies = myStudyListInfo.studyInfoList
+                val studiesWithTodo = studies.map { study ->
+                    val todo = getFirstTodoInfo(study.id)
+
+                    if (todo != null) {
+                        val todoCheckNum = getTodoProgress(study.id)!!.completeMemberCount
+                        val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
+                        MyStudyWithTodo(study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
+                    } else {
+                        MyStudyWithTodo(study, null, null, TodoStatus.TODO_EMPTY, null)
+                    }
+                }
+                _uiState.update {
+                    it.copy(
+                        myStudiesWithTodo = studiesWithTodo
+                    )
+                }
+
+                Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
+                Log.d("MainHomeViewModel", "_uiState: ${_uiState.value}")
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
         } else {
-            Log.e("MainHomeViewModel", "tokenResponse status: ${myStudyListResponse.code()}\ntokenResponse message: ${myStudyListResponse.message()}")
+            Log.e(
+                "MainHomeViewModel",
+                "myStudyListResponse status: ${myStudyListResponse.code()}\nmyStudyListResponse message: ${myStudyListResponse.message()}"
+            )
         }
+    }
+
+    private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
+        val todoInfoResponse = gitudyStudyRepository.getTodoList(
+            bearerToken,
+            studyInfoId,
+            cursorIdx = null,
+            limit = 1
+        )
+
+        if (todoInfoResponse.isSuccessful) {
+            val resCode = todoInfoResponse.body()!!.resCode
+            val resMsg = todoInfoResponse.body()!!.resMsg
+            val todoBody = todoInfoResponse.body()!!.todoBody
+            Log.d("MainHomeViewModel", "todo body: $todoBody")
+
+            if (resCode == 200 && resMsg == "OK") {
+                if (todoBody.todoList.isNotEmpty()) {
+                    val todo = todoBody.todoList.first()
+                    Log.d("MainHomeViewModel", "todo first: $todo")
+
+                    return todo
+                } else {
+                    Log.d("MainHomeViewModel", "No To-Do")
+                    return null
+                }
+            } else {
+                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+            }
+        } else {
+            Log.e(
+                "MainHomeViewModel",
+                "todoInfoResponse status: ${todoInfoResponse.code()}\ntodoInfoResponse message: ${todoInfoResponse.message()}"
+            )
+        }
+        // 에러 발생 시 null return
+        Log.d("MainHomeViewModel", "Error")
+        return null
+    }
+
+    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgress? {
+        val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
+            bearerToken,
+            studyInfoId
+        )
+
+        if (todoProgressResponse.isSuccessful) {
+            val resCode = todoProgressResponse.body()!!.resCode
+            val resMsg = todoProgressResponse.body()!!.resMsg
+            val todoProgress = todoProgressResponse.body()!!.todoProgress
+
+            if (resCode == 200 && resMsg == "OK") {
+                if (todoProgress != null) {
+                    return todoProgress
+                } else {
+                    return null
+                }
+            } else {
+                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+            }
+        } else {
+            Log.e(
+                "MainHomeViewModel",
+                "todoProgressResponse status: ${todoProgressResponse.code()}\ntodoProgressResponse message: ${todoProgressResponse.message()}"
+            )
+        }
+        return null
     }
 }
 
@@ -94,5 +244,7 @@ data class MainHomeUserInfoUiState(
     var profileImgUrl: String = "",
 //    var rank: Int,
     var progressScore: Int = 0,
-    var progressMax: Int = 15
-): Serializable
+    var progressMax: Int = 15,
+    var characterImgSrc: Int = R.drawable.character_bebe_to_15,
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
+) : Serializable
