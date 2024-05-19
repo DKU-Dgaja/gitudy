@@ -1,6 +1,7 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
+import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -32,7 +33,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.studyImg.setBackgroundColor(android.graphics.Color.parseColor(backgroundColorList[position % 6]))
+        holder.studyImg.setCardBackgroundColor(Color.parseColor(backgroundColorList[position % 6]))
         holder.studyName.text = studyInfoList[position].studyInfo.topic
         holder.teamScore.text = "${studyInfoList[position].studyInfo.score.toString()}점"
         holder.todoTitle.text = studyInfoList[position].todoTitle
