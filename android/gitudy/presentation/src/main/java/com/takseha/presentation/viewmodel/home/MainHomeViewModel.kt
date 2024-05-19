@@ -12,6 +12,7 @@ import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.repository.auth.GitudyAuthRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
+import com.takseha.presentation.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -30,10 +31,6 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
 
     private val _uiState = MutableStateFlow(MainHomeUserInfoUiState())
     val uiState = _uiState.asStateFlow()
-
-    private var _myStudyWithTodo = MutableLiveData<List<MyStudyWithTodo>>()
-    val myStudyWithTodo: LiveData<List<MyStudyWithTodo>>
-        get() = _myStudyWithTodo
 
     // stateflow로 바꾸는 거도 고민해보기~ 초기값 null 설정 가정
     private var _cursorIdxRes = MutableLiveData<Long?>()
@@ -72,36 +69,52 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     private fun getProgressInfo(state: StateFlow<MainHomeUserInfoUiState>) {
         when (state.value.score) {
             in 0..15 -> _uiState.update { it.copy(progressScore = it.score) }
-            in 16..30 -> _uiState.update { it.copy(progressScore = it.score - 15) }
+            in 16..30 -> _uiState.update {
+                it.copy(
+                    progressScore = it.score - 15,
+                    characterImgSrc = R.drawable.character_bebe_to_30
+                )
+            }
+
             in 31..50 -> _uiState.update {
                 it.copy(
                     progressScore = it.score - 30,
-                    progressMax = 20
+                    progressMax = 20,
+                    characterImgSrc = R.drawable.character_bebe_to_50
                 )
             }
 
             in 51..70 -> _uiState.update {
                 it.copy(
                     progressScore = it.score - 50,
-                    progressMax = 20
+                    progressMax = 20,
+                    characterImgSrc = R.drawable.character_bebe_to_70
                 )
             }
 
             in 71..100 -> _uiState.update {
                 it.copy(
                     progressScore = it.score - 70,
-                    progressMax = 30
+                    progressMax = 30,
+                    characterImgSrc = R.drawable.character_bebe_to_100
                 )
             }
 
             in 101..130 -> _uiState.update {
                 it.copy(
                     progressScore = it.score - 100,
-                    progressMax = 30
+                    progressMax = 30,
+                    characterImgSrc = R.drawable.character_bebe_to_130
                 )
             }
 
-            else -> _uiState.update { it.copy(progressScore = 1, progressMax = 1) }
+            else -> _uiState.update {
+                it.copy(
+                    progressScore = 1,
+                    progressMax = 1,
+                    characterImgSrc = R.drawable.character_bebe_to_130
+                )
+            }
         }
     }
 
@@ -124,16 +137,20 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                 _cursorIdxRes.value = myStudyListInfo.cursorIdx
 
                 val studies = myStudyListInfo.studyInfoList
-                val myStudiesWithTodo = studies.map { study ->
+                val studiesWithTodo = studies.map { study ->
                     val todo = getFirstTodoInfo(study.id)
                     val todoCheck = "임시 todoCheck"
                     val todoCheckNum = 1    // 임시 todoCheckNum
                     MyStudyWithTodo(study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
                 }
-                _myStudyWithTodo.postValue(myStudiesWithTodo)
+                _uiState.update {
+                    it.copy(
+                        myStudiesWithTodo = studiesWithTodo
+                    )
+                }
 
                 Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
-                Log.d("MainHomeViewModel", "myStudyLiveData: ${_myStudyWithTodo.value}")
+                Log.d("MainHomeViewModel", "_uiState: ${_uiState.value}")
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
@@ -178,7 +195,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
             )
         }
         // 에러 발생 시 빈 Todo를 return
-        return Todo("",0,0,"","","")
+        return Todo("", 0, 0, "", "", "")
     }
 }
 
@@ -189,5 +206,7 @@ data class MainHomeUserInfoUiState(
     var profileImgUrl: String = "",
 //    var rank: Int,
     var progressScore: Int = 0,
-    var progressMax: Int = 15
+    var progressMax: Int = 15,
+    var characterImgSrc: Int = R.drawable.character_bebe_to_15,
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
 ) : Serializable
