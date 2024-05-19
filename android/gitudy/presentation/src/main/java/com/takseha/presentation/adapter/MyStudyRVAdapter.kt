@@ -30,15 +30,15 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.studyName.text = studyInfoList[position].topic
-        holder.teamScore.text = studyInfoList[position].score.toString()
+        holder.studyName.text = studyInfoList[position].studyInfo.topic
+        holder.teamScore.text = studyInfoList[position].studyInfo.score.toString()
         holder.todoTitle.text = studyInfoList[position].todoTitle
         holder.todoCheck.text = studyInfoList[position].todoCheck
         holder.todoTime.text = studyInfoList[position].todoTime
         holder.todoCheckNum.text = studyInfoList[position].todoCheckNum.toString()
-        holder.totalNum.text = studyInfoList[position].totalNum.toString()
+        holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
         holder.progressBar.progress = studyInfoList[position].todoCheckNum
-        holder.progressBar.max = studyInfoList[position].totalNum
+        holder.progressBar.max = studyInfoList[position].studyInfo.maximumMember
     }
 
     override fun getItemCount(): Int {
