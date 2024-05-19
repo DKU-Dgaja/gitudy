@@ -9,9 +9,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.databinding.ItemMystudyBinding
 
-// itemImageView.clipToOutline = true 이거 프로필 이미지 둥글게 할 때 사용
 class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWithTodo>) : RecyclerView.Adapter<MyStudyRVAdapter.ViewHolder>() {
+    private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
+
     class ViewHolder(val binding: ItemMystudyBinding) : RecyclerView.ViewHolder(binding.root) {
+        val studyImg = binding.studyImg
         val studyName = binding.studyName
         val teamScore = binding.studyScore
         val todoTitle = binding.todoDetailTitle
@@ -30,12 +32,13 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        holder.studyImg.setBackgroundColor(android.graphics.Color.parseColor(backgroundColorList[position % 6]))
         holder.studyName.text = studyInfoList[position].studyInfo.topic
-        holder.teamScore.text = studyInfoList[position].studyInfo.score.toString()
+        holder.teamScore.text = "${studyInfoList[position].studyInfo.score.toString()}점"
         holder.todoTitle.text = studyInfoList[position].todoTitle
         holder.todoCheck.text = studyInfoList[position].todoCheck
         holder.todoTime.text = studyInfoList[position].todoTime
-        holder.todoCheckNum.text = studyInfoList[position].todoCheckNum.toString()
+        holder.todoCheckNum.text = "${ studyInfoList[position].todoCheckNum }/"
         holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
         holder.progressBar.progress = studyInfoList[position].todoCheckNum
         holder.progressBar.max = studyInfoList[position].studyInfo.maximumMember
