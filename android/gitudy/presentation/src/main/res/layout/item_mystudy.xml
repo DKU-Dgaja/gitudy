@@ -15,16 +15,19 @@
             android:paddingRight="20dp"
             android:paddingBottom="30dp">
 
-            <ImageView
+            <androidx.cardview.widget.CardView
                 android:id="@+id/studyImg"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                android:padding="10dp"
-                android:clipToOutline="true"
-                android:background="@drawable/square_r8_non_stroke"
-                android:src="@drawable/ic_git_white"
+                app:cardCornerRadius="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent">
+                <ImageView
+                    android:layout_gravity="center"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:src="@drawable/ic_git_white" />
+            </androidx.cardview.widget.CardView>
 
             <TextView
                 android:id="@+id/studyName"
