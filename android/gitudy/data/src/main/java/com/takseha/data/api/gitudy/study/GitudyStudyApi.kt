@@ -4,6 +4,7 @@ import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.MakeStudyResponse
 import com.takseha.data.dto.feed.StudyListResponse
 import com.takseha.data.dto.mystudy.TodoListResponse
+import com.takseha.data.dto.mystudy.TodoProgressResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -35,4 +36,10 @@ interface GitudyStudyApi {
         @Query("cursorIdx") cursorIdx: Long?,
         @Query("limit") limit: Long,
     ): Response<TodoListResponse>
+
+    @GET("/study/{studyInfoId}/todo/progress")
+    suspend fun getTodoProgress(
+        @Header("Authorization") bearerToken: String,
+        @Path("studyInfoId") studyInfoId: Int
+    ): Response<TodoProgressResponse>
 }

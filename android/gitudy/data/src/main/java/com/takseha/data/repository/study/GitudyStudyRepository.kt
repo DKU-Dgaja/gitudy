@@ -26,4 +26,9 @@ class GitudyStudyRepository {
         cursorIdx: Long?,
         limit: Long,
     ) = client.getTodoList(bearerToken, studyInfoId, cursorIdx, limit)
+
+    suspend fun getTodoProgress(
+        bearerToken: String,
+        studyInfoId: Int
+    ) = client.getTodoProgress(bearerToken, studyInfoId)
 }
