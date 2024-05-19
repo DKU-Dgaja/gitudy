@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.todo.repository;
 
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.backend.domain.define.study.todo.info.QStudyTodo.studyTodo;
 import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMapping.studyTodoMapping;
@@ -63,5 +65,18 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
                     .where(studyTodoMapping.id.in(todoMappingIds))
                     .execute();
         }
+    }
+
+    @Override
+    public Optional<StudyTodo> findStudyTodoByStudyInfoIdWithEarliestDueDate(Long studyInfoId) {
+        LocalDate currentDate = LocalDate.now();
+
+        StudyTodo result = queryFactory.selectFrom(studyTodo)
+                .where(studyTodo.studyInfoId.eq(studyInfoId)
+                        .and(studyTodo.todoDate.goe(currentDate)))
+                .orderBy(studyTodo.todoDate.asc())
+                .fetchFirst();
+
+        return Optional.ofNullable(result);
     }
 }
