@@ -8,11 +8,14 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.FragmentFeedHomeBinding
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 // TODO: 정렬 버튼 선택 시 정렬 기준 변경, 참여 가능한 스터디만 보기 기능 구현(currentMem이랑 maximumMem이 같은 스터디 제외시키기)
 
@@ -48,16 +51,18 @@ class FeedHomeFragment : Fragment() {
 //                viewModel.getFeedList(it, 5, "createdDateTime")
 //            }
 
-            viewModel.getFeedList(null, 5, "createdDateTime")
-            viewModel.feedStudyInfo.observe(viewLifecycleOwner) {
-                val feedRVAdapter = FeedRVAdapter(requireContext(), it)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.getFeedList(null, 5, "createdDateTime")
+                viewModel.uiState.collectLatest {
+                    val feedRVAdapter = FeedRVAdapter(requireContext(), it.studyInfoList)
 
-                if (feedRVAdapter.itemCount > 0) {
-                    isNoStudyLayout.visibility = View.GONE
+                    if (feedRVAdapter.itemCount > 0) {
+                        isNoStudyLayout.visibility = View.GONE
+                    }
+
+                    feedList.adapter = feedRVAdapter
+                    feedList.layoutManager = LinearLayoutManager(requireContext())
                 }
-
-                feedList.adapter = feedRVAdapter
-                feedList.layoutManager = LinearLayoutManager(requireContext())
             }
         }
     }
