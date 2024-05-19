@@ -14,7 +14,6 @@ import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-// itemImageView.clipToOutline = true 이거 프로필 이미지 둥글게 할 때 사용
 class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
     private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
 
