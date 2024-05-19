@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
@@ -15,6 +16,11 @@ import com.takseha.presentation.databinding.ItemMystudyBinding
 
 class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWithTodo>) : RecyclerView.Adapter<MyStudyRVAdapter.ViewHolder>() {
     private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
+
+    interface ItemClick {
+        fun onClick(view: View, position: Int)
+    }
+    var itemClick: ItemClick? = null
 
     class ViewHolder(val binding: ItemMystudyBinding) : RecyclerView.ViewHolder(binding.root) {
         val studyImg = binding.studyImg
@@ -63,6 +69,13 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                 holder.todoTime.text = studyInfoList[position].todoTime
                 holder.todoCheckNum.text = "${ studyInfoList[position].todoCheckNum }/"
                 holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
+            }
+        }
+
+        // 클릭 이벤트 처리
+        if (itemClick != null) {
+            holder?.itemView?.setOnClickListener { v ->
+                itemClick!!.onClick(v, position)
             }
         }
     }
