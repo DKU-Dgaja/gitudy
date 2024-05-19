@@ -19,8 +19,10 @@
                 android:id="@+id/studyImg"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
+                android:padding="10dp"
+                android:clipToOutline="true"
                 android:background="@drawable/square_r8_non_stroke"
-                android:src="@drawable/ic_study_pink"
+                android:src="@drawable/ic_git_white"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -144,7 +146,7 @@
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="310dp"
+                android:layout_width="300dp"
                 android:layout_height="16dp"
                 android:layout_marginTop="20dp"
                 android:max="100"
