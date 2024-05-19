@@ -105,12 +105,12 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun getMyStudyList(cursorIdx: Long?, limit: Long, sortby: String) = viewModelScope.launch {
+    fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             bearerToken,
             cursorIdx,
             limit,
-            sortby,
+            sortBy = "createdDateTime",
             myStudy = true
         )
 
@@ -132,19 +132,20 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                 }
                 _myStudyWithTodo.postValue(myStudiesWithTodo)
 
-                Log.d("MainHomeViewModel", _cursorIdxRes.value.toString())
+                Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
+                Log.d("MainHomeViewModel", "myStudyLiveData: ${_myStudyWithTodo.value}")
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
         } else {
             Log.e(
                 "MainHomeViewModel",
-                "tokenResponse status: ${myStudyListResponse.code()}\ntokenResponse message: ${myStudyListResponse.message()}"
+                "myStudyListResponse status: ${myStudyListResponse.code()}\nmyStudyListResponse message: ${myStudyListResponse.message()}"
             )
         }
     }
 
-    suspend fun getFirstTodoInfo(studyInfoId: Int): Todo {
+    private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo {
         val todoInfoResponse = gitudyStudyRepository.getTodoList(
             bearerToken,
             studyInfoId,
@@ -159,10 +160,14 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
             Log.d("MainHomeViewModel", "todo body: $todoBody")
 
             if (resCode == 200 && resMsg == "OK") {
-                val todo = todoBody.todoList.first()
-                Log.d("MainHomeViewModel", "todo first: $todo")
+                if (todoBody.todoList.isNotEmpty()) {
+                    val todo = todoBody.todoList.first()
+                    Log.d("MainHomeViewModel", "todo first: $todo")
 
-                return todo
+                    return todo
+                } else {
+                    return Todo("", 0, studyInfoId, "To-Do를 생성해주세요!", "", "")
+                }
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
