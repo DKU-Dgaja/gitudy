@@ -10,6 +10,8 @@ import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
+import com.takseha.data.dto.mystudy.TodoProgress
+import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.data.repository.auth.GitudyAuthRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
 import com.takseha.presentation.R
@@ -139,9 +141,14 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                 val studies = myStudyListInfo.studyInfoList
                 val studiesWithTodo = studies.map { study ->
                     val todo = getFirstTodoInfo(study.id)
-                    val todoCheck = "임시 todoCheck"
-                    val todoCheckNum = 1    // 임시 todoCheckNum
-                    MyStudyWithTodo(study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
+
+                    if (todo != null) {
+                        val todoCheckNum = getTodoProgress(study.id)!!.completeMemberCount
+                        val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
+                        MyStudyWithTodo(study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
+                    } else {
+                        MyStudyWithTodo(study, null, null, TodoStatus.TODO_EMPTY, null)
+                    }
                 }
                 _uiState.update {
                     it.copy(
@@ -162,7 +169,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo {
+    private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
         val todoInfoResponse = gitudyStudyRepository.getTodoList(
             bearerToken,
             studyInfoId,
@@ -183,7 +190,8 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
 
                     return todo
                 } else {
-                    return Todo("", 0, studyInfoId, "To-Do를 생성해주세요!", "", "")
+                    Log.d("MainHomeViewModel", "No To-Do")
+                    return null
                 }
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
@@ -194,8 +202,38 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                 "todoInfoResponse status: ${todoInfoResponse.code()}\ntodoInfoResponse message: ${todoInfoResponse.message()}"
             )
         }
-        // 에러 발생 시 빈 Todo를 return
-        return Todo("", 0, 0, "", "", "")
+        // 에러 발생 시 null return
+        Log.d("MainHomeViewModel", "Error")
+        return null
+    }
+
+    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgress? {
+        val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
+            bearerToken,
+            studyInfoId
+        )
+
+        if (todoProgressResponse.isSuccessful) {
+            val resCode = todoProgressResponse.body()!!.resCode
+            val resMsg = todoProgressResponse.body()!!.resMsg
+            val todoProgress = todoProgressResponse.body()!!.todoProgress
+
+            if (resCode == 200 && resMsg == "OK") {
+                if (todoProgress != null) {
+                    return todoProgress
+                } else {
+                    return null
+                }
+            } else {
+                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+            }
+        } else {
+            Log.e(
+                "MainHomeViewModel",
+                "todoProgressResponse status: ${todoProgressResponse.code()}\ntodoProgressResponse message: ${todoProgressResponse.message()}"
+            )
+        }
+        return null
     }
 }
 
