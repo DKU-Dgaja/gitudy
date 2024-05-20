@@ -295,8 +295,8 @@ public class StudyTodoService {
 
         StudyInfo study = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
-        List<StudyTodo> todos = studyTodoRepository.findByStudyInfoIdAndTodoDateBetween(
-                study.getId(), threeDaysAgo, today);
+        List<StudyTodo> todos = studyTodoRepository.findByStudyInfoIdAndTodoDateAfter(
+                study.getId(), threeDaysAgo);
         for (StudyTodo todo : todos) {
             studyCommitService.fetchRemoteCommitsAndSaveAsync(study, todo, pageSize);
         }

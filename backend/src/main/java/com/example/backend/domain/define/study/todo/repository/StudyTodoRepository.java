@@ -15,4 +15,6 @@ public interface StudyTodoRepository extends JpaRepository<StudyTodo, Long> , St
     List<StudyTodo> findByStudyInfoId(Long studyInfoId);
     List<StudyTodo> findByStudyInfoIdAndTodoDateBetween(Long studyInfoId, LocalDate startDate, LocalDate endDate);
 
+    List<StudyTodo> findByStudyInfoIdAndTodoDateAfter(Long studyInfoId, LocalDate date);
+
 }

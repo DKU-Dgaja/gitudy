@@ -94,8 +94,8 @@ public class StudyCommitService {
         List<StudyInfo> studies = studyInfoRepository.findAll();
 
         for (StudyInfo study : studies) {
-            List<StudyTodo> todos = studyTodoRepository.findByStudyInfoIdAndTodoDateBetween(
-                    study.getId(), threeDaysAgo, today);
+            List<StudyTodo> todos = studyTodoRepository.findByStudyInfoIdAndTodoDateAfter(
+                    study.getId(), threeDaysAgo);
             for (StudyTodo todo : todos) {
                 fetchRemoteCommitsAndSave(study, todo, pageSize);
             }
