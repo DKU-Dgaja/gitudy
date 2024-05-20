@@ -30,6 +30,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -154,10 +155,10 @@ public class StudyTodoService {
     }
 
     // Todo 전체조회
-    public StudyTodoListAndCursorIdxResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
+    public StudyTodoListAndCursorIdxResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit, boolean fetchFlag) {
 
         // 스터디 조회 예외처리
-        studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+        StudyInfo study = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 
@@ -170,22 +171,19 @@ public class StudyTodoService {
         // 다음 페이지 조회를 위한 cursorIdx 설정
         response.setNextCursorIdx();
 
-        // 커밋 fetch 업데이트
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
-            return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
-        });
+        if (fetchFlag) {
+            // 커밋 fetch 업데이트
+            studyTodoList.forEach(todo -> {
+                // 깃허브 api를 사용해 커밋 업데이트
+                StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
+                    return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+                });
+                studyCommitService.fetchRemoteCommitsAndSaveAsync(study, findTodo, PAGE_SIZE);
 
-        studyTodoList.forEach(todo -> {
-            // 깃허브 api를 사용해 커밋 업데이트
-            StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
-                log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
-                return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+                // TODO: 점수 부여 로직 필요
             });
-            studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo, PAGE_SIZE);
-
-            // TODO: 점수 부여 로직 필요
-        });
+        }
 
         return response;
     }
@@ -290,4 +288,17 @@ public class StudyTodoService {
                 .build();
     }
 
+    public void fetchTodoCommit(Long studyInfoId) {
+        int pageSize = 10;
+        LocalDate today = LocalDate.now();
+        LocalDate threeDaysAgo = today.minusDays(3);
+
+        StudyInfo study = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+        List<StudyTodo> todos = studyTodoRepository.findByStudyInfoIdAndTodoDateBetween(
+                study.getId(), threeDaysAgo, today);
+        for (StudyTodo todo : todos) {
+            studyCommitService.fetchRemoteCommitsAndSaveAsync(study, todo, pageSize);
+        }
+    }
 }

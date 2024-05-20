@@ -22,6 +22,7 @@ import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.convention.StudyConventionService;
 import com.example.backend.study.api.service.github.GithubApiService;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
+import com.example.backend.study.api.service.info.StudyInfoService;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,6 +49,7 @@ public class StudyCommitService {
     private final StudyCommitRepository studyCommitRepository;
     private final GithubApiService githubApiService;
     private final StudyConventionService studyConventionService;
+    private final StudyInfoService studyInfoService;
     private final StudyConventionRepository studyConventionRepository;
     private final StudyInfoRepository studyInfoRepository;
     private final StudyTodoRepository studyTodoRepository;
