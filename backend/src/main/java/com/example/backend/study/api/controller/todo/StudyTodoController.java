@@ -79,14 +79,13 @@ public class StudyTodoController {
     public JsonResult<?> readStudyTodoList(@AuthenticationPrincipal User user,
                                            @PathVariable(name = "studyInfoId") Long studyInfoId,
                                            @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
-                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "3") Long limit) {
-
+                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "3") Long limit,
+                                           @RequestParam(name = "fetchFlag", defaultValue = "false") boolean fetchFlag) {
         // 스터디 멤버인지 검증
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        return JsonResult.successOf(studyTodoService.readStudyTodoList(studyInfoId, cursorIdx, limit));
+        return JsonResult.successOf(studyTodoService.readStudyTodoList(studyInfoId, cursorIdx, limit, fetchFlag));
     }
-
 
     // Todo 단일조회
     @ApiResponse(responseCode = "200", description = "Todo 조회 성공", content = @Content(schema = @Schema(implementation = StudyTodoResponse.class)))
@@ -125,4 +124,14 @@ public class StudyTodoController {
         return JsonResult.successOf(studyTodoService.readStudyTodoProgress(studyInfoId));
     }
 
+    // 커밋 패치 로직
+    @GetMapping("/{studyInfoId}/todo/fetch")
+    public JsonResult<?> fetchTodoCommit(@AuthenticationPrincipal User user,
+                                         @PathVariable(name = "studyInfoId") Long studyInfoId) {
+
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
+        studyTodoService.fetchTodoCommit(studyInfoId);
+
+        return JsonResult.successOf("커밋 패치가 완료되었습니다.");
+    }
 }
