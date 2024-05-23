@@ -4,17 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     android:background="@color/BACKGROUND"
     tools:context=".ui.home.MainHomeFragment">
 
     <androidx.cardview.widget.CardView
         android:id="@+id/homeProfileLayout"
         android:layout_width="match_parent"
-        android:layout_height="570dp"
+        android:layout_height="500dp"
         android:layout_marginTop="-20dp"
         android:backgroundTint="#1B1B25"
-        android:elevation="15dp"
         app:cardCornerRadius="20dp"
+        app:cardElevation="7dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -54,7 +55,7 @@
                 android:id="@+id/characterImg"
                 android:layout_width="250dp"
                 android:layout_height="250dp"
-                android:layout_marginTop="110dp"
+                android:layout_marginTop="60dp"
                 android:padding="-30dp"
                 android:src="@drawable/character_bebe_to_15"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -150,21 +151,17 @@
     </androidx.cardview.widget.CardView>
 
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/myStudyList"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginLeft="22dp"
         android:layout_marginTop="32dp"
         android:layout_marginRight="22dp"
+        android:layout_marginBottom="100dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/myStudyList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-    </ScrollView>
-
+        app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

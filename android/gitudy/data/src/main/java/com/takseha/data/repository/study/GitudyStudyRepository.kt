@@ -1,9 +1,7 @@
 package com.takseha.data.repository.study
 
-import com.takseha.data.api.gitudy.auth.GitudyAuthApi
 import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.api.gitudy.study.GitudyStudyApi
-import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 
 class GitudyStudyRepository {
@@ -21,4 +19,16 @@ class GitudyStudyRepository {
         bearerToken: String,
         request: MakeStudyRequest
     ) = client.makeNewStudy(bearerToken, request)
+
+    suspend fun getTodoList(
+        bearerToken: String,
+        studyInfoId: Int,
+        cursorIdx: Long?,
+        limit: Long,
+    ) = client.getTodoList(bearerToken, studyInfoId, cursorIdx, limit)
+
+    suspend fun getTodoProgress(
+        bearerToken: String,
+        studyInfoId: Int
+    ) = client.getTodoProgress(bearerToken, studyInfoId)
 }

@@ -1,8 +1,6 @@
-package com.takseha.data.dto.mystudy
+package com.takseha.data.dto.feed
 
 import com.google.gson.annotations.SerializedName
-import com.takseha.data.dto.feed.StudyPeriod
-import java.time.LocalDateTime
 
 data class StudyListResponse(
     @SerializedName("res_code")

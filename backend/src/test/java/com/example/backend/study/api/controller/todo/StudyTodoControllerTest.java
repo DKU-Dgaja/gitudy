@@ -20,6 +20,7 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.todo.response.StudyTodoProgressResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -39,6 +40,7 @@ import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -213,7 +215,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class), anyBoolean())).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
@@ -248,7 +250,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class), anyBoolean())).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
@@ -335,5 +337,64 @@ public class StudyTodoControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
+    }
+
+    @Test
+    public void 가장_마감일이_빠른_Todo의_진행률_확인_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        var response = StudyTodoProgressResponse.builder()
+                .todoId(1L)
+                .totalMemberCount(10)
+                .completeMemberCount(5)
+                .build();
+
+
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
+        when(studyTodoService.readStudyTodoProgress(any(Long.class))).thenReturn(response);
+
+        // when
+        mockMvc.perform(get("/study/" + 1L + "/todo/progress")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andDo(print());
+    }
+
+
+    @Test
+    void 커밋_패치_요청_성공_테스트() throws Exception {
+        // given
+        User savedUser = generateAuthUser();
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(studyTodoService).fetchTodoCommit(any(Long.class));
+
+        // when
+        mockMvc.perform(get("/study/" + 1L + "/todo/fetch")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj").value("커밋 패치가 완료되었습니다."))
+                .andDo(print());
+
     }
 }

@@ -3,19 +3,14 @@ package com.takseha.presentation.ui.home
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.viewModels
-import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMainHomeBinding
 import com.takseha.presentation.ui.feed.FeedHomeFragment
 import com.takseha.presentation.ui.mystudy.MyStudyHomeFragment
 import com.takseha.presentation.ui.profile.ProfileHomeFragment
-import com.takseha.presentation.viewmodel.home.MainHomeViewModel
-import kotlinx.coroutines.launch
 
 class MainHomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainHomeBinding
-    private val viewModel: MainHomeViewModel by viewModels()
 
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -33,7 +28,6 @@ class MainHomeActivity : AppCompatActivity() {
     private fun setInit() {
         setBinding()
         setNoBackPressed()
-        setViewModel()
     }
 
     private fun setBinding() {
@@ -43,12 +37,6 @@ class MainHomeActivity : AppCompatActivity() {
     }
     private fun setNoBackPressed() {
         this.onBackPressedDispatcher.addCallback(this, callback)
-    }
-    private fun setViewModel() {
-        lifecycleScope.launch {
-            // TODO : getMyStudyList, getStudyList function 적용
-            viewModel.getUserInfo()
-        }
     }
     private fun setMainFragmentView(savedInstanceState: Bundle?) {
         with(binding) {

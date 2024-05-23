@@ -33,8 +33,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyCommitServiceTest extends TestConfig {
-    private final static int DATA_SIZE = 10;
-    private final static Long LIMIT = 10L;
+    private final static int DATA_SIZE = 5;
+    private final static Long LIMIT = 5L;
+    private final static int PAGE_SIZE = 5;
     private final String REPOSITORY_OWNER = "jusung-c";
     private final String REPOSITORY_NAME = "Github-Api-Test";
 
@@ -227,7 +228,7 @@ class StudyCommitServiceTest extends TestConfig {
         String C = "aBc123 [jusung-c] 백준: 크리스마스 트리";
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // 저장된 커밋들 중 컨벤션을 지킨 APPROVAL 상태의 커밋만 필터링
         List<StudyCommit> allCommits = studyCommitRepository.findByStudyTodoId(todo.getId())

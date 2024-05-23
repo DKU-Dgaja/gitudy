@@ -47,6 +47,7 @@ import static org.mockito.Mockito.*;
 public class CommitFetchServiceTest extends MockTestConfig {
     private final String REPOSITORY_OWNER = "jusung-c";
     private final String REPOSITORY_NAME = "Github-Api-Test";
+    private final int PAGE_SIZE = 5;
 
     @Autowired
     private StudyCommitService studyCommitService;
@@ -162,7 +163,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(mockCommits);
 
         // When
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
 
         // Then
@@ -189,7 +190,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // then
         // githubApiService.fetchCommits가 정확히 한 번 호출되었는지 검증
@@ -223,7 +224,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(firstPage);
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // then
         // githubApiService.fetchCommits가 정확히 한 번 호출되었는지 검증
@@ -312,7 +313,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // then
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
@@ -337,7 +338,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // When
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // Then
         assertTrue(studyCommitRepository.findAll().isEmpty());
@@ -409,7 +410,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
 
         // then
@@ -476,7 +477,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // then
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
@@ -532,7 +533,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // then
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
@@ -609,7 +610,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // then
         List<StudyCommit> allCommit = studyCommitRepository.findAll();
@@ -697,7 +698,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(Collections.emptyList());
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
 
         // then
@@ -742,7 +743,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .thenReturn(firstPage);
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // then
         // githubApiService.fetchCommits가 정확히 한 번 호출되었는지 검증
