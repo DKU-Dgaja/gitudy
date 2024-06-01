@@ -1,6 +1,8 @@
 package com.takseha.data.dto.mystudy
 
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyStatus
 
 data class MyStudyResponse(
     @SerializedName("res_code")
@@ -13,31 +15,31 @@ data class MyStudyResponse(
 
 data class MyStudyInfo(
     @SerializedName("category_names")
-    val categoryNames: List<String>,
+    val categoryNames: List<String> = listOf(),
     @SerializedName("created_date_time")
-    val createdDateTime: String,
+    val createdDateTime: String = "",
     @SerializedName("current_member")
-    val currentMember: Int,
+    val currentMember: Int = 0,
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("info")
-    val info: String,
+    val info: String = "",
     @SerializedName("last_commit_day")
-    val lastCommitDay: String,
+    val lastCommitDay: String = "",
     @SerializedName("maximum_member")
-    val maximumMember: Int,
+    val maximumMember: Int = 0,
     @SerializedName("modified_date_time")
-    val modifiedDateTime: String,
+    val modifiedDateTime: String = "",
     @SerializedName("period_type")
-    val periodType: String,
+    val periodType: StudyPeriod = StudyPeriod.STUDY_PERIOD_WEEK,
     @SerializedName("profile_image_url")
-    val profileImageUrl: String,
+    val profileImageUrl: String = "",
     @SerializedName("score")
-    val score: Int,
+    val score: Int = 0,
     @SerializedName("status")
-    val status: String,
+    val status: StudyStatus = StudyStatus.STUDY_PRIVATE,
     @SerializedName("topic")
-    val topic: String,
+    val topic: String = "",
     @SerializedName("user_id")
-    val userId: Int
+    val userId: Int = 0
 )

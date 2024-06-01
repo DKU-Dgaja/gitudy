@@ -92,7 +92,7 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
             )
         }
         // 에러 발생 시 null return
-        Log.d("MainHomeViewModel", "Error")
+        Log.d("MyStudyMainViewModel", "Error")
         return null
     }
 
@@ -100,7 +100,7 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
 }
 
 data class MyStudyMainInfoState(
-    var myStudyInfo: MyStudyInfo? = null,
+    var myStudyInfo: MyStudyInfo = MyStudyInfo(),
     var todoInfo: Todo? = null,
     // todo: convention 추가, comment 추가
     )
