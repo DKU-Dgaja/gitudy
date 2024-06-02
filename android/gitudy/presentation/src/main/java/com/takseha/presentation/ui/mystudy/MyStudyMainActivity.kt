@@ -37,7 +37,9 @@ class MyStudyMainActivity : AppCompatActivity() {
                 finish()
             }
             todoAdditionBtn.setOnClickListener {
-                startActivity(Intent(baseContext, AddTodoActivity::class.java))
+                val intent = Intent(this@MyStudyMainActivity, AddTodoActivity::class.java)
+                intent.putExtra("studyInfoId", studyInfoId)
+                startActivity(intent)
             }
         }
     }
