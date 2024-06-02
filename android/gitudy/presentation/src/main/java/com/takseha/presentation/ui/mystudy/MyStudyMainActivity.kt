@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -23,24 +24,27 @@ class MyStudyMainActivity : AppCompatActivity() {
         // Todo: statusBar 색 변경
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
+        val studyImgColor = intent.getStringExtra("studyImgColor")
         Log.d("MyStudyMainActivity", studyInfoId.toString())
 
         viewModel.getMyStudyInfo(studyInfoId)
-        setMyStudyInfo()
+        setMyStudyInfo(studyImgColor!!)
         binding.backBtn.setOnClickListener {
-
+            finish()
         }
-
     }
 
-    private fun setMyStudyInfo() {
+    private fun setMyStudyInfo(studyImgColor: String) {
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 with(binding) {
+                    studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
                     studyName.text = it.myStudyInfo.topic
                     studyRule.text = setCommitRule(it.myStudyInfo.periodType)
                     studyInfo.text = it.myStudyInfo.info
                     isStudyOpenText.text = setStudyStatus(it.myStudyInfo.status)
+                    studyRankText.text = String.format(getString(R.string.study_team_rank), it.myStudyInfo.score, 0)
+                    studyGithubLinkText.text = "필드 추가 필요"
                 }
             }
         }
