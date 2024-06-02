@@ -771,7 +771,10 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertEquals(savedStudyInfo.getStatus(), response.getStatus()),
                 () -> assertEquals(savedStudyInfo.getCreatedDateTime().getMinute(), response.getCreatedDateTime().getMinute()),
                 () -> assertEquals(savedStudyInfo.getModifiedDateTime().getMinute(), response.getModifiedDateTime().getMinute()),
-                () -> assertEquals(savedStudyInfo.getPeriodType(), response.getPeriodType())
+                () -> assertEquals(savedStudyInfo.getPeriodType(), response.getPeriodType()),
+                () -> assertEquals(savedStudyInfo.getRepositoryInfo().getName(), response.getRepositoryInfo().getName()),
+                () -> assertEquals(savedStudyInfo.getRepositoryInfo().getOwner(), response.getRepositoryInfo().getOwner()),
+                () -> assertEquals(savedStudyInfo.getRepositoryInfo().getBranchName(), response.getRepositoryInfo().getBranchName())
         );
 
         // 카테고리 매핑 response 확인
