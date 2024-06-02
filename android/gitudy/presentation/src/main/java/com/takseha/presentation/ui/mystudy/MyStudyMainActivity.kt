@@ -13,6 +13,7 @@ import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class MyStudyMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMyStudyMainBinding
@@ -28,13 +29,13 @@ class MyStudyMainActivity : AppCompatActivity() {
         Log.d("MyStudyMainActivity", studyInfoId.toString())
 
         viewModel.getMyStudyInfo(studyInfoId)
-        setMyStudyInfo(studyImgColor!!)
+        setMyStudyInfo(studyInfoId, studyImgColor!!)
         binding.backBtn.setOnClickListener {
             finish()
         }
     }
 
-    private fun setMyStudyInfo(studyImgColor: String) {
+    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String) {
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 with(binding) {
@@ -43,8 +44,8 @@ class MyStudyMainActivity : AppCompatActivity() {
                     studyRule.text = setCommitRule(it.myStudyInfo.periodType)
                     studyInfo.text = it.myStudyInfo.info
                     isStudyOpenText.text = setStudyStatus(it.myStudyInfo.status)
-                    studyRankText.text = String.format(getString(R.string.study_team_rank), it.myStudyInfo.score, 0)
-                    studyGithubLinkText.text = "필드 추가 필요"
+                    studyRankText.text = String.format(getString(R.string.study_team_rank), studyInfoId*10 + 2, if(studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2)
+                    studyGithubLinkText.text = it.myStudyInfo.githubLinkInfo.branchName
                 }
             }
         }

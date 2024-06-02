@@ -91,7 +91,7 @@ class MainHomeFragment : Fragment() {
 
         with(binding) {
             nickname.text = userInfo.name
-            scoreAndRank.text = String.format(scoreAndRankText, userInfo.score, 0)
+            scoreAndRank.text = String.format(scoreAndRankText, userInfo.score, 1)
             profileProgressBar.max = userInfo.progressMax
             profileProgressBar.progress = userInfo.progressScore
             characterImg.setImageResource(userInfo.characterImgSrc)

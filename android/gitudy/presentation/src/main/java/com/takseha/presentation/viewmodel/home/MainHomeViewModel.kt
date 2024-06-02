@@ -122,7 +122,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
-        val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
+        val backgroundColorList = listOf("#f8a7a7", "#f8dea6", "#d3f3be", "#85b0e9")
 
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             bearerToken,
@@ -148,9 +148,9 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                     if (todo != null) {
                         val todoCheckNum = getTodoProgress(study.id)!!.completeMemberCount
                         val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
-                        MyStudyWithTodo(backgroundColorList[study.id % 6], study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
+                        MyStudyWithTodo(backgroundColorList[study.id % 4], study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
                     } else {
-                        MyStudyWithTodo(backgroundColorList[study.id % 6], study, null, null, TodoStatus.TODO_EMPTY, null)
+                        MyStudyWithTodo(backgroundColorList[study.id % 4], study, null, null, TodoStatus.TODO_EMPTY, null)
                     }
                 }
                 _uiState.update {

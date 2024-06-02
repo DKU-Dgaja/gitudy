@@ -95,13 +95,13 @@
 
             <TextView
                 android:id="@+id/noTodoAlarm"
-                android:visibility="gone"
                 style="@style/B6_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="14dp"
                 android:text="@string/study_to_do_empty"
                 android:textColor="@color/BASIC_RED"
+                android:visibility="gone"
                 app:layout_constraintBottom_toTopOf="@+id/progressBar"
                 app:layout_constraintStart_toEndOf="@+id/todoImg"
                 app:layout_constraintTop_toTopOf="@+id/divider" />

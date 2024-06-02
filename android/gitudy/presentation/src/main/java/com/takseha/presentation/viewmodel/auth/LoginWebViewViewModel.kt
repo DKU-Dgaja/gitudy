@@ -42,8 +42,7 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
                 _role.value = allTokens.role
                 Log.d("LoginWebViewViewModel", "role: ${role.value}")
                 Log.d("LoginWebViewViewModel", "https status: $resCode, $resMsg")
-                Log.d("LoginWebViewViewModel", "shared pref 저장된 access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\n"
-                        + "shared pref 저장된 refresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}")
+                Log.d("LoginWebViewViewModel", "Bearer token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}")
             } else {
                 Log.e("LoginWebViewViewModel", "https status error: $resCode, $resMsg")
             }

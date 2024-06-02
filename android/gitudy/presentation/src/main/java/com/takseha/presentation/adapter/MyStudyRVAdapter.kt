@@ -81,7 +81,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
     private fun setBasicStudyInfo(holder: ViewHolder, position: Int) {
         holder.studyImg.setCardBackgroundColor(Color.parseColor(studyInfoList[position].studyImg))
         holder.studyName.text = studyInfoList[position].studyInfo.topic
-        holder.teamScore.text = "${studyInfoList[position].studyInfo.score}점"
+        holder.teamScore.text = "${studyInfoList[position].studyInfo.id*10 + 2}점"
         holder.progressBar.progress = studyInfoList[position].todoCheckNum ?: 0
         holder.progressBar.max = studyInfoList[position].studyInfo.maximumMember
     }
