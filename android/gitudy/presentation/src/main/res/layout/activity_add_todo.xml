@@ -87,6 +87,7 @@
                     android:background="@null"
                     android:hint="TO-DO 제목을 입력해주세요."
                     android:inputType="text"
+                    android:maxLength="20"
                     android:textColor="@color/BLACK"
                     android:textColorHint="@color/GS_400" />
 
@@ -96,7 +97,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/text_length_alert"
+                    android:text="20자 이내"
                     android:textColor="@color/GS_400"
                     android:visibility="visible" />
 
@@ -165,6 +166,7 @@
                     android:layout_weight="1"
                     android:background="@null"
                     android:hint="TO-DO에 대한\n간단한 설명을 적어주세요."
+                    android:maxLength="50"
                     android:textColor="@color/BLACK"
                     android:textColorHint="@color/GS_400" />
 
@@ -174,7 +176,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="15dp"
-                    android:text="@string/text_length_alert"
+                    android:text="50자 이내"
                     android:textColor="@color/GS_400"
                     android:visibility="visible" />
 

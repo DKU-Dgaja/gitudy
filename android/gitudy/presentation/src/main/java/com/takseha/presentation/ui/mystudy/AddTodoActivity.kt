@@ -10,6 +10,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
+import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -48,7 +50,17 @@ class AddTodoActivity : AppCompatActivity() {
                 ) {
                 }
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    var titleLength = todoTitleText.length()
+                    val titleLengthText = getString(R.string.text_length)
+
+                    if (titleLength > 0) {
+                        titleTextLengthAlert.visibility = View.GONE
+                        titleTextLength.visibility = View.VISIBLE
+                        titleTextLength.text =
+                            String.format(titleLengthText, titleLength, 20)
+                    }
+                }
 
                 override fun afterTextChanged(s: Editable?) {
                     title = todoTitleText.text.toString()
@@ -66,7 +78,17 @@ class AddTodoActivity : AppCompatActivity() {
                 ) {
                 }
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    var detailLength = todoDetailText.length()
+                    val detailLengthText = getString(R.string.text_length)
+
+                    if (detailLength > 0) {
+                        bodyTextLengthAlert.visibility = View.GONE
+                        bodyTextLength.visibility = View.VISIBLE
+                        bodyTextLength.text =
+                            String.format(detailLengthText, detailLength, 50)
+                    }
+                }
 
                 override fun afterTextChanged(s: Editable?) {
                     detail = todoDetailText.text.toString()
@@ -102,6 +124,7 @@ class AddTodoActivity : AppCompatActivity() {
 
             applyBtn.setOnClickListener {
                 todoDate = closeTimeText.text.toString()
+                Log.d("AddTodoActivity", todoDate)
                 showAddTodoDialog(studyInfoId, title, detail, todoLink, todoDate)
             }
         }
@@ -116,7 +139,7 @@ class AddTodoActivity : AppCompatActivity() {
         val datePickerDialog = DatePickerDialog(
             this, R.style.CustomDatePicker,
             { _, selectedYear, selectedMonth, selectedDay ->
-                closeTimeText.text = "$selectedYear-${selectedMonth + 1}-$selectedDay"
+                closeTimeText.text = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
                 closeTimeText.setTextColor(
                     ContextCompat.getColor(
                         this,
