@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.home
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -17,6 +18,7 @@ import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
+import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
 import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -81,6 +83,8 @@ class MainHomeFragment : Fragment() {
 
             myStudyList.adapter = myStudyRVAdapter
             myStudyList.layoutManager = LinearLayoutManager(requireContext())
+
+            clickMyStudyItem(myStudyRVAdapter, studyList)
         }
     }
 
@@ -91,10 +95,22 @@ class MainHomeFragment : Fragment() {
 
         with(binding) {
             nickname.text = userInfo.name
-            scoreAndRank.text = String.format(scoreAndRankText, userInfo.score, 0)
+            scoreAndRank.text = String.format(scoreAndRankText, userInfo.score, 1)
             profileProgressBar.max = userInfo.progressMax
             profileProgressBar.progress = userInfo.progressScore
             characterImg.setImageResource(userInfo.characterImgSrc)
+        }
+    }
+
+    private fun clickMyStudyItem(myStudyRVAdapter: MyStudyRVAdapter, studyList: List<MyStudyWithTodo>) {
+        myStudyRVAdapter.itemClick = object : MyStudyRVAdapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
+                val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
+                intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
+                intent.putExtra("studyImgColor", studyList[position].studyImg)
+                Log.d("MyStudyHomeFragment", intent.extras.toString())
+                startActivity(intent)
+            }
         }
     }
 

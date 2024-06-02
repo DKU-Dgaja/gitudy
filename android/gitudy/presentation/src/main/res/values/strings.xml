@@ -45,18 +45,21 @@
     <string name="study_to_do_body">본문내용이 그렇게 많으려나?? 글자 수 제한해서 2줄 이상 안넘게 막으면 접고 펼치는거 없앨 수 있어. 그럼 더 간결해보이긴 해</string>
     <string name="to_do_deadline">마감일 </string>
     <string name="to_do_deadline_date">%d.%d.%d</string>
+    <string name="to_do_add">새로운 TO-DO를\n추가하시겠습니까?</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
     <string name="commit_convention">[닉네임]-#문제번호: 사용언어</string>
     <string name="message_select_noti">%님에게 전달할\n메시지를 선택해주세요</string>
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
+
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
     <string name="study_to_do_check">/%d</string>
     <string name="study_member_rv">/%d명</string>
     <string name="study_total_day_cnt">D+%d</string>
     <string name="study_to_do_empty">마감 예정인 To-Do가 없습니다!</string>
+
 
 
     <!-- Strings related to feed -->

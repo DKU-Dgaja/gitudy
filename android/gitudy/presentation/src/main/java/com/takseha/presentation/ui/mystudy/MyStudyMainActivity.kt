@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,6 +14,7 @@ import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import kotlin.math.abs
 
 class MyStudyMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMyStudyMainBinding
@@ -21,20 +23,28 @@ class MyStudyMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_study_main)
         setBinding()
-        // Todo: statusBar 색 변경
+        // Todo: statusBar 색 변경, 팀장/팀원 판별해서 todo 등록 버튼 유무 정하기
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
         val studyImgColor = intent.getStringExtra("studyImgColor")
         Log.d("MyStudyMainActivity", studyInfoId.toString())
 
         viewModel.getMyStudyInfo(studyInfoId)
-        setMyStudyInfo(studyImgColor!!)
-        binding.backBtn.setOnClickListener {
-            finish()
+        setMyStudyInfo(studyInfoId, studyImgColor!!)
+
+        with(binding) {
+            backBtn.setOnClickListener {
+                finish()
+            }
+            todoAdditionBtn.setOnClickListener {
+                val intent = Intent(this@MyStudyMainActivity, AddTodoActivity::class.java)
+                intent.putExtra("studyInfoId", studyInfoId)
+                startActivity(intent)
+            }
         }
     }
 
-    private fun setMyStudyInfo(studyImgColor: String) {
+    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String) {
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 with(binding) {
@@ -43,12 +53,17 @@ class MyStudyMainActivity : AppCompatActivity() {
                     studyRule.text = setCommitRule(it.myStudyInfo.periodType)
                     studyInfo.text = it.myStudyInfo.info
                     isStudyOpenText.text = setStudyStatus(it.myStudyInfo.status)
-                    studyRankText.text = String.format(getString(R.string.study_team_rank), it.myStudyInfo.score, 0)
-                    studyGithubLinkText.text = "필드 추가 필요"
+                    studyRankText.text = String.format(
+                        getString(R.string.study_team_rank),
+                        studyInfoId * 10 + 2,
+                        if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2
+                    )
+                    studyGithubLinkText.text = it.myStudyInfo.githubLinkInfo.branchName
                 }
             }
         }
     }
+
     private fun setCommitRule(periodType: StudyPeriod): String {
         when (periodType) {
             StudyPeriod.STUDY_PERIOD_EVERYDAY -> return baseContext.getString(R.string.feed_rule_everyday)

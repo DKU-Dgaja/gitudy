@@ -41,5 +41,16 @@ data class MyStudyInfo(
     @SerializedName("topic")
     val topic: String = "",
     @SerializedName("user_id")
-    val userId: Int = 0
+    val userId: Int = 0,
+    @SerializedName("repository_info")
+    val githubLinkInfo: RepositoryInfo = RepositoryInfo()
+)
+
+data class RepositoryInfo(
+    @SerializedName("owner")
+    val owner: String = "",
+    @SerializedName("name")
+    val name: String = "",
+    @SerializedName("branch_name")
+    val branchName: String = ""
 )

@@ -21,7 +21,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.mystudy.AddTodoActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".ui.mystudy.MemberStudySettingActivity"
             android:exported="false" />

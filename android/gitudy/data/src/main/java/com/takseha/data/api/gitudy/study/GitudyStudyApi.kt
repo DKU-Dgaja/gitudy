@@ -3,6 +3,8 @@ package com.takseha.data.api.gitudy.study
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.MakeStudyResponse
 import com.takseha.data.dto.feed.StudyListResponse
+import com.takseha.data.dto.mystudy.MakeTodoRequest
+import com.takseha.data.dto.mystudy.MakeTodoResponse
 import com.takseha.data.dto.mystudy.MyStudyResponse
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
@@ -37,6 +39,13 @@ interface GitudyStudyApi {
         @Query("cursorIdx") cursorIdx: Long?,
         @Query("limit") limit: Long,
     ): Response<TodoListResponse>
+
+    @POST("/study/{studyInfoId}/todo")
+    suspend fun makeNewTodo(
+        @Header("Authorization") bearerToken: String,
+        @Path("studyInfoId") studyInfoId: Int,
+        @Body request: MakeTodoRequest
+    ): Response<MakeTodoResponse>
 
     @GET("/study/{studyInfoId}/todo/progress")
     suspend fun getTodoProgress(

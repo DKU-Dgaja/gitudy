@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
     <style name="H0_1">
         <item name="android:fontFamily">@font/pretendard_extrabold</item>
         <item name="android:textSize">64sp</item>
     </style>
+
     <style name="H0_2">
         <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">60sp</item>
@@ -13,6 +15,7 @@
         <item name="android:fontFamily">@font/pretendard_bold</item>
         <item name="android:textSize">54sp</item>
     </style>
+
     <style name="H1_2">
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">54sp</item>
@@ -27,6 +30,7 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">40sp</item>
     </style>
+
     <style name="H3_2">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">40sp</item>
@@ -36,10 +40,12 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">32sp</item>
     </style>
+
     <style name="H4_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">32sp</item>
     </style>
+
     <style name="H4_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">32sp</item>
@@ -50,10 +56,12 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">28sp</item>
     </style>
+
     <style name="B1_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">28sp</item>
     </style>
+
     <style name="B1_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">28sp</item>
@@ -63,10 +71,12 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">24sp</item>
     </style>
+
     <style name="B2_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">24sp</item>
     </style>
+
     <style name="B2_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">24sp</item>
@@ -76,10 +86,12 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">20sp</item>
     </style>
+
     <style name="B3_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">20sp</item>
     </style>
+
     <style name="B3_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">20sp</item>
@@ -89,10 +101,12 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">18sp</item>
     </style>
+
     <style name="B4_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">18sp</item>
     </style>
+
     <style name="B4_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">18sp</item>
@@ -102,10 +116,12 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">16sp</item>
     </style>
+
     <style name="B5_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">16sp</item>
     </style>
+
     <style name="B5_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">16sp</item>
@@ -115,10 +131,12 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">14sp</item>
     </style>
+
     <style name="B6_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">14sp</item>
     </style>
+
     <style name="B6_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">14sp</item>
@@ -128,12 +146,28 @@
         <item name="android:fontFamily">@font/pretendard_semibold</item>
         <item name="android:textSize">12sp</item>
     </style>
+
     <style name="B7_2">
         <item name="android:fontFamily">@font/pretendard_medium</item>
         <item name="android:textSize">12sp</item>
     </style>
+
     <style name="B7_3">
         <item name="android:fontFamily">@font/pretendard_regular</item>
         <item name="android:textSize">12sp</item>
+    </style>
+
+    <!-- 커스텀 DatePicker 스타일 정의 -->
+    <style name="CustomDatePicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="colorAccent">@color/BASIC_GREEN</item>
+        <item name="android:headerBackground">@color/BASIC_GREEN</item>
+        <item name="android:datePickerStyle">@style/CustomDatePickerStyle</item>
+    </style>
+
+    <style name="CustomDatePickerStyle" parent="android:Widget.Material.DatePicker">
+        <item name="android:headerBackground">@color/BASIC_GREEN</item>
+        <item name="android:calendarTextColor">@color/BLACK</item>
+        <item name="android:selectedDateVerticalBar">@color/BASIC_GREEN</item>
+        <item name="android:fontFamily">@font/pretendard_regular</item> <!-- 폰트 적용 -->
     </style>
 </resources>

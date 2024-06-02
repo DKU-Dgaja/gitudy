@@ -53,7 +53,7 @@ class MyStudyHomeFragment : Fragment() {
             val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
 
             if (myStudyRVAdapter.itemCount > 0) {
-                isNoStudyLayout.visibility = android.view.View.GONE
+                isNoStudyLayout.visibility = View.GONE
             }
 
             myStudyList.adapter = myStudyRVAdapter

@@ -1,9 +1,8 @@
-package com.takseha.data.dto.feed
-
+package com.takseha.data.dto.mystudy
 
 import com.google.gson.annotations.SerializedName
 
-data class MakeStudyResponse(
+data class MakeTodoResponse(
     @SerializedName("res_code")
     val resCode: Int,
     @SerializedName("res_msg")

@@ -3,6 +3,7 @@ package com.takseha.data.repository.study
 import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.api.gitudy.study.GitudyStudyApi
 import com.takseha.data.dto.feed.MakeStudyRequest
+import com.takseha.data.dto.mystudy.MakeTodoRequest
 
 class GitudyStudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyStudyApi::class.java)
@@ -26,6 +27,12 @@ class GitudyStudyRepository {
         cursorIdx: Long?,
         limit: Long,
     ) = client.getTodoList(bearerToken, studyInfoId, cursorIdx, limit)
+
+    suspend fun makeNewTodo(
+        bearerToken: String,
+        studyInfoId: Int,
+        request: MakeTodoRequest
+    ) = client.makeNewTodo(bearerToken, studyInfoId, request)
 
     suspend fun getTodoProgress(
         bearerToken: String,
