@@ -412,7 +412,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(studyInfoService.selectStudyInfoDetail(any(Long.class)))
+        when(studyInfoService.selectStudyInfoDetail(any(Long.class), any(Long.class)))
                 .thenReturn(generateStudyInfoDetailResponse(studyInfo));
 
         // when

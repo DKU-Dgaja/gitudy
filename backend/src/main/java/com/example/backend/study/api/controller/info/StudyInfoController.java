@@ -99,8 +99,8 @@ public class StudyInfoController {
     @GetMapping("/{studyInfoId}")
     public JsonResult<?> getStudyInfo(@AuthenticationPrincipal User user,
                                       @PathVariable(name = "studyInfoId") Long studyInfoId) {
-        authService.findUserInfo(user);
-        return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId));
+        UserInfoResponse userInfoResponse = authService.findUserInfo(user);
+        return JsonResult.successOf(studyInfoService.selectStudyInfoDetail(studyInfoId, userInfoResponse.getUserId()));
     }
 
     // 마이/전체스터디 개수 조회
