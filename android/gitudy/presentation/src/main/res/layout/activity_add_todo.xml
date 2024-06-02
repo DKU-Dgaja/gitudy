@@ -10,7 +10,7 @@
         android:id="@+id/addTodoLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="#F8F8FB"
+        android:background="@color/BACKGROUND"
         android:orientation="vertical"
         android:paddingLeft="22dp"
         android:paddingRight="22dp"
@@ -23,7 +23,7 @@
             android:id="@+id/addTodoTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="75dp"
+            android:layout_marginTop="48dp"
             app:layout_constraintTop_toTopOf="parent">
 
             <ImageView
@@ -192,7 +192,7 @@
                 style="@style/B4_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="마감 요일"
+                android:text="마감일"
                 android:textColor="@color/BLACK"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />

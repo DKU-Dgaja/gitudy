@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.Intent
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -30,8 +31,14 @@ class MyStudyMainActivity : AppCompatActivity() {
 
         viewModel.getMyStudyInfo(studyInfoId)
         setMyStudyInfo(studyInfoId, studyImgColor!!)
-        binding.backBtn.setOnClickListener {
-            finish()
+
+        with(binding) {
+            backBtn.setOnClickListener {
+                finish()
+            }
+            todoAdditionBtn.setOnClickListener {
+                startActivity(Intent(baseContext, AddTodoActivity::class.java))
+            }
         }
     }
 
@@ -44,12 +51,17 @@ class MyStudyMainActivity : AppCompatActivity() {
                     studyRule.text = setCommitRule(it.myStudyInfo.periodType)
                     studyInfo.text = it.myStudyInfo.info
                     isStudyOpenText.text = setStudyStatus(it.myStudyInfo.status)
-                    studyRankText.text = String.format(getString(R.string.study_team_rank), studyInfoId*10 + 2, if(studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2)
+                    studyRankText.text = String.format(
+                        getString(R.string.study_team_rank),
+                        studyInfoId * 10 + 2,
+                        if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2
+                    )
                     studyGithubLinkText.text = it.myStudyInfo.githubLinkInfo.branchName
                 }
             }
         }
     }
+
     private fun setCommitRule(periodType: StudyPeriod): String {
         when (periodType) {
             StudyPeriod.STUDY_PERIOD_EVERYDAY -> return baseContext.getString(R.string.feed_rule_everyday)
