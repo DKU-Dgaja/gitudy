@@ -1,20 +1,22 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.app.DatePickerDialog
+import android.app.Dialog
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.icu.util.Calendar
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.widget.EditText
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityAddTodoBinding
+import com.takseha.presentation.databinding.LayoutDialogBinding
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
 import java.time.LocalDate
 
@@ -50,7 +52,6 @@ class AddTodoActivity : AppCompatActivity() {
 
                 override fun afterTextChanged(s: Editable?) {
                     title = todoTitleText.text.toString()
-                    Log.d("AddTodoActivity", title)
                     applyBtn.isEnabled =
                         title.isNotEmpty() && detail.isNotEmpty()
                 }
@@ -69,7 +70,6 @@ class AddTodoActivity : AppCompatActivity() {
 
                 override fun afterTextChanged(s: Editable?) {
                     detail = todoDetailText.text.toString()
-                    Log.d("AddTodoActivity", detail)
                     applyBtn.isEnabled =
                         title.isNotEmpty() && detail.isNotEmpty()
                 }
@@ -88,19 +88,17 @@ class AddTodoActivity : AppCompatActivity() {
 
                 override fun afterTextChanged(s: Editable?) {
                     todoLink = todoLinkText.text.toString()
-                    Log.d("AddTodoActivity", todoLink)
                 }
             })
 
             closeTimeText.text = LocalDate.now().toString()
             closeTime.setOnClickListener {
                 showDatePickerDialog(closeTimeText)
-                todoDate = closeTimeText.text.toString()
-                Log.d("AddTodoActivity", closeTimeText.text.toString())
             }
 
             applyBtn.setOnClickListener {
-                viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
+                todoDate = closeTimeText.text.toString()
+                showAddTodoDialog(studyInfoId, title, detail, todoLink, todoDate)
             }
         }
     }
@@ -125,6 +123,35 @@ class AddTodoActivity : AppCompatActivity() {
             year, month, day
         )
         datePickerDialog.show()
+    }
+
+
+    private fun showAddTodoDialog(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) {
+        val dialogBinding = LayoutDialogBinding.inflate(layoutInflater)
+        val dialogView = dialogBinding.root
+        val dialog = Dialog(this)
+        dialog.setContentView(dialogView)
+
+        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+
+        val windowAttributes = dialog.window?.attributes
+        windowAttributes?.dimAmount = 0.8f
+        dialog.window?.attributes = windowAttributes
+        val confirmBtn = dialogBinding.confirmBtn
+        val cancelBtn = dialogBinding.cancelBtn
+
+        confirmBtn.setOnClickListener {
+            viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
+            dialog.dismiss()
+            finish()
+        }
+
+        cancelBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+
+        dialog.setCancelable(false)
+        dialog.show()
     }
 
     private fun setBinding() {
