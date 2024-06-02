@@ -3,6 +3,7 @@ package com.example.backend.domain.define.study.info.repository;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.JPAExpressions;
 import com.querydsl.jpa.JPQLQuery;
@@ -54,7 +55,13 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                         studyInfo.lastCommitDay,
                         studyInfo.profileImageUrl,
                         studyInfo.periodType,
-                        studyInfo.createdDateTime))
+                        studyInfo.createdDateTime,
+                        new CaseBuilder()
+                                .when(studyInfo.userId.eq(userId))
+                                .then(true)
+                                .otherwise(false)
+                                .as("isLeader")
+                ))
                 .from(studyInfo);
         // myStudy에 따라서 동적으로 추가 또는 제거
         if (myStudy) {
