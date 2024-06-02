@@ -1,6 +1,7 @@
 package com.takseha.presentation.viewmodel.home
 
 import android.app.Application
+import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -121,6 +122,8 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+        val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
+
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             bearerToken,
             cursorIdx,
@@ -145,9 +148,9 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                     if (todo != null) {
                         val todoCheckNum = getTodoProgress(study.id)!!.completeMemberCount
                         val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
-                        MyStudyWithTodo(study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
+                        MyStudyWithTodo(backgroundColorList[study.id % 6], study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
                     } else {
-                        MyStudyWithTodo(study, null, null, TodoStatus.TODO_EMPTY, null)
+                        MyStudyWithTodo(backgroundColorList[study.id % 6], study, null, null, TodoStatus.TODO_EMPTY, null)
                     }
                 }
                 _uiState.update {

@@ -36,6 +36,7 @@
     <string name="study_commit_rule">주 1회 커밋 필수</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
+    <string name="study_deleted">스터디 종료</string>
     <string name="study_team_rank">%d점 • %d등</string>
     <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %s</string>
     <string name="study_github_link">https://github.com/DKU-Dgaja/gitudy</string>

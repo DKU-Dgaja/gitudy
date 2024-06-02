@@ -1,6 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -56,6 +58,20 @@ class MyStudyHomeFragment : Fragment() {
 
             myStudyList.adapter = myStudyRVAdapter
             myStudyList.layoutManager = LinearLayoutManager(requireContext())
+
+            clickMyStudyItem(myStudyRVAdapter, studyList)
+        }
+    }
+
+    private fun clickMyStudyItem(myStudyRVAdapter: MyStudyRVAdapter, studyList: List<MyStudyWithTodo>) {
+        myStudyRVAdapter.itemClick = object : MyStudyRVAdapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
+                val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
+                intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
+                intent.putExtra("studyImgColor", studyList[position].studyImg)
+                Log.d("MyStudyHomeFragment", intent.extras.toString())
+                startActivity(intent)
+            }
         }
     }
 

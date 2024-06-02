@@ -3,6 +3,7 @@ package com.takseha.data.api.gitudy.study
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.MakeStudyResponse
 import com.takseha.data.dto.feed.StudyListResponse
+import com.takseha.data.dto.mystudy.MyStudyResponse
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import retrofit2.Response
@@ -42,4 +43,10 @@ interface GitudyStudyApi {
         @Header("Authorization") bearerToken: String,
         @Path("studyInfoId") studyInfoId: Int
     ): Response<TodoProgressResponse>
+
+    @GET("/study/{studyInfoId}")
+    suspend fun getMyStudyInfo(
+        @Header("Authorization") bearerToken: String,
+        @Path("studyInfoId") studyInfoId: Int
+    ): Response<MyStudyResponse>
 }

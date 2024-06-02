@@ -31,4 +31,9 @@ class GitudyStudyRepository {
         bearerToken: String,
         studyInfoId: Int
     ) = client.getTodoProgress(bearerToken, studyInfoId)
+
+    suspend fun getMyStudyInfo(
+        bearerToken: String,
+        studyInfoId: Int
+    ) = client.getMyStudyInfo(bearerToken, studyInfoId)
 }
