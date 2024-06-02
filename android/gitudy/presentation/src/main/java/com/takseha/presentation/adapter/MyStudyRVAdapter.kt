@@ -9,10 +9,13 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.TodoStatus
+import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemMystudyBinding
+import java.time.LocalDate
 
 class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWithTodo>) : RecyclerView.Adapter<MyStudyRVAdapter.ViewHolder>() {
     interface ItemClick {
@@ -60,6 +63,15 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                 holder.todoTime.text = studyInfoList[position].todoTime
                 holder.todoCheckNum.text = "${ studyInfoList[position].todoCheckNum }/"
                 holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
+
+                if (studyInfoList[position].todoTime == LocalDate.now().toString()) {
+                    holder.todoTime.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.BASIC_RED
+                        )
+                    )
+                }
             }
             else -> {
                 holder.todoCheck.text = "완료"
