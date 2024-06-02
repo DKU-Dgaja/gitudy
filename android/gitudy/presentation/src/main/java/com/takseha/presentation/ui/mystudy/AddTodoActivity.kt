@@ -96,6 +96,10 @@ class AddTodoActivity : AppCompatActivity() {
                 showDatePickerDialog(closeTimeText)
             }
 
+            backBtn.setOnClickListener {
+                finish()
+            }
+
             applyBtn.setOnClickListener {
                 todoDate = closeTimeText.text.toString()
                 showAddTodoDialog(studyInfoId, title, detail, todoLink, todoDate)
