@@ -28,6 +28,7 @@ class MyStudyMainActivity : AppCompatActivity() {
     private val viewModel: MyStudyMainViewModel by viewModels()
     private var firstTodoLink = ""
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_study_main)
