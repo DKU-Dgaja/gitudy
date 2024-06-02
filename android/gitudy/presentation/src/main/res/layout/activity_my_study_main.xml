@@ -239,6 +239,20 @@
                     android:paddingBottom="23dp"
                     android:layout_marginBottom="20dp">
 
+                    <TextView
+                        android:id="@+id/noTodoAlarm"
+                        style="@style/B6_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/study_to_do_empty"
+                        android:textColor="@color/BASIC_RED"
+                        android:visibility="gone"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginLeft="14dp"
+                        app:layout_constraintStart_toEndOf="@+id/todoImg"
+                        app:layout_constraintTop_toTopOf="parent" />
+
                     <ImageView
                         android:id="@+id/todoImg"
                         android:layout_width="40dp"
@@ -261,14 +275,12 @@
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
                             android:gravity="center">
-
                             <TextView
                                 android:id="@+id/todoDetailTitle"
                                 style="@style/B6_1"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="4dp"
-                                android:text="@string/study_to_do"
                                 android:textColor="@color/GS_700" />
 
                             <ImageView
@@ -297,7 +309,6 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_marginRight="4dp"
-                                android:text="@string/to_do_deadline_date"
                                 android:textColor="@color/GS_600" />
                         </LinearLayout>
                     </LinearLayout>
@@ -313,6 +324,7 @@
                         app:layout_constraintTop_toBottomOf="@+id/todoDetailLayout">
 
                         <TextView
+                            android:id="@+id/todoDetailText"
                             style="@style/B7_2"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"

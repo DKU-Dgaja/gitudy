@@ -2,23 +2,32 @@ package com.takseha.presentation.ui.mystudy
 
 import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.activity.viewModels
+import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.takseha.data.dto.feed.StudyPeriod
 import com.takseha.data.dto.feed.StudyStatus
+import com.takseha.data.dto.mystudy.MyStudyInfo
+import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 import kotlin.math.abs
 
 class MyStudyMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMyStudyMainBinding
     private val viewModel: MyStudyMainViewModel by viewModels()
+    private var firstTodoLink = ""
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_study_main)
@@ -30,7 +39,7 @@ class MyStudyMainActivity : AppCompatActivity() {
         Log.d("MyStudyMainActivity", studyInfoId.toString())
 
         viewModel.getMyStudyInfo(studyInfoId)
-        setMyStudyInfo(studyInfoId, studyImgColor!!)
+        setTotalInfo(studyInfoId, studyImgColor!!)
 
         with(binding) {
             backBtn.setOnClickListener {
@@ -44,22 +53,56 @@ class MyStudyMainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String) {
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setTotalInfo(studyInfoId: Int, studyImgColor: String) {
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
-                with(binding) {
-                    studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
-                    studyName.text = it.myStudyInfo.topic
-                    studyRule.text = setCommitRule(it.myStudyInfo.periodType)
-                    studyInfo.text = it.myStudyInfo.info
-                    isStudyOpenText.text = setStudyStatus(it.myStudyInfo.status)
-                    studyRankText.text = String.format(
-                        getString(R.string.study_team_rank),
-                        studyInfoId * 10 + 2,
-                        if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2
-                    )
-                    studyGithubLinkText.text = it.myStudyInfo.githubLinkInfo.branchName
+                setMyStudyInfo(studyInfoId, studyImgColor, it.myStudyInfo)
+                setTodoInfo(it.todoInfo)
+                Log.d("MyStudyMainActivity", firstTodoLink)
+            }
+        }
+    }
+
+    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: MyStudyInfo) {
+        with(binding) {
+            studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
+            studyName.text = myStudyInfo.topic
+            studyRule.text = setCommitRule(myStudyInfo.periodType)
+            studyInfo.text = myStudyInfo.info
+            isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
+            studyRankText.text = String.format(
+                getString(R.string.study_team_rank),
+                studyInfoId * 10 + 2,
+                if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2
+            )
+            studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setTodoInfo(todoInfo: Todo?) {
+        with(binding) {
+            if (todoInfo == null) {
+                todoDetailLayout.visibility = View.GONE
+                todoDetailBody.visibility = View.GONE
+                noTodoAlarm.visibility = View.VISIBLE
+            } else {
+                todoDetailLayout.visibility = View.VISIBLE
+                todoDetailBody.visibility = View.VISIBLE
+                noTodoAlarm.visibility = View.GONE
+
+                todoDetailTitle.text = todoInfo.title
+                todoDetailText.text = todoInfo.detail
+                todoTime.text = todoInfo.todoDate
+                if (todoInfo.todoDate == LocalDate.now().toString()) {
+                    todoTime.setTextColor(
+                        ContextCompat.getColor(
+                        this@MyStudyMainActivity,
+                        R.color.BASIC_RED
+                    ))
                 }
+                firstTodoLink = todoInfo.todoLink
             }
         }
     }
