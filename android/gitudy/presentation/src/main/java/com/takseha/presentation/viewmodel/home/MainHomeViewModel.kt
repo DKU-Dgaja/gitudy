@@ -35,6 +35,9 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     private val _uiState = MutableStateFlow(MainHomeUserInfoUiState())
     val uiState = _uiState.asStateFlow()
 
+    private val _myStudyState = MutableStateFlow(MainHomeMyStudyUiState())
+    val myStudyState = _myStudyState.asStateFlow()
+
     // stateflow로 바꾸는 거도 고민해보기~ 초기값 null 설정 가정
     private var _cursorIdxRes = MutableLiveData<Long?>()
     val cursorIdxRes: LiveData<Long?>
@@ -153,7 +156,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                         MyStudyWithTodo(backgroundColorList[study.id % 4], study, null, null, TodoStatus.TODO_EMPTY, null)
                     }
                 }
-                _uiState.update {
+                _myStudyState.update {
                     it.copy(
                         myStudiesWithTodo = studiesWithTodo
                     )
@@ -249,5 +252,8 @@ data class MainHomeUserInfoUiState(
     var progressScore: Int = 0,
     var progressMax: Int = 15,
     var characterImgSrc: Int = R.drawable.character_bebe_to_15,
-    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
 ) : Serializable
+
+data class MainHomeMyStudyUiState(
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
+)
