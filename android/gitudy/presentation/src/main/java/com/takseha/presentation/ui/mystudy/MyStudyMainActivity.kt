@@ -56,6 +56,11 @@ class MyStudyMainActivity : AppCompatActivity() {
                 intent.putExtra("studyInfoId", studyInfoId)
                 startActivity(intent)
             }
+            conventionLayout.setOnClickListener {
+                val intent = Intent(this@MyStudyMainActivity, CommitConventionActivity::class.java)
+                intent.putExtra("studyInfoId", studyInfoId)
+                startActivity(intent)
+            }
         }
     }
 
