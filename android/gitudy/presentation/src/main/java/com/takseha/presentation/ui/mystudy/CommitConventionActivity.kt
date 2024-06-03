@@ -43,6 +43,7 @@ class CommitConventionActivity : AppCompatActivity() {
                     convention = conventionEditText.text.toString()
                     saveBtn.isEnabled =
                         convention.isNotEmpty() && content.isNotEmpty()
+                    saveBtn.text = "저장하기"
                 }
             })
 
@@ -62,6 +63,7 @@ class CommitConventionActivity : AppCompatActivity() {
                     content = contentEditText.text.toString()
                     saveBtn.isEnabled =
                         convention.isNotEmpty() && content.isNotEmpty()
+                    saveBtn.text = "저장하기"
                 }
             })
 
@@ -78,6 +80,9 @@ class CommitConventionActivity : AppCompatActivity() {
 
                 override fun afterTextChanged(s: Editable?) {
                     description = descriptionEditText.text.toString()
+                    saveBtn.isEnabled =
+                        convention.isNotEmpty() && content.isNotEmpty()
+                    saveBtn.text = "저장하기"
                 }
             })
 
