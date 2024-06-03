@@ -50,4 +50,9 @@ class GitudyStudyRepository {
         studyInfoId: Int,
         request: SetConventionRequest
     ) = client.setConvention(bearerToken, studyInfoId, request)
+
+    suspend fun getConvention(
+        bearerToken: String,
+        studyInfoId: Int,
+    ) = client.getConvention(bearerToken, studyInfoId, null, 1)
 }

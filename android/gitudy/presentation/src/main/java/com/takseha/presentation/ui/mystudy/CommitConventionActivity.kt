@@ -6,6 +6,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import androidx.activity.viewModels
+import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityCommitConventionBinding
 import com.takseha.presentation.viewmodel.mystudy.CommitConventionViewModel
@@ -20,12 +21,15 @@ class CommitConventionActivity : AppCompatActivity() {
         setBinding()
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
+        val conventionInfo = intent.getSerializableExtra("conventionInfo") as StudyConvention
 
         with(binding) {
-            var convention = ""
-            var content = ""
-            var description = ""
-            var active = false // 추후 커밋 컨벤션 불러오기 api 호출 후 맞게 적용
+            var convention = conventionInfo.name
+            var content = conventionInfo.content
+            var description = conventionInfo.description
+            var active = conventionInfo.active
+
+            setInitConvention(convention, content, description, active)
 
             conventionEditText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
@@ -94,11 +98,31 @@ class CommitConventionActivity : AppCompatActivity() {
                 active = true
                 viewModel.setConvention(studyInfoId, convention, description, content, active)
 
-                isNotConventionText.visibility = View.GONE
-                isConventionText.visibility = View.VISIBLE
+                isConventionActive(active)
 
                 saveBtn.isEnabled = false
                 saveBtn.text = "저장 완료"
+            }
+        }
+    }
+
+    private fun setInitConvention(convention: String, content: String, description: String, active: Boolean) {
+        with(binding) {
+            conventionEditText.setText(convention)
+            contentEditText.setText(content)
+            descriptionEditText.setText(description)
+            isConventionActive(active)
+        }
+    }
+
+    private fun isConventionActive(active: Boolean) {
+        with(binding) {
+            if(active) {
+                isNotConventionText.visibility = View.GONE
+                isConventionText.visibility = View.VISIBLE
+            } else {
+                isNotConventionText.visibility = View.VISIBLE
+                isConventionText.visibility = View.GONE
             }
         }
     }

@@ -7,9 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.data.dto.mystudy.MyStudyInfo
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
+import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.Todo
-import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -38,11 +37,13 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
 
             if (resCode == 200 && resMsg == "OK") {
                 val todo = getFirstTodoInfo(studyInfoId)
+                val convention = getConvention(studyInfoId)
 
                 _uiState.update {
                     it.copy(
                         myStudyInfo = myStudyInfo,
-                        todoInfo = todo
+                        todoInfo = todo,
+                        conventionInfo = convention
                     )
                 }
 
@@ -96,11 +97,45 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
         return null
     }
 
+    private suspend fun getConvention(studyInfoId: Int): StudyConvention? {
+        val conventionInfoResponse = gitudyStudyRepository.getConvention(
+            bearerToken,
+            studyInfoId
+        )
+
+        if (conventionInfoResponse.isSuccessful) {
+            val resCode = conventionInfoResponse.body()!!.resCode
+            val resMsg = conventionInfoResponse.body()!!.resMsg
+            val conventionInfo = conventionInfoResponse.body()!!.conventionInfo
+            Log.d("MyStudyMainViewModel", "conventionInfo: $conventionInfo")
+
+            if (resCode == 200 && resMsg == "OK") {
+                if (conventionInfo.studyConventionList.isNotEmpty()) {
+                    return conventionInfo.studyConventionList.first()
+                } else {
+                    Log.d("MyStudyMainViewModel", "No Convention")
+                    return null
+                }
+            } else {
+                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
+            }
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "conventionInfoResponse status: ${conventionInfoResponse.code()}\nconventionInfoResponse message: ${conventionInfoResponse.message()}"
+            )
+        }
+        // 에러 발생 시 null return
+        Log.d("MyStudyMainViewModel", "Error")
+        return null
+    }
+
 
 }
 
 data class MyStudyMainInfoState(
     var myStudyInfo: MyStudyInfo = MyStudyInfo(),
     var todoInfo: Todo? = null,
-    // todo: convention 추가, comment 추가
+    var conventionInfo: StudyConvention? = null
+    // todo: comment 추가
     )

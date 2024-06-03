@@ -55,7 +55,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
         android:layout_marginTop="26dp"
-        android:text="적용"
+        android:text="적용 중"
         android:textColor="@color/BASIC_BLUE"
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/convientionTitle"

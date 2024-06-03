@@ -55,6 +55,13 @@ class MainHomeFragment : Fragment() {
             viewModel.apply {
                 uiState.collectLatest {
                     setUserInfo(it)
+                }
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.apply {
+                myStudyState.collectLatest {
                     setMyStudyList(it.myStudiesWithTodo)
                 }
             }

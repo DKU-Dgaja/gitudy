@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.takseha.data.dto.feed.StudyPeriod
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.MyStudyInfo
+import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
@@ -59,6 +60,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             conventionLayout.setOnClickListener {
                 val intent = Intent(this@MyStudyMainActivity, CommitConventionActivity::class.java)
                 intent.putExtra("studyInfoId", studyInfoId)
+                intent.putExtra("conventionInfo", viewModel.uiState.value.conventionInfo)
                 startActivity(intent)
             }
         }
@@ -70,7 +72,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             viewModel.uiState.collectLatest {
                 setMyStudyInfo(studyInfoId, studyImgColor, it.myStudyInfo)
                 setTodoInfo(it.todoInfo)
-                Log.d("MyStudyMainActivity", firstTodoLink)
+                setConventionInfo(it.conventionInfo)
             }
         }
     }
@@ -114,6 +116,20 @@ class MyStudyMainActivity : AppCompatActivity() {
                     ))
                 }
                 firstTodoLink = todoInfo.todoLink
+            }
+        }
+    }
+
+    private fun setConventionInfo(conventionInfo: StudyConvention?) {
+        with(binding) {
+            if (conventionInfo == null) {
+                commitConventionText.visibility = View.GONE
+                noConventionAlarm.visibility = View.VISIBLE
+            } else {
+                commitConventionText.visibility = View.VISIBLE
+                noConventionAlarm.visibility = View.GONE
+
+                commitConvention.text = conventionInfo.name
             }
         }
     }

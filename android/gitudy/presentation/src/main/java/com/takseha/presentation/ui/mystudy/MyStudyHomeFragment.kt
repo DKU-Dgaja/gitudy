@@ -42,8 +42,8 @@ class MyStudyHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.uiState.collectLatest {
-                    setMyStudyList(it.myStudiesWithTodo)
+            viewModel.myStudyState.collectLatest {
+                setMyStudyList(it.myStudiesWithTodo)
             }
         }
     }

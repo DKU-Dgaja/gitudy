@@ -17,6 +17,10 @@ class CommitConventionViewModel(application: Application) : AndroidViewModel(app
     private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
     private val prefs = SP(getApplication())
 
+    val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
+        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
+    }"
+
     fun setConvention(
         studyInfoId: Int,
         name: String,
@@ -24,9 +28,6 @@ class CommitConventionViewModel(application: Application) : AndroidViewModel(app
         content: String,
         active: Boolean
     ) = viewModelScope.launch {
-        val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-            prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
-        }"
         val request = SetConventionRequest(active, content, description, name)
         Log.d("CommitConventionViewModel", request.toString())
 
