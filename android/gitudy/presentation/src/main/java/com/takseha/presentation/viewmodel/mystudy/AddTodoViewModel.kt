@@ -17,16 +17,11 @@ class AddTodoViewModel(application: Application) : AndroidViewModel(application)
     private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
     private val prefs = SP(getApplication())
 
-    private val _newTodoInfoState = MutableStateFlow(MakeTodoRequest())
-    val newTodoInfoState = _newTodoInfoState.asStateFlow()
-
     fun makeNewTodo(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) = viewModelScope.launch {
-        _newTodoInfoState.update { it.copy(title = title, todoLink = todoLink, detail = detail, todoDate = todoDate ) }
-
         val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
             prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
         }"
-        val request = newTodoInfoState.value
+        val request = MakeTodoRequest(detail, title, todoDate, todoLink)
         Log.d("AddTodoViewModel", request.toString())
 
         val newTodoResponse = gitudyStudyRepository.makeNewTodo(bearerToken, studyInfoId, request)

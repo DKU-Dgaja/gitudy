@@ -54,9 +54,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="25dp"
-        android:text="적용 중"
-        android:textColor="@color/GS_500"
+        android:layout_marginTop="26dp"
+        android:text="적용"
+        android:textColor="@color/BASIC_BLUE"
         android:visibility="gone"
         app:layout_constraintStart_toEndOf="@+id/convientionTitle"
         app:layout_constraintTop_toBottomOf="@+id/conventionEditTitle" />
@@ -67,7 +67,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="6dp"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="26dp"
         android:text="미적용"
         android:textColor="@color/GS_500"
         android:visibility="visible"
@@ -109,13 +109,14 @@
                 android:textColor="@color/GS_500" />
 
             <EditText
-                android:id="@+id/convention"
+                android:id="@+id/conventionEditText"
                 style="@style/B6_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
                 android:background="@null"
                 android:hint="@string/commit_convention"
+                android:maxLength="20"
                 android:textColor="@color/BASIC_BLUE"
                 android:textColorHint="@color/GS_300" />
 
@@ -128,7 +129,7 @@
                 android:textColor="@color/GS_500" />
 
             <EditText
-                android:id="@+id/content"
+                android:id="@+id/contentEditText"
                 style="@style/B6_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -147,12 +148,13 @@
                 android:textColor="@color/GS_500" />
 
             <EditText
-                android:id="@+id/description"
+                android:id="@+id/descriptionEditText"
                 style="@style/B7_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@null"
                 android:hint="@string/commit_convention_description"
+                android:maxLength="50"
                 android:textColor="@color/BLACK"
                 android:textColorHint="@color/GS_300" />
         </LinearLayout>
