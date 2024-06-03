@@ -6,6 +6,8 @@ import com.takseha.data.dto.feed.StudyListResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.MakeTodoResponse
 import com.takseha.data.dto.mystudy.MyStudyResponse
+import com.takseha.data.dto.mystudy.SetConventionRequest
+import com.takseha.data.dto.mystudy.SetConventionResponse
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import retrofit2.Response
@@ -58,4 +60,11 @@ interface GitudyStudyApi {
         @Header("Authorization") bearerToken: String,
         @Path("studyInfoId") studyInfoId: Int
     ): Response<MyStudyResponse>
+
+    @POST("/study/{studyInfoId}/convention")
+    suspend fun setConvention(
+        @Header("Authorization") bearerToken: String,
+        @Path("studyInfoId") studyInfoId: Int,
+        @Body request: SetConventionRequest
+    ): Response<SetConventionResponse>
 }
