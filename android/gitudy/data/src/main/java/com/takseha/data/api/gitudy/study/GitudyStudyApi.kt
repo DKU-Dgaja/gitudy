@@ -3,6 +3,7 @@ package com.takseha.data.api.gitudy.study
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.MakeStudyResponse
 import com.takseha.data.dto.feed.StudyListResponse
+import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.MakeTodoResponse
 import com.takseha.data.dto.mystudy.MyStudyResponse
@@ -67,4 +68,12 @@ interface GitudyStudyApi {
         @Path("studyInfoId") studyInfoId: Int,
         @Body request: SetConventionRequest
     ): Response<SetConventionResponse>
+
+    @GET("/study/{studyInfoId}/convention")
+    suspend fun getConvention(
+        @Header("Authorization") bearerToken: String,
+        @Path("studyInfoId") studyInfoId: Int,
+        @Query("cursorIdx") cursorIdx: Int?,
+        @Query("limit") limit: Int
+    ): Response<ConventionResponse>
 }
