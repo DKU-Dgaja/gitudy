@@ -39,7 +39,7 @@ class AddTodoActivity : AppCompatActivity() {
             var title = todoTitleText.text.toString()
             var detail = todoDetailText.text.toString()
             var todoLink = todoLinkText.text.toString()
-            var todoDate = closeTimeText.text.toString()
+            var todoDate: String
 
             todoTitleText.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(

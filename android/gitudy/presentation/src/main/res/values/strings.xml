@@ -49,7 +49,7 @@
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
     <string name="commit_convention">ex) [문제 플랫폼]#문제번호:사용언어</string>
     <string name="commit_convention_content">ex) ^\\[[A-Z]+\\]#\\d+\\:[\\w+]+</string>
-    <string name="commit_convention_description">ex) 문제 플랫폼은 백준인 경우 BOJ,\n프로그래머스인 경우 PRO 라고 적어 주시면 됩니다.\nex) [BOJ]#1234:Kotlin, [PRO]#1234:C++</string>
+    <string name="commit_convention_description">ex) 문제 플랫폼은 백준인 경우 BOJ,\n프로그래머스인 경우 PRO라고 적어 주세요.\nex) [BOJ]#1234:Kotlin, [PRO]#1234:C++</string>
     <string name="commit_convention_add">컨벤션 추가하기</string>
     <string name="message_select_noti">%님에게 전달할\n메시지를 선택해주세요</string>
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
