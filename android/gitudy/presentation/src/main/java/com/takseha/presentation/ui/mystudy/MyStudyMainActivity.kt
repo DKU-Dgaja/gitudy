@@ -33,7 +33,12 @@ class MyStudyMainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_my_study_main)
         setBinding()
-        // Todo: statusBar 색 변경, 팀장/팀원 판별해서 todo 등록 버튼 유무 정하기
+
+        /*
+        Todo: statusBar 색 변경
+        Todo: 팀장/팀원 판별해서 todo 등록 버튼 유무 정하기
+        Todo: todo link 버튼 눌렀을 떄 webView 나타나게 하기
+         */
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
         val studyImgColor = intent.getStringExtra("studyImgColor")
