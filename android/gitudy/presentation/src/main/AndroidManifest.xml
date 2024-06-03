@@ -6,9 +6,13 @@
 
     <application>
         <activity
-            android:name=".ui.feed.MakeStudyActivity"
-            android:launchMode="singleTop"
+            android:name=".ui.mystudy.CommitConventionActivity"
             android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
+        <activity
+            android:name=".ui.feed.MakeStudyActivity"
+            android:exported="false"
+            android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.auth.SocialLoginCompleteActivity"
@@ -22,7 +26,7 @@
         <activity
             android:name=".ui.mystudy.AddTodoActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.mystudy.MemberStudySettingActivity"
             android:exported="false" />
@@ -68,8 +72,8 @@
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.SplashActivity"
-            android:exported="true"
-            android:clearTaskOnLaunch="true">
+            android:clearTaskOnLaunch="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

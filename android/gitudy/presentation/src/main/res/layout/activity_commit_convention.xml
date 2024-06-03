@@ -7,7 +7,7 @@
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
     android:paddingBottom="48dp"
-    tools:context=".ui.mystudy.CommitConventionFragment">
+    tools:context=".ui.mystudy.CommitConventionActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/conventionEditTitle"
@@ -174,5 +174,4 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
 </androidx.constraintlayout.widget.ConstraintLayout>
