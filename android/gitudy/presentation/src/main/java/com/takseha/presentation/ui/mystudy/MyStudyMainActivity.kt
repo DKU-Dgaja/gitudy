@@ -60,6 +60,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             conventionLayout.setOnClickListener {
                 val intent = Intent(this@MyStudyMainActivity, CommitConventionActivity::class.java)
                 intent.putExtra("studyInfoId", studyInfoId)
+                intent.putExtra("conventionInfo", viewModel.uiState.value.conventionInfo)
                 startActivity(intent)
             }
         }
@@ -72,7 +73,6 @@ class MyStudyMainActivity : AppCompatActivity() {
                 setMyStudyInfo(studyInfoId, studyImgColor, it.myStudyInfo)
                 setTodoInfo(it.todoInfo)
                 setConventionInfo(it.conventionInfo)
-                Log.d("MyStudyMainActivity", firstTodoLink)
             }
         }
     }

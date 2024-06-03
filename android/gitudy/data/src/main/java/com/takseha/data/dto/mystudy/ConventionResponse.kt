@@ -2,6 +2,7 @@ package com.takseha.data.dto.mystudy
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class ConventionResponse(
     @SerializedName("res_code")
@@ -32,4 +33,4 @@ data class StudyConvention(
     val name: String,
     @SerializedName("study_info_id")
     val studyInfoId: Int
-)
+) : Serializable
