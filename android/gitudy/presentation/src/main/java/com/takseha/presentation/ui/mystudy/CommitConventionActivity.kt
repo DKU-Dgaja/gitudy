@@ -88,9 +88,12 @@ class CommitConventionActivity : AppCompatActivity() {
             saveBtn.setOnClickListener {
                 active = true
                 viewModel.setConvention(studyInfoId, convention, description, content, active)
+
                 isNotConventionText.visibility = View.GONE
                 isConventionText.visibility = View.VISIBLE
-                it.isEnabled = false
+
+                saveBtn.isEnabled = false
+                saveBtn.text = "저장 완료"
             }
         }
     }
