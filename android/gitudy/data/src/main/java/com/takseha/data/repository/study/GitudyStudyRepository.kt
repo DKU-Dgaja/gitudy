@@ -54,5 +54,5 @@ class GitudyStudyRepository {
     suspend fun getConvention(
         bearerToken: String,
         studyInfoId: Int,
-    ) = client.getTodoList(bearerToken, studyInfoId, null, 1)
+    ) = client.getConvention(bearerToken, studyInfoId, null, 1)
 }
