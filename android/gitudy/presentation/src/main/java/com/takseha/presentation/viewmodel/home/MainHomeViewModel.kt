@@ -149,8 +149,8 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                     val todo = getFirstTodoInfo(study.id)
 
                     if (todo != null) {
-                        val todoCheckNum = getTodoProgress(study.id)!!.completeMemberCount
-                        val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
+                        val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
+                        val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
                         MyStudyWithTodo(backgroundColorList[study.id % 4], study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
                     } else {
                         MyStudyWithTodo(backgroundColorList[study.id % 4], study, null, null, TodoStatus.TODO_EMPTY, null)
@@ -225,11 +225,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
             val todoProgress = todoProgressResponse.body()!!.todoProgress
 
             if (resCode == 200 && resMsg == "OK") {
-                if (todoProgress != null) {
-                    return todoProgress
-                } else {
-                    return null
-                }
+                return todoProgress
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }

@@ -58,6 +58,11 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                 holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
             }
             TodoStatus.TODO_INCOMPLETE -> {
+                holder.noTodoAlarm.visibility = GONE
+                holder.todoTitle.visibility = VISIBLE
+                holder.todoCheck.visibility = VISIBLE
+                holder.todoTimeText.visibility = VISIBLE
+                holder.todoTime.visibility = VISIBLE
                 holder.todoCheck.text = "미완료"
                 holder.todoTitle.text = studyInfoList[position].todoTitle
                 holder.todoTime.text = studyInfoList[position].todoTime
@@ -74,6 +79,11 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                 }
             }
             else -> {
+                holder.noTodoAlarm.visibility = GONE
+                holder.todoTitle.visibility = VISIBLE
+                holder.todoCheck.visibility = VISIBLE
+                holder.todoTimeText.visibility = VISIBLE
+                holder.todoTime.visibility = VISIBLE
                 holder.todoCheck.text = "완료"
                 holder.todoTitle.text = studyInfoList[position].todoTitle
                 holder.todoTime.text = studyInfoList[position].todoTime

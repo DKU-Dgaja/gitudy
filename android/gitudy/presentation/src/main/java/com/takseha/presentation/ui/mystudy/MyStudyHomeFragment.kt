@@ -35,15 +35,15 @@ class MyStudyHomeFragment : Fragment() {
     ): View? {
         _binding = FragmentMyStudyHomeBinding.inflate(inflater, container, false)
 
-        viewModel.getMyStudyList(null, 10)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
-                setMyStudyList(it.myStudiesWithTodo)
+                if (it.myStudiesWithTodo.isNotEmpty()) {
+                    setMyStudyList(it.myStudiesWithTodo)
+                }
             }
         }
     }
@@ -52,8 +52,8 @@ class MyStudyHomeFragment : Fragment() {
         with(binding) {
             val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
 
-            if (myStudyRVAdapter.itemCount > 0) {
-                isNoStudyLayout.visibility = View.GONE
+            if (myStudyRVAdapter.itemCount == 0) {
+                isNoStudyLayout.visibility = View.VISIBLE
             }
 
             myStudyList.adapter = myStudyRVAdapter

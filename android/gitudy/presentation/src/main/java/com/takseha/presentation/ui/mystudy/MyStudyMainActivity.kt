@@ -3,12 +3,12 @@ package com.takseha.presentation.ui.mystudy
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.takseha.data.dto.feed.StudyPeriod
@@ -18,6 +18,7 @@ import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
+import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -50,6 +51,7 @@ class MyStudyMainActivity : AppCompatActivity() {
 
         with(binding) {
             backBtn.setOnClickListener {
+                startActivity(Intent(this@MyStudyMainActivity, MainHomeActivity::class.java))
                 finish()
             }
             todoAdditionBtn.setOnClickListener {
