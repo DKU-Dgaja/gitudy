@@ -4,6 +4,8 @@ package com.example.backend.study.api.service.todo;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -17,11 +19,9 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
-import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoProgressResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.controller.todo.response.*;
 import com.example.backend.study.api.service.commit.StudyCommitService;
+import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -49,6 +49,7 @@ public class StudyTodoService {
     private final StudyInfoService studyInfoService;
     private final UserService userService;
     private final ApplicationEventPublisher eventPublisher;
+    private final StudyCommitRepository studyCommitRepository;
 
     private final static Long MAX_LIMIT = 10L;
     private final static int PAGE_SIZE = 5;
@@ -155,6 +156,7 @@ public class StudyTodoService {
     }
 
     // Todo 전체조회
+    @Transactional
     public StudyTodoListAndCursorIdxResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit, boolean fetchFlag) {
 
         // 스터디 조회 예외처리
@@ -162,7 +164,7 @@ public class StudyTodoService {
 
         limit = Math.min(limit, MAX_LIMIT);
 
-        List<StudyTodoResponse> studyTodoList = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+        List<StudyTodoWithCommitsResponse> studyTodoList = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
 
         StudyTodoListAndCursorIdxResponse response = StudyTodoListAndCursorIdxResponse.builder()
                 .todoList(studyTodoList)
@@ -300,5 +302,12 @@ public class StudyTodoService {
         for (StudyTodo todo : todos) {
             studyCommitService.fetchRemoteCommitsAndSaveAsync(study, todo, pageSize);
         }
+    }
+
+    public List<CommitInfoResponse> selectTodoCommits(Long todoId) {
+
+        return studyCommitRepository.findByStudyTodoIdOrderByCommitDateDesc(todoId).stream()
+                .map(CommitInfoResponse::of)
+                .toList();
     }
 }

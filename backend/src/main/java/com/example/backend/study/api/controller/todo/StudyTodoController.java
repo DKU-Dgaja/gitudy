@@ -8,6 +8,7 @@ import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCu
 import com.example.backend.study.api.controller.todo.response.StudyTodoProgressResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -73,8 +74,8 @@ public class StudyTodoController {
     }
 
 
-    // Todo 전체조회
-    @ApiResponse(responseCode = "200", description = "Todo 전체조회 성공", content = @Content(schema = @Schema(implementation = StudyTodoListAndCursorIdxResponse.class)))
+    // Todo 전체조회 (커밋 리스트 포함)
+    @ApiResponse(responseCode = "200", description = "Todo 전체조회 성공 (커밋 리스트 포함)", content = @Content(schema = @Schema(implementation = StudyTodoListAndCursorIdxResponse.class)))
     @GetMapping("/{studyInfoId}/todo")
     public JsonResult<?> readStudyTodoList(@AuthenticationPrincipal User user,
                                            @PathVariable(name = "studyInfoId") Long studyInfoId,
@@ -125,6 +126,7 @@ public class StudyTodoController {
     }
 
     // 커밋 패치 로직
+    @ApiResponse(responseCode = "200", description = "특정 스터디의 커밋 리스트 패치")
     @GetMapping("/{studyInfoId}/todo/fetch")
     public JsonResult<?> fetchTodoCommit(@AuthenticationPrincipal User user,
                                          @PathVariable(name = "studyInfoId") Long studyInfoId) {
@@ -134,4 +136,15 @@ public class StudyTodoController {
 
         return JsonResult.successOf("커밋 패치가 완료되었습니다.");
     }
+
+    @ApiResponse(responseCode = "200", description = "Todo 별 커밋 리스트 조회", content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
+    @GetMapping("/{studyInfoId}/todo/{todoId}/commits")
+    public JsonResult<?> selectTodoCommits(@AuthenticationPrincipal User user,
+                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                           @PathVariable(name = "todoId") Long todoId) {
+        studyMemberService.isValidateStudyMember(user, studyInfoId);
+
+        return JsonResult.successOf(studyTodoService.selectTodoCommits(todoId));
+    }
+
 }

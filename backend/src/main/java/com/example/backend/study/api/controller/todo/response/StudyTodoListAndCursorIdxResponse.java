@@ -12,7 +12,7 @@ import java.util.List;
 @Builder
 public class StudyTodoListAndCursorIdxResponse {
 
-    private List<StudyTodoResponse> todoList;  // To do 정보
+    private List<StudyTodoWithCommitsResponse> todoList;  // To do 정보
 
     private Long cursorIdx;    // 다음위치 커서
 
