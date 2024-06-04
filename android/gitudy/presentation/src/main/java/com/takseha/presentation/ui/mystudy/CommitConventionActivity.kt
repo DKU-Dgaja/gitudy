@@ -21,7 +21,15 @@ class CommitConventionActivity : AppCompatActivity() {
         setBinding()
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
-        val conventionInfo = intent.getSerializableExtra("conventionInfo") as StudyConvention
+        val conventionInfo =
+            if (intent.getSerializableExtra("conventionInfo") == null) StudyConvention(
+                false,
+                "",
+                0,
+                "",
+                "",
+                studyInfoId
+            ) else intent.getSerializableExtra("conventionInfo") as StudyConvention
 
         with(binding) {
             var convention = conventionInfo.name
@@ -106,7 +114,12 @@ class CommitConventionActivity : AppCompatActivity() {
         }
     }
 
-    private fun setInitConvention(convention: String, content: String, description: String, active: Boolean) {
+    private fun setInitConvention(
+        convention: String,
+        content: String,
+        description: String,
+        active: Boolean
+    ) {
         with(binding) {
             conventionEditText.setText(convention)
             contentEditText.setText(content)
@@ -117,7 +130,7 @@ class CommitConventionActivity : AppCompatActivity() {
 
     private fun isConventionActive(active: Boolean) {
         with(binding) {
-            if(active) {
+            if (active) {
                 isNotConventionText.visibility = View.GONE
                 isConventionText.visibility = View.VISIBLE
             } else {
