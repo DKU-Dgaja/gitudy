@@ -65,18 +65,30 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/teamRankFullText"
+            style="@style/B7_3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:text="@string/study_team_rank_full"
+            android:textColor="@color/GS_500"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/studyName" />
+
+        <TextView
             android:id="@+id/studyDetail"
             style="@style/B6_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
+            android:layout_marginTop="20dp"
             android:text="@string/feed_explanation"
             android:textColor="@color/GS_700"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyName" />
+            app:layout_constraintTop_toBottomOf="@+id/teamRankFullText" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tagList"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -97,7 +109,7 @@
             app:layout_constraintTop_toBottomOf="@+id/tagList" />
 
         <LinearLayout
-            android:id="@+id/IsStudyOpen"
+            android:id="@+id/isStudyOpen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="33dp"
@@ -112,10 +124,35 @@
                 android:src="@drawable/ic_lock" />
 
             <TextView
+                android:id="@+id/isStudyOpenText"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/study_lock"
+                android:textColor="@color/GS_600" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/studyRank"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:gravity="center"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/isStudyOpen">
+
+            <ImageView
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:layout_marginRight="10dp"
+                android:src="@drawable/ic_rank" />
+
+            <TextView
+                android:id="@+id/studyRankText"
+                style="@style/B6_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/study_team_rank"
                 android:textColor="@color/GS_600" />
         </LinearLayout>
 
@@ -126,7 +163,7 @@
             android:layout_marginTop="15dp"
             android:gravity="center"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/IsStudyOpen">
+            app:layout_constraintTop_toBottomOf="@id/studyRank">
 
             <ImageView
                 android:layout_width="24dp"
@@ -135,6 +172,7 @@
                 android:src="@drawable/ic_study_github_link" />
 
             <TextView
+                android:id="@+id/studyGithubLinkText"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -158,6 +196,7 @@
                 android:src="@drawable/ic_attendance" />
 
             <TextView
+                android:id="@+id/studyRuleText"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -167,6 +206,7 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
+            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="25dp"
@@ -175,13 +215,23 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/studyRule" />
 
+        <ImageView
+            android:id="@+id/memberImg"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="15dp"
+            android:src="@drawable/ic_people"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/studyRule" />
+
         <TextView
+            android:id="@+id/studyMemberCntText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="31dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="16dp"
             android:text="@string/feed_member_number"
-            app:layout_constraintStart_toEndOf="@+id/recyclerView"
+            app:layout_constraintStart_toEndOf="@+id/memberImg"
             app:layout_constraintTop_toBottomOf="@id/studyRule" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

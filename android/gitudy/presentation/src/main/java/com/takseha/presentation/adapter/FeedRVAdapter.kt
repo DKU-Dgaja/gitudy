@@ -14,6 +14,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
     private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
@@ -49,8 +50,8 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         }
         holder.studyName.text = studyInfoList[position].topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].periodType)
-        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, position, studyInfoList[position].lastCommitDay)
-        holder.teamScore.text = studyInfoList[position].score.toString()
+        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, if (studyInfoList[position].id - 10 > 0) studyInfoList[position].id - 10 else abs(studyInfoList[position].id - 10) + 2, if (studyInfoList[position].lastCommitDay == null ) "없음" else studyInfoList[position].lastCommitDay)
+        holder.teamScore.text = (studyInfoList[position].id * 10 + 2).toString()
         holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].createdDateTime))
         holder.currentMember.text = studyInfoList[position].currentMember.toString()
         holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].maximumMember)

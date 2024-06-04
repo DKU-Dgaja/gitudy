@@ -41,7 +41,7 @@ data class StudyInfo(
     @SerializedName("info")
     val info: String,
     @SerializedName("last_commit_day")
-    val lastCommitDay: String,
+    val lastCommitDay: String?,
     @SerializedName("maximum_member")
     val maximumMember: Int,
     @SerializedName("period_type")
