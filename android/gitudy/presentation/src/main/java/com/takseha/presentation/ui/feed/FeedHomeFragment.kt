@@ -54,14 +54,16 @@ class FeedHomeFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getFeedList(null, 5, "createdDateTime")
                 viewModel.uiState.collectLatest {
-                    val feedRVAdapter = FeedRVAdapter(requireContext(), it.studyInfoList)
+                    if (it.studyInfoList.isNotEmpty()) {
+                        val feedRVAdapter = FeedRVAdapter(requireContext(), it.studyInfoList)
 
-                    if (feedRVAdapter.itemCount > 0) {
-                        isNoStudyLayout.visibility = View.GONE
+                        if (feedRVAdapter.itemCount == 0) {
+                            isNoStudyLayout.visibility = View.VISIBLE
+                        }
+
+                        feedList.adapter = feedRVAdapter
+                        feedList.layoutManager = LinearLayoutManager(requireContext())
                     }
-
-                    feedList.adapter = feedRVAdapter
-                    feedList.layoutManager = LinearLayoutManager(requireContext())
                 }
             }
         }

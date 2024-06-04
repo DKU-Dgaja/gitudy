@@ -62,7 +62,9 @@ class MainHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.apply {
                 myStudyState.collectLatest {
-                    setMyStudyList(it.myStudiesWithTodo)
+                    if (it.myStudiesWithTodo.isNotEmpty()) {
+                        setMyStudyList(it.myStudiesWithTodo)
+                    }
                 }
             }
         }
@@ -84,8 +86,8 @@ class MainHomeFragment : Fragment() {
         with(binding) {
             val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
 
-            if (myStudyRVAdapter.itemCount > 0) {
-                isNoStudyLayout.visibility = View.GONE
+            if (myStudyRVAdapter.itemCount == 0) {
+                isNoStudyLayout.visibility = View.VISIBLE
             }
 
             myStudyList.adapter = myStudyRVAdapter
