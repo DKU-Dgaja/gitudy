@@ -1,74 +1,67 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
     android:clipToPadding="false"
-    android:backgroundTint="@color/TRANSPARENT"
     android:gravity="center"
-    android:paddingLeft="22dp"
-    android:paddingRight="22dp">
+    app:cardCornerRadius="12dp">
 
-    <androidx.cardview.widget.CardView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="12dp">
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <ImageView
+            android:id="@+id/checkIc"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:src="@drawable/ic_check_gradient_c" />
+
+        <TextView
+            android:id="@+id/alertText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/pretendard_bold"
+            android:text="@string/to_do_add"
+            android:textColor="@color/BLACK"
+            android:textSize="22dp" />
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
+            android:layout_width="350dp"
+            android:layout_height="70dp"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="-4dp"
             android:clipToPadding="false"
-            android:padding="20dp">
+            android:gravity="center"
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/checkIc"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:src="@drawable/ic_check_gradient_c" />
-
-            <TextView
-                android:id="@+id/alertText"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/pretendard_bold"
-                android:text="@string/to_do_add"
-                android:textColor="@color/BLACK"
-                android:textSize="22dp" />
-
-            <LinearLayout
-                android:layout_width="350dp"
-                android:layout_height="70dp"
-                android:layout_gravity="center_horizontal"
-                android:gravity="center"
-                android:layout_marginTop="25dp"
+            <Button
+                android:id="@+id/cancelBtn"
+                android:layout_width="155dp"
+                android:layout_height="55dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/square_r8_non_stroke"
+                android:backgroundTint="@color/GS_200"
                 android:clipToPadding="false"
-                android:orientation="horizontal">
+                android:text="@string/cancel"
+                android:textColor="@color/GS_800" />
 
-                <Button
-                    android:id="@+id/cancelBtn"
-                    android:layout_width="155dp"
-                    android:layout_height="55dp"
-                    android:layout_marginRight="16dp"
-                    android:clipToPadding="false"
-                    android:background="@drawable/square_r8_non_stroke"
-                    android:backgroundTint="@color/GS_200"
-                    android:text="@string/cancel"
-                     android:textColor="@color/GS_800" />
-
-                <Button
-                    android:id="@+id/confirmBtn"
-                    android:layout_width="155dp"
-                    android:layout_height="55dp"
-                    android:background="@drawable/box_non_stroke_r8_green"
-                    android:text="@string/confirm"
-                    android:textColor="@color/BLACK" />
-            </LinearLayout>
+            <Button
+                android:id="@+id/confirmBtn"
+                android:layout_width="155dp"
+                android:layout_height="55dp"
+                android:background="@drawable/box_non_stroke_r8_green"
+                android:text="@string/confirm"
+                android:textColor="@color/BLACK" />
         </LinearLayout>
-    </androidx.cardview.widget.CardView>
-</LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>
