@@ -197,7 +197,12 @@ public class StudyMemberService {
 
         } else {
             // '스터디 승인 대기중인 유저' 로 생성
-            studyMemberRepository.save(StudyMember.waitingStudyMember(studyInfoId, user.getUserId(), messageRequest.getMessage()));
+            studyMemberRepository.save(StudyMember.builder()
+                    .studyInfoId(studyInfoId)
+                    .userId(user.getUserId())
+                    .signGreeting(messageRequest.getMessage())
+                    .status(StudyMemberStatus.STUDY_WAITING)
+                    .build());
 
         }
 
