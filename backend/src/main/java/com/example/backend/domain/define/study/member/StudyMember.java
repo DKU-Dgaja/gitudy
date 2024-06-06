@@ -35,7 +35,7 @@ public class StudyMember extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STUDY_MEMBER_STATUS")
-    @ColumnDefault(value = "'STUDY_ACTIVE'")
+    @ColumnDefault(value = "'STUDY_WAITING'")
     private StudyMemberStatus status;           // 스터디 구성원 상태
 
     @Column(name = "SCORE")
@@ -60,18 +60,6 @@ public class StudyMember extends BaseEntity {
     // 스터디 멤버 상태 업데이트
     public void updateStudyMemberStatus(StudyMemberStatus status) {
         this.status = status;
-    }
-
-    // 승인 대기중 유저 생성 메서드
-    public static StudyMember waitingStudyMember(Long studyInfoId, Long userId, String signGreeting) {
-        return StudyMember.builder()
-                .studyInfoId(studyInfoId)
-                .userId(userId)
-                .role(StudyMemberRole.STUDY_MEMBER)
-                .status(StudyMemberStatus.STUDY_WAITING)
-                .score(0)
-                .signGreeting(signGreeting)
-                .build();
     }
 
     public void updateSignGreeting(String signGreeting) {

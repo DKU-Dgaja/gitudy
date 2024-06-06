@@ -6,9 +6,9 @@ import lombok.RequiredArgsConstructor;
 @Getter
 @RequiredArgsConstructor
 public enum StudyStatus {
-    STUDY_PUBLIC("공개 스터디"),
-    STUDY_PRIVATE("비공개 스터디"),
-    STUDY_DELETED("삭제된 스터디")
+    STUDY_PUBLIC("공개"),
+    STUDY_PRIVATE("비공개"),
+    STUDY_DELETED("삭제된")
     ;
 
     private final String text;
