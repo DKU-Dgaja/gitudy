@@ -37,7 +37,6 @@ class MyStudyMainActivity : AppCompatActivity() {
         setBinding()
 
         /*
-        Todo: statusBar 색 변경
         Todo: 팀장/팀원 판별해서 todo 등록 버튼 유무 정하기
         Todo: todo link 버튼 눌렀을 떄 webView 나타나게 하기
          */
@@ -45,6 +44,8 @@ class MyStudyMainActivity : AppCompatActivity() {
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
         val studyImgColor = intent.getStringExtra("studyImgColor")
         Log.d("MyStudyMainActivity", studyInfoId.toString())
+
+        window.statusBarColor = Color.parseColor(studyImgColor)
 
         viewModel.getMyStudyInfo(studyInfoId)
         setTotalInfo(studyInfoId, studyImgColor!!)
