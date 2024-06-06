@@ -6,7 +6,9 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
+import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.dto.mystudy.MyStudyInfo
+import com.takseha.data.repository.member.GitudyMemberRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -14,7 +16,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class StudyApplyViewModel(application: Application) : AndroidViewModel(application) {
-    private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
+    private var gitudyStudyRepository = GitudyStudyRepository()
+    private var gitudyMemberRepository = GitudyMemberRepository()
     private val prefs = SP(getApplication())
 
     private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
@@ -40,15 +43,36 @@ class StudyApplyViewModel(application: Application) : AndroidViewModel(applicati
                     )
                 }
 
-                Log.d("MyStudyMainViewModel", "_uiState: ${_uiState.value}")
+                Log.d("StudyApplyViewModel", "_uiState: ${_uiState.value}")
             } else {
-                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
+                Log.e("StudyApplyViewModel", "https status error: $resCode, $resMsg")
             }
         } else {
             Log.e(
-                "MyStudyMainViewModel",
+                "StudyApplyViewModel",
                 "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.message()}"
             )
+        }
+    }
+
+    fun applyStudy(studyInfoId: Int, joinCode: String, message: String) = viewModelScope.launch {
+        val request = MessageRequest(message)
+        Log.d("StudyApplyViewModel", request.toString())
+
+        val applyStudyResponse = gitudyMemberRepository.applyStudy(bearerToken, studyInfoId, joinCode, request)
+
+        if (applyStudyResponse.isSuccessful) {
+            val resCode = applyStudyResponse.body()!!.resCode
+            val resMsg = applyStudyResponse.body()!!.resMsg
+            val resObj = applyStudyResponse.body()!!.resObj
+
+            if (resCode == 200 && resMsg == "OK") {
+                Log.d("StudyApplyViewModel", resObj)
+            } else {
+                Log.e("StudyApplyViewModel", "https status error: $resCode, $resMsg")
+            }
+        } else {
+            Log.e("StudyApplyViewModel", "applyStudyResponse status: ${applyStudyResponse.code()}\napplyStudyResponse message: ${applyStudyResponse.message()}")
         }
     }
 }

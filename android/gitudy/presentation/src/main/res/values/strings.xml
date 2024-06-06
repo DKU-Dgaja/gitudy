@@ -77,6 +77,7 @@
     <string name="feed_member_full_number">%d명</string>
     <string name="feed_make_study_1">%s</string>
     <string name="feed_make_study_2">주 %d일 커밋/%s 마감/%d명</string>
+    <string name="feed_apply_study">해당 스터디에\n가입 신청 하시겠습니까?</string>
     <string name="feed_make_study_github_repo">연동할 깃허브 레포지토리 링크를 입력해주세요\n* main branch 커밋 내용이 현재 스터디와 연동됩니다</string>
 
 

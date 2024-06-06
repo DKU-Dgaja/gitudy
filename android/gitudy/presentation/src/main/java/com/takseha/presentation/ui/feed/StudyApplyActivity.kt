@@ -10,6 +10,7 @@ import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.MyStudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityStudyApplyBinding
+import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,10 +46,10 @@ class StudyApplyActivity : AppCompatActivity() {
                 finish()
             }
             studyEnterBtn.setOnClickListener {
-
+                showAddTodoDialog(studyInfoId, "","스터디 가입 신청하겠습니당")
             }
             studyLinkCopyBtn.setOnClickListener {
-
+                // 추후 구현 예정
             }
         }
     }
@@ -92,6 +93,15 @@ class StudyApplyActivity : AppCompatActivity() {
             StudyStatus.STUDY_PUBLIC -> return baseContext.getString(R.string.study_unlock)
             StudyStatus.STUDY_DELETED -> return baseContext.getString(R.string.study_deleted)
         }
+    }
+
+    private fun showAddTodoDialog(studyInfoId: Int, joinCode: String, message: String) {
+        val customDialog = CustomDialog(this)
+        customDialog.setAlertText(getString(R.string.feed_apply_study))
+        customDialog.setOnConfirmClickListener {
+            viewModel.applyStudy(studyInfoId, "", "안녕하세용")
+        }
+        customDialog.show()
     }
 
     private fun setBinding() {
