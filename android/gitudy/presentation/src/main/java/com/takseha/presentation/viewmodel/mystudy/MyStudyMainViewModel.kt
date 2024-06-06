@@ -8,7 +8,9 @@ import com.takseha.common.model.SPKey
 import com.takseha.common.util.SP
 import com.takseha.data.dto.mystudy.MyStudyInfo
 import com.takseha.data.dto.mystudy.StudyConvention
+import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
+import com.takseha.data.repository.member.GitudyMemberRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -16,7 +18,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MyStudyMainViewModel(application: Application) : AndroidViewModel(application) {
-    private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
+    private var gitudyStudyRepository = GitudyStudyRepository()
+    private var gitudyMemberRepository = GitudyMemberRepository()
     private val prefs = SP(getApplication())
 
     private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
@@ -38,12 +41,14 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
             if (resCode == 200 && resMsg == "OK") {
                 val todo = getFirstTodoInfo(studyInfoId)
                 val convention = getConvention(studyInfoId)
+                val studyMemberList = getStudyMemberList(studyInfoId)
 
                 _uiState.update {
                     it.copy(
                         myStudyInfo = myStudyInfo,
                         todoInfo = todo,
-                        conventionInfo = convention
+                        conventionInfo = convention,
+                        studyMemberListInfo = studyMemberList
                     )
                 }
 
@@ -130,12 +135,40 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
         return null
     }
 
+    private suspend fun getStudyMemberList(studyInfoId: Int): List<StudyMember> {
+        val studyMemberListResponse =
+            gitudyMemberRepository.getStudyMemberList(bearerToken, studyInfoId, true)
 
+        if (studyMemberListResponse.isSuccessful) {
+            val resCode = studyMemberListResponse.body()!!.resCode
+            val resMsg = studyMemberListResponse.body()!!.resMsg
+            val studyMemberList = studyMemberListResponse.body()!!.studyMemberList
+            Log.d("MyStudyMainViewModel", "studyMemberList: $studyMemberList")
+
+            if (resCode == 200 && resMsg == "OK") {
+                return studyMemberList
+            } else {
+                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
+            }
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "studyMemberListResponse status: ${studyMemberListResponse.code()}\nstudyMemberListResponse message: ${studyMemberListResponse.message()}"
+            )
+            return listOf()
+        }
+        Log.e(
+            "MyStudyMainViewModel",
+            "통신 에러"
+        )
+        return listOf()
+    }
 }
 
 data class MyStudyMainInfoState(
     var myStudyInfo: MyStudyInfo = MyStudyInfo(),
     var todoInfo: Todo? = null,
-    var conventionInfo: StudyConvention? = null
-    // todo: comment 추가
-    )
+    var conventionInfo: StudyConvention? = null,
+    var studyMemberListInfo: List<StudyMember> = listOf()
+    // TODO: comment 추가
+)

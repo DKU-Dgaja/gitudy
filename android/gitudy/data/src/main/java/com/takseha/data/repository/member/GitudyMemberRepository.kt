@@ -19,4 +19,10 @@ class GitudyMemberRepository {
         studyInfoId: Int,
         request: MessageRequest
     ) = client.notifyToLeader(bearerToken, studyInfoId, request)
+
+    suspend fun getStudyMemberList(
+        bearerToken: String,
+        studyInfoId: Int,
+        orderByScore: Boolean?
+    ) = client.getStudyMemberList(bearerToken, studyInfoId, orderByScore)
 }

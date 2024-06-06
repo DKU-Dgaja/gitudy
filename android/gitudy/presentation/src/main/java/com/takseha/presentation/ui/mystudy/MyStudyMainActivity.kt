@@ -11,12 +11,16 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriod
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.MyStudyInfo
 import com.takseha.data.dto.mystudy.StudyConvention
+import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.MemberRankRVAdapter
+import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
 import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
@@ -76,6 +80,7 @@ class MyStudyMainActivity : AppCompatActivity() {
                 setMyStudyInfo(studyInfoId, studyImgColor, it.myStudyInfo)
                 setTodoInfo(it.todoInfo)
                 setConventionInfo(it.conventionInfo)
+                setMemberRank(it.studyMemberListInfo)
             }
         }
     }
@@ -134,6 +139,15 @@ class MyStudyMainActivity : AppCompatActivity() {
 
                 commitConvention.text = conventionInfo.name
             }
+        }
+    }
+
+    private fun setMemberRank(studyMemberList: List<StudyMember>) {
+        with(binding) {
+            val memberRankRVAdapter = MemberRankRVAdapter(this@MyStudyMainActivity, studyMemberList)
+
+            rankingListInTeam.adapter = memberRankRVAdapter
+            rankingListInTeam.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
         }
     }
 
