@@ -3,13 +3,13 @@ package com.takseha.data.dto.mystudy
 
 import com.google.gson.annotations.SerializedName
 
-data class StudyMemberResponse(
+data class StudyMemberListResponse(
     @SerializedName("res_code")
     val resCode: Int,
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")
-    val resObj: List<StudyMember>
+    val studyMemberList: List<StudyMember>
 )
 
 data class StudyMember(
