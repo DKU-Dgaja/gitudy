@@ -1,9 +1,8 @@
 package com.takseha.data.api.gitudy.member
 
 import com.takseha.data.dto.feed.MessageRequest
-import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.RogerResponse
-import com.takseha.data.dto.mystudy.StudyMemberResponse
+import com.takseha.data.dto.mystudy.StudyMemberListResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -33,5 +32,5 @@ interface GitudyMemberApi {
         @Header("Authorization") bearerToken: String,
         @Path("studyInfoId") studyInfoId: Int,
         @Query("orderByScore") orderByScore: Boolean?,
-    ): Response<StudyMemberResponse>
+    ): Response<StudyMemberListResponse>
 }

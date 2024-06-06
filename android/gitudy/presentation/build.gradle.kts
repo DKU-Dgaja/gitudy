@@ -90,4 +90,7 @@ dependencies {
     // viewModel
     implementation("androidx.fragment:fragment-ktx:1.6.2")
     implementation("androidx.activity:activity-ktx:1.8.2")
+
+    // Glide
+    implementation("com.github.bumptech.glide:glide:4.12.0")
 }
