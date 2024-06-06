@@ -35,7 +35,7 @@ public class StudyMember extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "STUDY_MEMBER_STATUS")
-    @ColumnDefault(value = "'STUDY_ACTIVE'")
+    @ColumnDefault(value = "'STUDY_WAITING'")
     private StudyMemberStatus status;           // 스터디 구성원 상태
 
     @Column(name = "SCORE")
