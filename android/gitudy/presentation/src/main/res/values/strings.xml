@@ -38,6 +38,7 @@
     <string name="study_unlock">스터디 공개</string>
     <string name="study_deleted">스터디 종료</string>
     <string name="study_team_rank">%d점 • %d등</string>
+    <string name="study_member_score">%d점</string>
     <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %s</string>
     <string name="study_github_link">https://github.com/DKU-Dgaja/gitudy</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>

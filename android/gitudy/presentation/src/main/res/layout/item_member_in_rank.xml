@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:id="@+id/memberRank"
+            style="@style/B6_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="13dp"
+            android:text="1"
+            android:textColor="@color/BASIC_BLUE" />
+
+        <ImageView
+            android:id="@+id/profileImg"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:layout_marginRight="8dp"
+            android:background="@drawable/circle_non_stroke"
+            android:clipToOutline="true"
+            android:src="@drawable/logo_profile_default" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/memberName"
+                style="@style/B5_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="탁세하"
+                android:textColor="@color/GS_700" />
+
+            <TextView
+                android:id="@+id/memberScore"
+                style="@style/B6_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/study_member_score"
+                android:textColor="@color/GS_500" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>
