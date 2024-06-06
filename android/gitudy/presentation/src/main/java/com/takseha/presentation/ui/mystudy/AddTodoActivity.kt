@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityAddTodoBinding
 import com.takseha.presentation.databinding.LayoutDialogBinding
+import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
 import java.time.LocalDate
 
@@ -152,33 +153,13 @@ class AddTodoActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
-
     private fun showAddTodoDialog(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) {
-        val dialogBinding = LayoutDialogBinding.inflate(layoutInflater)
-        val dialogView = dialogBinding.root
-        val dialog = Dialog(this)
-        dialog.setContentView(dialogView)
-
-        dialog?.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-
-        val windowAttributes = dialog.window?.attributes
-        windowAttributes?.dimAmount = 0.8f
-        dialog.window?.attributes = windowAttributes
-        val confirmBtn = dialogBinding.confirmBtn
-        val cancelBtn = dialogBinding.cancelBtn
-
-        confirmBtn.setOnClickListener {
-            viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
-            dialog.dismiss()
-            finish()
+        val customDialog = CustomDialog(this)
+        customDialog.setAlertText(getString(R.string.to_do_add))
+        customDialog.setOnConfirmClickListener {
+            viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
         }
-
-        cancelBtn.setOnClickListener {
-            dialog.dismiss()
-        }
-
-        dialog.setCancelable(false)
-        dialog.show()
+        customDialog.show()
     }
 
     private fun setBinding() {
