@@ -201,7 +201,6 @@ public class StudyMemberService {
                     .studyInfoId(studyInfoId)
                     .userId(user.getUserId())
                     .signGreeting(messageRequest.getMessage())
-                    .status(StudyMemberStatus.STUDY_WAITING)
                     .build());
 
         }
