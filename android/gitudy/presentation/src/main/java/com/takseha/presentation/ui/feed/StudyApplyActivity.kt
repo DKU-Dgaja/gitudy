@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.feed
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -46,7 +47,7 @@ class StudyApplyActivity : AppCompatActivity() {
                 finish()
             }
             studyEnterBtn.setOnClickListener {
-                showAddTodoDialog(studyInfoId, "","스터디 가입 신청하겠습니당")
+                showApplyStudyDialog(studyInfoId, "", "가입해서 열심히 활동할게요~")
             }
             studyLinkCopyBtn.setOnClickListener {
                 // 추후 구현 예정
@@ -95,11 +96,18 @@ class StudyApplyActivity : AppCompatActivity() {
         }
     }
 
-    private fun showAddTodoDialog(studyInfoId: Int, joinCode: String, message: String) {
+    private fun showApplyStudyDialog(studyInfoId: Int, joinCode: String, message: String) {
         val customDialog = CustomDialog(this)
         customDialog.setAlertText(getString(R.string.feed_apply_study))
         customDialog.setOnConfirmClickListener {
-            viewModel.applyStudy(studyInfoId, "", "안녕하세용")
+            viewModel.applyStudy(studyInfoId, joinCode, message)
+
+            // todo: 신청 취소 관련 로직 구현
+            binding.studyEnterBtn.apply {
+                text = "신청 취소하기"
+                setTextColor(Color.parseColor("#ffffff"))
+                backgroundTintList = ColorStateList.valueOf(Color.parseColor("#000000"))
+            }
         }
         customDialog.show()
     }

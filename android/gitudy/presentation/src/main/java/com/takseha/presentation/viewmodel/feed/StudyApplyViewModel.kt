@@ -67,6 +67,7 @@ class StudyApplyViewModel(application: Application) : AndroidViewModel(applicati
             val resObj = applyStudyResponse.body()!!.resObj
 
             if (resCode == 200 && resMsg == "OK") {
+
                 Log.d("StudyApplyViewModel", resObj)
             } else {
                 Log.e("StudyApplyViewModel", "https status error: $resCode, $resMsg")
@@ -78,5 +79,5 @@ class StudyApplyViewModel(application: Application) : AndroidViewModel(applicati
 }
 
 data class StudyMainInfoState(
-    var studyInfo: MyStudyInfo = MyStudyInfo(),
+    var studyInfo: MyStudyInfo = MyStudyInfo()
 )
