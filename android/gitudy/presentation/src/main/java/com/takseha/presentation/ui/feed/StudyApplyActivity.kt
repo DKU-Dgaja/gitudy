@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.feed
 
+import android.content.res.ColorStateList
 import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -10,6 +11,7 @@ import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.MyStudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityStudyApplyBinding
+import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,10 +47,10 @@ class StudyApplyActivity : AppCompatActivity() {
                 finish()
             }
             studyEnterBtn.setOnClickListener {
-
+                showApplyStudyDialog(studyInfoId, "", "가입해서 열심히 활동할게요~")
             }
             studyLinkCopyBtn.setOnClickListener {
-
+                // 추후 구현 예정
             }
         }
     }
@@ -92,6 +94,22 @@ class StudyApplyActivity : AppCompatActivity() {
             StudyStatus.STUDY_PUBLIC -> return baseContext.getString(R.string.study_unlock)
             StudyStatus.STUDY_DELETED -> return baseContext.getString(R.string.study_deleted)
         }
+    }
+
+    private fun showApplyStudyDialog(studyInfoId: Int, joinCode: String, message: String) {
+        val customDialog = CustomDialog(this)
+        customDialog.setAlertText(getString(R.string.feed_apply_study))
+        customDialog.setOnConfirmClickListener {
+            viewModel.applyStudy(studyInfoId, joinCode, message)
+
+            // todo: 신청 취소 관련 로직 구현
+            binding.studyEnterBtn.apply {
+                text = "신청 취소하기"
+                setTextColor(Color.parseColor("#ffffff"))
+                backgroundTintList = ColorStateList.valueOf(Color.parseColor("#000000"))
+            }
+        }
+        customDialog.show()
     }
 
     private fun setBinding() {
