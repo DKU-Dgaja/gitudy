@@ -55,7 +55,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                 holder.todoTimeText.visibility = GONE
                 holder.todoTime.visibility = GONE
                 holder.todoCheckNum.text = "0/"
-                holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
+                holder.totalNum.text = studyInfoList[position].studyInfo.currentMember.toString()
             }
             TodoStatus.TODO_INCOMPLETE -> {
                 holder.noTodoAlarm.visibility = GONE
@@ -67,7 +67,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                 holder.todoTitle.text = studyInfoList[position].todoTitle
                 holder.todoTime.text = studyInfoList[position].todoTime
                 holder.todoCheckNum.text = "${ studyInfoList[position].todoCheckNum }/"
-                holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
+                holder.totalNum.text = studyInfoList[position].studyInfo.currentMember.toString()
 
                 if (studyInfoList[position].todoTime == LocalDate.now().toString()) {
                     holder.todoTime.setTextColor(
@@ -88,7 +88,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                 holder.todoTitle.text = studyInfoList[position].todoTitle
                 holder.todoTime.text = studyInfoList[position].todoTime
                 holder.todoCheckNum.text = "${ studyInfoList[position].todoCheckNum }/"
-                holder.totalNum.text = studyInfoList[position].studyInfo.maximumMember.toString()
+                holder.totalNum.text = studyInfoList[position].studyInfo.currentMember.toString()
             }
         }
 
@@ -105,7 +105,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
         holder.studyName.text = studyInfoList[position].studyInfo.topic
         holder.teamScore.text = "${studyInfoList[position].studyInfo.id*10 + 2}점"
         holder.progressBar.progress = studyInfoList[position].todoCheckNum ?: 0
-        holder.progressBar.max = studyInfoList[position].studyInfo.maximumMember
+        holder.progressBar.max = studyInfoList[position].studyInfo.currentMember
     }
 
     override fun getItemCount(): Int {
