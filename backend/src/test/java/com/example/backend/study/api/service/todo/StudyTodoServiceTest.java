@@ -25,10 +25,7 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
-import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoProgressResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
+import com.example.backend.study.api.controller.todo.response.*;
 import com.example.backend.study.api.service.commit.StudyCommitService;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
@@ -113,13 +110,11 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
                 StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),
                 StudyMemberFixture.createStudyMemberWithdrawal(withdrawalMember.getId(), studyInfo.getId())
         ));
-
 
         StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
 
@@ -133,7 +128,6 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertNotNull(studyTodos);
         StudyTodo savedStudyTodo = studyTodos.get(0);
         assertEquals(studyInfo.getId(), savedStudyTodo.getStudyInfoId());
-
 
         List<StudyTodoMapping> mappings = studyTodoMappingRepository.findAll();
         // 활동중인 멤버에게 할당되었는지 확인
@@ -284,6 +278,12 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertEquals(studyTodo1.getTitle(), responses.getTodoList().get(0).getTitle());
         assertEquals(studyTodo2.getTitle(), responses.getTodoList().get(1).getTitle());
 
+        assertNotNull(responses.getTodoList().get(0).getTodoCode());
+        assertNotNull(responses.getTodoList().get(1).getTodoCode());
+
+//        System.out.println("responses.getTodoList().get(0).getTodoCode(); = " + responses.getTodoList().get(0).getTodoCode());
+//        System.out.println("responses.getTodoList().get(1).getTodoCode(); = " + responses.getTodoList().get(1).getTodoCode());
+
         // 커밋 리스트 검증
         assertEquals(1, responses.getTodoList().get(0).getCommits().size());
         assertEquals(commit1.getCommitSHA(), responses.getTodoList().get(0).getCommits().get(0).getCommitSHA());
@@ -431,13 +431,14 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyInfoRepository.save(studyInfo);
 
         StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        studyTodoRepository.save(studyTodo);
+        StudyTodo todo = studyTodoRepository.save(studyTodo);
 
         //when
-        studyTodoService.readStudyTodo(studyInfo.getId(), studyTodo.getId());
+        StudyTodoResponse response = studyTodoService.readStudyTodo(studyInfo.getId(), studyTodo.getId());
 
         //then
         assertEquals("백준 1234번 풀기", studyTodo.getTitle());
+        assertEquals(todo.getTodoCode(), response.getTodoCode());
     }
 
 
