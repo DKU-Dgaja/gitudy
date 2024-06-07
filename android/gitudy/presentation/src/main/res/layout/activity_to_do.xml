@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginLeft="22dp"
+    android:layout_marginTop="48dp"
+    android:layout_marginRight="22dp"
     tools:context=".ui.mystudy.ToDoActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/todoTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="22dp"
-        android:layout_marginTop="75dp"
-        android:layout_marginRight="22dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -36,6 +36,28 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+    <CheckBox
+        android:id="@+id/commitWithTodoCheckBtn"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_marginTop="22dp"
+        android:background="@drawable/selector_ic_check_sq_checked"
+        android:button="@null"
+        android:checked="true"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+
+    <TextView
+        style="@style/B6_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="커밋 히스토리 함께 보기"
+        android:textColor="@color/GS_800"
+        android:layout_marginTop="22dp"
+        android:layout_marginLeft="4dp"
+        app:layout_constraintStart_toEndOf="@+id/commitWithTodoCheckBtn"
+        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/memberList"
         android:layout_width="wrap_content"
@@ -43,30 +65,26 @@
         android:layout_marginLeft="22dp"
         android:layout_marginTop="31dp"
         android:orientation="horizontal"
+        android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/commitWithTodoCheckBtn" />
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/todoWithDateList"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/memberList">
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/todoWithDateList"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
-            android:layout_marginRight="22dp" />
-    </ScrollView>
+        android:layout_marginTop="20dp"
+        android:layout_marginLeft="22dp"
+        android:layout_marginRight="22dp"
+        app:layout_constraintTop_toBottomOf="@+id/memberList"/>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/TodoPopup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="-20dp"
-        android:visibility="visible"
+        android:visibility="gone"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
