@@ -17,7 +17,7 @@ data class Commit(
     @SerializedName("rejection-reason")
     val rejectionReason: String,
     @SerializedName("status")
-    val status: String,
+    val status: CommitStatus,
     @SerializedName("study_info_id")
     val studyInfoId: Int,
     @SerializedName("study_todo_id")
