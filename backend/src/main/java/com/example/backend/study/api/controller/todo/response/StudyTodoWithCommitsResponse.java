@@ -16,7 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 public class StudyTodoWithCommitsResponse {
 
-    private Long id;             // to doid
+    private Long id;             // To do id
 
     private Long studyInfoId;    // 스터티 Id
 
@@ -30,8 +30,9 @@ public class StudyTodoWithCommitsResponse {
 
     private LocalDate todoDate;  // To do 날짜
 
-    private List<CommitInfoResponse> commits;  // 커밋 리스트
+    private String todoCode;     // To do를 식별할 6자리 코드
 
+    private List<CommitInfoResponse> commits;  // 커밋 리스트
 
     public static StudyTodoWithCommitsResponse of(StudyTodo studyTodo, List<CommitInfoResponse> commits) {
         return StudyTodoWithCommitsResponse.builder()
@@ -41,6 +42,7 @@ public class StudyTodoWithCommitsResponse {
                 .detail(studyTodo.getDetail())
                 .todoLink(studyTodo.getTodoLink())
                 .todoDate(studyTodo.getTodoDate())
+                .todoCode(studyTodo.getTodoCode())
                 .commits(commits)
                 .build();
     }
