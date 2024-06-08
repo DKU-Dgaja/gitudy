@@ -10,7 +10,6 @@ import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.ToDoListRVAdapter
 import com.takseha.presentation.databinding.ActivityToDoBinding
-import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.mystudy.TodoViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
