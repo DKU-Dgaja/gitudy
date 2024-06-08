@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentProfileHomeBinding
 import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
@@ -49,6 +50,10 @@ class ProfileHomeFragment : Fragment() {
         with(binding) {
             nickname.text = userInfo.name
             githubIdText.text = "@${userInfo.githubId}"
+            Glide.with(this@ProfileHomeFragment)
+                .load(userInfo.profileImgUrl)
+                .error(R.drawable.logo_profile_default)
+                .into(profileImg)
         }
     }
 
