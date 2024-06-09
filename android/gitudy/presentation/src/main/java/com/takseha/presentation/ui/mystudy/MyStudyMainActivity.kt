@@ -103,8 +103,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
             studyRankText.text = String.format(
                 getString(R.string.study_team_rank),
-                studyInfoId * 10 + 2,
-                if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2
+                300 - studyInfoId * 10, studyInfoId - 15
             )
             studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
         }
