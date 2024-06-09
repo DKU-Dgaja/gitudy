@@ -61,13 +61,18 @@ public class ProjectConfig implements WebMvcConfigurer {
     public void devProfileCorsMapping(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowedOriginPatterns("*")
-                .allowedMethods("GET", "POST")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
                 .allowedHeaders("*")
                 .allowCredentials(true);
     }
+
     // 프로덕션 환경에서는 Cors 설정을 Front 페이지와 허용할 서버만 등록
     private void prodProfileCorsMapping(CorsRegistry registry) {
-
+        registry.addMapping("/**")
+                .allowedOriginPatterns("*")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true);
     }
     @Bean
     public ModelResolver modelResolver(ObjectMapper objectMapper) {
