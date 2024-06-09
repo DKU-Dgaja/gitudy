@@ -159,7 +159,6 @@ class AddTodoActivity : AppCompatActivity() {
         customDialog.setAlertText(getString(R.string.to_do_add))
         customDialog.setOnConfirmClickListener {
             viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
-            startActivity(Intent(this@AddTodoActivity, MyStudyMainActivity::class.java))
             finish()
         }
         customDialog.show()

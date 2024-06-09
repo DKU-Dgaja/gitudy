@@ -75,6 +75,10 @@ class MyStudyMainActivity : AppCompatActivity() {
                 intent.putExtra("conventionInfo", viewModel.uiState.value.conventionInfo)
                 startActivity(intent)
             }
+            swipeRefreshMyStudyMain.setOnRefreshListener {
+                viewModel.getMyStudyInfo(studyInfoId)
+                swipeRefreshMyStudyMain.isRefreshing = false
+            }
         }
     }
 

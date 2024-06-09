@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
