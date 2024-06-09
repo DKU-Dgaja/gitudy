@@ -124,6 +124,7 @@ class MyStudyMainActivity : AppCompatActivity() {
                 todoDetailTitle.text = todoInfo.title
                 todoDetailText.text = todoInfo.detail
                 todoTime.text = todoInfo.todoDate
+                todoCode.text = todoInfo.todoCode
                 if (todoInfo.todoDate == LocalDate.now().toString()) {
                     todoTime.setTextColor(
                         ContextCompat.getColor(

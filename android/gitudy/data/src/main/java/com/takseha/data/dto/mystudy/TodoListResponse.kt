@@ -31,6 +31,8 @@ data class Todo(
     val title: String,
     @SerializedName("todo_date")
     val todoDate: String,
+    @SerializedName("todo_code")
+    val todoCode: String,
     @SerializedName("todo_link")
     val todoLink: String,
     @SerializedName("commits")

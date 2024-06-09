@@ -35,6 +35,7 @@ class ToDoListRVAdapter(val context : Context, val todoList : List<Todo>) : Recy
         var todoTitle = binding.todoDetailTitle
         var todoTime = binding.todoTime
         var todoDetail = binding.todoDetailText
+        var todoCode = binding.todoCode
         var todoLinkBtn = binding.todoLinkBtn
         var commitList = binding.commitList
     }
@@ -51,6 +52,7 @@ class ToDoListRVAdapter(val context : Context, val todoList : List<Todo>) : Recy
         holder.todoTitle.text = todoList[position].title
         holder.todoTime.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
+        holder.todoCode.text = todoList[position].todoCode
         holder.todoLinkBtn.setOnClickListener {
            // todoList[position].todoLink웹뷰로 이동
         }
