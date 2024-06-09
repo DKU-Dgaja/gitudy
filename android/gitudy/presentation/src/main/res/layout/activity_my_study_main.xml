@@ -467,7 +467,7 @@
 
                         <LinearLayout
                             android:id="@+id/teamMemberAdminBtn"
-                            android:layout_width="110dp"
+                            android:layout_width="130dp"
                             android:layout_height="46dp"
                             android:layout_marginRight="14dp"
                             android:background="@drawable/box_non_stroke_r12"
@@ -495,7 +495,7 @@
 
                         <LinearLayout
                             android:id="@+id/todoAdditionBtn"
-                            android:layout_width="110dp"
+                            android:layout_width="130dp"
                             android:layout_height="46dp"
                             android:background="@drawable/box_non_stroke_r12"
                             android:backgroundTint="#F8F8FB"
