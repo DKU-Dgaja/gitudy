@@ -1,32 +1,20 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.graphics.Color
 import android.os.Build
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.CommitStatus
 import com.takseha.data.dto.mystudy.LikeCount
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
-import com.takseha.data.dto.mystudy.TodoStatus
-import com.takseha.presentation.R
-import com.takseha.presentation.databinding.ItemMystudyBinding
 import com.takseha.presentation.databinding.ItemTodoBinding
-import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
 import java.time.LocalDate
 
-class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
+class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private val onCommitClickListener: OnCommitClickListener) :
     RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
     // 임시 커밋 리스트
     private var commitList: List<Commit> = listOf(
@@ -80,11 +68,9 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
         )
     )
 
-    interface ItemClick {
-        fun onClick(view: View, position: Int)
+    interface OnCommitClickListener {
+        fun onCommitClick(commit: Commit)
     }
-
-    var itemClick: ItemClick? = null
 
     class ViewHolder(val binding: ItemTodoBinding) : RecyclerView.ViewHolder(binding.root) {
         var todoDate = binding.todoDate
@@ -114,29 +100,14 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
         }
         // setCommitList(holder.commitList, todoList[position].commitList)
         setCommitList(holder.commitList, commitList)
-
-        // 클릭 이벤트 처리
-        if (itemClick != null) {
-            holder?.itemView?.setOnClickListener { v ->
-                itemClick!!.onClick(v, position)
-            }
-        }
     }
 
     private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
-        val commitListRVAdapter = CommitListRVAdapter(context, commitList)
+        val commitListRVAdapter = CommitListRVAdapter(context, commitList, onCommitClickListener)
 
         commitListView.adapter = commitListRVAdapter
         commitListView.layoutManager = LinearLayoutManager(context)
     }
-
-//    private fun clickCommitItem(commitListRVAdapter: CommitListRVAdapter, commitList: List<Commit>) {
-//        commitListRVAdapter.itemClick = object : CommitListRVAdapter.ItemClick {
-//            override fun onClick(view: View, position: Int) {
-//
-//            }
-//        }
-//    }
 
     override fun getItemCount(): Int {
         return todoList.size

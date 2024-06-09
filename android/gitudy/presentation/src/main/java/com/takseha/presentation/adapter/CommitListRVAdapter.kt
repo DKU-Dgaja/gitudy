@@ -1,37 +1,45 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.CommitStatus
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
-import com.takseha.data.dto.mystudy.Todo
-import com.takseha.data.dto.mystudy.TodoStatus
+import com.takseha.data.dto.mystudy.LikeCount
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCommitBinding
-import com.takseha.presentation.databinding.ItemMystudyBinding
-import com.takseha.presentation.databinding.ItemTodoBinding
-import java.time.LocalDate
 
-class CommitListRVAdapter(val context : Context, val commitList : List<Commit>) : RecyclerView.Adapter<CommitListRVAdapter.ViewHolder>() {
-    interface ItemClick {
-        fun onClick(view: View, position: Int)
-    }
-    var itemClick: ItemClick? = null
+class CommitListRVAdapter(val context : Context, val commitList : List<Commit>, val onCommitClickListener: ToDoListRVAdapter.OnCommitClickListener) : RecyclerView.Adapter<CommitListRVAdapter.ViewHolder>() {
 
-    class ViewHolder(val binding: ItemCommitBinding) : RecyclerView.ViewHolder(binding.root) {
+    inner class ViewHolder(val binding: ItemCommitBinding) : RecyclerView.ViewHolder(binding.root) {
         var commitTitle = binding.commitTitle
         var commitInfo = binding.commitInfo
         var commitStatus = binding.commitStatus
+
+        init {
+            binding.root.setOnClickListener {
+                val position = bindingAdapterPosition
+                if (position != RecyclerView.NO_POSITION) {
+                    val commit = Commit(
+                        "2024-06-11",
+                        "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
+                        1,
+                        LikeCount(0),
+                        "6PHP1b #7576:C++",
+                        "탁세하",
+                        CommitStatus.COMMIT_WAITING,
+                        17,
+                        13,
+                        11
+                    )
+                    onCommitClickListener.onCommitClick(commit)
+                }
+            }
+        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -57,13 +65,6 @@ class CommitListRVAdapter(val context : Context, val commitList : List<Commit>) 
             CommitStatus.COMMIT_WAITING -> {
                 holder.commitStatus.text = "승인대기"
                 holder.commitStatus.setTextColor(ContextCompat.getColor(context, R.color.BASIC_GREEN))
-            }
-        }
-
-        // 클릭 이벤트 처리
-        if (itemClick != null) {
-            holder?.itemView?.setOnClickListener { v ->
-                itemClick!!.onClick(v, position)
             }
         }
     }
