@@ -15,6 +15,8 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.Commit
+import com.takseha.data.dto.mystudy.CommitStatus
+import com.takseha.data.dto.mystudy.LikeCount
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoStatus
@@ -24,10 +26,64 @@ import com.takseha.presentation.databinding.ItemTodoBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
 import java.time.LocalDate
 
-class ToDoListRVAdapter(val context : Context, val todoList : List<Todo>) : RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
+class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
+    RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
+    // 임시 커밋 리스트
+    private var commitList: List<Commit> = listOf(
+        Commit(
+            "2024-06-09",
+            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
+            1,
+            LikeCount(0),
+            "6PHP1b #7576:Kotlin",
+            "이주성",
+            CommitStatus.COMMIT_APPROVAL,
+            17,
+            13,
+            13
+        ),
+        Commit(
+            "2024-06-09",
+            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
+            1,
+            LikeCount(0),
+            "6PHP1b #7576:JAVA",
+            "이정우",
+            CommitStatus.COMMIT_REJECTION,
+            17,
+            13,
+            14
+        ),
+        Commit(
+            "2024-06-10",
+            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
+            1,
+            LikeCount(0),
+            "6PHP1b #7576:C++",
+            "구영민",
+            CommitStatus.COMMIT_APPROVAL,
+            17,
+            13,
+            12
+        ),
+        Commit(
+            "2024-06-11",
+            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
+            1,
+            LikeCount(0),
+            "6PHP1b #7576:C++",
+            "탁세하",
+            CommitStatus.COMMIT_WAITING,
+            17,
+            13,
+            11
+        )
+    )
+
     interface ItemClick {
         fun onClick(view: View, position: Int)
     }
+
     var itemClick: ItemClick? = null
 
     class ViewHolder(val binding: ItemTodoBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -54,9 +110,10 @@ class ToDoListRVAdapter(val context : Context, val todoList : List<Todo>) : Recy
         holder.todoDetail.text = todoList[position].detail
         holder.todoCode.text = todoList[position].todoCode
         holder.todoLinkBtn.setOnClickListener {
-           // todoList[position].todoLink웹뷰로 이동
+            // todoList[position].todoLink웹뷰로 이동
         }
-        setCommitList(holder.commitList, todoList[position].commitList)
+        // setCommitList(holder.commitList, todoList[position].commitList)
+        setCommitList(holder.commitList, commitList)
 
         // 클릭 이벤트 처리
         if (itemClick != null) {

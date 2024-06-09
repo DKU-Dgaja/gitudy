@@ -43,7 +43,7 @@ class CommitListRVAdapter(val context : Context, val commitList : List<Commit>) 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.commitTitle.text = commitList[position].message
-        holder.commitInfo.text = context.getString(R.string.study_to_do_commit_info, commitList[position].commitSha, commitList[position].commitDate)
+        holder.commitInfo.text = context.getString(R.string.study_to_do_commit_info, commitList[position].rejectionReason, commitList[position].commitDate)
         when (commitList[position].status) {
             CommitStatus.COMMIT_APPROVAL -> holder.commitStatus.text = "승인완료"
             CommitStatus.COMMIT_DELETE -> {
