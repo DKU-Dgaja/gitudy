@@ -23,6 +23,7 @@ class ToDoActivity : AppCompatActivity(), ToDoListRVAdapter.OnCommitClickListene
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_to_do)
         setBinding()
+        window.statusBarColor = getColor(R.color.WHITE)
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
 
@@ -57,13 +58,14 @@ class ToDoActivity : AppCompatActivity(), ToDoListRVAdapter.OnCommitClickListene
 
     private fun navigateToFragment(fragment: Fragment) {
         supportFragmentManager.beginTransaction()
+            .setCustomAnimations(R.anim.vertical_enter, R.anim.vertical_exit)
             .replace(R.id.CommitFragmentContainer, fragment)
             .addToBackStack(null)
             .commit()
     }
 
     override fun onCommitClick(commit: Commit) {
-        navigateToFragment(MyCommitFragment())
+        navigateToFragment(MyCommitFragment.newInstance(commit))
     }
 
     private fun setBinding() {
