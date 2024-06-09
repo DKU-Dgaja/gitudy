@@ -29,6 +29,7 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom{
                         studyComment.id,
                         studyComment.studyInfoId,
                         studyComment.userId,
+                        studyComment.content,
                         Projections.constructor(
                                 UserInfoForStudyCommentResponse.class,
                                 user.id,

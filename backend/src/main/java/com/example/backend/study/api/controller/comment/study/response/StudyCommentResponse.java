@@ -13,12 +13,14 @@ public class StudyCommentResponse {
     private Long studyInfoId;
     private Long userId;
     private UserInfoForStudyCommentResponse userInfoResponse;
+    private String content;
 
     @Builder
-    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, UserInfoForStudyCommentResponse userInfoResponse) {
+    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, String content, UserInfoForStudyCommentResponse userInfoResponse) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.userId = userId;
+        this.content = content;
         this.userInfoResponse = userInfoResponse;
     }
 }
