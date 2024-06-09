@@ -2,6 +2,7 @@ package com.takseha.data.dto.mystudy
 
 
 import com.google.gson.annotations.SerializedName
+import java.io.Serializable
 
 data class Commit(
     @SerializedName("commit_date")
@@ -24,7 +25,7 @@ data class Commit(
     val studyTodoId: Int,
     @SerializedName("user_id")
     val userId: Int
-)
+): Serializable
 
 data class LikeCount(
     @SerializedName("like_count")
