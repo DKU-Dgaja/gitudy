@@ -7,6 +7,7 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -23,6 +24,7 @@ import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCu
 import com.example.backend.study.api.controller.todo.response.StudyTodoProgressResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.example.backend.study.api.service.todo.StudyTodoService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -396,5 +398,33 @@ public class StudyTodoControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_obj").value("커밋 패치가 완료되었습니다."))
                 .andDo(print());
 
+    }
+
+    @Test
+    void 투두별_커밋_조회_테스트() throws Exception {
+        // given
+        User savedUser = generateAuthUser();
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        List<CommitInfoResponse> list = List.of(CommitInfoResponse.builder().commitSHA("tt").build());
+
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
+        when(studyTodoService.selectTodoCommits(any(Long.class)))
+                .thenReturn(list);
+
+        // when
+        mockMvc.perform(get("/study/" + 1L + "/todo/" + 1L + "/commits")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.res_code").value(200))
+                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.res_obj[0].commit_sha").value("tt"))
+                .andDo(print());
     }
 }

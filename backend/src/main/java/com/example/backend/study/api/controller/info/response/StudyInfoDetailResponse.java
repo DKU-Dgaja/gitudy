@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.info.response;
 
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import lombok.AllArgsConstructor;
@@ -37,7 +38,7 @@ public class StudyInfoDetailResponse {
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
-    private StudyStatus status;                // 스터디 상태
+    private StudyStatus status;                     // 스터디 상태
 
     private LocalDateTime createdDateTime;          // 스터디 개설 시간
 
@@ -45,7 +46,10 @@ public class StudyInfoDetailResponse {
 
     private List<String> categoryNames;              // 카테고리 이름 리스트
 
-    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<String> categoryNames){
+    private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
+
+    private Boolean isLeader;                       // 스터디 리더인지
+    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<String> categoryNames, Long userId){
         return StudyInfoDetailResponse.builder()
                 .userId(studyInfo.getUserId())
                 .topic(studyInfo.getTopic())
@@ -59,7 +63,9 @@ public class StudyInfoDetailResponse {
                 .status(studyInfo.getStatus())
                 .createdDateTime(studyInfo.getCreatedDateTime())
                 .modifiedDateTime(studyInfo.getModifiedDateTime())
+                .repositoryInfo(studyInfo.getRepositoryInfo())
                 .categoryNames(categoryNames)
+                .isLeader(studyInfo.getUserId().equals(userId))
                 .build();
     }
 }

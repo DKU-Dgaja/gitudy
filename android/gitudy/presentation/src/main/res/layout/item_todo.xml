@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="30dp">
+
+        <TextView
+            android:id="@+id/todoDate"
+            style="@style/B7_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="2024-06-07"
+            android:textColor="@color/GS_600"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/todoBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/box_non_stroke_r12"
+            android:backgroundTint="#F8F8FB"
+            android:gravity="center_vertical"
+            android:paddingLeft="17dp"
+            android:paddingTop="23dp"
+            android:paddingRight="17dp"
+            android:paddingBottom="23dp"
+            app:layout_constraintTop_toBottomOf="@+id/todoDate">
+
+            <ImageView
+                android:id="@+id/todoImg"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:src="@drawable/ic_todo_git"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/moreBtn"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:src="@drawable/ic_more"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <LinearLayout
+                android:id="@+id/todoDetailLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="14dp"
+                android:orientation="vertical"
+                app:layout_constraintStart_toEndOf="@+id/todoImg"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="4dp"
+                    android:gravity="center">
+
+                    <TextView
+                        android:id="@+id/todoDetailTitle"
+                        style="@style/B6_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:textColor="@color/GS_700" />
+
+                    <ImageView
+                        android:id="@+id/todoLinkBtn"
+                        android:layout_width="14dp"
+                        android:layout_height="14dp"
+                        android:src="@drawable/ic_link"
+                        android:tint="#7A808D"
+                        tools:ignore="UseAppTint" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:text="@string/to_do_deadline"
+                        android:textColor="@color/GS_500" />
+
+                    <TextView
+                        android:id="@+id/todoTime"
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:textColor="@color/BASIC_BLUE" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:text="ToDoCode"
+                        android:textColor="@color/GS_500" />
+
+                    <TextView
+                        android:id="@+id/todoCode"
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:textColor="@color/BLACK" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/todoDetailBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="25dp"
+                android:visibility="visible"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/todoDetailLayout">
+
+                <TextView
+                    android:id="@+id/todoDetailText"
+                    style="@style/B7_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/study_to_do_body"
+                    android:textColor="@color/GS_500" />
+            </LinearLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/commitList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintTop_toBottomOf="@+id/todoBox" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

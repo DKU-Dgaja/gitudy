@@ -7,6 +7,9 @@ import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.fcm.listener.TodoRegisterMemberListener;
+import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.domain.define.study.commit.StudyCommitFixture;
+import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -22,10 +25,9 @@ import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodo
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
-import com.example.backend.study.api.controller.todo.response.StudyTodoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoProgressResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoStatusResponse;
+import com.example.backend.study.api.controller.todo.response.*;
 import com.example.backend.study.api.service.commit.StudyCommitService;
+import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
@@ -36,13 +38,13 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -70,6 +72,9 @@ public class StudyTodoServiceTest extends MockTestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
+    @Autowired
+    private StudyCommitRepository studyCommitRepository;
+
     @MockBean
     private StudyCommitService studyCommitService;
     
@@ -91,6 +96,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyInfoRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
+        studyCommitRepository.deleteAllInBatch();
     }
 
     @Test
@@ -104,13 +110,11 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-
         studyMemberRepository.saveAll(List.of(
                 StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId()),
                 StudyMemberFixture.createDefaultStudyMember(activeMember.getId(), studyInfo.getId()),
                 StudyMemberFixture.createStudyMemberWithdrawal(withdrawalMember.getId(), studyInfo.getId())
         ));
-
 
         StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
 
@@ -124,7 +128,6 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertNotNull(studyTodos);
         StudyTodo savedStudyTodo = studyTodos.get(0);
         assertEquals(studyInfo.getId(), savedStudyTodo.getStudyInfoId());
-
 
         List<StudyTodoMapping> mappings = studyTodoMappingRepository.findAll();
         // 활동중인 멤버에게 할당되었는지 확인
@@ -259,6 +262,11 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyTodo studyTodo4 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2, studyTodo3, studyTodo4));
 
+        // 커밋 생성
+        StudyCommit commit1 = StudyCommitFixture.createDefaultStudyCommit(leader.getId(), studyInfo.getId(), studyTodo4.getId(), "sha1");
+        StudyCommit commit2 = StudyCommitFixture.createDefaultStudyCommit(leader.getId(), studyInfo.getId(), studyTodo3.getId(), "sha2");
+        studyCommitRepository.saveAll(List.of(commit1, commit2));
+
         doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
@@ -269,6 +277,18 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertEquals(3, responses.getTodoList().size());
         assertEquals(studyTodo1.getTitle(), responses.getTodoList().get(0).getTitle());
         assertEquals(studyTodo2.getTitle(), responses.getTodoList().get(1).getTitle());
+
+        assertNotNull(responses.getTodoList().get(0).getTodoCode());
+        assertNotNull(responses.getTodoList().get(1).getTodoCode());
+
+//        System.out.println("responses.getTodoList().get(0).getTodoCode(); = " + responses.getTodoList().get(0).getTodoCode());
+//        System.out.println("responses.getTodoList().get(1).getTodoCode(); = " + responses.getTodoList().get(1).getTodoCode());
+
+        // 커밋 리스트 검증
+        assertEquals(1, responses.getTodoList().get(0).getCommits().size());
+        assertEquals(commit1.getCommitSHA(), responses.getTodoList().get(0).getCommits().get(0).getCommitSHA());
+        assertEquals(1, responses.getTodoList().get(1).getCommits().size());
+        assertEquals(commit2.getCommitSHA(), responses.getTodoList().get(1).getCommits().get(0).getCommitSHA());
     }
 
     @Test
@@ -286,40 +306,66 @@ public class StudyTodoServiceTest extends MockTestConfig {
         }
         studyTodoRepository.saveAll(createdTodos);
 
+        // 투두당 하나의 커밋을 생성
+        List<StudyCommit> commitList = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            commitList.add(StudyCommitFixture.createDefaultStudyCommit(leader.getId(), studyInfo.getId(), createdTodos.get(i).getId(), i + "sha"));
+        }
+        studyCommitRepository.saveAll(commitList);
+
         doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         StudyTodoListAndCursorIdxResponse firstPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit, true);
 
-
         // then
         assertNotNull(firstPageResponse);
         assertEquals(3, firstPageResponse.getTodoList().size());  // 3개만 가져와야함
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
+        // 커밋 리스트 검증
+        for (int i = 0; i < firstPageResponse.getTodoList().size(); i++) {
+            StudyTodoWithCommitsResponse todoWithCommits = firstPageResponse.getTodoList().get(i);
+            assertNotNull(todoWithCommits.getCommits());
+            assertFalse(todoWithCommits.getCommits().isEmpty());
+            assertEquals(1, todoWithCommits.getCommits().size());  // 각 투두당 하나의 커밋
+            assertEquals((6 - i) + "sha", todoWithCommits.getCommits().get(0).getCommitSHA());
+        }
 
-        // when
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
         Long newCursorIdx = firstPageResponse.getCursorIdx();
-        StudyTodoListAndCursorIdxResponse secondPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx, Limit, true);
+        StudyTodoListAndCursorIdxResponse secondPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx, 3L, true);
 
-        // then
         // 두 번째 페이지의 데이터 검증
         assertNotNull(secondPageResponse);
         assertEquals(3, secondPageResponse.getTodoList().size());
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
+        // 커밋 리스트 검증
+        for (int i = 0; i < secondPageResponse.getTodoList().size(); i++) {
+            StudyTodoWithCommitsResponse todoWithCommits = secondPageResponse.getTodoList().get(i);
+            assertNotNull(todoWithCommits.getCommits());
+            assertFalse(todoWithCommits.getCommits().isEmpty());
+            assertEquals(1, todoWithCommits.getCommits().size());  // 각 투두당 하나의 커밋
+            assertEquals((3 - i) + "sha", todoWithCommits.getCommits().get(0).getCommitSHA());
+        }
 
-        // when
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
         Long newCursorIdx2 = secondPageResponse.getCursorIdx();
-        StudyTodoListAndCursorIdxResponse thirdPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx2, Limit, true);
+        StudyTodoListAndCursorIdxResponse thirdPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx2, 3L, true);
 
-        // then
         // 세 번째 페이지의 데이터 검증
         assertNotNull(thirdPageResponse);
         assertEquals(1, thirdPageResponse.getTodoList().size());
+
+        // 커밋 리스트 검증
+        for (int i = 0; i < thirdPageResponse.getTodoList().size(); i++) {
+            StudyTodoWithCommitsResponse todoWithCommits = thirdPageResponse.getTodoList().get(i);
+            assertNotNull(todoWithCommits.getCommits());
+            assertFalse(todoWithCommits.getCommits().isEmpty());
+            assertEquals(1, todoWithCommits.getCommits().size());  // 각 투두당 하나의 커밋
+            assertEquals((0) + "sha", todoWithCommits.getCommits().get(0).getCommitSHA());
+        }
     }
+
 
     @Test
     @DisplayName("다른 스터디의 Todo와 섞여있을 때, 특정 스터디의 Todo만 조회 확인 테스트")
@@ -385,13 +431,14 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyInfoRepository.save(studyInfo);
 
         StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        studyTodoRepository.save(studyTodo);
+        StudyTodo todo = studyTodoRepository.save(studyTodo);
 
         //when
-        studyTodoService.readStudyTodo(studyInfo.getId(), studyTodo.getId());
+        StudyTodoResponse response = studyTodoService.readStudyTodo(studyInfo.getId(), studyTodo.getId());
 
         //then
         assertEquals("백준 1234번 풀기", studyTodo.getTitle());
+        assertEquals(todo.getTodoCode(), response.getTodoCode());
     }
 
 
@@ -494,6 +541,42 @@ public class StudyTodoServiceTest extends MockTestConfig {
 
         // then
         verify(studyCommitService, times(expectedTodoCnt)).fetchRemoteCommitsAndSaveAsync(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
+
+    }
+
+    @Test
+    void 투두별_커밋_리스트_조회() {
+        // given
+        User member = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(member.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(studyInfo.getId()));
+
+        Set<Integer> usedValues = new HashSet<>();
+
+        List<StudyCommit> commitList = createDefaultStudyCommitList(5, member.getId(), studyInfo.getId(), todo.getId(), usedValues);
+        studyCommitRepository.saveAll(commitList);
+
+        // when
+        List<CommitInfoResponse> list = studyTodoService.selectTodoCommits(todo.getId());
+
+        // then
+
+        for (StudyCommit commit : commitList) {
+            CommitInfoResponse response = list.stream()
+                    .filter(r -> r.getCommitSHA().equals(commit.getCommitSHA()))
+                    .findFirst()
+                    .orElse(null);
+
+            assertThat(response).isNotNull();
+            assertThat(response.getId()).isEqualTo(commit.getId());
+            assertThat(response.getStudyInfoId()).isEqualTo(commit.getStudyInfoId());
+            assertThat(response.getStudyTodoId()).isEqualTo(commit.getStudyTodoId());
+            assertThat(response.getUserId()).isEqualTo(commit.getUserId());
+            assertThat(response.getCommitSHA()).isEqualTo(commit.getCommitSHA());
+        }
 
     }
 }

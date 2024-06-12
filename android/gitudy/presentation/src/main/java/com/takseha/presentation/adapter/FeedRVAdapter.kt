@@ -4,6 +4,7 @@ import android.content.Context
 import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
@@ -12,10 +13,17 @@ import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import kotlin.math.abs
 
 class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
     private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
+
+    interface ItemClick {
+        fun onClick(view: View, position: Int)
+    }
+    var itemClick: ItemClick? = null
 
     class ViewHolder(val binding: ItemFeedBinding) : RecyclerView.ViewHolder(binding.root) {
         val backgroundColor = binding.studyInfoLayout
@@ -36,14 +44,25 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.backgroundColor.setBackgroundColor(Color.parseColor(backgroundColorList[position % 6]))
+        if (studyInfoList[position].profileImageUrl.isEmpty()) {
+            holder.backgroundColor.setBackgroundColor(Color.parseColor(backgroundColorList[position % 6]))
+        } else {
+            holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].profileImageUrl))
+        }
         holder.studyName.text = studyInfoList[position].topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].periodType)
-        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, position, studyInfoList[position].lastCommitDay)
-        holder.teamScore.text = studyInfoList[position].score.toString()
+        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].id - 15, if (studyInfoList[position].lastCommitDay == null ) "없음" else studyInfoList[position].lastCommitDay)
+        holder.teamScore.text = (300 - studyInfoList[position].id * 10).toString()
         holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].createdDateTime))
         holder.currentMember.text = studyInfoList[position].currentMember.toString()
         holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].maximumMember)
+
+        // 클릭 이벤트 처리
+        if (itemClick != null) {
+            holder?.itemView?.setOnClickListener { v ->
+                itemClick!!.onClick(v, position)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
@@ -61,7 +80,6 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateTotalDayCnt(createdDate: String): Long {
         val createdDateLocalDate = LocalDateTime.parse(createdDate)
-        assert(createdDateLocalDate.toString() == createdDate)
 
         val nowDate = LocalDateTime.now()
 

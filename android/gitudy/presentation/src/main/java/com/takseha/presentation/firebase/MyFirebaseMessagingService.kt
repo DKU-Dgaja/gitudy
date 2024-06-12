@@ -8,6 +8,7 @@ import android.os.Build
 import android.util.Log
 import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
@@ -21,9 +22,19 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     fun getFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnSuccessListener {
-            Log.d("MyFirebaseMessagingService", "token: $it")
-        }
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if (!task.isSuccessful) {
+                Log.w("MyFirebaseMessagingService", "FCM registration token 발급 실패", task.exception)
+                return@OnCompleteListener
+            }
+
+            // Get new FCM registration token
+            val token = task.result
+
+            // Log and toast
+            val msg = "FCM token: $token"
+            Log.d("MyFirebaseMessagingService", msg)
+        })
     }
 
     // 포그라운드 메시지 수신

@@ -9,16 +9,18 @@ import com.takseha.common.util.SP
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriod
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.repository.auth.GitudyAuthRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class MakeStudyViewModel(application: Application) : AndroidViewModel(application) {
     private lateinit var gitudyStudyRepository: GitudyStudyRepository
     private val prefs = SP(getApplication())
+    private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
+    val randIdx = (0..5).random()
 
     private val _newStudyInfoState = MutableStateFlow(MakeStudyRequest())
     val newStudyInfoState = _newStudyInfoState.asStateFlow()
@@ -27,7 +29,7 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
         _newStudyInfoState.update { it.copy(topic = title, info = detail, branchName = githubRepo) }
     }
     fun setStudyRule(commitTimes: StudyPeriod, isPublic: StudyStatus, maxMember: Int) {
-        _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember) }
+        _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = backgroundColorList[randIdx]) }
     }
     fun makeNewStudy() = viewModelScope.launch {
         gitudyStudyRepository = GitudyStudyRepository()

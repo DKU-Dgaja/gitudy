@@ -302,6 +302,7 @@ class StudyInfoServiceTest extends TestConfig {
                             () -> assertEquals(expected.getProfileImageUrl(), actual.getProfileImageUrl()),
                             () -> assertEquals(expected.getPeriodType(), actual.getPeriodType())
                     );
+                    assertEquals(actual.getIsLeader(),true);
                 });
     }
 
@@ -755,7 +756,7 @@ class StudyInfoServiceTest extends TestConfig {
         studyCategoryMappingRepository.saveAll(StudyCategoryMappingFixture.generateStudyCategoryMappings(savedStudyInfo, studyCategories));
 
         // when
-        StudyInfoDetailResponse response = studyInfoService.selectStudyInfoDetail(savedStudyInfo.getId());
+        StudyInfoDetailResponse response = studyInfoService.selectStudyInfoDetail(savedStudyInfo.getId(), user.getId());
 
         // then
         assertAll(
@@ -771,8 +772,13 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertEquals(savedStudyInfo.getStatus(), response.getStatus()),
                 () -> assertEquals(savedStudyInfo.getCreatedDateTime().getMinute(), response.getCreatedDateTime().getMinute()),
                 () -> assertEquals(savedStudyInfo.getModifiedDateTime().getMinute(), response.getModifiedDateTime().getMinute()),
-                () -> assertEquals(savedStudyInfo.getPeriodType(), response.getPeriodType())
+                () -> assertEquals(savedStudyInfo.getPeriodType(), response.getPeriodType()),
+                () -> assertEquals(savedStudyInfo.getRepositoryInfo().getName(), response.getRepositoryInfo().getName()),
+                () -> assertEquals(savedStudyInfo.getRepositoryInfo().getOwner(), response.getRepositoryInfo().getOwner()),
+                () -> assertEquals(savedStudyInfo.getRepositoryInfo().getBranchName(), response.getRepositoryInfo().getBranchName())
         );
+
+        assertEquals(response.getIsLeader(), true);
 
         // 카테고리 매핑 response 확인
         List<StudyCategoryMapping> savedStudyCategoryMappings = studyCategoryMappingRepository.findAll();

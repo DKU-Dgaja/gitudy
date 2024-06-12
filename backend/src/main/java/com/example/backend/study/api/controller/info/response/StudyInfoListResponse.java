@@ -35,4 +35,6 @@ public class StudyInfoListResponse {
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
     private LocalDateTime createdDateTime;           // 스터디 개설 시간
+
+    private Boolean isLeader;                       // 스터디 리더인지
 }

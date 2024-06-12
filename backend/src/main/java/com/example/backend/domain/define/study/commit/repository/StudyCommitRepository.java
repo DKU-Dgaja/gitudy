@@ -9,6 +9,8 @@ import java.util.List;
 public interface StudyCommitRepository extends JpaRepository<StudyCommit, Long>, StudyCommitRepositoryCustom {
     List<StudyCommit> findByStudyTodoId(long todoId);
 
+    List<StudyCommit> findByStudyTodoIdOrderByCommitDateDesc(Long todoId);
+
     List<StudyCommit> findStudyCommitListByStudyInfoIdAndStatus(Long studyInfoId, CommitStatus status);
 
     boolean existsByCommitSHA(String commitSha);

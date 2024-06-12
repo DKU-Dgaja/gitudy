@@ -1,6 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -33,15 +35,15 @@ class MyStudyHomeFragment : Fragment() {
     ): View? {
         _binding = FragmentMyStudyHomeBinding.inflate(inflater, container, false)
 
-        viewModel.getMyStudyList(null, 10)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.uiState.collectLatest {
+            viewModel.myStudyState.collectLatest {
+                if (it.myStudiesWithTodo.isNotEmpty()) {
                     setMyStudyList(it.myStudiesWithTodo)
+                }
             }
         }
     }
@@ -50,12 +52,26 @@ class MyStudyHomeFragment : Fragment() {
         with(binding) {
             val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
 
-            if (myStudyRVAdapter.itemCount > 0) {
-                isNoStudyLayout.visibility = android.view.View.GONE
+            if (myStudyRVAdapter.itemCount == 0) {
+                isNoStudyLayout.visibility = View.VISIBLE
             }
 
             myStudyList.adapter = myStudyRVAdapter
             myStudyList.layoutManager = LinearLayoutManager(requireContext())
+
+            clickMyStudyItem(myStudyRVAdapter, studyList)
+        }
+    }
+
+    private fun clickMyStudyItem(myStudyRVAdapter: MyStudyRVAdapter, studyList: List<MyStudyWithTodo>) {
+        myStudyRVAdapter.itemClick = object : MyStudyRVAdapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
+                val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
+                intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
+                intent.putExtra("studyImgColor", studyList[position].studyImg)
+                Log.d("MyStudyHomeFragment", intent.extras.toString())
+                startActivity(intent)
+            }
         }
     }
 

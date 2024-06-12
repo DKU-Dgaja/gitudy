@@ -6,6 +6,7 @@ import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NonNull;
 
 import java.time.LocalDate;
 
@@ -28,6 +29,8 @@ public class StudyTodoResponse {
 
     private LocalDate todoDate;  // To do 날짜
 
+    private String todoCode;     // To do를 식별할 6자리 코드
+
     public static StudyTodoResponse of(StudyTodo studyTodo) {
         return StudyTodoResponse.builder()
                 .id(studyTodo.getId())
@@ -36,6 +39,7 @@ public class StudyTodoResponse {
                 .detail(studyTodo.getDetail())
                 .todoLink(studyTodo.getTodoLink())
                 .todoDate(studyTodo.getTodoDate())
+                .todoCode(studyTodo.getTodoCode())
                 .build();
     }
 }

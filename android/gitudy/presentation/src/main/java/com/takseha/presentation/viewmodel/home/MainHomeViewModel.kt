@@ -1,6 +1,7 @@
 package com.takseha.presentation.viewmodel.home
 
 import android.app.Application
+import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
@@ -33,6 +34,9 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
 
     private val _uiState = MutableStateFlow(MainHomeUserInfoUiState())
     val uiState = _uiState.asStateFlow()
+
+    private val _myStudyState = MutableStateFlow(MainHomeMyStudyUiState())
+    val myStudyState = _myStudyState.asStateFlow()
 
     // stateflow로 바꾸는 거도 고민해보기~ 초기값 null 설정 가정
     private var _cursorIdxRes = MutableLiveData<Long?>()
@@ -121,6 +125,8 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+        val backgroundColorList = listOf("#f8a7a7", "#f8dea6", "#d3f3be", "#85b0e9")
+
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             bearerToken,
             cursorIdx,
@@ -143,14 +149,14 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                     val todo = getFirstTodoInfo(study.id)
 
                     if (todo != null) {
-                        val todoCheckNum = getTodoProgress(study.id)!!.completeMemberCount
-                        val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
-                        MyStudyWithTodo(study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
+                        val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
+                        val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
+                        MyStudyWithTodo(backgroundColorList[study.id % 4], study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
                     } else {
-                        MyStudyWithTodo(study, null, null, TodoStatus.TODO_EMPTY, null)
+                        MyStudyWithTodo(backgroundColorList[study.id % 4], study, null, null, TodoStatus.TODO_EMPTY, null)
                     }
                 }
-                _uiState.update {
+                _myStudyState.update {
                     it.copy(
                         myStudiesWithTodo = studiesWithTodo
                     )
@@ -219,11 +225,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
             val todoProgress = todoProgressResponse.body()!!.todoProgress
 
             if (resCode == 200 && resMsg == "OK") {
-                if (todoProgress != null) {
-                    return todoProgress
-                } else {
-                    return null
-                }
+                return todoProgress
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
@@ -246,5 +248,8 @@ data class MainHomeUserInfoUiState(
     var progressScore: Int = 0,
     var progressMax: Int = 15,
     var characterImgSrc: Int = R.drawable.character_bebe_to_15,
-    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
 ) : Serializable
+
+data class MainHomeMyStudyUiState(
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
+)

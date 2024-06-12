@@ -36,7 +36,9 @@
     <string name="study_commit_rule">주 1회 커밋 필수</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
+    <string name="study_deleted">스터디 종료</string>
     <string name="study_team_rank">%d점 • %d등</string>
+    <string name="study_member_score">%d점</string>
     <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %s</string>
     <string name="study_github_link">https://github.com/DKU-Dgaja/gitudy</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>
@@ -44,18 +46,27 @@
     <string name="study_to_do_body">본문내용이 그렇게 많으려나?? 글자 수 제한해서 2줄 이상 안넘게 막으면 접고 펼치는거 없앨 수 있어. 그럼 더 간결해보이긴 해</string>
     <string name="to_do_deadline">마감일 </string>
     <string name="to_do_deadline_date">%d.%d.%d</string>
+    <string name="to_do_add">새로운 TO-DO를\n추가하시겠습니까?</string>
+    <string name="no_to_do_alarm">등록한 TO-DO가 없습니다</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
-    <string name="commit_convention">[닉네임]-#문제번호: 사용언어</string>
+    <string name="commit_github_url_basic">https://github.com/DKU-Dgaja/gitudy-study-jusung/commit/%s</string>
+    <string name="no_commit_convention">커밋 컨벤션을 등록해 주세요!</string>
+    <string name="commit_convention">ex) [문제 플랫폼]#문제번호:사용언어</string>
+    <string name="commit_convention_content">ex) ^\\[[A-Z]+\\]#\\d+\\:[\\w+]+</string>
+    <string name="commit_convention_description">ex) [BOJ]#1234:Kotlin, [PRO]#1234:C++</string>
+    <string name="commit_convention_add">컨벤션 추가하기</string>
     <string name="message_select_noti">%님에게 전달할\n메시지를 선택해주세요</string>
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
+
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
     <string name="study_to_do_check">/%d</string>
     <string name="study_member_rv">/%d명</string>
     <string name="study_total_day_cnt">D+%d</string>
     <string name="study_to_do_empty">마감 예정인 To-Do가 없습니다!</string>
+    <string name="study_to_do_commit_info">%s • %s •</string>
 
 
     <!-- Strings related to feed -->
@@ -69,6 +80,8 @@
     <string name="feed_member_full_number">%d명</string>
     <string name="feed_make_study_1">%s</string>
     <string name="feed_make_study_2">주 %d일 커밋/%s 마감/%d명</string>
+    <string name="feed_apply_study">해당 스터디에\n가입하시겠습니까?</string>
+    <string name="feed_apply_study_cancel">해당 스터디 가입을\n취소하시겠습니까?</string>
     <string name="feed_make_study_github_repo">연동할 깃허브 레포지토리 링크를 입력해주세요\n* main branch 커밋 내용이 현재 스터디와 연동됩니다</string>
 
 
@@ -87,5 +100,7 @@
     <string name="profile_linkedin_link">www.linkedin.com</string>
     <string name="profile_no_commit_list">커밋 기록이 없습니다</string>
     <string name="profile_no_saved_study">저장한 스터디가 없습니다</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

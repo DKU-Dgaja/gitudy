@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.feed
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +11,14 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.takseha.data.dto.feed.StudyInfo
+import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.FeedRVAdapter
+import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentFeedHomeBinding
+import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -52,17 +58,38 @@ class FeedHomeFragment : Fragment() {
 //            }
 
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.getFeedList(null, 5, "createdDateTime")
+                viewModel.getFeedList(null, 10, "createdDateTime")
                 viewModel.uiState.collectLatest {
-                    val feedRVAdapter = FeedRVAdapter(requireContext(), it.studyInfoList)
+                    if (it.studyInfoList.isNotEmpty()) {
+                        val feedRVAdapter = FeedRVAdapter(requireContext(), it.studyInfoList)
 
-                    if (feedRVAdapter.itemCount > 0) {
-                        isNoStudyLayout.visibility = View.GONE
+                        if (feedRVAdapter.itemCount == 0) {
+                            isNoStudyLayout.visibility = View.VISIBLE
+                        }
+
+                        feedList.adapter = feedRVAdapter
+                        feedList.layoutManager = LinearLayoutManager(requireContext())
+
+                        clickFeedItem(feedRVAdapter, it.studyInfoList)
                     }
-
-                    feedList.adapter = feedRVAdapter
-                    feedList.layoutManager = LinearLayoutManager(requireContext())
                 }
+            }
+
+            swipeRefreshFeedList.setOnRefreshListener {
+                viewModel.getFeedList(null, 10, "createdDateTime")
+                swipeRefreshFeedList.isRefreshing = false
+            }
+        }
+    }
+
+    private fun clickFeedItem(feedRVAdapter: FeedRVAdapter, studyList: List<StudyInfo>) {
+        feedRVAdapter.itemClick = object : FeedRVAdapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
+                val intent = Intent(requireContext(), StudyApplyActivity::class.java)
+                intent.putExtra("studyInfoId", studyList[position].id)
+                intent.putExtra("studyImgColor", studyList[position].profileImageUrl)
+                Log.d("FeedHomeFragment", intent.extras.toString())
+                startActivity(intent)
             }
         }
     }

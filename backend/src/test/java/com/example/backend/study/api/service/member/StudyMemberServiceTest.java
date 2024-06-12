@@ -420,13 +420,19 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
+//        System.out.println("studyInfo.getCurrentMember() = " + studyInfo.getCurrentMember());
+        
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
+        StudyInfo saveStudy = studyInfoRepository.findById(studyInfo.getId()).get();
+
+//        System.out.println("saveStudy.getCurrentMember() = " + saveStudy.getCurrentMember());
 
         // then
         assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
         assertEquals(request.getMessage(), waitMember.get().getSignGreeting()); // 스터디장에게 한마디 저장 확인
+        assertEquals(saveStudy.getCurrentMember(), 2);
     }
 
     @Test

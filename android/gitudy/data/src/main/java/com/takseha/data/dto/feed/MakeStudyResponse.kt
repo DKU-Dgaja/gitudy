@@ -1,7 +1,6 @@
 package com.takseha.data.dto.feed
 
 
-import com.google.gson.JsonObject
 import com.google.gson.annotations.SerializedName
 
 data class MakeStudyResponse(

@@ -95,7 +95,7 @@ public class StudyCommitController {
 
     @GetMapping("/waiting")
     public JsonResult<?> waitingCommitList(@AuthenticationPrincipal User user,
-                                        @RequestParam(name = "studyInfoId") Long studyInfoId) {
+                                           @RequestParam(name = "studyInfoId") Long studyInfoId) {
         // 팀장 권한 검사
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
