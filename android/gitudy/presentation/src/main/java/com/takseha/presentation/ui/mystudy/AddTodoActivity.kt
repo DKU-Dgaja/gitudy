@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.mystudy
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.icu.util.Calendar
@@ -157,7 +158,8 @@ class AddTodoActivity : AppCompatActivity() {
         val customDialog = CustomDialog(this)
         customDialog.setAlertText(getString(R.string.to_do_add))
         customDialog.setOnConfirmClickListener {
-            viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
+            viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
+            finish()
         }
         customDialog.show()
     }

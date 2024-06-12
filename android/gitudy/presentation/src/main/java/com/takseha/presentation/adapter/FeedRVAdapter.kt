@@ -13,6 +13,7 @@ import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import kotlin.math.abs
 
@@ -50,8 +51,8 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         }
         holder.studyName.text = studyInfoList[position].topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].periodType)
-        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, if (studyInfoList[position].id - 10 > 0) studyInfoList[position].id - 10 else abs(studyInfoList[position].id - 10) + 2, if (studyInfoList[position].lastCommitDay == null ) "없음" else studyInfoList[position].lastCommitDay)
-        holder.teamScore.text = (studyInfoList[position].id * 10 + 2).toString()
+        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].id - 15, if (studyInfoList[position].lastCommitDay == null ) "없음" else studyInfoList[position].lastCommitDay)
+        holder.teamScore.text = (300 - studyInfoList[position].id * 10).toString()
         holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].createdDateTime))
         holder.currentMember.text = studyInfoList[position].currentMember.toString()
         holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].maximumMember)
@@ -79,7 +80,6 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateTotalDayCnt(createdDate: String): Long {
         val createdDateLocalDate = LocalDateTime.parse(createdDate)
-        assert(createdDateLocalDate.toString() == createdDate)
 
         val nowDate = LocalDateTime.now()
 

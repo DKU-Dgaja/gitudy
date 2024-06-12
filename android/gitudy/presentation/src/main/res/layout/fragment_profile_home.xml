@@ -58,6 +58,7 @@
                     android:layout_width="55dp"
                     android:layout_height="55dp"
                     android:layout_marginRight="16dp"
+                    android:clipToOutline="true"
                     android:background="@drawable/circle_non_stroke"
                     android:src="@drawable/character_bebe_over_130" />
 

@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.R
@@ -72,6 +73,11 @@ class FeedHomeFragment : Fragment() {
                         clickFeedItem(feedRVAdapter, it.studyInfoList)
                     }
                 }
+            }
+
+            swipeRefreshFeedList.setOnRefreshListener {
+                viewModel.getFeedList(null, 10, "createdDateTime")
+                swipeRefreshFeedList.isRefreshing = false
             }
         }
     }

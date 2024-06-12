@@ -63,8 +63,8 @@ class StudyApplyActivity : AppCompatActivity() {
             studyRuleText.text = setCommitRule(myStudyInfo.periodType)
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
             studyRankText.text = getString(
-                R.string.study_team_rank, studyInfoId * 10 + 2,
-                if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2
+                R.string.study_team_rank, 300 - studyInfoId * 10,
+                studyInfoId - 15
             )
             teamRankFullText.text = getString(
                 R.string.study_team_rank_full,

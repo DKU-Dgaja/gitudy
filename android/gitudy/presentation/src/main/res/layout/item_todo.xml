@@ -100,6 +100,26 @@
                         android:layout_marginRight="4dp"
                         android:textColor="@color/BASIC_BLUE" />
                 </LinearLayout>
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:text="ToDoCode"
+                        android:textColor="@color/GS_500" />
+
+                    <TextView
+                        android:id="@+id/todoCode"
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="4dp"
+                        android:textColor="@color/BLACK" />
+                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
