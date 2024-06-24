@@ -39,23 +39,83 @@ class GithubApiServiceTest extends TestConfig {
     }
 
     @Test
-    void 깃허브_레포지토리의_커밋_리스트_조회_테스트() {
+    void 깃허브_레포지토리의_커밋_리스트_조회_테스트A() {
         // given
-        int pageNumber = 1;
-        int pageSize = 3;
+        int pageNumber = 2;
+        int pageSize = 5;
         String todoCode = "qwe321";
-
-        // todoCode에 해당하는 커밋들 중 1Page 목록
-//        qwe321 [jusung-c] 백준: 컨벤션 지키기
-//        qwe321 컨벤션 무시하기
-//        qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기
-        int expectedSize = 3;
 
         RepositoryInfo repo = RepositoryInfo.builder()
                 .owner(REPOSITORY_OWNER)
                 .name(REPOSITORY_NAME)
                 .branchName("main")
                 .build();
+
+        int expectedSize = 2;
+
+        // when
+        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageNumber, pageSize, todoCode);
+
+//        System.out.println("commits.size() = " + commits.size());
+//        for (var c : commits) {
+//            System.out.println("c.getAuthorName() = " + c.getAuthorName());
+//            System.out.println("c.getMessage() = " + c.getMessage());
+//            System.out.println("c.getSha() = " + c.getSha());
+//        }
+
+        // then
+        assertEquals(expectedSize, commits.size());
+        for (var c : commits) {
+            assertTrue(c.getMessage().startsWith(todoCode));
+        }
+    }
+
+    @Test
+    void 깃허브_레포지토리의_커밋_리스트_조회_테스트B() {
+        // given
+        int pageNumber = 1;
+        int pageSize = 10;
+        String todoCode = "qwe321";
+
+        RepositoryInfo repo = RepositoryInfo.builder()
+                .owner(REPOSITORY_OWNER)
+                .name(REPOSITORY_NAME)
+                .branchName("main")
+                .build();
+
+        int expectedSize = 4;
+
+        // when
+        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageNumber, pageSize, todoCode);
+
+//        System.out.println("commits.size() = " + commits.size());
+//        for (var c : commits) {
+//            System.out.println("c.getAuthorName() = " + c.getAuthorName());
+//            System.out.println("c.getMessage() = " + c.getMessage());
+//            System.out.println("c.getSha() = " + c.getSha());
+//        }
+
+        // then
+        assertEquals(expectedSize, commits.size());
+        for (var c : commits) {
+            assertTrue(c.getMessage().startsWith(todoCode));
+        }
+    }
+
+    @Test
+    void 깃허브_레포지토리의_커밋_리스트_조회_테스트C() {
+        // given
+        int pageNumber = 1;
+        int pageSize = 3;
+        String todoCode = "aBc123";
+
+        RepositoryInfo repo = RepositoryInfo.builder()
+                .owner(REPOSITORY_OWNER)
+                .name(REPOSITORY_NAME)
+                .branchName("main")
+                .build();
+
+        int expectedSize = 1;
 
         // when
         List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageNumber, pageSize, todoCode);

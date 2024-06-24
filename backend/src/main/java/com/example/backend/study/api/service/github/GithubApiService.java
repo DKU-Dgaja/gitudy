@@ -58,30 +58,28 @@ public class GithubApiService {
     // 지정한 레포지토리의 커밋 리스트를 불러오기
     public List<GithubCommitResponse> fetchCommits(RepositoryInfo repo, int pageNumber, int pageSize, String todoCode) {
         GHRepository getRepo = getRepository(repo);
-        List<GHCommit> commits = new ArrayList<>();
+        List<GHCommit> filteredCommits = new ArrayList<>();
 
-        // 페이지네이션을 위해 list() 메서드에 페이지 및 페이지 크기 인수 제공
-        PagedIterator<GHCommit> commitsIterable = getRepo.listCommits().withPageSize(pageSize).iterator();
+        // 페이지네이션 기준 pageSize 지정
+        PagedIterator<GHCommit> commitsIterator = getRepo.listCommits().withPageSize(pageSize).iterator();
 
-        // pageNumber - 1 만큼 페이지를 이동 (조회를 희망하는 페이지로 이동)
-        for (int i = 0; i < pageNumber; i++) {
-            if (commitsIterable.hasNext()) {
-                commitsIterable.nextPage();
+        // 조회를 희망하는 페이지로 이동
+        for (int i = 0; i < pageNumber - 1; i++) {
+            if (commitsIterator.hasNext()) {
+                commitsIterator.nextPage();
             } else {
                 throw new IllegalArgumentException("Requested page does not exist");
             }
         }
 
         // 현재 페이지의 데이터만 가져온다.
-        int count = 0;
-        while (commitsIterable.hasNext() && count < pageSize) {
-            GHCommit commit = commitsIterable.next();
+        List<GHCommit> currentPageCommits = commitsIterator.nextPage();
 
-            // 투두에 해당하는 커밋만 필터링
+        // 필터링된 커밋을 리스트로 저장
+        for (GHCommit commit : currentPageCommits) {
             try {
                 if (commit.getCommitShortInfo().getMessage().startsWith(todoCode)) {
-                    commits.add(commit);
-                    count++;
+                    filteredCommits.add(commit);
                 }
             } catch (IOException e) {
                 log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
@@ -92,7 +90,7 @@ public class GithubApiService {
         log.info(">>>> [ '{}'의 {} 페이지 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", repo.getName(), pageNumber);
 
         // 가져온 커밋들을 GithubCommitResponse로 변환하여 반환
-        return commits.stream()
+        return filteredCommits.stream()
                 .map(commit -> {
                     try {
                         return GithubCommitResponse.of(commit);
