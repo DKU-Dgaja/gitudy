@@ -33,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -49,7 +50,6 @@ public class StudyCommitService {
     private final StudyCommitRepository studyCommitRepository;
     private final GithubApiService githubApiService;
     private final StudyConventionService studyConventionService;
-    private final StudyInfoService studyInfoService;
     private final StudyConventionRepository studyConventionRepository;
     private final StudyInfoRepository studyInfoRepository;
     private final StudyTodoRepository studyTodoRepository;
@@ -104,47 +104,40 @@ public class StudyCommitService {
         return CompletableFuture.completedFuture(null);
     }
 
-
     // 커밋 업데이트
     @Transactional
     public void fetchRemoteCommitsAndSave(StudyInfo study, StudyTodo todo, int pageSize) {
-        int pageNumber = 0;
+        // 스터디의 활동중인 모든 멤버의 Id를 미리 조회해 Map에 저장
+        Map<Long, StudyMember> studyMemberMap = getActiveStudyMembers(study.getId());
 
-        // 스터디의 활동중인 모든 멤버의 Id를 미리 조회
-        Map<Long, StudyMember> studyMemberMap = studyMemberRepository.findActiveMembersByStudyInfoId(study.getId()).stream()
+        // 원격의 커밋을 한 번에 모두 추출
+        List<GithubCommitResponse> commitPage = githubApiService.fetchCommits(study.getRepositoryInfo(), pageSize, todo.getTodoCode());
+
+        // 빈 페이지의 경우 탈출
+        if (commitPage.isEmpty()) return;
+
+        // 사용자 조회 로직을 최소화하기 위해 조회한 페이지에 관여된 사용자의 githubId를 키로 map에 미리 저장
+        Map<String, User> userMap = getUserMap(commitPage);
+        // 스터디 투두 매핑 조회 로직 최소화를 위해 map에 미리 저장
+        Map<Long, StudyTodoMapping> todoMappingMap = getTodoMappingMap(todo, userMap);
+
+        // StudyCommit으로 저장되지 않은 것만 필터링
+        List<GithubCommitResponse> unsavedCommits = studyCommitRepository.findUnsavedGithubCommits(commitPage);
+
+        // 검증할 컨벤션 조회
+        StudyConventionResponse conventions = studyConventionRepository.findActiveConventionByStudyInId(study.getId());
+
+        // 저장할 커밋 필터링
+        List<StudyCommit> commitList = filterCommit(todo, unsavedCommits, userMap, studyMemberMap, conventions, todoMappingMap);
+
+        studyCommitRepository.saveAll(commitList);
+
+        log.info(">>>> [ 원격 레포지토리로부터 {}개의 커밋 업데이트를 성공하였습니다.] <<<<", commitList.size());
+    }
+
+    private Map<Long, StudyMember> getActiveStudyMembers(Long studyId) {
+        return studyMemberRepository.findActiveMembersByStudyInfoId(studyId).stream()
                 .collect(Collectors.toMap(StudyMember::getUserId, Function.identity()));
-
-        // 불러온 커밋 페이지에 저장되지 않은 커밋이 없을 때까지 반복
-        while (true) {
-            // 원격의 커밋 한 페이지 추출
-            List<GithubCommitResponse> commitPage = githubApiService.fetchCommits(study.getRepositoryInfo(), pageNumber, pageSize, todo.getTodoCode());
-            if (commitPage.isEmpty()) break;
-
-            // 사용자 조회 로직을 최소화하기 위해 map에 미리 저장
-            Map<String, User> userMap = getUserMap(commitPage);
-
-            // 스터디 투두 매핑 조회 로직 최소화를 위해 map에 미리 저장
-            Map<Long, StudyTodoMapping> todoMappingMap = getTodoMappingMap(todo, userMap);
-
-            // StudyCommit으로 저장되지 않은 것만 필터링
-            List<GithubCommitResponse> unsavedCommits = studyCommitRepository.findUnsavedGithubCommits(commitPage);
-
-            // 검증할 컨벤션 조회
-            StudyConventionResponse conventions = studyConventionRepository.findActiveConventionByStudyInId(study.getId());
-
-            // 저장할 커밋 필더링
-            List<StudyCommit> commitList = filterCommit(todo, unsavedCommits, userMap, studyMemberMap, conventions, todoMappingMap);
-
-            studyCommitRepository.saveAll(commitList);
-
-            // 페이지 내 저장된 커밋이 하나라도 있으면 현재 페이지까지만 저장 로직 적용
-            if (commitPage.size() > unsavedCommits.size()) break;
-
-            // 다음 페이지로
-            pageNumber++;
-        }
-
-        log.info(">>>> [ 원격 레포지토리로부터 커밋 업데이트를 성공하였습니다. ] <<<<");
     }
 
     private List<StudyCommit> filterCommit(StudyTodo todo, List<GithubCommitResponse> unsavedCommits,
@@ -155,32 +148,49 @@ public class StudyCommitService {
                 .filter(commit -> {
                     User user = userMap.get(commit.getAuthorName());
 
-                    // 커밋 중복 체크
-                    boolean isDuplicate = studyCommitRepository.existsByCommitSHA(commit.getSha());
+                    // 활동 중인 스터디 멤버인지 확인
+                    if (user == null) {
+                        log.info(">>>> 앱 가입자가 아니므로 저장되지 않았습니다. 커밋 작성자: {}", commit.getAuthorName());
+                        return false;
+                    }
 
-                    return user != null &&
-                            // 활동중인 스터디 멤버인지
-                            studyMemberMap.containsKey(user.getId()) &&
-                            // 컨벤션을 지켰는지
-                            studyConventionService.checkConvention(conventions.getContent(), commit.getMessage()) &&
-                            !isDuplicate;
+                    if (!studyMemberMap.containsKey(user.getId())) {
+                        log.info(">>>> 활동중인 스터디원이 아니므로 저장되지 않았습니다. 커밋 작성자: {}", commit.getAuthorName());
+                        return false;
+                    }
+
+                    // 컨벤션을 지켰는지 확인
+                    if (!studyConventionService.checkConvention(conventions.getContent(), commit.getMessage())) {
+                        log.info(">>>> 컨벤션을 지키지 않은 커밋이므로 저장되지 않았습니다. 커밋 sha: {}", commit.getSha());
+                        return false;
+                    }
+
+                    // 커밋 중복 체크
+                    if (studyCommitRepository.existsByCommitSHA(commit.getSha())) {
+                        log.info(">>>> 중복된 커밋이므로 저장되지 않았습니다. 커밋 sha: {}", commit.getSha());
+                        return false;
+                    }
+
+                    return true;
                 })
                 .map(commit -> {
                     User findUser = userMap.get(commit.getAuthorName());
                     StudyTodoMapping todoMapping = todoMappingMap.get(findUser.getId());
 
                     // 마감일이 지났는지 확인
-                    if (todoMapping != null && commit.getCommitDate().isAfter(todo.getTodoDate())) {
-                        // 마감일이 지났다면 상태를 TODO_OVERDUE로 변경
-                        todoMapping.updateTodoMappingStatus(StudyTodoStatus.TODO_OVERDUE);
-                    } else {
-                        // 마감일이 지나지 않았다면 상태를 TODO_COMPLETE로 변경
-                        if (todoMapping != null) {
+                    if (todoMapping != null) {
+                        if (commit.getCommitDate().isAfter(todo.getTodoDate())) {
+                            log.info(">>>> 마감일이 지났으므로 지각 처리되었습니다. 커밋 sha: {}", commit.getSha());
+
+                            // 마감일이 지났다면 상태를 TODO_OVERDUE로 변경
+                            todoMapping.updateTodoMappingStatus(StudyTodoStatus.TODO_OVERDUE);
+                        } else {
+                            // 마감일이 지나지 않았다면 상태를 TODO_COMPLETE로 변경
                             todoMapping.updateTodoMappingStatus(StudyTodoStatus.TODO_COMPLETE);
                         }
                     }
 
-                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_APPROVAL);
+                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_WAITING);
                 })
                 .toList();
 

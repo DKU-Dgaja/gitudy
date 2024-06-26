@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -23,6 +24,8 @@ import java.util.List;
 public class GithubApiService {
     @Value("${github.api.token}")
     private String token;
+
+    private final StudyCommitRepository studyCommitRepository;
 
     // 깃허브 api 통신 연결
     public GitHub connectGithubApi() {
@@ -56,50 +59,43 @@ public class GithubApiService {
     }
 
     // 지정한 레포지토리의 커밋 리스트를 불러오기
-    public List<GithubCommitResponse> fetchCommits(RepositoryInfo repo, int pageNumber, int pageSize, String todoCode) {
+    public List<GithubCommitResponse> fetchCommits(RepositoryInfo repo, int pageSize, String todoCode) {
         GHRepository getRepo = getRepository(repo);
-        List<GHCommit> filteredCommits = new ArrayList<>();
-
-        // 페이지네이션 기준 pageSize 지정
+        List<GithubCommitResponse> filteredCommits = new ArrayList<>();
         PagedIterator<GHCommit> commitsIterator = getRepo.listCommits().withPageSize(pageSize).iterator();
 
-        // 조회를 희망하는 페이지로 이동
-        for (int i = 0; i < pageNumber - 1; i++) {
-            if (commitsIterator.hasNext()) {
-                commitsIterator.nextPage();
-            } else {
-                throw new IllegalArgumentException("Requested page does not exist");
-            }
-        }
+        // 특정 투두의 이미 저장된 커밋 SHA 목록 조회
+        Set<String> existingCommitSHAs = studyCommitRepository.findStudyCommitShaListByStudyTodoCode(todoCode);
 
-        // 현재 페이지의 데이터만 가져온다.
-        List<GHCommit> currentPageCommits = commitsIterator.nextPage();
+        int pageNumber = 1;
+        while (commitsIterator.hasNext()) {
+            List<GHCommit> currentPageCommits = commitsIterator.nextPage();
+            log.info(">>>> [ '{}'의 {} 페이지 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", repo.getName(), pageNumber);
 
-        // 필터링된 커밋을 리스트로 저장
-        for (GHCommit commit : currentPageCommits) {
-            try {
-                if (commit.getCommitShortInfo().getMessage().startsWith(todoCode)) {
-                    filteredCommits.add(commit);
-                }
-            } catch (IOException e) {
-                log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
-                throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
-            }
-        }
+            // 필터링된 커밋을 리스트로 저장
+            for (GHCommit commit : currentPageCommits) {
+                try {
+                    // 투두에 해당하는 커밋인지 투두 코드로 확인
+                    if (commit.getCommitShortInfo().getMessage().startsWith(todoCode)) {
 
-        log.info(">>>> [ '{}'의 {} 페이지 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", repo.getName(), pageNumber);
+                        // 커밋 SHA를 확인하여 이미 저장된 커밋인지 확인
+                        if (existingCommitSHAs.contains(commit.getSHA1())) {
 
-        // 가져온 커밋들을 GithubCommitResponse로 변환하여 반환
-        return filteredCommits.stream()
-                .map(commit -> {
-                    try {
-                        return GithubCommitResponse.of(commit);
-                    } catch (IOException e) {
-                        log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
-                        throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
+                            log.info(">>>> [ 이미 저장된 커밋 발견: {} ] <<<<", commit.getSHA1());
+                            return filteredCommits; // 이미 저장된 커밋 발견 시 조회 중단
+                        }
+
+                        filteredCommits.add(GithubCommitResponse.of(commit));
                     }
-                })
-                .toList();
-    }
+                } catch (IOException e) {
+                    log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
+                    throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
+                }
+            }
 
+            pageNumber++;
+        }
+
+        return filteredCommits;
+    }
 }

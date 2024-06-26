@@ -52,7 +52,7 @@ public class StudyTodoService {
     private final StudyCommitRepository studyCommitRepository;
 
     private final static Long MAX_LIMIT = 10L;
-    private final static int PAGE_SIZE = 5;
+    private final static int PAGE_SIZE = 10;
 
     // Todo 등록
     @Transactional
