@@ -122,7 +122,8 @@ public class StudyTodoService {
 
         // 깃허브 api를 사용해 커밋 업데이트
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
-        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, studyTodo, PAGE_SIZE);
+//        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, studyTodo, PAGE_SIZE);
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, studyTodo, PAGE_SIZE);
 
         // 활동중인 멤버들의 userId 추출
         List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
@@ -181,7 +182,9 @@ public class StudyTodoService {
                     log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
                     return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
                 });
-                studyCommitService.fetchRemoteCommitsAndSaveAsync(study, findTodo, PAGE_SIZE);
+//                studyCommitService.fetchRemoteCommitsAndSaveAsync(study, findTodo, PAGE_SIZE);
+                studyCommitService.fetchRemoteCommitsAndSave(study, findTodo, PAGE_SIZE);
+
 
                 // TODO: 점수 부여 로직 필요
             });
@@ -206,7 +209,8 @@ public class StudyTodoService {
             log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
             return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
-        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo, PAGE_SIZE);
+//        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo, PAGE_SIZE);
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo, PAGE_SIZE);
 
         return StudyTodoResponse.of(todo);
     }
@@ -228,7 +232,9 @@ public class StudyTodoService {
 
         // 깃허브 api를 사용해 커밋 업데이트
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
-        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, todo, PAGE_SIZE);
+//        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, todo, PAGE_SIZE);
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, todo, PAGE_SIZE);
+
 
         // TODO: 점수 부여 로직 필요
 
@@ -281,7 +287,8 @@ public class StudyTodoService {
 
         // 깃허브 api를 사용해 커밋 업데이트
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
-        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo, PAGE_SIZE);
+//        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo, PAGE_SIZE);
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo, PAGE_SIZE);
 
         return StudyTodoProgressResponse.builder()
                 .todoId(findTodo.getId())
@@ -300,7 +307,9 @@ public class StudyTodoService {
         List<StudyTodo> todos = studyTodoRepository.findByStudyInfoIdAndTodoDateAfter(
                 study.getId(), threeDaysAgo);
         for (StudyTodo todo : todos) {
-            studyCommitService.fetchRemoteCommitsAndSaveAsync(study, todo, pageSize);
+//            studyCommitService.fetchRemoteCommitsAndSaveAsync(study, todo, pageSize);
+            studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
+
         }
     }
 
