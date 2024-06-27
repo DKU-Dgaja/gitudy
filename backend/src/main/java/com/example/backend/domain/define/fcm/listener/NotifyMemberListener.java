@@ -28,8 +28,7 @@ public class NotifyMemberListener {
 
         noticeService.NotifyMemberNotice(event);
 
-        if(event.isPushAlarmYn())
-        {
+        if (event.isPushAlarmYn()) {
             FcmToken fcmToken = fcmService.findFcmTokenByIdOrThrowException(event.getNotifyUserId());
 
             fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()

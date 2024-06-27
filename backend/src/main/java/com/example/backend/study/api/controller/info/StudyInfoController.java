@@ -108,7 +108,7 @@ public class StudyInfoController {
             StudyInfoCountResponse.class)))
     @GetMapping("/count")
     public JsonResult<?> getStudyInfoCount(@AuthenticationPrincipal User user,
-                                      @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy) {
+                                           @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy) {
         UserInfoResponse findUser = authService.findUserInfo(user);
         return JsonResult.successOf(studyInfoService.getStudyInfoCount(findUser.getUserId(), myStudy));
     }

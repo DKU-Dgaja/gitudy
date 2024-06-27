@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.study.comment.study;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -33,6 +32,7 @@ public class StudyComment extends BaseEntity {
         this.userId = userId;
         this.content = content;
     }
+
     public void updateStudyComment(String content) {
         this.content = content;
     }

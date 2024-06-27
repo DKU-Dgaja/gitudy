@@ -2,18 +2,15 @@ package com.example.backend.auth.api.service.token;
 
 
 import com.example.backend.auth.api.service.jwt.JwtService;
-
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.domain.define.account.user.constant.UserRole;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.constant.UserRole;
-import com.example.backend.domain.define.account.user.constant.UserPlatformType;
-import com.example.backend.domain.define.account.user.repository.UserRepository;
-
 import io.jsonwebtoken.Claims;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -63,12 +60,12 @@ public class RefreshTokenService {
 
         return jwtService.generateAccessToken(map, userDetails);
     }
+
     private String[] extractFromSubject(String subject) {
         // "_"로 문자열을 나누고 id와 type을 추출
         // 이미 검증된 토큰이므로 따로 예외처리 필요 없음
         return subject.split("_");
     }
-
 
 
     // Logout 시 Redis에 저장된 RefreshToken 삭제

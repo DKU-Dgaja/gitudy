@@ -14,26 +14,26 @@ import org.springframework.web.reactive.function.client.support.WebClientAdapter
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 
 /*
-    * BeanFactoryPostProcessor
-        * Application Context가 생성될 때 실행되는 인터페이스
-        * 빈의 설정을 변경하거나 추가적인 빈을 동적으로 등록
+ * BeanFactoryPostProcessor
+ * Application Context가 생성될 때 실행되는 인터페이스
+ * 빈의 설정을 변경하거나 추가적인 빈을 동적으로 등록
 
-    * EnvironmentAware
-        * Context 생성 및 초기화 시 Environment(application.yml)를 주입받음
-        * 빈 내부에서 Environment(application.yml)를 사용할 수 있음
+ * EnvironmentAware
+ * Context 생성 및 초기화 시 Environment(application.yml)를 주입받음
+ * 빈 내부에서 Environment(application.yml)를 사용할 수 있음
  */
 @Slf4j
 @Component
-public class ExternalClientsPostProcessor implements BeanFactoryPostProcessor , EnvironmentAware {
+public class ExternalClientsPostProcessor implements BeanFactoryPostProcessor, EnvironmentAware {
 
     private Environment environment;
 
     @Override
     public void postProcessBeanFactory(ConfigurableListableBeanFactory beanFactory) throws BeansException {
         /*
-            * Reflection 라이브러리
-                * 프로그램 실행 중에 클래스, 메서드, 필드 등의 정보를 조사할 때 사용
-                * 적용할 external 패키지 지정
+         * Reflection 라이브러리
+         * 프로그램 실행 중에 클래스, 메서드, 필드 등의 정보를 조사할 때 사용
+         * 적용할 external 패키지 지정
          */
         Reflections ref = new Reflections("com.example.backend.external");
 

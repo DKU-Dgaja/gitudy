@@ -6,7 +6,6 @@ import com.example.backend.domain.define.study.member.constant.StudyMemberStatus
 import com.example.backend.study.api.controller.info.response.StudyMemberWithUserInfoResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;

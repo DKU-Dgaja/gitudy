@@ -1,7 +1,6 @@
 package com.example.backend.auth.api.controller.auth.response;
 
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +32,7 @@ public class UserInfoResponse {
         this.point = point;
     }
 
-    public static UserInfoResponse of(User user){
+    public static UserInfoResponse of(User user) {
         return UserInfoResponse.builder()
                 .userId(user.getId())
                 .role(user.getRole())

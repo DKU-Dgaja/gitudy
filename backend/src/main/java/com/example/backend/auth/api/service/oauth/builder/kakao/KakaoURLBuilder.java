@@ -38,6 +38,7 @@ public class KakaoURLBuilder implements OAuthURLBuilder {
             throw new OAuthException(ExceptionMessage.OAUTH_CONFIG_NULL);
         }
     }
+
     // "https://kauth.kakao.com/oauth/authorize?..."
     @Override
     public String authorize(String state) {
@@ -60,7 +61,10 @@ public class KakaoURLBuilder implements OAuthURLBuilder {
                 + "&code=" + code;                  // authorize() 요청으로 얻은 인가 코드
 
     }
+
     // "https://kapi.kakao.com/v2/user/me"
     @Override
-    public String profile() { return profileUri; }
+    public String profile() {
+        return profileUri;
+    }
 }

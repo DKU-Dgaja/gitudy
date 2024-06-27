@@ -11,24 +11,21 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
-import com.example.backend.common.exception.user.UserException;
+import com.example.backend.auth.api.service.token.RefreshTokenService;
+import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.jwt.JwtException;
+import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.auth.api.service.token.RefreshTokenService;
-import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
-
 import io.jsonwebtoken.Claims;
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 
 import java.util.HashMap;
 
@@ -44,6 +41,7 @@ public class AuthService {
     private final OAuthService oAuthService;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+
     @Transactional
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
         OAuthResponse loginResponse = oAuthService.login(platformType, code, state);
@@ -104,7 +102,7 @@ public class AuthService {
         log.info(">>>> [ 사용자 {}님의 refresh 토큰이 발급되었습니다 ] <<<<", user.getName());
 
         // Refresh Token을 레디스에 저장
-        RefreshToken refreshToken= RefreshToken.builder().refreshToken(jwtRefreshToken).subject(user.getUsername()).build();
+        RefreshToken refreshToken = RefreshToken.builder().refreshToken(jwtRefreshToken).subject(user.getUsername()).build();
         refreshTokenService.saveRefreshToken(refreshToken);
         return JwtToken.builder()
                 .accessToken(jwtAccessToken)
@@ -118,7 +116,7 @@ public class AuthService {
     }
 
     // JWT 토큰이 만료되었을 때 재발급을 위한 서비스 로직
-    public ReissueAccessTokenResponse reissueAccessToken(String refreshToken){
+    public ReissueAccessTokenResponse reissueAccessToken(String refreshToken) {
         Claims claims = jwtService.extractAllClaims(refreshToken);
         if (jwtService.isTokenValid(refreshToken, claims.getSubject())) {
             // 리프레시 토큰을 이용해 새로운 엑세스 토큰 발급
@@ -141,7 +139,7 @@ public class AuthService {
         User userInfoResponse = userRepository.findByPlatformIdAndPlatformType(platformId, platformType)
                 .orElseThrow(() -> {
                     log.warn(">>>> User not found with platformId: {} platformType: {}", platformId, platformType);
-                     throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                    throw new UserException(ExceptionMessage.USER_NOT_FOUND);
                 });
 
 
@@ -203,6 +201,7 @@ public class AuthService {
                 .refreshToken(refreshToken)
                 .build();
     }
+
     @Transactional
     public void userDelete(String userName) {
         String[] platformIdAndPlatformType = extractFromSubject(userName);

@@ -49,7 +49,8 @@ public class StudyInfoDetailResponse {
     private RepositoryInfo repositoryInfo;          // 연동할 깃허브 레포지토리 정보
 
     private Boolean isLeader;                       // 스터디 리더인지
-    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<String> categoryNames, Long userId){
+
+    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<String> categoryNames, Long userId) {
         return StudyInfoDetailResponse.builder()
                 .userId(studyInfo.getUserId())
                 .topic(studyInfo.getTopic())

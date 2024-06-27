@@ -1,14 +1,12 @@
 package com.example.backend.domain.define.study.convention.repository;
 
 
-import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 
 import java.util.List;
 

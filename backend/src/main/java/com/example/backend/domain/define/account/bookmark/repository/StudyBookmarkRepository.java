@@ -7,6 +7,8 @@ import java.util.Optional;
 
 public interface StudyBookmarkRepository extends JpaRepository<StudyBookmark, Long>, StudyBookmarkRepositoryCustom {
     Optional<StudyBookmark> findStudyBookmarkByUserIdAndStudyInfoId(Long userId, Long studyInfoId);
+
     int deleteStudyBookmarkByUserIdAndStudyInfoId(Long userId, Long studyInfoId);
+
     boolean existsStudyBookmarkByUserIdAndStudyInfoId(Long userId, Long studyInfoId);
 }

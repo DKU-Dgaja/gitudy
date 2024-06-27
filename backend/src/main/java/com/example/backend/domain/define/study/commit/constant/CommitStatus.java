@@ -9,8 +9,7 @@ public enum CommitStatus {
     COMMIT_APPROVAL("승인"),
     COMMIT_REJECTION("거절"),
     COMMIT_WAITING("대기"),
-    COMMIT_DELETE("삭제")
-    ;
+    COMMIT_DELETE("삭제");
 
     private final String text;
 }

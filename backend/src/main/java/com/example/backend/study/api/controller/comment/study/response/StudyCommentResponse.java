@@ -1,6 +1,5 @@
 package com.example.backend.study.api.controller.comment.study.response;
 
-import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.study.api.service.comment.study.response.UserInfoForStudyCommentResponse;
 import lombok.Builder;
 import lombok.Getter;

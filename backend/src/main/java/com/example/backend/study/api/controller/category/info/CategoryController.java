@@ -33,6 +33,7 @@ public class CategoryController {
         categoryService.registerCategory(categoryRegisterRequest);
         return JsonResult.successOf("Category Register Success.");
     }
+
     @ApiResponse(responseCode = "200", description = "카테고리 수정 성공")
     @PatchMapping("/{categoryId}")
     public JsonResult<?> updateStudyComment(@AuthenticationPrincipal User user,
@@ -42,6 +43,7 @@ public class CategoryController {
         categoryService.updateCategory(categoryUpdateRequest, categoryId);
         return JsonResult.successOf("Category update Success");
     }
+
     @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공")
     @DeleteMapping("/{categoryId}")
     public JsonResult<?> deleteStudyComment(@AuthenticationPrincipal User user,

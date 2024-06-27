@@ -1,9 +1,6 @@
 package com.example.backend.domain.define.study.comment.commit;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.study.commit.StudyCommit;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

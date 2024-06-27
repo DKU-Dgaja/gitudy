@@ -1,11 +1,6 @@
 package com.example.backend.domain.define.study.commit.repository;
 
-import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.user.UserException;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.commit.StudyCommit;
-import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import com.querydsl.core.types.Projections;
@@ -18,7 +13,6 @@ import org.springframework.stereotype.Component;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
 
