@@ -33,7 +33,7 @@ public class StudyInfoRegisterRequest {
 
     private String profileImageUrl;                 // 스터디 프로필 사진
 
-    private String branchName;                      // 브랜치 이름
+    private RepositoryInfo repositoryInfo;          // 레포지토리 정보
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
@@ -45,7 +45,7 @@ public class StudyInfoRegisterRequest {
                 .status(request.getStatus())
                 .maximumMember(request.getMaximumMember())
                 .profileImageUrl(request.getProfileImageUrl())
-                .branchName(request.getRepositoryInfo().getBranchName())
+                .repositoryInfo(request.getRepositoryInfo())
                 .build();
     }
 }
