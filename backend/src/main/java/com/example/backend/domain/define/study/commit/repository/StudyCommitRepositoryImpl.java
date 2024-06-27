@@ -15,7 +15,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
 
@@ -76,5 +79,13 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
         return githubCommitList.stream()
                 .filter(commit -> !savedCommitShaList.contains(commit.getSha()))
                 .toList();
+    }
+
+    @Override
+    public Set<String> findStudyCommitShaListByStudyTodoCode(String todoCode) {
+        return new HashSet<>(queryFactory.select(studyCommit.commitSHA)
+                .from(studyCommit)
+                .where(studyCommit.message.startsWith(todoCode))
+                .fetch());
     }
 }

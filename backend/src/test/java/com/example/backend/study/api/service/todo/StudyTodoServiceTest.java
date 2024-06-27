@@ -532,15 +532,13 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyTodo studyTodo4 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
         studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2, studyTodo3, studyTodo4));
 
-        doReturn(CompletableFuture.completedFuture(null))
-                .when(studyCommitService)
-                .fetchRemoteCommitsAndSaveAsync(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
+        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
         // when
         studyTodoService.fetchTodoCommit(studyInfo.getId());
 
         // then
-        verify(studyCommitService, times(expectedTodoCnt)).fetchRemoteCommitsAndSaveAsync(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
+        verify(studyCommitService, times(expectedTodoCnt)).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
     }
 

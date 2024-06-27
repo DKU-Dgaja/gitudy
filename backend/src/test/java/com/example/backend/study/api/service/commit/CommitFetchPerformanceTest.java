@@ -155,9 +155,9 @@ public class CommitFetchPerformanceTest extends MockTestConfig {
                 GithubCommitResponse.builder().authorName(user.getGithubId()).message(savedCommit.getMessage()).commitDate(LocalDate.now()).sha("sha").build()
         );
 
-        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyInt(), anyString()))
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyString()))
                 .thenReturn(firstPage);
-        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyInt(), anyString()))
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyString()))
                 .thenReturn(Collections.emptyList());
 
         // when
