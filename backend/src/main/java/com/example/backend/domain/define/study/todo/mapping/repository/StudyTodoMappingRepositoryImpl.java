@@ -12,7 +12,7 @@ import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMap
 
 @Component
 @RequiredArgsConstructor
-public class StudyTodoMappingRepositoryImpl implements StudyTodoMappingRepositoryCustom{
+public class StudyTodoMappingRepositoryImpl implements StudyTodoMappingRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override

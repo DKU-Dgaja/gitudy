@@ -26,9 +26,7 @@ public class StudyBookmarkController {
     private final AuthService authService;
     private final StudyBookmarkService studyBookmarkService;
 
-    @ApiResponse(responseCode = "200",
-            description = "북마크 조회 성공",
-            content = @Content(schema = @Schema(implementation = BookmarkInfoListAndCursorIdxResponse.class)))
+    @ApiResponse(responseCode = "200", description = "북마크 조회 성공", content = @Content(schema = @Schema(implementation = BookmarkInfoListAndCursorIdxResponse.class)))
     @GetMapping("")
     public JsonResult<?> userBookmarkList(@AuthenticationPrincipal User user,
                                           @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,

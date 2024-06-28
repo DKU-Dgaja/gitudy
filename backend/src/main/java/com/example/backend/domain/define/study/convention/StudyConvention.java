@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.study.convention;
 
 import com.example.backend.domain.define.BaseEntity;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;

@@ -1,7 +1,6 @@
 package com.example.backend.auth.api.service.state;
 
 import com.example.backend.common.exception.ExceptionMessage;
-
 import com.example.backend.common.exception.state.LoginStateException;
 import com.example.backend.domain.define.state.LoginState;
 import com.example.backend.domain.define.state.LoginStateRepository;

@@ -1,6 +1,5 @@
 package com.example.backend.domain.define.study.convention.repository;
 
-import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 
 import java.util.List;

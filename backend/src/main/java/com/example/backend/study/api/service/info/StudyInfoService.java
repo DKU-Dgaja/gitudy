@@ -146,6 +146,7 @@ public class StudyInfoService {
                 .count(studyInfoRepository.findStudyInfoCount(userId, myStudy))
                 .build();
     }
+
     // StudyInfoDetailResponse를 생성해주는 함수
     private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<String> categoryNames, Long userId) {
         return StudyInfoDetailResponse.of(studyInfo, categoryNames, userId);

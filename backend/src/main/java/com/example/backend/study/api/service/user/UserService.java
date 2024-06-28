@@ -2,7 +2,6 @@ package com.example.backend.study.api.service.user;
 
 
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.event.EventException;
 import com.example.backend.common.exception.user.UserException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -13,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service

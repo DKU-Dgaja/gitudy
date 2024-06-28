@@ -8,8 +8,7 @@ import lombok.RequiredArgsConstructor;
 public enum StudyTodoStatus {
     TODO_INCOMPLETE("미완료"),
     TODO_COMPLETE("완료"),
-    TODO_OVERDUE("기한 초과")
-    ;
+    TODO_OVERDUE("기한 초과");
 
     private final String text;
 }

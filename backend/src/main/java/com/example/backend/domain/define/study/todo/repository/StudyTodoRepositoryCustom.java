@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.study.todo.repository;
 
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
-import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
 
 import java.util.List;

@@ -33,8 +33,8 @@ public class StudyCommentController {
     @ApiResponse(responseCode = "200", description = "스터디 댓글 등록 성공")
     @PostMapping("/{studyInfoId}/comment")
     public JsonResult<?> registerStudyComment(@AuthenticationPrincipal User user,
-                                           @PathVariable("studyInfoId") Long studyInfoId,
-                                           @Valid @RequestBody StudyCommentRegisterRequest studyCommentRegisterRequest) {
+                                              @PathVariable("studyInfoId") Long studyInfoId,
+                                              @Valid @RequestBody StudyCommentRegisterRequest studyCommentRegisterRequest) {
         UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
         studyCommentService.registerStudyComment(studyCommentRegisterRequest, studyInfoId, userInfo.getUserId());
 
@@ -44,19 +44,20 @@ public class StudyCommentController {
     @ApiResponse(responseCode = "200", description = "스터디 댓글 수정 성공")
     @PatchMapping("/{studyInfoId}/comment/{studyCommentId}")
     public JsonResult<?> updateStudyComment(@AuthenticationPrincipal User user,
-                                         @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                         @PathVariable(name = "studyCommentId") Long studyCommentId,
-                                         @Valid @RequestBody StudyCommentUpdateRequest studyCommentUpdateRequest) {
+                                            @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                            @PathVariable(name = "studyCommentId") Long studyCommentId,
+                                            @Valid @RequestBody StudyCommentUpdateRequest studyCommentUpdateRequest) {
         UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
         studyCommentService.updateStudyComment(studyCommentUpdateRequest, studyInfoId, studyCommentId, userInfo.getUserId());
 
         return JsonResult.successOf("StudyComment update Success");
     }
+
     @ApiResponse(responseCode = "200", description = "스터디 댓글 삭제 성공")
     @DeleteMapping("/{studyInfoId}/comment/{studyCommentId}")
     public JsonResult<?> deleteStudyComment(@AuthenticationPrincipal User user,
-                                     @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                     @PathVariable(name = "studyCommentId") Long studyCommentId
+                                            @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                            @PathVariable(name = "studyCommentId") Long studyCommentId
     ) {
         studyMemberService.isValidateStudyMember(user, studyInfoId);
         studyCommentService.deleteStudyComment(user, studyInfoId, studyCommentId);

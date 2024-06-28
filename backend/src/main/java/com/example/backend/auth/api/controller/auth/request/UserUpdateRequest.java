@@ -2,7 +2,6 @@ package com.example.backend.auth.api.controller.auth.request;
 
 import com.example.backend.common.validation.ValidSocialInfo;
 import com.example.backend.domain.define.account.user.SocialInfo;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

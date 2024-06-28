@@ -40,6 +40,7 @@ public class StudyInfoRegisterResponse {
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
     private List<Long> categoriesId;              // 카테고리 ID 리스트
+
     public static StudyInfoRegisterResponse of(StudyInfo response, List<Long> categoriesId) {
         return StudyInfoRegisterResponse.builder()
                 .userId(response.getUserId())

@@ -4,11 +4,8 @@ package com.example.backend.study.api.event.service;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.notice.NoticeException;
-import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.fcm.listener.NotifyLeaderListener;
 import com.example.backend.domain.define.notice.Notice;
 import com.example.backend.domain.define.notice.repository.NoticeRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.event.NotifyLeaderEvent;
@@ -17,13 +14,9 @@ import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.todo.event.TodoRegisterMemberEvent;
 import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
-import com.example.backend.study.api.controller.member.request.MessageRequest;
-import com.example.backend.study.api.service.info.StudyInfoService;
-import com.example.backend.study.api.service.user.UserService;
 import com.example.backend.study.api.event.controller.response.UserNoticeList;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,9 +30,6 @@ import java.util.List;
 public class NoticeService {
 
     private final NoticeRepository noticeRepository;
-    private final StudyInfoService studyInfoService;
-    private final ApplicationEventPublisher eventPublisher;
-    private final UserService userService;
 
 
     // 알림 목록 조회

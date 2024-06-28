@@ -1,6 +1,5 @@
 package com.example.backend.domain.define.study.todo.mapping.repository;
 
-import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

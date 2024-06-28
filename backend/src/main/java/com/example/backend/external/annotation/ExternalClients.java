@@ -10,8 +10,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /*
-    * @HttpExchange를 확장한 커스텀 어노테이션
-    * 사용자가 직접 ProxyFactory 로 빈을 등록해줘야하는 번거로움을 해소해준다.
+ * @HttpExchange를 확장한 커스텀 어노테이션
+ * 사용자가 직접 ProxyFactory 로 빈을 등록해줘야하는 번거로움을 해소해준다.
  */
 @Target(ElementType.TYPE)               // 어노테이션 범위: 클래스, 인터페이스 등의 타입 선언부
 @Retention(RetentionPolicy.RUNTIME)     // 어노테이션 유지 시간: 런타임

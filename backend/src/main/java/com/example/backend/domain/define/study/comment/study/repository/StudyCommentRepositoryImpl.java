@@ -1,7 +1,5 @@
 package com.example.backend.domain.define.study.comment.study.repository;
 
-import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
-import com.example.backend.domain.define.study.comment.study.StudyComment;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import com.example.backend.study.api.service.comment.study.response.UserInfoForStudyCommentResponse;
 import com.querydsl.core.types.Projections;
@@ -14,11 +12,10 @@ import java.util.List;
 
 import static com.example.backend.domain.define.account.user.QUser.user;
 import static com.example.backend.domain.define.study.comment.study.QStudyComment.studyComment;
-import static javax.management.Query.eq;
 
 @Component
 @RequiredArgsConstructor
-public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom{
+public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom {
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override

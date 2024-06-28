@@ -5,7 +5,6 @@ import com.example.backend.auth.config.oauth.OAuthProperties;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
 import lombok.extern.slf4j.Slf4j;
-
 import org.springframework.stereotype.Component;
 
 
@@ -62,8 +61,6 @@ public class GoogleURLBuilder implements OAuthURLBuilder {
                 + "&redirect_uri=" + redirectUri    // 리다이렉트 URI
                 + "&code=" + code;                  // authorize() 요청으로 얻은 인가 코드
     }
-
-
 
 
     // "https://www.googleapis.com/oauth2/v3/userinfo"

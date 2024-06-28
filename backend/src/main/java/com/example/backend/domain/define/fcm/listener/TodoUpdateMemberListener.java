@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.fcm.listener;
 
 import com.example.backend.domain.define.fcm.FcmToken;
-import com.example.backend.domain.define.study.todo.event.TodoRegisterMemberEvent;
 import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
