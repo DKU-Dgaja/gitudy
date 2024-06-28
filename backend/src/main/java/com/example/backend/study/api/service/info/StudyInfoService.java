@@ -240,11 +240,7 @@ public class StudyInfoService {
                 .lastCommitDay(null)
                 .profileImageUrl(request.getProfileImageUrl())
                 .notice(null)
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner(userInfo.getGithubId())
-                        .name(userInfo.getName())
-                        .branchName(request.getBranchName())
-                        .build())
+                .repositoryInfo(request.getRepositoryInfo())
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);

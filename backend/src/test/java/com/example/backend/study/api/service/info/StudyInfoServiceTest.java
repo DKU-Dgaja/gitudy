@@ -98,17 +98,12 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertEquals(studyInfoRegisterRequest.getStatus(), registeredStudy.getStatus()),
                 () -> assertEquals(studyInfoRegisterRequest.getMaximumMember(), registeredStudy.getMaximumMember()),
                 () -> assertEquals(studyInfoRegisterRequest.getProfileImageUrl(), registeredStudy.getProfileImageUrl()),
-                () -> assertEquals(studyInfoRegisterRequest.getBranchName(), registeredStudy.getRepositoryInfo().getBranchName()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getOwner(), registeredStudy.getRepositoryInfo().getOwner()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getName(), registeredStudy.getRepositoryInfo().getName()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getBranchName(), registeredStudy.getRepositoryInfo().getBranchName()),
                 () -> assertEquals(studyInfoRegisterRequest.getPeriodType(), registeredStudy.getPeriodType()),
                 () -> assertIterableEquals(studyInfoRegisterRequest.getCategoriesId(), registeredStudy.getCategoriesId())
         );
-
-        // 스터디 등록 시 자동 초기화 검증
-        List<StudyInfo> studyInfo = studyInfoRepository.findAll();
-        assertEquals(studyInfo.size(), 1);
-        assertEquals(studyInfo.get(0).getUserId(), user.getId());
-        assertEquals(studyInfo.get(0).getRepositoryInfo().getOwner(), user.getGithubId());
-        assertEquals(studyInfo.get(0).getRepositoryInfo().getName(), user.getName());
 
         // joinCode 10자리가 잘 생성되었는지 검증
         assertEquals(registeredStudy.getJoinCode().length(), JOIN_CODE_LENGTH);
