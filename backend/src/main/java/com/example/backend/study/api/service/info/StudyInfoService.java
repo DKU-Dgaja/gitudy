@@ -8,8 +8,9 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
+import com.example.backend.domain.define.study.convention.StudyConvention;
+import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -36,6 +37,8 @@ import static com.example.backend.domain.define.study.member.constant.StudyMembe
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudyInfoService {
+    private final static String DEFAULT_NAME = "default convention";
+    private final static String DEFAULT_CONTENT = "^[a-zA-Z0-9]{6} .*";
 
     private final StudyInfoRepository studyInfoRepository;
     private final StudyMemberRepository memberRepository;
@@ -43,6 +46,7 @@ public class StudyInfoService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyCategoryRepository studyCategoryRepository;
     private final UserRepository userRepository;
+    private final StudyConventionRepository studyConventionRepository;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
@@ -59,9 +63,11 @@ public class StudyInfoService {
         Optional<User> user = userRepository.findById(userInfo.getUserId());
         user.get().addUserScore(5);
 
+        // 기본 컨벤션 생성
+        registerDefaultConvention(studyInfo.getId());
+
         return StudyInfoRegisterResponse.of(studyInfo, categories);
     }
-
 
     @Transactional
     public void updateStudyInfo(StudyInfoUpdateRequest request, Long studyInfoId) {
@@ -244,6 +250,17 @@ public class StudyInfoService {
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);
+    }
+
+    // 기본 컨벤션 생성
+    public void registerDefaultConvention(Long id) {
+        // 기본 컨벤션 저장
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(id)
+                .name(DEFAULT_NAME)
+                .content(DEFAULT_CONTENT)
+                .isActive(true)
+                .build());
     }
 
     public StudyInfo findStudyInfoByIdOrThrowException(Long studyInfoId) {
