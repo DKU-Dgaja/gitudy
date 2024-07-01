@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.example.backend.domain.define.study.member.constant.StudyMemberRole.STUDY_LEADER;
 import static com.example.backend.domain.define.study.member.constant.StudyMemberStatus.STUDY_ACTIVE;
@@ -211,7 +212,7 @@ public class StudyInfoService {
                         .studyInfoId(studyInfo.getId())
                         .studyCategoryId(categoryId)
                         .build())
-                .collect(Collectors.toList());
+                .toList();
 
         studyCategoryMappingRepository.saveAll(studyCategoryMapping);
         return categoriesId;
