@@ -1,4 +1,4 @@
-package com.takseha.common.model
+package com.takseha.data.sharedPreferences
 
 object SPKey {
     const val ACCESS_TOKEN = "access_token"

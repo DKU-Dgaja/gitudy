@@ -46,7 +46,6 @@ android {
 }
 
 dependencies {
-    implementation(project(":common"))
     implementation(project(":domain"))
     // 임시로 data implementation
     implementation(project(":data"))
