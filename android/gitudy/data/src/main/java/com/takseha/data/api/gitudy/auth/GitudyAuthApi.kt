@@ -6,6 +6,7 @@ import com.takseha.data.dto.auth.login.LoginResponse
 import com.takseha.data.dto.auth.register.NickNameResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.auth.register.RegisterResponse
+import com.takseha.data.dto.auth.register.ReissueResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -35,6 +36,11 @@ interface GitudyAuthApi {
         @Header("Authorization") bearerToken: String,
         @Body request: RegisterRequest
     ): Response<RegisterResponse>
+
+    @POST("/auth/reissue")
+    suspend fun reissueToken(
+        @Header("Authorization") bearerToken: String
+    ): Response<ReissueResponse>
 
     @GET("/auth/info")
     suspend fun getUserInfo(
