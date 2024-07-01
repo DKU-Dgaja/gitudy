@@ -19,14 +19,13 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
         prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
     }"
 
-//    private val _availableTokenState = MutableStateFlow<Boolean>(false)
-//    val availableTokenState = _availableTokenState.asStateFlow()
     private var _availableTokenCheck = MutableLiveData<Boolean>()
     val availableTokenCheck : LiveData<Boolean>
         get() = _availableTokenCheck
 
     suspend fun checkAvailableToken() {
         val checkTokenResponse = gitudyAuthRepository.getUserInfo(bearerToken)
+        Log.d("SplashViewModel", bearerToken)
 
         if (checkTokenResponse.isSuccessful) {
             val resCode = checkTokenResponse.body()!!.resCode

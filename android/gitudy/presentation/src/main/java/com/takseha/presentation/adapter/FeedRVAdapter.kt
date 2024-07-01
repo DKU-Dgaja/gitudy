@@ -46,8 +46,10 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         if (studyInfoList[position].profileImageUrl.isEmpty()) {
             holder.backgroundColor.setBackgroundColor(Color.parseColor(backgroundColorList[position % 6]))
-        } else {
+        } else if (studyInfoList[position].profileImageUrl != "string") {
             holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].profileImageUrl))
+        } else {
+            holder.backgroundColor.setBackgroundColor(Color.parseColor(backgroundColorList[position % 6]))
         }
         holder.studyName.text = studyInfoList[position].topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].periodType)
