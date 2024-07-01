@@ -115,6 +115,9 @@ public class StudyInfoService {
                 = studyMemberRepository.findStudyMemberListByStudyInfoListJoinUserInfo(studyInfoIdList);
         Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = getStudyUserInfoMap(studyMemberWithUserInfoResponses);
 
+        List<StudyInfoListWithMemberResponse> withMemberResponses =
+                convertToWithMemberResponse(studyInfoListResponse, studyUserInfoMap);
+
 
         // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>>
         List<CategoryResponseWithStudyId> categoryResponseWithStudyIdList
@@ -123,8 +126,7 @@ public class StudyInfoService {
 
 
         StudyInfoListAndCursorIdxResponse response = StudyInfoListAndCursorIdxResponse.builder()
-                .studyInfoList(studyInfoListResponse)
-                .studyUserInfoMap(studyUserInfoMap)
+                .studyInfoList(withMemberResponses)
                 .studyCategoryMappingMap(studyCategoryMappingMap)
                 .build();
         response.setNextCursorIdx();
@@ -252,5 +254,17 @@ public class StudyInfoService {
                     log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
                     return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
                 });
+    }
+
+    public static List<StudyInfoListWithMemberResponse> convertToWithMemberResponse(
+            List<StudyInfoListResponse> studyInfoListResponses,
+            Map<Long, List<UserNameAndProfileImageResponse>> userInfoMap) {
+
+        return studyInfoListResponses.stream()
+                .map(studyInfo -> {
+                    List<UserNameAndProfileImageResponse> userInfo = userInfoMap.getOrDefault(studyInfo.getId(), new ArrayList<>());
+                    return StudyInfoListWithMemberResponse.from(studyInfo, userInfo);
+                })
+                .collect(Collectors.toList());
     }
 }
