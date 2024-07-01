@@ -189,18 +189,14 @@ class StudyCommitServiceTest extends TestConfig {
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
@@ -221,11 +217,13 @@ class StudyCommitServiceTest extends TestConfig {
                 aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
                 aBc123 [jusung-c] 백준: 크리스마스 트리
         */
-        int expectedSize = 3;
+        int expectedSize = 5;
 
         String A = "aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기";
-        String B = "aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기";
-        String C = "aBc123 [jusung-c] 백준: 크리스마스 트리";
+        String B = "aBc123 컨벤션 무시하기";
+        String C = "aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기";
+        String D = "aBc123 컨벤션 안 지키기";
+        String E = "aBc123 [jusung-c] 백준: 크리스마스 트리";
 
         // when
         studyCommitService.fetchRemoteCommitsAndSave(study, todo, 2);
@@ -235,10 +233,10 @@ class StudyCommitServiceTest extends TestConfig {
                 .stream()
                 .filter(commit -> commit.getStatus() == CommitStatus.COMMIT_WAITING)
                 .toList();
-        System.out.println("allCommits.size() = " + allCommits.size());
-        for (var c : allCommits) {
-            System.out.println(c.getMessage());
-        }
+//        System.out.println("allCommits.size() = " + allCommits.size());
+//        for (var c : allCommits) {
+//            System.out.println(c.getMessage());
+//        }
 
         // then
         assertEquals(allCommits.size(), expectedSize);
@@ -251,6 +249,8 @@ class StudyCommitServiceTest extends TestConfig {
         assertEquals(A, allCommits.get(0).getMessage());
         assertEquals(B, allCommits.get(1).getMessage());
         assertEquals(C, allCommits.get(2).getMessage());
+        assertEquals(D, allCommits.get(3).getMessage());
+        assertEquals(E, allCommits.get(4).getMessage());
 
     }
 

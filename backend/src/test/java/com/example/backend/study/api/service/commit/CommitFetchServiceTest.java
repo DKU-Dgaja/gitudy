@@ -132,18 +132,14 @@ public class CommitFetchServiceTest extends MockTestConfig {
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
@@ -155,8 +151,8 @@ public class CommitFetchServiceTest extends MockTestConfig {
         List<GithubCommitResponse> mockCommits = List.of(
                 GithubCommitResponse.builder().sha("sha1").message(A).authorName(userA.getGithubId()).commitDate(LocalDate.now()).build(),
                 GithubCommitResponse.builder().sha("sha2").message(B).authorName(userB.getGithubId()).commitDate(LocalDate.now()).build(),
-                GithubCommitResponse.builder().sha("sha3").message("aBc123 컨벤션 무시하기").authorName(userA.getGithubId()).commitDate(LocalDate.now()).build(),
-                GithubCommitResponse.builder().sha("sha4").message("aBc123 컨벤션 무시하기").authorName(userB.getGithubId()).commitDate(LocalDate.now()).build()
+                GithubCommitResponse.builder().sha("sha3").message("aBc123컨벤션 무시하기").authorName(userA.getGithubId()).commitDate(LocalDate.now()).build(),
+                GithubCommitResponse.builder().sha("sha4").message("aBc123컨벤션 무시하기").authorName(userB.getGithubId()).commitDate(LocalDate.now()).build()
         );
 
         when(githubApiService.fetchCommits(any(RepositoryInfo.class), anyInt(), eq("aBc123")))
@@ -201,23 +197,78 @@ public class CommitFetchServiceTest extends MockTestConfig {
 
     @Test
     void 컨벤션_불일치_커밋_처리_테스트() {
-        // Given
-        User user = userRepository.save(UserFixture.generateAuthUser());
-        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
-        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
-        studyConventionRepository.save(StudyConventionFixture.createStudyDefaultConvention(study.getId()));
+        // 유저 저장
+        User userA = userRepository.save(User.builder()
+                .platformId("1")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId(REPOSITORY_OWNER)
+                .profileImageUrl("프로필이미지")
+                .build());
 
-        List<GithubCommitResponse> invalidConvention = List.of(StudyCommitFixture.createGithubCommitResponse(user.getGithubId()));
+        String gitId = "jjjjssssuuunngg";
+        User userB = userRepository.save(User.builder()
+                .platformId("2")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId(gitId)
+                .profileImageUrl("프로필이미지")
+                .build());
+
+        // 스터디 저장
+        StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
+                .userId(userA.getId())
+                .topic("topic")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner(REPOSITORY_OWNER)
+                        .name(REPOSITORY_NAME)
+                        .branchName("main")
+                        .build())
+                .build());
+
+        // 스터디원 저장
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), study.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userB.getId(), study.getId()));
+
+        // 투두 저장
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
+
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
+
+        // 컨벤션 등록
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(study.getId())
+                .name(conventionName)
+                .content(convention)
+                .isActive(true)
+                .build());
+
+        String A = "aBc123 컨벤션 지키기";
+        String B = "aBc123백준: 컨벤션 수칙 어기기";
+
+        List<GithubCommitResponse> commits = List.of(
+                GithubCommitResponse.builder().sha("sha1").message(A).authorName(userA.getGithubId()).commitDate(LocalDate.now()).build(),
+                GithubCommitResponse.builder().sha("sha2").message(B).authorName(userB.getGithubId()).commitDate(LocalDate.now()).build()
+        );
 
         // 깃허브 페이지 조회
         when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(PAGE_SIZE), eq(todo.getTodoCode())))
-                .thenReturn(invalidConvention);
+                .thenReturn(commits);
 
         // When
         studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
 
         // Then
-        assertTrue(studyCommitRepository.findAll().isEmpty());
+        assertEquals(1, studyCommitRepository.findAll().size());
+        assertEquals(A, studyCommitRepository.findAll().get(0).getMessage());
     }
 
     @Test
@@ -253,18 +304,14 @@ public class CommitFetchServiceTest extends MockTestConfig {
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
@@ -309,18 +356,14 @@ public class CommitFetchServiceTest extends MockTestConfig {
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
@@ -372,18 +415,14 @@ public class CommitFetchServiceTest extends MockTestConfig {
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
@@ -437,18 +476,14 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .status(StudyTodoStatus.TODO_INCOMPLETE)
                 .build());
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
@@ -503,6 +538,18 @@ public class CommitFetchServiceTest extends MockTestConfig {
                 .todoId(todo.getId())
                 .userId(user.getId())
                 .status(StudyTodoStatus.TODO_INCOMPLETE)
+                .build());
+
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
+
+        // 컨벤션 등록
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(study.getId())
+                .name(conventionName)
+                .content(convention)
+                .isActive(true)
                 .build());
 
         StudyCommit commit = studyCommitRepository.save(
