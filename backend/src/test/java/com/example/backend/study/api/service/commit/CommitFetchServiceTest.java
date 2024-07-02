@@ -394,7 +394,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
 
         StudyCommit commit = allCommits.get(0);
         assertEquals(commit.getUserId(), activeUser.getId());
-        assertEquals(CommitStatus.COMMIT_WAITING, commit.getStatus());
+        assertEquals(CommitStatus.COMMIT_APPROVAL, commit.getStatus());
 
     }
 
@@ -441,7 +441,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
         assertEquals(1, allCommits.size());
         assertEquals(message, allCommits.get(0).getMessage());
-        assertEquals(CommitStatus.COMMIT_WAITING, allCommits.get(0).getStatus());
+        assertEquals(CommitStatus.COMMIT_APPROVAL, allCommits.get(0).getStatus());
     }
 
     @Test
