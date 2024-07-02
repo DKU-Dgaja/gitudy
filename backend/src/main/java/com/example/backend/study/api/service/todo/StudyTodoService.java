@@ -193,6 +193,7 @@ public class StudyTodoService {
     }
 
     // Todo 단일조회
+    @Transactional
     public StudyTodoResponse readStudyTodo(Long studyInfoId, Long todoId) {
 
         // To do 조회
@@ -204,12 +205,8 @@ public class StudyTodoService {
         });
 
         // 깃허브 api를 사용해 커밋 업데이트
-        StudyTodo findTodo = studyTodoRepository.findById(todo.getId()).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todo.getId(), ExceptionMessage.TODO_NOT_FOUND.getText());
-            return new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
 //        studyCommitService.fetchRemoteCommitsAndSaveAsync(studyInfo, findTodo, PAGE_SIZE);
-        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, findTodo, PAGE_SIZE);
+        studyCommitService.fetchRemoteCommitsAndSave(studyInfo, todo, PAGE_SIZE);
 
         return StudyTodoResponse.of(todo);
     }
@@ -296,6 +293,7 @@ public class StudyTodoService {
                 .build();
     }
 
+    @Transactional
     public void fetchTodoCommit(Long studyInfoId) {
         int pageSize = 10;
         LocalDate today = LocalDate.now();
