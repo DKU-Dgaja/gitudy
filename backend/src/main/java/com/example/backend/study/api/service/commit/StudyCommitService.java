@@ -19,7 +19,6 @@ import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.controller.convention.response.StudyConventionResponse;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.convention.StudyConventionService;
 import com.example.backend.study.api.service.github.GithubApiService;
@@ -194,7 +193,7 @@ public class StudyCommitService {
                         }
                     }
 
-                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_WAITING);
+                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.WAITING);
                 })
                 .toList();
 
@@ -236,7 +235,7 @@ public class StudyCommitService {
     }
 
     public List<CommitInfoResponse> selectWaitingCommit(Long studyInfoId) {
-        return studyCommitRepository.findStudyCommitListByStudyInfoIdAndStatus(studyInfoId, CommitStatus.COMMIT_WAITING)
+        return studyCommitRepository.findStudyCommitListByStudyInfoIdAndStatus(studyInfoId, CommitStatus.WAITING)
                 .stream()
                 .map(CommitInfoResponse::of)
                 .toList();
