@@ -193,7 +193,7 @@ public class StudyCommitService {
                         }
                     }
 
-                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_WAITING);
+                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_APPROVAL);
                 })
                 .toList();
 

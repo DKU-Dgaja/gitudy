@@ -231,7 +231,7 @@ class StudyCommitServiceTest extends TestConfig {
         // 저장된 커밋들 중 컨벤션을 지킨 APPROVAL 상태의 커밋만 필터링
         List<StudyCommit> allCommits = studyCommitRepository.findByStudyTodoId(todo.getId())
                 .stream()
-                .filter(commit -> commit.getStatus() == CommitStatus.COMMIT_WAITING)
+                .filter(commit -> commit.getStatus() == CommitStatus.COMMIT_APPROVAL)
                 .toList();
 //        System.out.println("allCommits.size() = " + allCommits.size());
 //        for (var c : allCommits) {
