@@ -1,31 +1,20 @@
 package com.takseha.presentation.viewmodel.auth
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
+import androidx.lifecycle.ViewModel
 import com.takseha.data.repository.auth.GitudyAuthRepository
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 
-class SplashViewModel(application: Application) : AndroidViewModel(application) {
+class SplashViewModel: ViewModel() {
     private var gitudyAuthRepository: GitudyAuthRepository = GitudyAuthRepository()
-    private val prefs = SP(getApplication())
-
-    private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
-    }"
 
     private var _availableTokenCheck = MutableLiveData<Boolean>()
     val availableTokenCheck : LiveData<Boolean>
         get() = _availableTokenCheck
 
     suspend fun checkAvailableToken() {
-        val checkTokenResponse = gitudyAuthRepository.getUserInfo(bearerToken)
-        Log.d("SplashViewModel", bearerToken)
+        val checkTokenResponse = gitudyAuthRepository.getUserInfo()
 
         if (checkTokenResponse.isSuccessful) {
             val resCode = checkTokenResponse.body()!!.resCode
@@ -40,7 +29,7 @@ class SplashViewModel(application: Application) : AndroidViewModel(application) 
         } else {
             Log.e(
                 "SplashViewModel",
-                "tokenResponse status: ${checkTokenResponse.code()}\ntokenResponse message: ${checkTokenResponse.message()}"
+                "checkTokenResponse status: ${checkTokenResponse.code()}\ncheckTokenResponse message: ${checkTokenResponse.message()}"
             )
         }
     }
