@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import static com.example.backend.domain.define.study.commit.constant.CommitStatus.APPROVAL;
-import static com.example.backend.domain.define.study.commit.constant.CommitStatus.WAITING;
+import static com.example.backend.domain.define.study.commit.constant.CommitStatus.COMMIT_APPROVAL;
+import static com.example.backend.domain.define.study.commit.constant.CommitStatus.COMMIT_WAITING;
 
 public class StudyCommitFixture {
     private static final int MAX_VALUE = 1000; // 최대값 설정
@@ -22,7 +22,7 @@ public class StudyCommitFixture {
                 .commitSHA(commitSHA)
                 .message("메세지")
                 .commitDate(LocalDate.now())
-                .status(APPROVAL)
+                .status(COMMIT_APPROVAL)
                 .rejectionReason(null)
                 .build();
     }
@@ -35,7 +35,7 @@ public class StudyCommitFixture {
                 .commitSHA(commitSHA)
                 .message("메세지")
                 .commitDate(LocalDate.now())
-                .status(WAITING)
+                .status(COMMIT_WAITING)
                 .rejectionReason(null)
                 .build();
     }

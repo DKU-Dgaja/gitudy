@@ -193,7 +193,7 @@ public class StudyCommitService {
                         }
                     }
 
-                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.WAITING);
+                    return StudyCommit.of(findUser.getId(), todo, commit, CommitStatus.COMMIT_WAITING);
                 })
                 .toList();
 
@@ -235,7 +235,7 @@ public class StudyCommitService {
     }
 
     public List<CommitInfoResponse> selectWaitingCommit(Long studyInfoId) {
-        return studyCommitRepository.findStudyCommitListByStudyInfoIdAndStatus(studyInfoId, CommitStatus.WAITING)
+        return studyCommitRepository.findStudyCommitListByStudyInfoIdAndStatus(studyInfoId, CommitStatus.COMMIT_WAITING)
                 .stream()
                 .map(CommitInfoResponse::of)
                 .toList();

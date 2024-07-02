@@ -137,7 +137,7 @@ public class CommitFetchPerformanceTest extends MockTestConfig {
                 .userId(user.getId())
                 .message("aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기")
                 .commitDate(LocalDate.now())
-                .status(CommitStatus.APPROVAL)
+                .status(CommitStatus.COMMIT_APPROVAL)
                 .commitSHA("sha")
                 .build());
 

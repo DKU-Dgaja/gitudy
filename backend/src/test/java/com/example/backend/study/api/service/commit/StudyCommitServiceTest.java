@@ -231,7 +231,7 @@ class StudyCommitServiceTest extends TestConfig {
         // 저장된 커밋들 중 컨벤션을 지킨 APPROVAL 상태의 커밋만 필터링
         List<StudyCommit> allCommits = studyCommitRepository.findByStudyTodoId(todo.getId())
                 .stream()
-                .filter(commit -> commit.getStatus() == CommitStatus.WAITING)
+                .filter(commit -> commit.getStatus() == CommitStatus.COMMIT_WAITING)
                 .toList();
 //        System.out.println("allCommits.size() = " + allCommits.size());
 //        for (var c : allCommits) {
@@ -269,7 +269,7 @@ class StudyCommitServiceTest extends TestConfig {
 
         // then
         StudyCommit commit = studyCommitRepository.findById(savedCommit.getId()).get();
-        assertEquals(commit.getStatus(), CommitStatus.APPROVAL);
+        assertEquals(commit.getStatus(), CommitStatus.COMMIT_APPROVAL);
     }
 
     @Test
@@ -293,7 +293,7 @@ class StudyCommitServiceTest extends TestConfig {
 
         // then
         StudyCommit commit = studyCommitRepository.findById(savedCommit.getId()).get();
-        assertEquals(CommitStatus.APPROVAL, commit.getStatus());
+        assertEquals(CommitStatus.COMMIT_APPROVAL, commit.getStatus());
         assertNotNull(commit.getModifiedDateTime());
     }
 
@@ -315,7 +315,7 @@ class StudyCommitServiceTest extends TestConfig {
 
         // then
         StudyCommit commit = studyCommitRepository.findById(savedCommit.getId()).get();
-        assertEquals(commit.getStatus(), CommitStatus.REJECTION);
+        assertEquals(commit.getStatus(), CommitStatus.COMMIT_REJECTION);
         assertEquals(commit.getRejectionReason(), rejectionReason);
     }
 
@@ -339,7 +339,7 @@ class StudyCommitServiceTest extends TestConfig {
         // then
         assertEquals(waintingList.size(), waitingCommits.size());
         for (var a : waintingList) {
-            assertEquals(a.getStatus(), CommitStatus.WAITING);
+            assertEquals(a.getStatus(), CommitStatus.COMMIT_WAITING);
         }
 
     }
