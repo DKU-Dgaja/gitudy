@@ -1,14 +1,11 @@
 package com.takseha.presentation.viewmodel.home
 
 import android.app.Application
-import android.graphics.Color
 import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoProgress
@@ -24,13 +21,8 @@ import kotlinx.coroutines.launch
 import java.io.Serializable
 
 class MainHomeViewModel(application: Application) : AndroidViewModel(application) {
-    private var gitudyAuthRepository: GitudyAuthRepository = GitudyAuthRepository()
-    private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
-    private val prefs = SP(getApplication())
-
-    private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
-    }"
+    private var gitudyAuthRepository = GitudyAuthRepository()
+    private var gitudyStudyRepository = GitudyStudyRepository()
 
     private val _uiState = MutableStateFlow(MainHomeUserInfoUiState())
     val uiState = _uiState.asStateFlow()
@@ -44,7 +36,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         get() = _cursorIdxRes
 
     suspend fun getUserInfo() {
-        val userInfoResponse = gitudyAuthRepository.getUserInfo(bearerToken)
+        val userInfoResponse = gitudyAuthRepository.getUserInfo()
 
         if (userInfoResponse.isSuccessful) {
             val resCode = userInfoResponse.body()!!.resCode
@@ -67,7 +59,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         } else {
             Log.e(
                 "MainHomeViewModel",
-                "tokenResponse status: ${userInfoResponse.code()}\ntokenResponse message: ${userInfoResponse.message()}"
+                "userInfoResponse status: ${userInfoResponse.code()}\nuserInfoResponse message: ${userInfoResponse.message()}"
             )
         }
     }
@@ -128,7 +120,6 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         val backgroundColorList = listOf("#f8a7a7", "#f8dea6", "#d3f3be", "#85b0e9")
 
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
-            bearerToken,
             cursorIdx,
             limit,
             sortBy = "createdDateTime",
@@ -150,10 +141,25 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
 
                     if (todo != null) {
                         val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
-                        val todoCheck = if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
-                        MyStudyWithTodo(backgroundColorList[study.id % 4], study, todo.title, todo.todoDate, todoCheck, todoCheckNum)
+                        val todoCheck =
+                            if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
+                        MyStudyWithTodo(
+                            backgroundColorList[study.id % 4],
+                            study,
+                            todo.title,
+                            todo.todoDate,
+                            todoCheck,
+                            todoCheckNum
+                        )
                     } else {
-                        MyStudyWithTodo(backgroundColorList[study.id % 4], study, null, null, TodoStatus.TODO_EMPTY, null)
+                        MyStudyWithTodo(
+                            backgroundColorList[study.id % 4],
+                            study,
+                            null,
+                            null,
+                            TodoStatus.TODO_EMPTY,
+                            null
+                        )
                     }
                 }
                 _myStudyState.update {
@@ -177,7 +183,6 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
 
     private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
         val todoInfoResponse = gitudyStudyRepository.getTodoList(
-            bearerToken,
             studyInfoId,
             cursorIdx = null,
             limit = 1
@@ -215,7 +220,6 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
 
     private suspend fun getTodoProgress(studyInfoId: Int): TodoProgress? {
         val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
-            bearerToken,
             studyInfoId
         )
 

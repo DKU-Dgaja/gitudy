@@ -71,6 +71,9 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:32.7.4"))
     implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-messaging:23.4.1")
+
+    // security
+    implementation("androidx.security:security-crypto-ktx:1.1.0-alpha06")
 }
 
 kapt {

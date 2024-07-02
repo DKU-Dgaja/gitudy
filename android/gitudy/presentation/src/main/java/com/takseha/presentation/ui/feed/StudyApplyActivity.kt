@@ -30,7 +30,7 @@ class StudyApplyActivity : AppCompatActivity() {
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
         val studyImgColor =
-            if (intent.getStringExtra("studyImgColor") == "") "#000000" else intent.getStringExtra("studyImgColor")
+            if (intent.getStringExtra("studyImgColor") == "" || intent.getStringExtra("studyImgColor") == "string") "#000000" else intent.getStringExtra("studyImgColor")
 
         window.statusBarColor = Color.parseColor(studyImgColor)
 

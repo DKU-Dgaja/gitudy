@@ -1,13 +1,10 @@
 package com.takseha.presentation.viewmodel.feed
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,13 +12,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class FeedHomeViewModel(application: Application) : AndroidViewModel(application) {
+class FeedHomeViewModel : ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
-    private val prefs = SP(getApplication())
-
-    private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
-    }"
 
     private var _uiState = MutableStateFlow(FeedHomeUiState())
     val uiState = _uiState.asStateFlow()
@@ -33,7 +25,6 @@ class FeedHomeViewModel(application: Application) : AndroidViewModel(application
 
     fun getFeedList(cursorIdx: Long?, limit: Long, sortby: String) = viewModelScope.launch {
         val feedListResponse = gitudyStudyRepository.getStudyList(
-            bearerToken,
             cursorIdx,
             limit,
             sortby,
@@ -56,7 +47,7 @@ class FeedHomeViewModel(application: Application) : AndroidViewModel(application
         } else {
             Log.e(
                 "FeedHomeViewModel",
-                "tokenResponse status: ${feedListResponse.code()}\ntokenResponse message: ${feedListResponse.message()}"
+                "feedListResponse status: ${feedListResponse.code()}\nfeedListResponse message: ${feedListResponse.message()}"
             )
         }
     }

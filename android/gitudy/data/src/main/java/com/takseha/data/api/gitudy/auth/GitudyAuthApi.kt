@@ -6,10 +6,10 @@ import com.takseha.data.dto.auth.login.LoginResponse
 import com.takseha.data.dto.auth.register.NickNameResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.dto.auth.register.RegisterResponse
+import com.takseha.data.dto.auth.register.ReissueResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -31,13 +31,14 @@ interface GitudyAuthApi {
     ): Response<NickNameResponse>
 
     @POST("/auth/register")
-    suspend fun getRegisterTokens(
-        @Header("Authorization") bearerToken: String,
+    suspend fun register(
         @Body request: RegisterRequest
     ): Response<RegisterResponse>
 
+    @POST("/auth/reissue")
+    suspend fun reissueTokens(bearerToken: String): Response<ReissueResponse>
+
     @GET("/auth/info")
     suspend fun getUserInfo(
-        @Header("Authorization") bearerToken: String
     ): Response<UserInfoResponse>
 }

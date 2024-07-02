@@ -1,11 +1,8 @@
 package com.takseha.presentation.viewmodel.mystudy
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
 import com.takseha.data.dto.mystudy.MyStudyInfo
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyMember
@@ -17,20 +14,15 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MyStudyMainViewModel(application: Application) : AndroidViewModel(application) {
+class MyStudyMainViewModel: ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
     private var gitudyMemberRepository = GitudyMemberRepository()
-    private val prefs = SP(getApplication())
-
-    private val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-        prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
-    }"
 
     private val _uiState = MutableStateFlow(MyStudyMainInfoState())
     val uiState = _uiState.asStateFlow()
 
     fun getMyStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(bearerToken, studyInfoId)
+        val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
 
         if (myStudyInfoResponse.isSuccessful) {
             val resCode = myStudyInfoResponse.body()!!.resCode
@@ -66,7 +58,6 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
 
     private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
         val todoInfoResponse = gitudyStudyRepository.getTodoList(
-            bearerToken,
             studyInfoId,
             cursorIdx = null,
             limit = 1
@@ -104,7 +95,6 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
 
     private suspend fun getConvention(studyInfoId: Int): StudyConvention? {
         val conventionInfoResponse = gitudyStudyRepository.getConvention(
-            bearerToken,
             studyInfoId
         )
 
@@ -137,7 +127,7 @@ class MyStudyMainViewModel(application: Application) : AndroidViewModel(applicat
 
     private suspend fun getStudyMemberList(studyInfoId: Int): List<StudyMember> {
         val studyMemberListResponse =
-            gitudyMemberRepository.getStudyMemberList(bearerToken, studyInfoId, true)
+            gitudyMemberRepository.getStudyMemberList(studyInfoId, true)
 
         if (studyMemberListResponse.isSuccessful) {
             val resCode = studyMemberListResponse.body()!!.resCode

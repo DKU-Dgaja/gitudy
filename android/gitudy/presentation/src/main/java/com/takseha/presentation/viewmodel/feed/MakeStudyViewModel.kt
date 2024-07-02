@@ -1,11 +1,8 @@
 package com.takseha.presentation.viewmodel.feed
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriod
 import com.takseha.data.dto.feed.StudyStatus
@@ -14,11 +11,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import kotlin.random.Random
 
-class MakeStudyViewModel(application: Application) : AndroidViewModel(application) {
+class MakeStudyViewModel: ViewModel() {
     private lateinit var gitudyStudyRepository: GitudyStudyRepository
-    private val prefs = SP(getApplication())
     private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
     val randIdx = (0..5).random()
 
@@ -34,17 +29,10 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
     fun makeNewStudy() = viewModelScope.launch {
         gitudyStudyRepository = GitudyStudyRepository()
 
-        val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-            prefs.loadPref(
-                SPKey.REFRESH_TOKEN,
-                "0"
-            )
-        }"
-
         val request = newStudyInfoState.value
         Log.d("MakeStudyViewModel", request.toString())
 
-        val newStudyResponse = gitudyStudyRepository.makeNewStudy(bearerToken, request)
+        val newStudyResponse = gitudyStudyRepository.makeNewStudy(request)
 
         if (newStudyResponse.isSuccessful) {
             val resCode = newStudyResponse.body()!!.resCode
@@ -57,7 +45,7 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
                 Log.e("MakeStudyViewModel", "https status error: $resCode, $resMsg")
             }
         } else {
-            Log.e("MakeStudyViewModel", "tokenResponse status: ${newStudyResponse.code()}\ntokenResponse message: ${newStudyResponse.message()}")
+            Log.e("MakeStudyViewModel", "newStudyResponse status: ${newStudyResponse.code()}\nnewStudyResponse message: ${newStudyResponse.message()}")
         }
     }
 }

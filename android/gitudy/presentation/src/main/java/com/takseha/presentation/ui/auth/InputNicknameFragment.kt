@@ -10,13 +10,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Observer
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputNicknameBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding

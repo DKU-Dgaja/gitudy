@@ -1,4 +1,4 @@
-package com.takseha.common.util
+package com.takseha.data.sharedPreferences
 
 import android.content.Context
 import android.content.SharedPreferences
