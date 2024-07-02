@@ -11,6 +11,8 @@ import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
+import com.example.backend.domain.define.study.convention.StudyConvention;
+import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -56,6 +58,8 @@ class StudyInfoServiceTest extends TestConfig {
     private StudyMemberRepository studyMemberRepository;
     @Autowired
     private StudyCategoryRepository studyCategoryRepository;
+    @Autowired
+    private StudyConventionRepository studyConventionRepository;
 
     @AfterEach
     void tearDown() {
@@ -64,11 +68,14 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.deleteAllInBatch();
         studyCategoryRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        studyConventionRepository.deleteAllInBatch();
     }
 
     @Test
     void StudyInfo_등록_테스트() {
         // given
+        String expectedConvention = "^[a-zA-Z0-9]{6} .*";
+
         User user = userRepository.save(generateAuthUser());
         int beforeUserScore = user.getScore();
 
@@ -80,6 +87,7 @@ class StudyInfoServiceTest extends TestConfig {
         StudyInfoRegisterResponse registeredStudy = studyInfoService.registerStudy(studyInfoRegisterRequest, UserInfoResponse.of(user));
         List<StudyCategoryMapping> studyCategoryMapping = studyCategoryMappingRepository.findAll();
         List<StudyMember> studyMember = studyMemberRepository.findAll();
+        List<StudyConvention> convention = studyConventionRepository.findAll();
 
         // then
 
@@ -111,6 +119,10 @@ class StudyInfoServiceTest extends TestConfig {
 
         // User의 score가 +5가 되었는 지 검증
         assertEquals(beforeUserScore + 5, userRepository.findById(user.getId()).get().getScore());
+
+        // 기본 컨벤션이 잘 생성되었는지 검증
+        assertEquals(1, convention.size());
+        assertEquals(expectedConvention, convention.get(0).getContent());
     }
 
 

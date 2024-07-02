@@ -57,7 +57,7 @@ public class CommitCommentController {
     }
 
     @ApiResponse(responseCode = "200", description = "커밋 댓글 수정 성공")
-    @PostMapping("/{commitId}/comments/{commentId}")
+    @PatchMapping("/{commitId}/comments/{commentId}")
     public JsonResult<?> updateCommitComment(@AuthenticationPrincipal User user,
                                              @PathVariable(name = "commitId") Long commitId,
                                              @PathVariable(name = "commentId") Long commentId,

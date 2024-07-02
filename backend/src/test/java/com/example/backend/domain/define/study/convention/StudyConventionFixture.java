@@ -38,6 +38,16 @@ public class StudyConventionFixture {
                 .build();
     }
 
+    // 기본 컨벤션 등록
+    public static StudyConvention createDefaultConvention(Long studyInfoId) {
+        return StudyConvention.builder()
+                .studyInfoId(studyInfoId)
+                .name("default convention")
+                .content("^[a-zA-Z0-9]{6} .*")
+                .isActive(true)
+                .build();
+    }
+
     // 테스트용 StudyConvention
     public static StudyConvention createStudyConventionName(Long studyInfoId, String name) {
         return StudyConvention.builder()

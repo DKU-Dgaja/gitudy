@@ -2,11 +2,13 @@ package com.example.backend.study.api.service.commit;
 
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.commit.CommitException;
+import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -44,6 +46,8 @@ public class StudyCommitService {
     private final StudyMemberRepository studyMemberRepository;
     private final UserRepository userRepository;
     private final static Long MAX_LIMIT = 50L;
+    private final static String DEFAULT_CONTENT = "^[a-zA-Z0-9]{6} .*";
+
     private final StudyCommitRepository studyCommitRepository;
     private final GithubApiService githubApiService;
     private final StudyConventionService studyConventionService;
@@ -122,7 +126,10 @@ public class StudyCommitService {
         List<GithubCommitResponse> unsavedCommits = studyCommitRepository.findUnsavedGithubCommits(commitPage);
 
         // 검증할 컨벤션 조회
-        StudyConventionResponse conventions = studyConventionRepository.findActiveConventionByStudyInId(study.getId());
+        StudyConvention conventions = studyConventionRepository.findByStudyInfoIdAndContent(study.getId(), DEFAULT_CONTENT).orElseThrow(() -> {
+            log.error(">>>> {} : {} <<<<", DEFAULT_CONTENT, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
+            throw new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
+        });
 
         // 저장할 커밋 필터링
         List<StudyCommit> commitList = filterCommit(todo, unsavedCommits, userMap, studyMemberMap, conventions, todoMappingMap);
@@ -139,7 +146,7 @@ public class StudyCommitService {
 
     private List<StudyCommit> filterCommit(StudyTodo todo, List<GithubCommitResponse> unsavedCommits,
                                            Map<String, User> userMap, Map<Long, StudyMember> studyMemberMap,
-                                           StudyConventionResponse conventions, Map<Long, StudyTodoMapping> todoMappingMap) {
+                                           StudyConvention conventions, Map<Long, StudyTodoMapping> todoMappingMap) {
 
         return unsavedCommits.stream()
                 .filter(commit -> {

@@ -80,4 +80,15 @@ public class StudyConventionRepositoryTest extends TestConfig {
         assertTrue(convention.isActive());
     }
 
+    @Test
+    void 기본_컨벤션_조회() {
+        // given
+        studyConventionRepository.save(StudyConventionFixture.createDefaultConvention(1L));
+
+        // when
+        StudyConvention studyConvention = studyConventionRepository.findByStudyInfoIdAndContent(1L, "^[a-zA-Z0-9]{6} .*").get();
+
+        assertEquals(studyConvention.getContent(), "^[a-zA-Z0-9]{6} .*");
+    }
+
 }
