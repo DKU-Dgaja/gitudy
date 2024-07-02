@@ -9,7 +9,6 @@ import com.example.backend.domain.define.study.commit.repository.StudyCommitRepo
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -139,7 +137,7 @@ public class CommitFetchPerformanceTest extends MockTestConfig {
                 .userId(user.getId())
                 .message("aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기")
                 .commitDate(LocalDate.now())
-                .status(CommitStatus.COMMIT_APPROVAL)
+                .status(CommitStatus.APPROVAL)
                 .commitSHA("sha")
                 .build());
 

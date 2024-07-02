@@ -47,7 +47,7 @@ public class StudyCommit extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "COMMIT_STATUS")
-    @ColumnDefault(value = "'COMMIT_WAITING'")
+    @ColumnDefault(value = "'WAITING'")
     private CommitStatus status;                // 커밋 상태 (승인 여부)
 
     @Column(name = "REJECTION_REASON")
@@ -70,11 +70,11 @@ public class StudyCommit extends BaseEntity {
     }
 
     public void approveCommit() {
-        this.status = CommitStatus.COMMIT_APPROVAL;
+        this.status = CommitStatus.APPROVAL;
     }
 
     public void rejectCommit(String rejectionReason) {
-        this.status = CommitStatus.COMMIT_REJECTION;
+        this.status = CommitStatus.REJECTION;
         this.rejectionReason = rejectionReason;
     }
 

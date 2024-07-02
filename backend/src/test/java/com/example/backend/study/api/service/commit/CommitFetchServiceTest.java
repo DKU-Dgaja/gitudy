@@ -1,16 +1,13 @@
 package com.example.backend.study.api.service.commit;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
-import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
-import com.example.backend.domain.define.study.convention.StudyConventionFixture;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
@@ -31,7 +28,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.Collections;
@@ -398,7 +394,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
 
         StudyCommit commit = allCommits.get(0);
         assertEquals(commit.getUserId(), activeUser.getId());
-        assertEquals(CommitStatus.COMMIT_WAITING, commit.getStatus());
+        assertEquals(CommitStatus.WAITING, commit.getStatus());
 
     }
 
@@ -445,7 +441,7 @@ public class CommitFetchServiceTest extends MockTestConfig {
         List<StudyCommit> allCommits = studyCommitRepository.findAll();
         assertEquals(1, allCommits.size());
         assertEquals(message, allCommits.get(0).getMessage());
-        assertEquals(CommitStatus.COMMIT_WAITING, allCommits.get(0).getStatus());
+        assertEquals(CommitStatus.WAITING, allCommits.get(0).getStatus());
     }
 
     @Test
