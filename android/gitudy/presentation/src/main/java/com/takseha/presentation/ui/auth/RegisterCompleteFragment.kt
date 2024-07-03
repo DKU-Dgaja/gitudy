@@ -11,8 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.fragment.app.activityViewModels
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentRegisterCompleteBinding
 import com.takseha.presentation.ui.home.MainHomeActivity

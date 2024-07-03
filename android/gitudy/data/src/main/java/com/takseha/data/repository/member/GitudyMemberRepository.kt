@@ -8,21 +8,18 @@ class GitudyMemberRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyMemberApi::class.java)
 
     suspend fun applyStudy(
-        bearerToken: String,
         studyInfoId: Int,
         joinCode: String,
         request: MessageRequest
-    ) = client.applyStudy(bearerToken, studyInfoId, joinCode, request)
+    ) = client.applyStudy(studyInfoId, joinCode, request)
 
     suspend fun notifyToLeader(
-        bearerToken: String,
         studyInfoId: Int,
         request: MessageRequest
-    ) = client.notifyToLeader(bearerToken, studyInfoId, request)
+    ) = client.notifyToLeader(studyInfoId, request)
 
     suspend fun getStudyMemberList(
-        bearerToken: String,
         studyInfoId: Int,
         orderByScore: Boolean?
-    ) = client.getStudyMemberList(bearerToken, studyInfoId, orderByScore)
+    ) = client.getStudyMemberList(studyInfoId, orderByScore)
 }
