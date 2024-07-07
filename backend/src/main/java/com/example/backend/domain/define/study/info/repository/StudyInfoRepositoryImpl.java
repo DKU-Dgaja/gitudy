@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.info.repository;
 
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -50,6 +51,7 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                         studyInfo.topic,
                         studyInfo.score,
                         studyInfo.info,
+                        studyInfo.status,
                         studyInfo.maximumMember,
                         studyInfo.currentMember,
                         studyInfo.lastCommitDay,
@@ -62,7 +64,8 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                                 .otherwise(false)
                                 .as("isLeader")
                 ))
-                .from(studyInfo);
+                .from(studyInfo)
+                .where(studyInfo.status.ne(StudyStatus.STUDY_DELETED));
         // myStudy에 따라서 동적으로 추가 또는 제거
         if (myStudy) {
             query.innerJoin(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
