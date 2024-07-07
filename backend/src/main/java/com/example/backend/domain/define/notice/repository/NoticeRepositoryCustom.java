@@ -1,7 +1,6 @@
 package com.example.backend.domain.define.notice.repository;
 
 import com.example.backend.domain.define.notice.Notice;
-import com.example.backend.study.api.event.controller.response.UserNoticeList;
 
 import java.time.LocalDateTime;
 import java.util.List;

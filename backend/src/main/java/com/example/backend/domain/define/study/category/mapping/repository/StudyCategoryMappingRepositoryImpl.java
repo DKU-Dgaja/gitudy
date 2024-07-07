@@ -14,9 +14,10 @@ import static com.example.backend.domain.define.study.category.mapping.QStudyCat
 
 @Component
 @RequiredArgsConstructor
-public class StudyCategoryMappingRepositoryImpl  implements StudyCategoryMappingRepositoryCustom {
+public class StudyCategoryMappingRepositoryImpl implements StudyCategoryMappingRepositoryCustom {
 
     private final JPAQueryFactory queryFactory;
+
     @Override
     public List<CategoryResponseWithStudyId> findCategoryListByStudyInfoListJoinCategoryMapping(List<Long> studyInfoIdList) {
         JPAQuery<CategoryResponseWithStudyId> query = queryFactory

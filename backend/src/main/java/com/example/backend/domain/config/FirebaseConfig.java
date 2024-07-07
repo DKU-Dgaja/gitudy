@@ -31,14 +31,14 @@ public class FirebaseConfig {
         List<FirebaseApp> firebaseAppList = FirebaseApp.getApps();
 
         if (firebaseAppList != null && !firebaseAppList.isEmpty()) {
-            for(FirebaseApp app: firebaseAppList) {
-                if(app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
+            for (FirebaseApp app : firebaseAppList) {
+                if (app.getName().equals(FirebaseApp.DEFAULT_APP_NAME)) {
                     firebaseApp = app;
                 }
             }
         }
 
-        if(firebaseApp == null) {
+        if (firebaseApp == null) {
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(refreshToken))
                     .build();

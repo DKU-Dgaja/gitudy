@@ -1,10 +1,10 @@
 package com.example.backend.domain.define.study.commit.repository;
 
-import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 
 import java.util.List;
+import java.util.Set;
 
 public interface StudyCommitRepositoryCustom {
 
@@ -13,4 +13,7 @@ public interface StudyCommitRepositoryCustom {
 
     // GithubCommitResponse 리스트 중 실제 StudyCommit으로 저장되지 않은 경우 찾기
     List<GithubCommitResponse> findUnsavedGithubCommits(List<GithubCommitResponse> githubCommitList);
+
+    // Study todoCode에 해당하는 커밋의 SHA 목록 Set 조회
+    Set<String> findStudyCommitShaListByStudyTodoCode(String todoCode);
 }

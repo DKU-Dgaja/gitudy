@@ -137,6 +137,7 @@ public class StudyTodoController {
         return JsonResult.successOf("커밋 패치가 완료되었습니다.");
     }
 
+    // Todo별 커밋 리스트 조회
     @ApiResponse(responseCode = "200", description = "Todo 별 커밋 리스트 조회", content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @GetMapping("/{studyInfoId}/todo/{todoId}/commits")
     public JsonResult<?> selectTodoCommits(@AuthenticationPrincipal User user,

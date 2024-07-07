@@ -6,10 +6,7 @@ import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
-import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
-import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
+import com.example.backend.study.api.controller.info.response.*;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 
 import java.time.LocalDate;
@@ -98,7 +95,11 @@ public class StudyInfoFixture {
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .branchName("BRANCH_NAME")
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("소유자이름")
+                        .name("레포 이름")
+                        .branchName("main")
+                        .build())
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -114,7 +115,11 @@ public class StudyInfoFixture {
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(11)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .branchName("BRANCH_NAME")
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("소유자이름")
+                        .name("레포 이름")
+                        .branchName("main")
+                        .build())
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -127,10 +132,14 @@ public class StudyInfoFixture {
         return StudyInfoRegisterRequest.builder()
                 .topic("Sample Study")
                 .info("This is a sample study.")
-                .status(StudyStatus.STUDY_PUBLIC)
+                .status(STUDY_PUBLIC)
                 .maximumMember(-1)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .branchName("BRANCH_NAME")
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("소유자이름")
+                        .name("레포 이름")
+                        .branchName("main")
+                        .build())
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -146,7 +155,11 @@ public class StudyInfoFixture {
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .branchName("BRANCH_NAME")
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("소유자이름")
+                        .name("레포 이름")
+                        .branchName("main")
+                        .build())
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -246,7 +259,7 @@ public class StudyInfoFixture {
     }
     // MyStudyInfoListAndCursorIdxResponse를 생성해주는 함수
     public static StudyInfoListAndCursorIdxResponse generateMyStudyInfoListAndCursorIdxResponse() {
-        List<StudyInfoListResponse> studyInfoList = new ArrayList<>();
+        List<StudyInfoListWithMemberResponse> studyInfoList = new ArrayList<>();
         Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = new HashMap<>();
         Map<Long, List<String>> studyCategoryMappingMap = new HashMap<>();
         Long cursorIdx = 123L;
@@ -254,7 +267,6 @@ public class StudyInfoFixture {
         return StudyInfoListAndCursorIdxResponse.builder()
                 .studyInfoList(studyInfoList)
                 .cursorIdx(cursorIdx)
-                .studyUserInfoMap(studyUserInfoMap)
                 .studyCategoryMappingMap(studyCategoryMappingMap)
                 .build();
     }

@@ -1,13 +1,10 @@
 package com.takseha.presentation.viewmodel.auth
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.common.model.SPKey
-import com.takseha.common.util.SP
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.repository.auth.GithubRepository
 import com.takseha.data.repository.auth.GitudyAuthRepository
@@ -16,10 +13,9 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class RegisterViewModel(application: Application) : AndroidViewModel(application) {
+class RegisterViewModel: ViewModel() {
     private lateinit var gitudyAuthRepository: GitudyAuthRepository
     private lateinit var githubRepository: GithubRepository
-    private val prefs = SP(getApplication())
 
     private val _registerInfoState = MutableStateFlow(RegisterRequest())
     val registerInfoState = _registerInfoState.asStateFlow()
@@ -79,46 +75,23 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     fun getRegisterTokens() = viewModelScope.launch {
         gitudyAuthRepository = GitudyAuthRepository()
 
-        val bearerToken = "Bearer ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")} ${
-            prefs.loadPref(
-                SPKey.REFRESH_TOKEN,
-                "0"
-            )
-        }"
-        Log.d("RegisterViewModel", bearerToken)
         val request = registerInfoState.value
 
-        val tokenResponse = gitudyAuthRepository.getRegisterTokens(bearerToken, request)
+        val registerResponse = gitudyAuthRepository.register(request)
 
-        if (tokenResponse.isSuccessful) {
-            val resCode = tokenResponse.body()!!.resCode
-            val resMsg = tokenResponse.body()!!.resMsg
-            val allTokens = tokenResponse.body()!!.tokenInfo
+        if (registerResponse.isSuccessful) {
+            val resCode = registerResponse.body()!!.resCode
+            val resMsg = registerResponse.body()!!.resMsg
+            val allTokens = registerResponse.body()!!.tokenInfo
 
             if (resCode == 200 && resMsg == "OK") {
-                prefs.savePref(
-                    SPKey.ACCESS_TOKEN,
-                    allTokens.accessToken
-                )
-                prefs.savePref(
-                    SPKey.REFRESH_TOKEN,
-                    allTokens.refreshToken
-                )
-                Log.d(
-                    "RegisterViewModel",
-                    "shared pref 저장된 access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\n"
-                            + "shared pref 저장된 refresh token: ${
-                        prefs.loadPref(
-                            SPKey.REFRESH_TOKEN,
-                            "0"
-                        )
-                    }"
-                )
+                // role이 회원으로 바뀜!
+                Log.d("RegisterViewModel", allTokens.toString())
             } else {    // 추후에 status 에러 코드에 맞춰서 에러 상황 다르게 처리! 일단은 다 id 입력 오류라고 생각하고 처리
                 Log.e("RegisterViewModel", "https status error: $resCode, $resMsg")
             }
         } else {
-            Log.e("RegisterViewModel", "tokenResponse status: ${tokenResponse.code()}\ntokenResponse message: ${tokenResponse.message()}")
+            Log.e("RegisterViewModel", "registerResponse status: ${registerResponse.code()}\nregisterResponse message: ${registerResponse.message()}")
         }
     }
 }

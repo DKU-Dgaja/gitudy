@@ -2,11 +2,8 @@ package com.example.backend.domain.define.study.todo.repository;
 
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
-import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
 import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
-import com.querydsl.core.Tuple;
-import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -21,7 +18,6 @@ import java.util.stream.Collectors;
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
 import static com.example.backend.domain.define.study.todo.info.QStudyTodo.studyTodo;
 import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMapping.studyTodoMapping;
-import static com.querydsl.core.group.GroupBy.groupBy;
 
 @Component
 @RequiredArgsConstructor
@@ -66,7 +62,6 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
 
         return responses;
     }
-
 
 
     @Override

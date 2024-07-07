@@ -12,7 +12,6 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -33,11 +32,12 @@ public class StudyInfoRegisterRequest {
 
     private String profileImageUrl;                 // 스터디 프로필 사진
 
-    private String branchName;                      // 브랜치 이름
+    private RepositoryInfo repositoryInfo;          // 레포지토리 정보
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
     private List<Long> categoriesId;                // 카테고리 ID 리스트
+
     public static StudyInfoRegisterRequest of(StudyInfo request) {
         return StudyInfoRegisterRequest.builder()
                 .topic(request.getTopic())
@@ -45,7 +45,7 @@ public class StudyInfoRegisterRequest {
                 .status(request.getStatus())
                 .maximumMember(request.getMaximumMember())
                 .profileImageUrl(request.getProfileImageUrl())
-                .branchName(request.getRepositoryInfo().getBranchName())
+                .repositoryInfo(request.getRepositoryInfo())
                 .build();
     }
 }

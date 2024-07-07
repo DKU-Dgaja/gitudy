@@ -1,6 +1,5 @@
 package com.example.backend.domain.define.study.comment.commit.repository;
 
-import com.example.backend.domain.define.study.comment.commit.CommitComment;
 import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;
 
 import java.util.List;

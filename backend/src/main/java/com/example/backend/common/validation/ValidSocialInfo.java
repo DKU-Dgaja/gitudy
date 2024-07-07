@@ -1,6 +1,5 @@
 package com.example.backend.common.validation;
 
-import com.example.backend.common.exception.ExceptionMessage;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 

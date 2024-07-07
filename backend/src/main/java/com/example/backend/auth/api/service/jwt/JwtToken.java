@@ -1,6 +1,5 @@
 package com.example.backend.auth.api.service.jwt;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

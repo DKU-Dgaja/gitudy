@@ -115,18 +115,17 @@ public class StudyInfo extends BaseEntity {
         this.repositoryInfo = request.getRepositoryInfo();
         this.periodType = request.getPeriodType();
     }
-    
+
     public void updateDeletedStudy() {
         this.status = StudyStatus.STUDY_DELETED;
     }
 
     // 스터디원 증/감
-    public void updateCurrentMember(int num){
+    public void updateCurrentMember(int num) {
         this.currentMember += num;
     }
 
-    public boolean isMaximumMember()
-    {
+    public boolean isMaximumMember() {
         return this.currentMember < this.maximumMember;
     }
 }

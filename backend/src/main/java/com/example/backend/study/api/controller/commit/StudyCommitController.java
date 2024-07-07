@@ -93,6 +93,8 @@ public class StudyCommitController {
         return JsonResult.successOf("커밋 거절이 완료되었습니다.");
     }
 
+    @ApiResponse(responseCode = "200", description = "팀장의 승인을 기다리는 커밋 리스트 반환 성공",
+            content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @GetMapping("/waiting")
     public JsonResult<?> waitingCommitList(@AuthenticationPrincipal User user,
                                            @RequestParam(name = "studyInfoId") Long studyInfoId) {

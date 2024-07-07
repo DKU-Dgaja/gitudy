@@ -11,6 +11,8 @@ import com.example.backend.domain.define.study.category.info.StudyCategory;
 import com.example.backend.domain.define.study.category.info.repository.StudyCategoryRepository;
 import com.example.backend.domain.define.study.category.mapping.StudyCategoryMapping;
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
+import com.example.backend.domain.define.study.convention.StudyConvention;
+import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -37,6 +39,7 @@ import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_L
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyInfoServiceTest extends TestConfig {
@@ -55,6 +58,8 @@ class StudyInfoServiceTest extends TestConfig {
     private StudyMemberRepository studyMemberRepository;
     @Autowired
     private StudyCategoryRepository studyCategoryRepository;
+    @Autowired
+    private StudyConventionRepository studyConventionRepository;
 
     @AfterEach
     void tearDown() {
@@ -63,11 +68,14 @@ class StudyInfoServiceTest extends TestConfig {
         studyMemberRepository.deleteAllInBatch();
         studyCategoryRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        studyConventionRepository.deleteAllInBatch();
     }
 
     @Test
     void StudyInfo_등록_테스트() {
         // given
+        String expectedConvention = "^[a-zA-Z0-9]{6} .*";
+
         User user = userRepository.save(generateAuthUser());
         int beforeUserScore = user.getScore();
 
@@ -79,6 +87,7 @@ class StudyInfoServiceTest extends TestConfig {
         StudyInfoRegisterResponse registeredStudy = studyInfoService.registerStudy(studyInfoRegisterRequest, UserInfoResponse.of(user));
         List<StudyCategoryMapping> studyCategoryMapping = studyCategoryMappingRepository.findAll();
         List<StudyMember> studyMember = studyMemberRepository.findAll();
+        List<StudyConvention> convention = studyConventionRepository.findAll();
 
         // then
 
@@ -98,23 +107,22 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertEquals(studyInfoRegisterRequest.getStatus(), registeredStudy.getStatus()),
                 () -> assertEquals(studyInfoRegisterRequest.getMaximumMember(), registeredStudy.getMaximumMember()),
                 () -> assertEquals(studyInfoRegisterRequest.getProfileImageUrl(), registeredStudy.getProfileImageUrl()),
-                () -> assertEquals(studyInfoRegisterRequest.getBranchName(), registeredStudy.getRepositoryInfo().getBranchName()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getOwner(), registeredStudy.getRepositoryInfo().getOwner()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getName(), registeredStudy.getRepositoryInfo().getName()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getBranchName(), registeredStudy.getRepositoryInfo().getBranchName()),
                 () -> assertEquals(studyInfoRegisterRequest.getPeriodType(), registeredStudy.getPeriodType()),
                 () -> assertIterableEquals(studyInfoRegisterRequest.getCategoriesId(), registeredStudy.getCategoriesId())
         );
-
-        // 스터디 등록 시 자동 초기화 검증
-        List<StudyInfo> studyInfo = studyInfoRepository.findAll();
-        assertEquals(studyInfo.size(), 1);
-        assertEquals(studyInfo.get(0).getUserId(), user.getId());
-        assertEquals(studyInfo.get(0).getRepositoryInfo().getOwner(), user.getGithubId());
-        assertEquals(studyInfo.get(0).getRepositoryInfo().getName(), user.getName());
 
         // joinCode 10자리가 잘 생성되었는지 검증
         assertEquals(registeredStudy.getJoinCode().length(), JOIN_CODE_LENGTH);
 
         // User의 score가 +5가 되었는 지 검증
         assertEquals(beforeUserScore + 5, userRepository.findById(user.getId()).get().getScore());
+
+        // 기본 컨벤션이 잘 생성되었는지 검증
+        assertEquals(1, convention.size());
+        assertEquals(expectedConvention, convention.get(0).getContent());
     }
 
 
@@ -282,13 +290,13 @@ class StudyInfoServiceTest extends TestConfig {
         StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY, true);
 
         // response.getStudyInfoList()를 id순으로 정렬
-        response.getStudyInfoList().sort(Comparator.comparingLong(StudyInfoListResponse::getId));
+        response.getStudyInfoList().sort(Comparator.comparingLong(StudyInfoListWithMemberResponse::getId));
 
         // then
         IntStream.range(0, expectedResponseSize)
                 .forEach(i -> {
                     StudyInfo expected = studyInfos.get(i);
-                    StudyInfoListResponse actual = response.getStudyInfoList().get(i);
+                    StudyInfoListWithMemberResponse actual = response.getStudyInfoList().get(i);
 
                     assertAll(
                             () -> assertEquals(expected.getId(), actual.getId()),
@@ -354,6 +362,7 @@ class StudyInfoServiceTest extends TestConfig {
     @Test
     public void 마이스터디_조회_테스트_스터디_멤버_정보_반환_테스트() {
         // given
+        int expectedMyStudySize = 2;
         int expectedTeamASize = 3;
         int expectedTeamBSize = 4;
 
@@ -391,23 +400,13 @@ class StudyInfoServiceTest extends TestConfig {
 
         // when
         StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(myLeaderUser.getId(), null, LIMIT, SORTBY, true);
-        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
+
 
         // then
-        // 내 스터디 정보 검증
-        Long myStudyAId = myStudyA.getId();
-        List<UserNameAndProfileImageResponse> myStudyAUserList = studyUserInfoMap.get(myStudyAId);
-        assertEquals(expectedTeamASize, myStudyAUserList.size());
-//        for(int i=0;i<myStudyAUserList.size();i++){
-//            System.out.println(myStudyAUserList.get(i).getId());
-//        }
+        assertEquals(response.getStudyInfoList().size(), expectedMyStudySize);
+        assertEquals(response.getStudyInfoList().get(0).getUserInfo().size(), expectedTeamBSize);
+        assertEquals(response.getStudyInfoList().get(1).getUserInfo().size(), expectedTeamASize);
 
-        Long myStudyBId = myStudyB.getId();
-        List<UserNameAndProfileImageResponse> myStudyBUserList = studyUserInfoMap.get(myStudyBId);
-        assertEquals(expectedTeamBSize, myStudyBUserList.size());
-//        for(int i=0;i<myStudyBUserList.size();i++){
-//            System.out.println(myStudyBUserList.get(i).getId());
-//        }
     }
 
     @Test
@@ -457,9 +456,9 @@ class StudyInfoServiceTest extends TestConfig {
                 , sortBy
                 , true);
 
-        List<StudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
+        List<StudyInfoListWithMemberResponse> studyInfoList1 = response1.getStudyInfoList();
         System.out.println("---------After sort by Score----------");
-        for(StudyInfoListResponse x: studyInfoList1){
+        for(StudyInfoListWithMemberResponse x: studyInfoList1){
             System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
         }
         System.out.println("--------------------------------------");
@@ -470,10 +469,10 @@ class StudyInfoServiceTest extends TestConfig {
                 , 3L
                 , sortBy
                 , true);
-        List<StudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
+        List<StudyInfoListWithMemberResponse> studyInfoList2 = response2.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " + score50.getId() + ", limit : 3]");
-        for(StudyInfoListResponse x: studyInfoList2){
+        for(StudyInfoListWithMemberResponse x: studyInfoList2){
             System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
         }
         System.out.println("response ->[cursorIdx : " + response2.getCursorIdx() +"]");
@@ -488,10 +487,10 @@ class StudyInfoServiceTest extends TestConfig {
                 , 3L
                 , sortBy
                 , true);
-        List<StudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
+        List<StudyInfoListWithMemberResponse> studyInfoList3 = response3.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " +response2.getCursorIdx() + ", limit : 3]");
-        for(StudyInfoListResponse x: studyInfoList3){
+        for(StudyInfoListWithMemberResponse x: studyInfoList3){
             System.out.println("cursorIdx : "+ x.getId()+"  score : "+x.getScore());
         }
         System.out.println("response ->[cursorIdx : " + response3.getCursorIdx() +"]");
@@ -535,9 +534,9 @@ class StudyInfoServiceTest extends TestConfig {
 
         // when
         StudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectStudyInfoList(savedUser.getId(), null, LIMIT, sortBy, true);
-        List<StudyInfoListResponse> studyInfoList1 = response1.getStudyInfoList();
+        List<StudyInfoListWithMemberResponse> studyInfoList1 = response1.getStudyInfoList();
         System.out.println("---------lastCommitDay 기준으로 정렬 후----------");
-        for (StudyInfoListResponse x : studyInfoList1) {
+        for (StudyInfoListWithMemberResponse x : studyInfoList1) {
             System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
         }
         System.out.println("--------------------------------------");
@@ -545,10 +544,10 @@ class StudyInfoServiceTest extends TestConfig {
         // when
         StudyInfoListAndCursorIdxResponse response2
                 = studyInfoService.selectStudyInfoList(savedUser.getId(), studyInfo3.getId(), 3L, sortBy, true);
-        List<StudyInfoListResponse> studyInfoList2 = response2.getStudyInfoList();
+        List<StudyInfoListWithMemberResponse> studyInfoList2 = response2.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " + studyInfo3.getId() + ", limit : 3]");
-        for (StudyInfoListResponse x : studyInfoList2) {
+        for (StudyInfoListWithMemberResponse x : studyInfoList2) {
             System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
         }
         System.out.println("response ->[cursorIdx : " + response2.getCursorIdx() + "]");
@@ -560,10 +559,10 @@ class StudyInfoServiceTest extends TestConfig {
         // when
         StudyInfoListAndCursorIdxResponse response3
                 = studyInfoService.selectStudyInfoList(savedUser.getId(), response2.getCursorIdx(), 3L, sortBy, true);
-        List<StudyInfoListResponse> studyInfoList3 = response3.getStudyInfoList();
+        List<StudyInfoListWithMemberResponse> studyInfoList3 = response3.getStudyInfoList();
         System.out.println("-------------------------------------------");
         System.out.println("request ->[cursorIdx : " + response2.getCursorIdx() + ", limit : 3]");
-        for (StudyInfoListResponse x : studyInfoList3) {
+        for (StudyInfoListWithMemberResponse x : studyInfoList3) {
             System.out.println("cursorIdx : " + x.getId() + "  lastCommitDay : " + x.getLastCommitDay());
         }
         System.out.println("response ->[cursorIdx : " + response3.getCursorIdx() + "]");
@@ -595,13 +594,13 @@ class StudyInfoServiceTest extends TestConfig {
         StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(MyUser.getId(), null, LIMIT, SORTBY, false);
 
         // response.getStudyInfoList()를 id순으로 정렬
-        response.getStudyInfoList().sort(Comparator.comparingLong(StudyInfoListResponse::getId));
+        response.getStudyInfoList().sort(Comparator.comparingLong(StudyInfoListWithMemberResponse::getId));
 
         // then
         IntStream.range(0, expectedResponseSize)
                 .forEach(i -> {
                     StudyInfo expected = studyInfos.get(i);
-                    StudyInfoListResponse actual = response.getStudyInfoList().get(i);
+                    StudyInfoListWithMemberResponse actual = response.getStudyInfoList().get(i);
 
                     assertAll(
                             () -> assertEquals(expected.getId(), actual.getId()),
@@ -714,32 +713,12 @@ class StudyInfoServiceTest extends TestConfig {
 
         // when
         StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(user1.getId(), null, LIMIT, SORTBY, false);
-        Map<Long, List<UserNameAndProfileImageResponse>> studyUserInfoMap = response.getStudyUserInfoMap();
 
         // then
-        // 스터디 정보 검증
-        assertEquals(studyUserInfoMap.size(), expectedStudySize);
-
-        Long studyAId = studyA.getId();
-        List<UserNameAndProfileImageResponse> studyAUserList = studyUserInfoMap.get(studyAId);
-        assertEquals(expectedTeamASize, studyAUserList.size());
-//        for(int i=0;i<studyAUserList.size();i++){
-//            System.out.println(studyAUserList.get(i).getId());
-//        }
-
-        Long studyBId = studyB.getId();
-        List<UserNameAndProfileImageResponse> studyBUserList = studyUserInfoMap.get(studyBId);
-        assertEquals(expectedTeamBSize, studyBUserList.size());
-//        for(int i=0;i<studyBUserList.size();i++){
-//            System.out.println(studyBUserList.get(i).getId());
-//        }
-
-        Long studyCId = studyC.getId();
-        List<UserNameAndProfileImageResponse> studyCUserList = studyUserInfoMap.get(studyCId);
-        assertEquals(expectedTeamCSize, studyCUserList.size());
-//        for(int i=0;i<studyCUserList.size();i++){
-//            System.out.println(studyCUserList.get(i).getId());
-//        }
+        assertEquals(response.getStudyInfoList().size(), expectedStudySize);
+        assertEquals(response.getStudyInfoList().get(0).getUserInfo().size(), expectedTeamCSize);
+        assertEquals(response.getStudyInfoList().get(1).getUserInfo().size(), expectedTeamBSize);
+        assertEquals(response.getStudyInfoList().get(2).getUserInfo().size(), expectedTeamASize);
     }
 
     @Test

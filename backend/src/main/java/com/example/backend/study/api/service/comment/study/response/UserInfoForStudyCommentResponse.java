@@ -1,6 +1,5 @@
 package com.example.backend.study.api.service.comment.study.response;
 
-import com.example.backend.domain.define.account.user.constant.UserRole;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

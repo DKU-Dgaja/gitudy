@@ -11,7 +11,7 @@ import static com.example.backend.domain.define.account.user.QUser.user;
 
 @Component
 @RequiredArgsConstructor
-public class UserRepositoryImpl implements UserRepositoryCustom{
+public class UserRepositoryImpl implements UserRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override

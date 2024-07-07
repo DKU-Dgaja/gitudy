@@ -9,7 +9,6 @@ import com.example.backend.domain.define.study.commit.repository.StudyCommitRepo
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -33,7 +32,6 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -120,18 +118,14 @@ public class CommitFetchPerformanceTest extends MockTestConfig {
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
@@ -155,9 +149,9 @@ public class CommitFetchPerformanceTest extends MockTestConfig {
                 GithubCommitResponse.builder().authorName(user.getGithubId()).message(savedCommit.getMessage()).commitDate(LocalDate.now()).sha("sha").build()
         );
 
-        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyInt(), anyString()))
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyString()))
                 .thenReturn(firstPage);
-        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyInt(), anyString()))
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyString()))
                 .thenReturn(Collections.emptyList());
 
         // when

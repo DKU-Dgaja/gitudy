@@ -10,8 +10,7 @@ public enum StudyMemberStatus {
     STUDY_ACTIVE("활동"),
     STUDY_WITHDRAWAL("탈퇴"),
     STUDY_RESIGNED("강퇴"),
-    STUDY_REFUSED("승인 거부")
-    ;
+    STUDY_REFUSED("승인 거부");
 
     private final String text;
 }

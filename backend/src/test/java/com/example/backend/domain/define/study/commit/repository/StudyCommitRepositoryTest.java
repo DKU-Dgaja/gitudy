@@ -2,7 +2,9 @@ package com.example.backend.domain.define.study.commit.repository;
 
 import com.example.backend.TestConfig;
 import com.example.backend.domain.define.study.commit.StudyCommit;
+import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,5 +115,30 @@ class StudyCommitRepositoryTest extends TestConfig {
 //            assertTrue(commit.getId() < cursorIdx);
             assertEquals(commit.getStudyInfoId(), javaStudyId);
         }
+    }
+
+    @Test
+    void 저장되지_않은_커밋_리스트_조회_테스트() {
+        // given
+        String t1 = "test1";
+        String t2 = "test2";
+        String t3 = "test3";
+
+        studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(1L, 1L, 1L, t1));
+        studyCommitRepository.save(StudyCommitFixture.createWaitingStudyCommit(1L, 1L, 1L, t2));
+
+        var test1 = GithubCommitResponse.builder().sha(t1).build();
+        var test2 = GithubCommitResponse.builder().sha(t2).build();
+        var test3 = GithubCommitResponse.builder().sha(t3).build();
+
+        List<GithubCommitResponse> githubCommitList = List.of(test1, test2, test3);
+
+        // when
+        var unsavedGithubCommits = studyCommitRepository.findUnsavedGithubCommits(githubCommitList);
+
+        // then
+        assertEquals(1, unsavedGithubCommits.size());
+        assertEquals(t3, unsavedGithubCommits.get(0).getSha());
+
     }
 }

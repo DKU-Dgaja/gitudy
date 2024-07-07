@@ -26,14 +26,14 @@ public class StudyCategoryRepositoryImpl implements StudyCategoryRepositoryCusto
                 .where(studyCategoryMapping.studyInfoId.eq(studyInfoId))
                 .fetch();
     }
+
     @Override
     public List<CategoryResponse> findCategoryListByStudyInfoIdJoinCategoryMapping(Long studyInfoId, Long cursorIdx, Long limit) {
         JPAQuery<CategoryResponse> query = queryFactory
                 .select(Projections.constructor(
                         CategoryResponse.class,
                         studyCategory.id,
-                        studyCategory.name
-                        )
+                        studyCategory.name)
                 )
                 .from(studyCategory)
                 .join(studyCategoryMapping).on(studyCategory.id.eq(studyCategoryMapping.studyCategoryId))

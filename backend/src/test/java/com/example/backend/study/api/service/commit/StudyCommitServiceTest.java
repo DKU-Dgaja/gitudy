@@ -35,7 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class StudyCommitServiceTest extends TestConfig {
     private final static int DATA_SIZE = 5;
     private final static Long LIMIT = 5L;
-    private final static int PAGE_SIZE = 5;
     private final String REPOSITORY_OWNER = "jusung-c";
     private final String REPOSITORY_NAME = "Github-Api-Test";
 
@@ -190,24 +189,21 @@ class StudyCommitServiceTest extends TestConfig {
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        // 기본 컨벤션 저장
+        String conventionName = "default convention";
+        String convention = "^[a-zA-Z0-9]{6} .*";
 
         // 컨벤션 등록
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
                 .name(conventionName)
-                .description(conventionDescription)
                 .content(convention)
                 .isActive(true)
                 .build());
 
-        // 레포지토리의 총 10개의 커밋 중 컨벤션 지킨 것 5개 (순서대로)
+        // 레포지토리의 총 11개의 커밋 중 컨벤션 지킨 것 7개 (순서대로)
         /*
+                qwe321 [jjjjssssuuunngg] 프로그래머스: 컨벤션 지키기
                 aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기
                 qwe321 [jusung-c] 백준: 컨벤션 지키기
                 aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
@@ -221,14 +217,16 @@ class StudyCommitServiceTest extends TestConfig {
                 aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기
                 aBc123 [jusung-c] 백준: 크리스마스 트리
         */
-        int expectedSize = 3;
+        int expectedSize = 5;
 
         String A = "aBc123 [jjjjssssuuunngg] 백준: 컨벤션 지키기";
-        String B = "aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기";
-        String C = "aBc123 [jusung-c] 백준: 크리스마스 트리";
+        String B = "aBc123 컨벤션 무시하기";
+        String C = "aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기";
+        String D = "aBc123 컨벤션 안 지키기";
+        String E = "aBc123 [jusung-c] 백준: 크리스마스 트리";
 
         // when
-        studyCommitService.fetchRemoteCommitsAndSave(study, todo, PAGE_SIZE);
+        studyCommitService.fetchRemoteCommitsAndSave(study, todo, 2);
 
         // 저장된 커밋들 중 컨벤션을 지킨 APPROVAL 상태의 커밋만 필터링
         List<StudyCommit> allCommits = studyCommitRepository.findByStudyTodoId(todo.getId())
@@ -251,6 +249,8 @@ class StudyCommitServiceTest extends TestConfig {
         assertEquals(A, allCommits.get(0).getMessage());
         assertEquals(B, allCommits.get(1).getMessage());
         assertEquals(C, allCommits.get(2).getMessage());
+        assertEquals(D, allCommits.get(3).getMessage());
+        assertEquals(E, allCommits.get(4).getMessage());
 
     }
 
@@ -271,6 +271,32 @@ class StudyCommitServiceTest extends TestConfig {
         StudyCommit commit = studyCommitRepository.findById(savedCommit.getId()).get();
         assertEquals(commit.getStatus(), CommitStatus.COMMIT_APPROVAL);
     }
+
+    @Test
+    void 이미_승인된_커밋에_대한_중복_승인_방지_테스트() {
+        // given
+        Long studyId = 1L;
+        Long userId = 1L;
+        Long studyTodoId = 1L;
+        String commitSha = "123";
+
+        StudyCommit savedCommit = studyCommitRepository.save(
+                StudyCommitFixture.createDefaultStudyCommit(userId, studyId, studyTodoId, commitSha)
+        );
+
+        // 커밋을 승인 처리
+        studyCommitService.approveCommit(savedCommit.getId());
+
+        // when
+        // 다시 동일한 커밋을 승인 처리
+        studyCommitService.approveCommit(savedCommit.getId());
+
+        // then
+        StudyCommit commit = studyCommitRepository.findById(savedCommit.getId()).get();
+        assertEquals(CommitStatus.COMMIT_APPROVAL, commit.getStatus());
+        assertNotNull(commit.getModifiedDateTime());
+    }
+
 
     @Test
     void 커밋_거절_성공_테스트() {

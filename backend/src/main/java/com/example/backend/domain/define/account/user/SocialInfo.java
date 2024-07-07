@@ -1,9 +1,7 @@
 package com.example.backend.domain.define.account.user;
 
-import com.example.backend.common.validation.ValidSocialInfo;
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;

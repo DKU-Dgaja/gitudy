@@ -16,19 +16,19 @@ public class ScheduledCommitFetchService {
 
     @Value("${scheduling.fixedRate}")
     private long fixedRate;
-
-    @Scheduled(fixedRateString = "${scheduling.fixedRate}", initialDelay = 1800000)
-    @Transactional
-    public void fetchCommitsForAllStudies() {
-        log.info(">>>> 스케줄링 시작");
-
-        studyCommitService.fetchRemoteCommitsForAllStudiesAsync()
-                .exceptionally(ex -> {
-                    log.error(">>>> Error fetching commits for all studies", ex);
-                    return null;
-                });
-
-        log.info(">>>> 스케줄링 종료");
-    }
+//
+//    @Scheduled(fixedRateString = "${scheduling.fixedRate}", initialDelay = 1800000)
+//    @Transactional
+//    public void fetchCommitsForAllStudies() {
+//        log.info(">>>> 스케줄링 시작");
+//
+//        studyCommitService.fetchRemoteCommitsForAllStudiesAsync()
+//                .exceptionally(ex -> {
+//                    log.error(">>>> Error fetching commits for all studies", ex);
+//                    return null;
+//                });
+//
+//        log.info(">>>> 스케줄링 종료");
+//    }
 
 }
