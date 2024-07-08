@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class RefreshTokenServiceTest extends TestConfig {
     @Autowired
@@ -97,5 +97,42 @@ class RefreshTokenServiceTest extends TestConfig {
                 () -> refreshTokenService.reissue(claims, refreshToken));
         assertThat(exception.getMessage()).isEqualTo(ExceptionMessage.JWT_NOT_EXIST_RTK.getText());
 
+    }
+
+
+    @Test
+    void Subject로_토큰찾기() {
+        // given
+        RefreshToken saveToken = refreshTokenRepository.save(RefreshToken.builder()
+                .refreshToken("redis_Token")
+                .subject("12345_GITHUB")
+                .build());
+
+        // when
+        Optional<RefreshToken> rtk = refreshTokenRepository.findBySubject(saveToken.getSubject());
+
+        // then
+        assertThat(rtk).isNotEmpty();
+
+
+        assertThat(rtk.get().getRefreshToken()).isEqualTo(saveToken.getRefreshToken());
+        assertThat(rtk.get().getSubject()).isEqualTo(saveToken.getSubject());
+    }
+
+    @Test
+    void 이미_존재하는_토큰이면_삭제_테스트() {
+        // given
+        RefreshToken saveToken = refreshTokenRepository.save(RefreshToken.builder()
+                .refreshToken("이미 존재하는 RefreshToken")
+                .subject("12345_GITHUB")
+                .build());
+
+        // when
+        Optional<RefreshToken> rtk = refreshTokenRepository.findBySubject(saveToken.getSubject());
+        refreshTokenRepository.delete(rtk.get());
+
+        // then
+        Optional<RefreshToken> deletedToken = refreshTokenRepository.findBySubject(saveToken.getSubject());
+        assertFalse(deletedToken.isPresent());
     }
 }
