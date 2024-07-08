@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.commit;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -70,7 +69,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "20"))
 
@@ -98,7 +97,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "")
                         .param("limit", "20"))
 
@@ -126,7 +125,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "20"))
 
@@ -153,7 +152,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "-1")
                         .param("limit", "0"))
 
@@ -183,7 +182,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -211,7 +210,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -238,7 +237,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/" + commitId + "/approve")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -271,7 +270,7 @@ class StudyCommitControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
                         .content(objectMapper.writeValueAsString(request))
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -302,7 +301,7 @@ class StudyCommitControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
                         .content(objectMapper.writeValueAsString(request))
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -328,7 +327,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/waiting")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -354,7 +353,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/waiting")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())

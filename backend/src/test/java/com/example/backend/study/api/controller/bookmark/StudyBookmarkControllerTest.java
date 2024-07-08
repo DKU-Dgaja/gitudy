@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.bookmark;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -59,7 +58,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
@@ -88,7 +87,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "")
                         .param("limit", "5"))
 
@@ -100,6 +99,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
                 .andDo(print());
 
     }
+
     @Test
     void 마이_북마크_조회_실패_테스트() throws Exception {
         // given
@@ -115,7 +115,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
@@ -138,7 +138,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/bookmarks")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "-1"))
 
@@ -166,7 +166,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/bookmarks/study/" + studyInfoId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -192,7 +192,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/bookmarks/study/" + studyInfoId)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())

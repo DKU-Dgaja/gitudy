@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.info;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -99,7 +98,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -129,7 +128,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
@@ -158,7 +157,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
@@ -185,7 +184,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(delete("/study/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                 )
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -218,7 +217,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(patch("/study/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyInfoUpdateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -250,8 +249,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/update")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                )
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
@@ -276,7 +274,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
@@ -306,7 +304,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "10")
                         .param("cursorIdx", "")
                         .param("sortBy", "score")
@@ -318,6 +316,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andDo(print());
     }
+
     @Test
     void 마이_스터디_조회_유효성_검증_실패_테스트() throws Exception {
         // given
@@ -334,7 +333,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "10")
                         .param("cursorIdx", "-1")
                         .param("sortBy", "score")
@@ -346,6 +345,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
+
     @Test
     void 전체_스터디_조회_성공_테스트() throws Exception {
         // given
@@ -362,7 +362,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
@@ -374,6 +374,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andDo(print());
     }
+
     @Test
     void 전체_스터디_조회_유효성_검증_실패_테스트() throws Exception {
         // given
@@ -390,7 +391,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "10")
                         .param("cursorIdx", "-1")
                         .param("sortBy", "score")
@@ -402,6 +403,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
+
     @Test
     void 스터디_상세정보_조회_성공_테스트() throws Exception {
         // given
@@ -418,7 +420,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "10")
                         .param("cursorIdx", "1")
                         .param("sortBy", "score")
@@ -448,7 +450,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("myStudy", "true")
                 )
                 // then
@@ -476,7 +478,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/count")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("myStudy", "false")
                 )
                 // then

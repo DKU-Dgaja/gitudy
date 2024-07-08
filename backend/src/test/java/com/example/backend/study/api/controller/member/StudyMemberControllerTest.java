@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.member;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -91,7 +90,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(get("/member/{studyInfoId}", studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200));
@@ -121,7 +120,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(patch("/member/" + studyInfo.getId() + "/resign/" + studyMember.getUserId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("resignUserId", String.valueOf(studyMember.getUserId())))
 
                 // then
@@ -154,7 +153,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(patch("/member/" + studyInfo.getId() + "/withdrawal")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -183,7 +182,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         mockMvc.perform(post("/member/" + studyInfo.getId() + "/apply")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(messageRequest))
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -210,7 +209,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         // when, then
         mockMvc.perform(patch("/member/" + studyInfo.getId() + "/apply/" + 1L)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -237,7 +236,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(delete("/member/" + studyInfo.getId() + "/apply")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -269,7 +268,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(get("/member/" + studyInfo.getId() + "/apply")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
@@ -303,7 +302,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(get("/member/" + studyInfo.getId() + "/apply")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "")
                         .param("limit", "5"))
 
@@ -335,7 +334,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         mockMvc.perform(post("/member/" + studyInfo.getId() + "/notify/" + 1L)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(messageRequest))
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -365,7 +364,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         mockMvc.perform(post("/member/" + studyInfo.getId() + "/notify/leader")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(messageRequest))
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())

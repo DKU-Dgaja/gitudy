@@ -37,8 +37,8 @@ public class MockTestConfig {
     public static final String AUTHORIZATION = "Authorization";
     public static final String BEARER = "Bearer";
 
-    public static String createAuthorizationHeader(String accessToken, String refreshToken) {
-        return BEARER + " " + accessToken + " " + refreshToken;
+    public static String createAuthorizationHeader(String token) {
+        return BEARER + " " + token;
     }
 }
 

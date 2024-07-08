@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.comment.study;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -96,7 +95,7 @@ class StudyCommentControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentRegisterRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -104,6 +103,7 @@ class StudyCommentControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_obj").value("StudyComment register Success"))
                 .andDo(print());
     }
+
     @Test
     public void Study_Comment_Update_테스트() throws Exception {
         //given
@@ -125,7 +125,7 @@ class StudyCommentControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(patch("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentUpdateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -133,6 +133,7 @@ class StudyCommentControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_obj").value("StudyComment update Success"))
                 .andDo(print());
     }
+
     @Test
     public void Study_Comment_삭제_테스트() throws Exception {
         //given
@@ -153,7 +154,7 @@ class StudyCommentControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
@@ -178,9 +179,9 @@ class StudyCommentControllerTest extends MockTestConfig {
                 .thenReturn(response);
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
@@ -209,9 +210,9 @@ class StudyCommentControllerTest extends MockTestConfig {
                 .thenReturn(response);
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "")
                         .param("limit", "5"))
 
@@ -239,9 +240,9 @@ class StudyCommentControllerTest extends MockTestConfig {
                 .isValidateStudyMember(any(User.class), any(Long.class));
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
@@ -263,9 +264,9 @@ class StudyCommentControllerTest extends MockTestConfig {
         String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "-1"))
 

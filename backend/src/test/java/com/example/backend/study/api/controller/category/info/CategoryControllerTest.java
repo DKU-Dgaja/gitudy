@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.category.info;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -62,6 +61,7 @@ class CategoryControllerTest extends MockTestConfig {
     private StudyCategoryRepository studyCategoryRepository;
     @Autowired
     private StudyInfoRepository studyInfoRepository;
+
     @AfterEach
     void tearDown() {
         studyInfoRepository.deleteAllInBatch();
@@ -90,7 +90,7 @@ class CategoryControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/category")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -98,6 +98,7 @@ class CategoryControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Category Register Success."))
                 .andDo(print());
     }
+
     @Test
     void 카테고리_등록_공백_유효성_검증_실패_테스트() throws Exception {
         //given
@@ -120,7 +121,7 @@ class CategoryControllerTest extends MockTestConfig {
         //when, then
         mockMvc.perform(post("/category")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isOk())
@@ -151,7 +152,7 @@ class CategoryControllerTest extends MockTestConfig {
         //when, then
         mockMvc.perform(post("/category")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isOk())
@@ -159,6 +160,7 @@ class CategoryControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
+
     @Test
     public void 카테고리_수정_테스트() throws Exception {
         //given
@@ -181,7 +183,7 @@ class CategoryControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(patch("/category/" + studyCategory.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -189,6 +191,7 @@ class CategoryControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_obj").value("Category update Success"))
                 .andDo(print());
     }
+
     @Test
     void 카테고리_수정_글자수_초과_유효성_검증_실패_테스트() throws Exception {
         //given
@@ -214,7 +217,7 @@ class CategoryControllerTest extends MockTestConfig {
         //when, then
         mockMvc.perform(post("/category")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isOk())
@@ -222,6 +225,7 @@ class CategoryControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
+
     @Test
     void 카테고리_수정_공백_유효성_검증_실패_테스트() throws Exception {
         //given
@@ -247,7 +251,7 @@ class CategoryControllerTest extends MockTestConfig {
         //when, then
         mockMvc.perform(patch("/category/" + studyCategory.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isOk())
@@ -255,6 +259,7 @@ class CategoryControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
+
     @Test
     public void 카테고리_수정_권한_실패_테스트() throws Exception {
         //given
@@ -278,13 +283,14 @@ class CategoryControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(patch("/category/" + studyCategory.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.CATEGORY_NOT_FOUND.getText()))
                 .andDo(print());
     }
+
     @Test
     public void 카테고리_삭제_테스트() throws Exception {
         //given
@@ -304,7 +310,7 @@ class CategoryControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(delete("/category/" + studyCategory.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
@@ -332,7 +338,7 @@ class CategoryControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(delete("/category/" + studyCategory.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
@@ -358,7 +364,7 @@ class CategoryControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/category/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
@@ -390,7 +396,7 @@ class CategoryControllerTest extends MockTestConfig {
 
         mockMvc.perform(get("/category/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
@@ -416,7 +422,7 @@ class CategoryControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/category/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "-1"))
 

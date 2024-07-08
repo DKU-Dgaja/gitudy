@@ -1,7 +1,6 @@
 package com.example.backend.study.api.event.controller;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
@@ -71,7 +70,7 @@ class FcmControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/fcm")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(token)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -96,7 +95,7 @@ class FcmControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(post("/fcm/single")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(fcmSingleTokenRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -121,7 +120,7 @@ class FcmControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(post("/fcm/multi")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(fcmMultiTokenRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))

@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -70,6 +71,7 @@ class SecurityConfigTest extends MockTestConfig {
         User user = User.builder()
                 .name("김민수")
                 .role(UserRole.USER)
+                .platformId("github123")
                 .platformType(UserPlatformType.GITHUB)
                 .profileImageUrl("https://google.com")
                 .build();
@@ -78,16 +80,16 @@ class SecurityConfigTest extends MockTestConfig {
         // JWT의 Claims로 넣어줄 map 생성
         HashMap<String, String> claimsMap = new HashMap<>();
         claimsMap.put("role", savedUser.getRole().name());
-        claimsMap.put("name", savedUser.getName());
-        claimsMap.put("profileImageUrl", savedUser.getProfileImageUrl());
+        claimsMap.put("platformId", savedUser.getPlatformId());
+        claimsMap.put("platformType", savedUser.getPlatformType().name());
 
         // JWT Access Token 생성
-        String atk = jwtService.generateAccessToken(claimsMap, savedUser);
+        String accessToken = jwtService.generateAccessToken(claimsMap, savedUser);
 
         // when
         mockMvc.perform(
                         get(uri)
-                                .header("Authorization", "Bearer " + atk)
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                 )
                 .andExpect(status().isOk());
     }

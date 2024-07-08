@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.comment.commit;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -65,7 +64,7 @@ class CommitCommentControllerTest extends MockTestConfig {
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("studyInfoId", "1"))
 
 
@@ -93,7 +92,7 @@ class CommitCommentControllerTest extends MockTestConfig {
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("studyInfoId", "1"))
 
                 // then
@@ -121,7 +120,7 @@ class CommitCommentControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
 
                 // then
@@ -148,7 +147,7 @@ class CommitCommentControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content(inValidContent).build())))
 
                 // then
@@ -173,7 +172,7 @@ class CommitCommentControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
 
                 // then

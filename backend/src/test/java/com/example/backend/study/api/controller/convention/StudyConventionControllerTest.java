@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.convention;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
@@ -94,7 +93,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/convention")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -121,7 +120,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/convention")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(StudyConventionRequest.builder()
                                 .name(inValidName)
                                 .content("정규식")
@@ -157,7 +156,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
         //when, then
         mockMvc.perform(put("/study/" + studyInfo.getId() + "/convention/" + studyConvention.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 .andExpect(status().isOk())
@@ -194,7 +193,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
         //when, then
         mockMvc.perform(put("/study/" + studyInfo.getId() + "/convention/" + studyConvention.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(StudyConventionUpdateRequest.builder()
                                 .name("컨벤션 수정")
                                 .description("설명 수정")
@@ -230,7 +229,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/convention/" + studyConvention.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
@@ -261,7 +260,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
         // when, then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention/" + studyConvention.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
@@ -296,9 +295,9 @@ public class StudyConventionControllerTest extends MockTestConfig {
         // when, then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("cursorIdx","1")
-                        .param("limit","1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .param("cursorIdx", "1")
+                        .param("limit", "1")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -333,9 +332,9 @@ public class StudyConventionControllerTest extends MockTestConfig {
         // when, then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("cursorIdx","")
-                        .param("limit","1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .param("cursorIdx", "")
+                        .param("limit", "1")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))

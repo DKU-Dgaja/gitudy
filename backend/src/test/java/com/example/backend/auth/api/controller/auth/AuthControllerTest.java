@@ -1,7 +1,6 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
@@ -19,7 +18,6 @@ import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,14 +30,15 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings("NonAsciiCharacters")
 class AuthControllerTest extends MockTestConfig {
@@ -73,8 +72,7 @@ class AuthControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(
                         post("/auth/logout")
-                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
-
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -100,7 +98,7 @@ class AuthControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(post("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -112,7 +110,7 @@ class AuthControllerTest extends MockTestConfig {
     void logoutWhenInvalidHeader() throws Exception {
         mockMvc.perform(post("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, "INVALID HEADER"))
+                        .header(AUTHORIZATION, "INVALID HEADER EXAMPLE"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
@@ -137,7 +135,7 @@ class AuthControllerTest extends MockTestConfig {
         mockMvc.perform(
                         post("/auth/register")
                                 .contentType(MediaType.APPLICATION_JSON)
-                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                                 .content(objectMapper.writeValueAsString(request)))
                 .andDo(result -> {
                     System.out.println(result.getResponse().getContentAsString());
@@ -158,7 +156,7 @@ class AuthControllerTest extends MockTestConfig {
 
         when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthLoginResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
+                //.refreshToken(refreshToken)
                 .build()
         );
 
@@ -167,7 +165,7 @@ class AuthControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(post("/auth/delete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200));
@@ -194,7 +192,7 @@ class AuthControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/auth/info")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -214,7 +212,7 @@ class AuthControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/auth/info")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
@@ -238,7 +236,7 @@ class AuthControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/auth/info")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
@@ -266,7 +264,7 @@ class AuthControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(get("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(200))
@@ -291,7 +289,7 @@ class AuthControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(get("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_code").value(400))
@@ -324,7 +322,7 @@ class AuthControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 // then
@@ -361,7 +359,7 @@ class AuthControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 // then
@@ -396,7 +394,7 @@ class AuthControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(post("/auth/update")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 // then
@@ -422,7 +420,7 @@ class AuthControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(get("/auth/update/pushAlarmYn" + "/" + true)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -446,7 +444,7 @@ class AuthControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(get("/auth/update/pushAlarmYn" + "/" + true)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
