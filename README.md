@@ -24,7 +24,7 @@
 
 <p align="left">  
   <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/39eb1d17-d9c8-4261-9985-d072d17b880d" align="left" width="39" height="39">  
-  <h2>서비스 소개</h2>
+  <h2>SERVICE</h2>
 </p>
 
 ### 🌟 스터디와 연동된 Github 커밋을 모바일 앱에서 확인 및 리뷰
@@ -35,7 +35,10 @@
   <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/8947b632-569e-4302-87a7-c3769eda93a8" align="center" height="500">
 </p>
 <p align="center">
+
+  ~~~
   1️⃣ Gitudy 스터디 생성 시, 팀장이 연동시킬 Github Repository 등록
+  ~~~
 </p>
 
 <br/><br/>
@@ -44,7 +47,10 @@
   <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/4fe01dc0-10fd-44d6-91e5-eb452559a17f" align="center" height="500">
 </p>
 <p align="center">
+      
+  ~~~
   2️⃣ 팀장은 스터디에 To-Do(ex. 백준 #7569 풀기)를 등록
+  ~~~
 </p>
 
 <br/><br/>
@@ -54,7 +60,10 @@
   <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/86007496-a3a5-480d-ab71-bd512ccf8cc8" align="center" height="400">
 </p>
 <p align="center"> 
+      
+  ~~~
   3️⃣ 팀원은 앱에서 To-Do를 확인하고, 문제를 푼 후 해당 코드를 연동된 Repository에 커밋: 커밋메세지에 해당 To-Do 번호 명시
+  ~~~
 </p>
 
 <br/><br/>
@@ -63,7 +72,10 @@
   <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/a788d474-b5a2-499d-816b-84c671b40dc3" align="center" height="500">
 </p>
 <p align="center">
+
+ ~~~
  4️⃣ 팀장 및 팀원들은 앱 내 링크를 통해 팀원의 커밋 내용 확인 및 리뷰
+ ~~~
 </p>
 
 
@@ -80,18 +92,22 @@
 
 <br/>
 
-<p align="center">
-  - 커밋 횟수, 스터디 참여 개수 등 스터디 참여도 관련 지표를 생성하여 귀여운 UI와 점수로 표현<br/><br/>
- - 각 팀의 점수와 개인의 점수를 랭킹순으로 확인 가능 → 동기부여 제공<br/><br/>
- - 스터디 내 커뮤니티 기능 제공(방명록 및 댓글)
-</p>
+<p align="center">  
+    
+~~~
+- 커밋 횟수, 스터디 참여 개수 등 스터디 참여도 관련 지표를 생성하여 귀여운 UI와 점수로 표현
 
+- 각 팀의 점수와 개인의 점수를 랭킹순으로 확인 가능 → 동기부여 제공
+
+- 스터디 내 커뮤니티 기능 제공(방명록 및 댓글)
+~~~
+</p>
 
 <br/><br/><br/><br/>
 
 <p align="left">  
   <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/39eb1d17-d9c8-4261-9985-d072d17b880d" align="left" width="39" height="39">  
-  <h2>팀원 소개</h2>
+  <h2>TEAM</h2>
 </p>
 
 
@@ -104,7 +120,58 @@
 
 </div>
 
+<br/><br/><br/><br/>
 
-<br/><br/>
+<p align="left">  
+  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/39eb1d17-d9c8-4261-9985-d072d17b880d" align="left" width="39" height="39">  
+  <h2>ARCHITECTURE</h2>
+</p>
+
+### 🚀 Android
+
+
+<p align="center">  
+  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/d4d6268b-1245-4a7e-b761-669d18afcdbd" align="center" width="750">  
+</p>
+
+
+<p align="center">  
+    
+~~~
+- Stacks -
+
+MVVM Architecture
+Android: Kotlin, Jetpack Library(AAC), Coroutines, Flow, Security
+Network: Retrofit2, OkHttp3, Glide
+Firebase: FCM
+~~~
+</p>
+
+
+<br/><br/><br/>
+
+
+### 🚀 Backend
+
+<br/>
+
+<p align="center">
+  <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/9f3fdd11-f865-4f8e-aa9c-91a142951d3f" align="center" width="750">  
+</p>
+
+
+<p align="center">  
+    
+~~~
+- Stacks -
+
+Java, Spring boot, Spring security, Swagger, Query DSL, JPA, RESTful API, Git API
+CI/CD: docker, Github Actions
+DB: Redis, MongoDB, MySQL
+Firebase: FCM
+~~~
+</p>
+
+<br/>
 
 ![Group 483366](https://github.com/DKU-Dgaja/gitudy/assets/86196342/ec931c8c-b16e-4c46-83a6-b1bc020367e1)
