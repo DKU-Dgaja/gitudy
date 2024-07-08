@@ -69,17 +69,17 @@ public class RefreshTokenService {
 
 
     // Logout 시 Redis에 저장된 RefreshToken 삭제
-    public void logout(String refreshToken) {
+    public void logout(String accessToken) {
 
-        String sub = jwtService.extractAllClaims(refreshToken).getSubject();
+        String sub = jwtService.extractAllClaims(accessToken).getSubject();
 
-        RefreshToken rtk = refreshTokenRepository.findById(refreshToken).orElseThrow(() -> {
+        RefreshToken rtk = refreshTokenRepository.findBySubject(sub).orElseThrow(() -> {
             log.warn(">>>> Token Not Exist : {}", ExceptionMessage.REFRESHTOKEN_NOT_EXIST.getText());
-            throw new JwtException(ExceptionMessage.REFRESHTOKEN_NOT_EXIST);
+            return new JwtException(ExceptionMessage.REFRESHTOKEN_NOT_EXIST);
         });
 
         // refreshToken 유효성 검사
-        if (!jwtService.isTokenValid(refreshToken, rtk.getRefreshToken())) {
+        if (!jwtService.isTokenValid(rtk.getRefreshToken(), rtk.getSubject())) {
             log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.REFRESHTOKEN_INVALID.getText());
             throw new JwtException(ExceptionMessage.REFRESHTOKEN_INVALID);
         }

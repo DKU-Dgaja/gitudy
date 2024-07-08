@@ -21,6 +21,7 @@ import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
+import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.HashMap;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -41,6 +43,7 @@ public class AuthService {
     private final OAuthService oAuthService;
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Transactional
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
@@ -100,6 +103,12 @@ public class AuthService {
         final String jwtRefreshToken = jwtService.generateRefreshToken(claims, user);
         log.info(">>>> [ 사용자 {}님의 JWT 토큰이 발급되었습니다 ] <<<<", user.getName());
         log.info(">>>> [ 사용자 {}님의 refresh 토큰이 발급되었습니다 ] <<<<", user.getName());
+
+        // 사용자의 Refresh Token이 이미 존재하면 토큰 삭제
+        Optional<RefreshToken> existingToken = refreshTokenRepository.findBySubject(user.getUsername());
+        if (existingToken.isPresent()) {
+            refreshTokenRepository.delete(existingToken.get());
+        }
 
         // Refresh Token을 레디스에 저장
         RefreshToken refreshToken = RefreshToken.builder().refreshToken(jwtRefreshToken).subject(user.getUsername()).build();
