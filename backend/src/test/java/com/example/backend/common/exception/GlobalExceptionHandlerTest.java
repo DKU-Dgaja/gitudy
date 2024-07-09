@@ -2,6 +2,7 @@ package com.example.backend.common.exception;
 
 import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.response.JsonResult;
+import com.google.api.Http;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -56,7 +57,7 @@ class GlobalExceptionHandlerTest {
 
     @Test
     @DisplayName("JwtException 발생시 GlobalExceptionHandler에서 처리되며 401(UNAUTHORIZED)를 반환한다.")
-    void exceptionTest() {
+    void JwtExceptionTest() {
         // given
         JwtException exception = new JwtException(ExceptionMessage.JWT_MALFORMED);
 
@@ -66,5 +67,19 @@ class GlobalExceptionHandlerTest {
         // then
         assertThat(result.getResCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
         assertThat(result.getResMsg()).isEqualTo(ExceptionMessage.JWT_MALFORMED.getText());
+    }
+
+    @Test
+    @DisplayName("Exception 발생시 GlobalExceptionHandler에서 처리되며 400(BAD_REQUEST)를 반환한다.")
+    void ExceptionTest() {
+        // given
+        Exception exception = new Exception(ExceptionMessage.AUTH_NOT_FOUND.getText());
+
+        // when
+        JsonResult result = globalExceptionHandler.exception(exception);
+
+        // then
+        assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(result.getResMsg()).isEqualTo(ExceptionMessage.AUTH_NOT_FOUND.getText());
     }
 }
