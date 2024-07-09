@@ -55,16 +55,16 @@ class GlobalExceptionHandlerTest {
     }
 
     @Test
-    @DisplayName("Exception 발생시 GlobalExceptionHandler에서 처리된다.")
+    @DisplayName("JwtException 발생시 GlobalExceptionHandler에서 처리되며 401(UNAUTHORIZED)를 반환한다.")
     void exceptionTest() {
         // given
         JwtException exception = new JwtException(ExceptionMessage.JWT_MALFORMED);
 
         // when
-        JsonResult result = globalExceptionHandler.exception(exception);
+        JsonResult result = globalExceptionHandler.handleJwtException(exception);
 
         // then
-        assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+        assertThat(result.getResCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
         assertThat(result.getResMsg()).isEqualTo(ExceptionMessage.JWT_MALFORMED.getText());
     }
 }

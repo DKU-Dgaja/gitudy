@@ -78,7 +78,7 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_code").value(401))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
@@ -217,7 +217,7 @@ class AuthControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(jsonPath("$.res_code").value(401))
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
