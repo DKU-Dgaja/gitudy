@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.info.response;
 
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,6 +24,8 @@ public class StudyInfoListResponse {
     private int score;                              // 스터디 활동점수
 
     private String info;                            // 스터디 소개
+
+    private StudyStatus status;                     // 스터디 상태
 
     private int maximumMember;                      // 스터디 제한 인원
 
