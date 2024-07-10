@@ -23,7 +23,7 @@ repositories {
 }
 
 dependencies {
-    // JPA
+    // JPA 의존성
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // Spring Web
