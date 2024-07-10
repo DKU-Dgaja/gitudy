@@ -1,5 +1,6 @@
 package com.example.backend.common.exception;
 
+import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.response.JsonResult;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -37,6 +38,14 @@ public class GlobalExceptionHandler {
                         .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
                         .collect(Collectors.joining(", "))
         );
+    }
+
+    /*
+        JWT 관련 예외 처리
+     */
+    @ExceptionHandler(com.example.backend.common.exception.jwt.JwtException.class)
+    public JsonResult<Exception> handleJwtException(JwtException e) {
+        return JsonResult.failOfUnauthorized(e.getMessage());
     }
 
     @ExceptionHandler(Exception.class)

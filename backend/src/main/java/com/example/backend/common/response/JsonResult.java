@@ -54,6 +54,23 @@ public class JsonResult<T> {
                 .build();
     }
 
+    /*
+        토큰 관련 실패 응답 객체 생성 메서드 - static
+     */
+    public static JsonResult failOfUnauthorized() {
+        return JsonResult.builder()
+                .resCode(HttpStatus.UNAUTHORIZED.value())
+                .resMsg(HttpStatus.UNAUTHORIZED.getReasonPhrase())
+                .build();
+    }
+
+    public static <T> JsonResult failOfUnauthorized(String resMsg) {
+        return JsonResult.builder()
+                .resCode(HttpStatus.UNAUTHORIZED.value())
+                .resMsg(resMsg)
+                .build();
+    }
+
     @Override
     public String toString() {
         return "JsonResult{" +
