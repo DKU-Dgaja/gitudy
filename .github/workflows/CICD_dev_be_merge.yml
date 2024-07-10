@@ -3,6 +3,8 @@ name: Spring Boot & Gradle CICD Jobs (With. dev branches push)
 on:
   push:
     branches: [ dev ]
+    paths:
+      - 'backend/**'
 
 jobs:
   build:
