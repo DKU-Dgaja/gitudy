@@ -74,7 +74,6 @@ class FcmControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(token)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("FCM token save Success."))
                 .andDo(print());
@@ -99,7 +98,6 @@ class FcmControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(fcmSingleTokenRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("Fcm Single Success"))
                 .andDo(print());
@@ -124,7 +122,6 @@ class FcmControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                         .content(objectMapper.writeValueAsString(fcmMultiTokenRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("Fcm Multi Success"))
                 .andDo(print());

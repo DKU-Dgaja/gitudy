@@ -77,8 +77,7 @@ class AuthControllerTest extends MockTestConfig {
 
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(401))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
@@ -96,15 +95,15 @@ class AuthControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
         String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
-
         // when
         mockMvc.perform(post("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_obj").value("로그아웃 되었습니다."));
+                .andExpect(jsonPath("$.res_obj").value("로그아웃 되었습니다."))
+                .andDo(print());
     }
 
     @Test
@@ -113,8 +112,8 @@ class AuthControllerTest extends MockTestConfig {
         mockMvc.perform(post("/auth/logout")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, "INVALID HEADER"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_INVALID_HEADER.getText()));
     }
 
@@ -142,8 +141,8 @@ class AuthControllerTest extends MockTestConfig {
                 .andDo(result -> {
                     System.out.println(result.getResponse().getContentAsString());
                 })
+
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"));
     }
 
@@ -170,7 +169,7 @@ class AuthControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200));
+                .andExpect(jsonPath("$.res_msg").value("OK"));
 
     }
 
@@ -195,9 +194,9 @@ class AuthControllerTest extends MockTestConfig {
         mockMvc.perform(get("/auth/info")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj.role").value(String.valueOf(UserRole.USER)))
                 .andExpect(jsonPath("$.res_obj.name").value(savedUser.getName()))
                 .andExpect(jsonPath("$.res_obj.profile_image_url").value(savedUser.getProfileImageUrl()));
@@ -215,9 +214,9 @@ class AuthControllerTest extends MockTestConfig {
         mockMvc.perform(get("/auth/info")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(401))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
@@ -239,9 +238,9 @@ class AuthControllerTest extends MockTestConfig {
         mockMvc.perform(get("/auth/info")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
 
@@ -269,7 +268,6 @@ class AuthControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj.name").value(savedUser.getName()))
                 .andExpect(jsonPath("$.res_obj.profile_image_url").value(savedUser.getProfileImageUrl()))
                 .andDo(print());
@@ -293,8 +291,7 @@ class AuthControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
 
@@ -329,7 +326,6 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("User Update Success."))
                 .andDo(print());
@@ -365,8 +361,7 @@ class AuthControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
     }
@@ -400,8 +395,7 @@ class AuthControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
@@ -426,7 +420,6 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("PushAlarmYn Update Success."))
                 .andDo(print());
@@ -449,8 +442,7 @@ class AuthControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
     }
@@ -469,7 +461,6 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("Nickname Duplication Check Success."))
                 .andDo(print());
@@ -491,8 +482,7 @@ class AuthControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
@@ -513,8 +503,7 @@ class AuthControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }

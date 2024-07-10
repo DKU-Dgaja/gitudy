@@ -1,8 +1,6 @@
 package com.example.backend.common.exception;
 
 import com.example.backend.common.exception.jwt.JwtException;
-import com.example.backend.common.response.JsonResult;
-import com.google.api.Http;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -11,8 +9,8 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class GlobalExceptionHandlerTest {
     // @SpringBootTest 사용 안하고 테스트하기 위해 그냥 생성
@@ -28,11 +26,11 @@ class GlobalExceptionHandlerTest {
         String expectedResponseMessage = "fieldName: error message";
 
         // when
-        JsonResult result = globalExceptionHandler.bindException(bindException);
+        var result = globalExceptionHandler.bindException(bindException);
 
         // then
-        assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getResMsg()).isEqualTo(expectedResponseMessage);
+        assertEquals(result.getStatusCode().value(), HttpStatus.BAD_REQUEST.value());
+        assertThat(result.getBody().getResMsg()).isEqualTo(expectedResponseMessage);
 
     }
 
@@ -47,11 +45,11 @@ class GlobalExceptionHandlerTest {
         String expectedResponseMessage = "fieldName: error message";
 
         // when
-        JsonResult result = globalExceptionHandler.handleMethodArgumentNotValid(error);
+        var result = globalExceptionHandler.handleMethodArgumentNotValid(error);
 
         // then
-        assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getResMsg()).isEqualTo(expectedResponseMessage);
+        assertEquals(result.getStatusCode().value(), HttpStatus.BAD_REQUEST.value());
+        assertThat(result.getBody().getResMsg()).isEqualTo(expectedResponseMessage);
 
     }
 
@@ -62,11 +60,11 @@ class GlobalExceptionHandlerTest {
         JwtException exception = new JwtException(ExceptionMessage.JWT_MALFORMED);
 
         // when
-        JsonResult result = globalExceptionHandler.handleJwtException(exception);
+        var result = globalExceptionHandler.handleJwtException(exception);
 
         // then
-        assertThat(result.getResCode()).isEqualTo(HttpStatus.UNAUTHORIZED.value());
-        assertThat(result.getResMsg()).isEqualTo(ExceptionMessage.JWT_MALFORMED.getText());
+        assertEquals(result.getStatusCode().value(), HttpStatus.UNAUTHORIZED.value());
+        assertThat(result.getBody().getResMsg()).isEqualTo(ExceptionMessage.JWT_MALFORMED.getText());
     }
 
     @Test
@@ -76,10 +74,10 @@ class GlobalExceptionHandlerTest {
         Exception exception = new Exception(ExceptionMessage.AUTH_NOT_FOUND.getText());
 
         // when
-        JsonResult result = globalExceptionHandler.exception(exception);
+        var result = globalExceptionHandler.exception(exception);
 
         // then
-        assertThat(result.getResCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getResMsg()).isEqualTo(ExceptionMessage.AUTH_NOT_FOUND.getText());
+        assertEquals(result.getStatusCode().value(), HttpStatus.BAD_REQUEST.value());
+        assertThat(result.getBody().getResMsg()).isEqualTo(ExceptionMessage.AUTH_NOT_FOUND.getText());
     }
 }
