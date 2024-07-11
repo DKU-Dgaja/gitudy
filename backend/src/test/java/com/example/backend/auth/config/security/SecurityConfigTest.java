@@ -2,6 +2,7 @@ package com.example.backend.auth.config.security;
 
 import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -13,7 +14,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.HashMap;
+import java.util.Map;
 
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -66,28 +69,15 @@ class SecurityConfigTest extends MockTestConfig {
         // given
         String uri = "/test";
 
-        // USER 권한 사용자 저장
-        User user = User.builder()
-                .name("김민수")
-                .role(UserRole.USER)
-                .platformType(UserPlatformType.GITHUB)
-                .profileImageUrl("https://google.com")
-                .build();
-        User savedUser = userRepository.save(user);
-
-        // JWT의 Claims로 넣어줄 map 생성
-        HashMap<String, String> claimsMap = new HashMap<>();
-        claimsMap.put("role", savedUser.getRole().name());
-        claimsMap.put("name", savedUser.getName());
-        claimsMap.put("profileImageUrl", savedUser.getProfileImageUrl());
-
-        // JWT Access Token 생성
-        String atk = jwtService.generateAccessToken(claimsMap, savedUser);
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
         mockMvc.perform(
                         get(uri)
-                                .header("Authorization", "Bearer " + atk)
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
                 )
                 .andExpect(status().isOk());
     }

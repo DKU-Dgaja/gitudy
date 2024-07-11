@@ -14,6 +14,8 @@ import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
@@ -21,7 +23,6 @@ import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import jakarta.security.auth.message.AuthException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -52,7 +53,6 @@ public class AuthController {
 
         // OAuth 사용하여 각 플랫폼의 로그인 페이지 URL을 가져와서 state 주입
         List<AuthLoginPageResponse> loginPages = oAuthService.loginPage(loginState);
-
 
         return JsonResult.successOf(loginPages);
     }
@@ -86,7 +86,7 @@ public class AuthController {
             return JsonResult.successOf("로그아웃 되었습니다.");
         } else {
             log.warn(">>>> Invalid Header Access : {}", ExceptionMessage.JWT_INVALID_HEADER.getText());
-            return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
+            throw new JwtException(ExceptionMessage.JWT_INVALID_HEADER);
         }
 
     }
@@ -102,7 +102,7 @@ public class AuthController {
             return JsonResult.successOf(reissueResponse);
         } else {
             log.warn(">>>> Invalid Header Access : {}", ExceptionMessage.JWT_INVALID_HEADER.getText());
-            return JsonResult.failOf(ExceptionMessage.JWT_INVALID_HEADER.getText());
+            throw new JwtException(ExceptionMessage.JWT_INVALID_HEADER);
         }
     }
 
@@ -112,7 +112,7 @@ public class AuthController {
 
         if (user.getRole() == UNAUTH) {
             log.error(">>>> {} <<<<", ExceptionMessage.UNAUTHORIZED_AUTHORITY);
-            return JsonResult.failOf(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText());
+            throw new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY);
         }
 
         UserInfoResponse userInfoResponse = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());

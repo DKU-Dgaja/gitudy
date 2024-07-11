@@ -8,13 +8,11 @@ import org.springframework.http.HttpStatus;
 @Getter
 @NoArgsConstructor
 public class JsonResult<T> {
-    private Integer resCode;
     private T resObj;
     private String resMsg;
 
     @Builder
-    public JsonResult(Integer resCode, T resObj, String resMsg) {
-        this.resCode = resCode;
+    public JsonResult(T resObj, String resMsg) {
         this.resObj = resObj;
         this.resMsg = resMsg;
     }
@@ -24,14 +22,12 @@ public class JsonResult<T> {
      */
     public static JsonResult successOf() {
         return JsonResult.builder()
-                .resCode(HttpStatus.OK.value())
                 .resMsg(HttpStatus.OK.getReasonPhrase())
                 .build();
     }
 
     public static <T> JsonResult successOf(T resObj) {
         return JsonResult.builder()
-                .resCode(HttpStatus.OK.value())
                 .resObj(resObj)
                 .resMsg(HttpStatus.OK.getReasonPhrase())
                 .build();
@@ -40,33 +36,8 @@ public class JsonResult<T> {
     /*
         실패 응답 객체 생성 메서드 - static
      */
-    public static JsonResult failOf() {
-        return JsonResult.builder()
-                .resCode(HttpStatus.BAD_REQUEST.value())
-                .resMsg(HttpStatus.BAD_REQUEST.getReasonPhrase())
-                .build();
-    }
-
     public static <T> JsonResult failOf(String resMsg) {
         return JsonResult.builder()
-                .resCode(HttpStatus.BAD_REQUEST.value())
-                .resMsg(resMsg)
-                .build();
-    }
-
-    /*
-        토큰 관련 실패 응답 객체 생성 메서드 - static
-     */
-    public static JsonResult failOfUnauthorized() {
-        return JsonResult.builder()
-                .resCode(HttpStatus.UNAUTHORIZED.value())
-                .resMsg(HttpStatus.UNAUTHORIZED.getReasonPhrase())
-                .build();
-    }
-
-    public static <T> JsonResult failOfUnauthorized(String resMsg) {
-        return JsonResult.builder()
-                .resCode(HttpStatus.UNAUTHORIZED.value())
                 .resMsg(resMsg)
                 .build();
     }
@@ -74,7 +45,6 @@ public class JsonResult<T> {
     @Override
     public String toString() {
         return "JsonResult{" +
-                "resCode=" + resCode +
                 ", resObj=" + resObj +
                 ", resMsg='" + resMsg + '\'' +
                 '}';
