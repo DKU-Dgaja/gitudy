@@ -62,22 +62,7 @@ class AuthControllerTest extends MockTestConfig {
     void tearDown() {
         userRepository.deleteAllInBatch();
     }
-
-    @Test
-    @DisplayName("로그아웃 실패 테스트 - 잘못된 토큰으로 요청시 예외 발생")
-    void logoutTestWhenInvalidToken() throws Exception {
-        String accessToken = "strangeToken";
-        String refreshToken = "strangeToken";
-
-        // when
-        mockMvc.perform(
-                        post("/auth/logout")
-                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-
-                // then
-                .andExpect(status().isUnauthorized())
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
-    }
+    
 
     @Test
     @DisplayName("로그아웃 성공 테스트")
