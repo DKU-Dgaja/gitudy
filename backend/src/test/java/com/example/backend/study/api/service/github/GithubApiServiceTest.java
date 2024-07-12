@@ -447,4 +447,17 @@ class GithubApiServiceTest extends TestConfig {
 
     }
 
+    @Test
+    public void Collaborator_추가_성공_테스트() throws Exception {
+        // 실제로 존재하는 GitHub 레포지토리와 사용자 정보로 변경
+        RepositoryInfo repoInfo = new RepositoryInfo("jusung-c", "jenkins-test", "main");
+        String githubId = "rndudals"; // 실제로 존재하는 GitHub 사용자명
+
+        // 실제 GitHub API를 사용하여 Collaborator 추가
+        githubApiService.addCollaborator(repoInfo, githubId);
+
+        // 결과 확인은 GitHub 웹사이트에서 직접 확인하거나,
+        // 추가적인 API 호출을 통해 확인할 수 있습니다.
+    }
+
 }

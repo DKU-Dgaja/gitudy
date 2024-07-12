@@ -27,12 +27,8 @@ public class GithubApiService {
 
     private final StudyCommitRepository studyCommitRepository;
 
+    private final GitHub github;
     // 깃허브 api 통신 연결
-    public GitHub connectGithubApi() {
-        return connectGithub(token);
-    }
-
-    // 깃허브 통신을 위한 커넥션 생성
     public GitHub connectGithub(String token) {
         try {
             GitHub github = new GitHubBuilder().withOAuthToken(token).build();
@@ -97,5 +93,19 @@ public class GithubApiService {
         }
 
         return filteredCommits;
+    }
+
+    // 레포지토리에 Collaborator 추가
+    @Transactional
+    public void addCollaborator(RepositoryInfo repo, String githubId) {
+        try {
+            GHRepository repository = getRepository(repo);
+            GHUser user = github.getUser(githubId); // 여기에서 GitHub 객체를 사용하여 GHUser 객체를 가져옴
+            repository.addCollaborators(GHOrganization.Permission.PUSH, user); // GHUser 객체를 Collaborator로 추가하고 권한 설정
+            log.info(">>>> [ {} 사용자를 {} 레포지토리의 Collaborator로 추가했습니다. ] <<<<", githubId, repo.getName());
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_ADD_COLLABORATOR_ERROR.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_ADD_COLLABORATOR_ERROR);
+        }
     }
 }
