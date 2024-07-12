@@ -1,10 +1,9 @@
 package com.takseha.presentation.viewmodel.home
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
@@ -20,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-class MainHomeViewModel(application: Application) : AndroidViewModel(application) {
+class MainHomeViewModel: ViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
     private var gitudyStudyRepository = GitudyStudyRepository()
 
@@ -169,7 +168,6 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
                 }
 
                 Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
-                Log.d("MainHomeViewModel", "_uiState: ${_uiState.value}")
             } else {
                 Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
