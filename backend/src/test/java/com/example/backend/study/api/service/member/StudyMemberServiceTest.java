@@ -15,6 +15,7 @@ import com.example.backend.domain.define.fcm.listener.*;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -34,6 +35,7 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -96,6 +98,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
     @MockBean
     private NotifyLeaderListener notifyLeaderListener;
 
+    @MockBean
+    private GithubApiService githubApiService;
 
     public final static Long CursorIdx = null;
     public final static Long Limit = 3L;
@@ -693,6 +697,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // 스터디 가입 시 현재인원 증가
         assertEquals(beforeCurrentMember + 1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
+
+        // github api가 작동했는지 확인
+        verify(githubApiService, times(1)).addCollaborator(any(RepositoryInfo.class), any(String.class));
     }
 
     @Test
