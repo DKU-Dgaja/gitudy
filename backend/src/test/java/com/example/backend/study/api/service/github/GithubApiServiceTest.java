@@ -456,8 +456,7 @@ class GithubApiServiceTest extends TestConfig {
         // 실제 GitHub API를 사용하여 Collaborator 추가
         githubApiService.addCollaborator(repoInfo, githubId);
 
-        // 결과 확인은 GitHub 웹사이트에서 직접 확인하거나,
-        // 추가적인 API 호출을 통해 확인할 수 있습니다.
+        // 결과 확인은 GitHub 웹사이트에서 직접 확인할 수 있습니다.
     }
 
 }
