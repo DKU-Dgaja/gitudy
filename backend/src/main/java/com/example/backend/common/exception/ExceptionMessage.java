@@ -82,6 +82,7 @@ public enum ExceptionMessage {
     GITHUB_API_GET_REPOSITORY_ERROR("Repository 정보를 불러오는 데에 실패했습니다."),
     GITHUB_API_GET_COMMITS_ERROR("커밋 리스트를 불러오는데 실패했습니다."),
     GITHUB_API_GET_COMMIT_ERROR("커밋을 불러오는데 실패했습니다."),
+    GITHUB_API_ADD_COLLABORATOR_ERROR("GitHub Collaborator 추가가 실패했습니다."),
 
     // CategoryException
     CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),
