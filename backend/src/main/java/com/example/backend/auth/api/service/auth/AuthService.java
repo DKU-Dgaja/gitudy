@@ -96,6 +96,12 @@ public class AuthService {
         claims.put(PLATFORM_TYPE_CLAIM, String.valueOf(user.getPlatformType()));
 
 
+        // 사용자의 Refresh Token이 이미 존재하면 토큰 삭제
+        Optional<RefreshToken> existingToken = refreshTokenRepository.findBySubject(user.getUsername());
+        if (existingToken.isPresent()) {
+            refreshTokenRepository.delete(existingToken.get());
+        }
+
         // Access Token 생성
         final String jwtAccessToken = jwtService.generateAccessToken(claims, user);
 
@@ -104,11 +110,6 @@ public class AuthService {
         log.info(">>>> [ 사용자 {}님의 JWT 토큰이 발급되었습니다 ] <<<<", user.getName());
         log.info(">>>> [ 사용자 {}님의 refresh 토큰이 발급되었습니다 ] <<<<", user.getName());
 
-        // 사용자의 Refresh Token이 이미 존재하면 토큰 삭제
-        Optional<RefreshToken> existingToken = refreshTokenRepository.findBySubject(user.getUsername());
-        if (existingToken.isPresent()) {
-            refreshTokenRepository.delete(existingToken.get());
-        }
 
         // Refresh Token을 레디스에 저장
         RefreshToken refreshToken = RefreshToken.builder().refreshToken(jwtRefreshToken).subject(user.getUsername()).build();
