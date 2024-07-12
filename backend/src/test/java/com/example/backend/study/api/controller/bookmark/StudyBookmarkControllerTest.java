@@ -64,7 +64,6 @@ class StudyBookmarkControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
@@ -93,7 +92,6 @@ class StudyBookmarkControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
@@ -120,8 +118,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
                         .param("limit", "5"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
     }
@@ -143,8 +140,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
                         .param("limit", "-1"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
@@ -170,7 +166,6 @@ class StudyBookmarkControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("북마크 등록/삭제에 성공하였습니다."))
                 .andDo(print());
@@ -195,8 +190,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value("계정 정보를 찾을 수 없습니다."))
                 .andDo(print());
     }

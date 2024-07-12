@@ -304,6 +304,7 @@ class StudyInfoServiceTest extends TestConfig {
                             () -> assertEquals(expected.getTopic(), actual.getTopic()),
                             () -> assertEquals(expected.getScore(), actual.getScore()),
                             () -> assertEquals(expected.getInfo(), actual.getInfo()),
+                            () -> assertEquals(expected.getStatus(), actual.getStatus()),
                             () -> assertEquals(expected.getMaximumMember(), actual.getMaximumMember()),
                             () -> assertEquals(expected.getCurrentMember(), actual.getCurrentMember()),
                             () -> assertEquals(expected.getLastCommitDay(), actual.getLastCommitDay()),
@@ -608,6 +609,7 @@ class StudyInfoServiceTest extends TestConfig {
                             () -> assertEquals(expected.getTopic(), actual.getTopic()),
                             () -> assertEquals(expected.getScore(), actual.getScore()),
                             () -> assertEquals(expected.getInfo(), actual.getInfo()),
+                            () -> assertEquals(expected.getStatus(), actual.getStatus()),
                             () -> assertEquals(expected.getMaximumMember(), actual.getMaximumMember()),
                             () -> assertEquals(expected.getCurrentMember(), actual.getCurrentMember()),
                             () -> assertEquals(expected.getLastCommitDay(), actual.getLastCommitDay()),
@@ -617,6 +619,23 @@ class StudyInfoServiceTest extends TestConfig {
                 });
     }
 
+    @Test
+    public void 전체_스터디_조회시_삭제된_스터디_예외처리_테스트() {
+        // given
+        int expectedResponseSize = 0;
+
+        // 유저 생성
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+
+        // 삭제된 스터디 생성
+        StudyInfo studyInfos = studyInfoRepository.save(generateDeletedStudyInfo(user.getId()));
+
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(user.getId(), studyInfos.getId()));
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(user.getId(), null, LIMIT, SORTBY, false);
+
+        assertEquals(expectedResponseSize, response.getStudyInfoList().size());
+    }
     @Test
     public void 전체_스터디_조회_테스트_스터디_카테고리_name_반환_테스트() {
         // given

@@ -70,7 +70,6 @@ class CommitCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
@@ -96,8 +95,7 @@ class CommitCommentControllerTest extends MockTestConfig {
                         .param("studyInfoId", "1"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.AUTH_NOT_FOUND.getText()))
                 .andDo(print());
 
@@ -125,7 +123,6 @@ class CommitCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andDo(print());
 
@@ -151,8 +148,7 @@ class CommitCommentControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content(inValidContent).build())))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(expectedError))
                 .andDo(print());
     }
@@ -176,8 +172,7 @@ class CommitCommentControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.STUDY_NOT_MEMBER.getText()))
                 .andDo(print());
 

@@ -2,6 +2,7 @@ package com.example.backend.auth.config.security;
 
 import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
@@ -15,6 +16,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 

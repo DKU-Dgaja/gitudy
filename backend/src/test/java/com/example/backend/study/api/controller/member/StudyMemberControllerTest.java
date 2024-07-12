@@ -92,8 +92,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200));
+                .andExpect(status().isOk());
 
     }
 
@@ -125,7 +124,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Resign Member Success"));
     }
 
@@ -157,7 +155,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Withdrawal Member Success"));
     }
 
@@ -186,7 +183,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Apply StudyMember Success"));
 
     }
@@ -213,7 +209,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Apply Approve or Refuse StudyMember Success"));
 
     }
@@ -240,7 +235,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Apply cancel StudyMember Success"));
 
     }
@@ -274,7 +268,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isNotEmpty())
                 .andDo(print());
@@ -308,7 +301,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").isEmpty())
                 .andDo(print());
@@ -338,7 +330,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Notify to StudyMember Success"));
 
     }
@@ -368,7 +359,6 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj").value("Notify to StudyLeader Success"));
 
     }

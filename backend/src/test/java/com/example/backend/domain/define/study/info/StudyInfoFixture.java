@@ -67,6 +67,26 @@ public class StudyInfoFixture {
                 .build();
     }
 
+    // StudyInfo 생성 해주는 메소드
+    public static StudyInfo generateDeletedStudyInfo(Long userId) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .score(100)
+                .endDate(LocalDate.now().plusMonths(3))
+                .info("This is a sample study.")
+                .status(StudyStatus.STUDY_DELETED)
+                .joinCode("ABC123")
+                .maximumMember(5)
+                .currentMember(3)
+                .lastCommitDay(LocalDate.now())
+                .profileImageUrl("https://example.com/profile.jpg")
+                .notice("Important notice for the study.")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+
     // StudyInfoDetailResponse를 생성해주는 함수
     public static StudyInfoDetailResponse generateStudyInfoDetailResponse(StudyInfo studyInfo){
         return StudyInfoDetailResponse.builder()

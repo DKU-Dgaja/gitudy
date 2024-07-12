@@ -161,7 +161,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void jwtExceptionHandler(HttpServletResponse response, ExceptionMessage message) throws IOException {
         log.error(">>>> [ JWT 토큰 인증 중 Error 발생 : {} ] <<<<", message.getText());
 
-        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.getWriter().write(objectMapper.writeValueAsString(JsonResult.failOf(message.getText())));
