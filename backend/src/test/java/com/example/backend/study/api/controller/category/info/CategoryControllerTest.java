@@ -331,8 +331,7 @@ class CategoryControllerTest extends MockTestConfig {
         mockMvc.perform(delete("/category/" + studyCategory.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
     }

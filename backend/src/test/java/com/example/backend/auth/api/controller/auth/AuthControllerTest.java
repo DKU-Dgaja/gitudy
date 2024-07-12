@@ -62,7 +62,7 @@ class AuthControllerTest extends MockTestConfig {
     void tearDown() {
         userRepository.deleteAllInBatch();
     }
-    
+
 
     @Test
     @DisplayName("로그아웃 성공 테스트")
@@ -100,8 +100,7 @@ class AuthControllerTest extends MockTestConfig {
                                 .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
@@ -184,7 +183,6 @@ class AuthControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
                 .andExpect(jsonPath("$.res_obj.role").value(String.valueOf(UserRole.USER)))
                 .andExpect(jsonPath("$.res_obj.name").value(savedUser.getName()))
                 .andExpect(jsonPath("$.res_obj.profile_image_url").value(savedUser.getProfileImageUrl()));
@@ -203,8 +201,7 @@ class AuthControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
@@ -227,8 +224,7 @@ class AuthControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
+                .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
 
