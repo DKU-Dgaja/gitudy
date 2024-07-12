@@ -75,7 +75,7 @@ public class RefreshTokenService {
 
         RefreshToken rtk = refreshTokenRepository.findBySubject(sub).orElseThrow(() -> {
             log.warn(">>>> Token Not Exist : {}", ExceptionMessage.REFRESHTOKEN_NOT_EXIST.getText());
-            return new JwtException(ExceptionMessage.REFRESHTOKEN_NOT_EXIST);
+            throw new JwtException(ExceptionMessage.REFRESHTOKEN_NOT_EXIST);
         });
 
         // refreshToken 유효성 검사
@@ -85,7 +85,7 @@ public class RefreshTokenService {
         }
 
         refreshTokenRepository.delete(rtk);
-        log.info(">>>> {}'s RefreshToken id deleted.", sub);
+        log.info(">>>> {} 님의 RefreshToken이 삭제되었습니다.", sub);
     }
 
 }
