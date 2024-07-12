@@ -726,6 +726,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // then
         verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+
+        // github api가 작동했는지 확인
+        verify(githubApiService, times(1)).addCollaborator(any(RepositoryInfo.class), any(String.class));
     }
 
     @Test
