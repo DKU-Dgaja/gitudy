@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.ui.auth.LoginActivity
+import com.takseha.presentation.ui.auth.PopupAgreementActivity
 import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.auth.SplashViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -43,8 +44,12 @@ class SplashActivity : AppCompatActivity() {
 
     private fun setMainHome(availableTokenState: Boolean) {
         if (availableTokenState) {
+//            Handler(Looper.getMainLooper()).postDelayed({
+//                startActivity(Intent(this, MainHomeActivity::class.java))
+//                finish()
+//            }, 2000)
             Handler(Looper.getMainLooper()).postDelayed({
-                startActivity(Intent(this, MainHomeActivity::class.java))
+                startActivity(Intent(this, PopupAgreementActivity::class.java))
                 finish()
             }, 2000)
         }

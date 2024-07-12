@@ -45,18 +45,13 @@ class RegisterViewModel: ViewModel() {
         gitudyAuthRepository = GitudyAuthRepository()
 
         val correctNameResponse = gitudyAuthRepository.checkCorrectNickname(name)
-        val resCode = correctNameResponse.body()!!.resCode
-        val resMsg = correctNameResponse.body()!!.resMsg
         val resObj = correctNameResponse.body()!!.resObj
 
         if (correctNameResponse.isSuccessful) {
-            if (resCode == 200 && resMsg == "OK") {
-                _isCorrectName.value = true
-                Log.d("RegisterViewModel", resObj)
-            } else {
-                _isCorrectName.value = false
-            }
+            _isCorrectName.value = true
+            Log.d("RegisterViewModel", resObj)
         } else {
+            _isCorrectName.value = false
             Log.e("RegisterViewModel", "correctNameResponse status: ${correctNameResponse.code()}\ncorrectNameResponse message: ${correctNameResponse.message()}")
         }
     }
