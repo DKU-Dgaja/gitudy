@@ -1,8 +1,10 @@
 package com.takseha.data
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import com.takseha.data.api.gitudy.auth.GitudyAuthApi
+import com.takseha.data.dto.auth.login.LoginPageInfo
 import com.takseha.data.dto.auth.login.LoginTokenInfo
 import com.takseha.data.dto.auth.register.ReissueTokenInfo
 import com.takseha.data.repository.auth.GitudyAuthRepository
@@ -34,6 +36,23 @@ class TokenManager(context: Context) {
             prefs.savePref(SPKey.REFRESH_TOKEN, value!!)
         }
 
+    suspend fun getLoginPages(): List<LoginPageInfo>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = loginApi.getLoginPage()
+
+                if (response.isSuccessful) {
+                    val loginPageInfos = response.body()!!.loginPageInfos
+                    loginPageInfos
+                } else {
+                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message: ${response.message()}")
+                    null
+                }
+            } catch (e: Exception) {
+                null
+            }
+        }
+    }
     suspend fun getLoginTokens(platformType: String, code: String, state: String): LoginTokenInfo? {
         return withContext(Dispatchers.IO) {
             try {
@@ -58,16 +77,16 @@ class TokenManager(context: Context) {
             try {
                 val bearerToken = "Bearer $accessToken $refreshToken"
                 val response = loginApi.reissueTokens(bearerToken)
-
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.tokenInfo.accessToken
                     refreshToken = response.body()!!.tokenInfo.refreshToken
                     response.body()!!.tokenInfo
                 } else {
-                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message: ${response.message()}")
+                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message:${response.errorBody()!!.string()}")
                     null
                 }
             } catch (e: Exception) {
+                Log.e("TokenManager", e.message.toString())
                 null
             }
         }

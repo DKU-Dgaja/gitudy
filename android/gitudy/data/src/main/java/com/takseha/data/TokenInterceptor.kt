@@ -1,11 +1,12 @@
 package com.takseha.data
 
+import android.util.Log
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
 
-class TokenInterceptor(private val tokenManager: TokenManager) : Interceptor {
+class TokenInterceptor(private val tokenManager: TokenManager, private val navigationHandler: NavigationHandler) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
 
@@ -24,6 +25,9 @@ class TokenInterceptor(private val tokenManager: TokenManager) : Interceptor {
                     // 갱신된 토큰으로 요청 재시도
                     request = addTokenToRequest(request, "${newToken.accessToken} ${newToken.refreshToken}")
                     return chain.proceed(request)
+                } else {
+                    // 토큰 갱신 실패 시 로그인 화면으로 이동
+                    navigationHandler.navigateToLogin()
                 }
             }
         }
