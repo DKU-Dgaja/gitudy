@@ -62,6 +62,8 @@ class InputNicknameFragment : Fragment() {
                     val nicknameLengthText = getString(R.string.text_length)
                     val snackBarText = getString(R.string.alert_text_length)
 
+                    confirmBtn.isEnabled = false    // 확인 버튼 초기화
+
                     if (nicknameLength > 0) {
                         isNameOkBtn.isEnabled = true
                         nicknameLengthWithMax.text =

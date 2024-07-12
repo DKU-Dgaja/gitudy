@@ -5,8 +5,6 @@ import com.takseha.data.dto.feed.StudyPeriod
 import com.takseha.data.dto.feed.StudyStatus
 
 data class MyStudyResponse(
-    @SerializedName("res_code")
-    val resCode: Int,
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")

@@ -25,29 +25,22 @@ class MyStudyMainViewModel: ViewModel() {
         val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
 
         if (myStudyInfoResponse.isSuccessful) {
-            val resCode = myStudyInfoResponse.body()!!.resCode
-            val resMsg = myStudyInfoResponse.body()!!.resMsg
             val myStudyInfo = myStudyInfoResponse.body()!!.myStudyInfo
 
+            val todo = getFirstTodoInfo(studyInfoId)
+            val convention = getConvention(studyInfoId)
+            val studyMemberList = getStudyMemberList(studyInfoId)
 
-            if (resCode == 200 && resMsg == "OK") {
-                val todo = getFirstTodoInfo(studyInfoId)
-                val convention = getConvention(studyInfoId)
-                val studyMemberList = getStudyMemberList(studyInfoId)
-
-                _uiState.update {
-                    it.copy(
-                        myStudyInfo = myStudyInfo,
-                        todoInfo = todo,
-                        conventionInfo = convention,
-                        studyMemberListInfo = studyMemberList
-                    )
-                }
-
-                Log.d("MyStudyMainViewModel", "_uiState: ${_uiState.value}")
-            } else {
-                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
+            _uiState.update {
+                it.copy(
+                    myStudyInfo = myStudyInfo,
+                    todoInfo = todo,
+                    conventionInfo = convention,
+                    studyMemberListInfo = studyMemberList
+                )
             }
+
+            Log.d("MyStudyMainViewModel", "_uiState: ${_uiState.value}")
         } else {
             Log.e(
                 "MyStudyMainViewModel",
@@ -64,23 +57,16 @@ class MyStudyMainViewModel: ViewModel() {
         )
 
         if (todoInfoResponse.isSuccessful) {
-            val resCode = todoInfoResponse.body()!!.resCode
-            val resMsg = todoInfoResponse.body()!!.resMsg
             val todoBody = todoInfoResponse.body()!!.todoBody
-            Log.d("MyStudyMainViewModel", "todo body: $todoBody")
 
-            if (resCode == 200 && resMsg == "OK") {
-                if (todoBody.todoList.isNotEmpty()) {
-                    val todo = todoBody.todoList.first()
-                    Log.d("MyStudyMainViewModel", "todo first: $todo")
+            if (todoBody.todoList.isNotEmpty()) {
+                val todo = todoBody.todoList.first()
+                Log.d("MyStudyMainViewModel", "todo first: $todo")
 
-                    return todo
-                } else {
-                    Log.d("MyStudyMainViewModel", "No To-Do")
-                    return null
-                }
+                return todo
             } else {
-                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
+                Log.d("MyStudyMainViewModel", "No To-Do")
+                return null
             }
         } else {
             Log.e(
@@ -99,20 +85,14 @@ class MyStudyMainViewModel: ViewModel() {
         )
 
         if (conventionInfoResponse.isSuccessful) {
-            val resCode = conventionInfoResponse.body()!!.resCode
-            val resMsg = conventionInfoResponse.body()!!.resMsg
             val conventionInfo = conventionInfoResponse.body()!!.conventionInfo
             Log.d("MyStudyMainViewModel", "conventionInfo: $conventionInfo")
 
-            if (resCode == 200 && resMsg == "OK") {
-                if (conventionInfo.studyConventionList.isNotEmpty()) {
-                    return conventionInfo.studyConventionList.first()
-                } else {
-                    Log.d("MyStudyMainViewModel", "No Convention")
-                    return null
-                }
+            if (conventionInfo.studyConventionList.isNotEmpty()) {
+                return conventionInfo.studyConventionList.first()
             } else {
-                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
+                Log.d("MyStudyMainViewModel", "No Convention")
+                return null
             }
         } else {
             Log.e(
@@ -130,16 +110,7 @@ class MyStudyMainViewModel: ViewModel() {
             gitudyMemberRepository.getStudyMemberList(studyInfoId, true)
 
         if (studyMemberListResponse.isSuccessful) {
-            val resCode = studyMemberListResponse.body()!!.resCode
-            val resMsg = studyMemberListResponse.body()!!.resMsg
-            val studyMemberList = studyMemberListResponse.body()!!.studyMemberList
-            Log.d("MyStudyMainViewModel", "studyMemberList: $studyMemberList")
-
-            if (resCode == 200 && resMsg == "OK") {
-                return studyMemberList
-            } else {
-                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
-            }
+            studyMemberListResponse.body()!!.studyMemberList
         } else {
             Log.e(
                 "MyStudyMainViewModel",

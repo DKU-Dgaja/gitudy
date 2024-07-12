@@ -32,18 +32,11 @@ class FeedHomeViewModel : ViewModel() {
         )
 
         if (feedListResponse.isSuccessful) {
-            val resCode = feedListResponse.body()!!.resCode
-            val resMsg = feedListResponse.body()!!.resMsg
             val feedStudyListInfo = feedListResponse.body()!!.studyListInfo
 
-            if (resCode == 200 && resMsg == "OK") {
-                _cursorIdxRes.value = feedStudyListInfo.cursorIdx
-                _uiState.update { it.copy(studyInfoList = feedStudyListInfo.studyInfoList) }
-
-                Log.d("FeedHomeViewModel", _cursorIdxRes.value.toString())
-            } else {
-                Log.e("FeedHomeViewModel", "https status error: $resCode, $resMsg")
-            }
+            _cursorIdxRes.value = feedStudyListInfo.cursorIdx
+            _uiState.update { it.copy(studyInfoList = feedStudyListInfo.studyInfoList) }
+            Log.d("FeedHomeViewModel", _cursorIdxRes.value.toString())
         } else {
             Log.e(
                 "FeedHomeViewModel",
