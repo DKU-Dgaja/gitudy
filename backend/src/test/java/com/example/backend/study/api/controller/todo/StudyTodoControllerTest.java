@@ -1,13 +1,11 @@
 package com.example.backend.study.api.controller.todo;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -116,7 +114,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyTodoRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_msg").value("OK"))
@@ -156,7 +154,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(put("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_msg").value("OK"))
@@ -189,7 +187,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andExpect(jsonPath("$.res_obj").value("Todo delete Success"))
@@ -219,7 +217,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "3"))
 
@@ -253,7 +251,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "")
                         .param("limit", "3"))
 
@@ -286,7 +284,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -325,7 +323,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + 1L + "/status")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -356,7 +354,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + 1L + "/todo/progress")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -381,7 +379,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + 1L + "/todo/fetch")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
@@ -409,7 +407,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/study/" + 1L + "/todo/" + 1L + "/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())

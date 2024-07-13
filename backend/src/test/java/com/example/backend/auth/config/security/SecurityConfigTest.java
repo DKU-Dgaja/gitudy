@@ -69,15 +69,29 @@ class SecurityConfigTest extends MockTestConfig {
         // given
         String uri = "/test";
 
-        User user = userRepository.save(generateAuthUser());
-        Map<String, String> map = TokenUtil.createTokenMap(user);
-        String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
+        // USER 권한 사용자 저장
+        User user = User.builder()
+                .name("김민수")
+                .role(UserRole.USER)
+                .platformId("github123")
+                .platformType(UserPlatformType.GITHUB)
+                .profileImageUrl("https://google.com")
+                .build();
+        User savedUser = userRepository.save(user);
+
+        // JWT의 Claims로 넣어줄 map 생성
+        HashMap<String, String> claimsMap = new HashMap<>();
+        claimsMap.put("role", savedUser.getRole().name());
+        claimsMap.put("platformId", savedUser.getPlatformId());
+        claimsMap.put("platformType", savedUser.getPlatformType().name());
+
+        // JWT Access Token 생성
+        String accessToken = jwtService.generateAccessToken(claimsMap, savedUser);
 
         // when
         mockMvc.perform(
                         get(uri)
-                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                 )
                 .andExpect(status().isOk());
     }

@@ -43,9 +43,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final RefreshTokenService refreshTokenService;
     private final static int ACCESS_TOKEN_INDEX = 1;
     private final static String[] EXCLUDE_PATH = {"/auth/reissue"};
     private final JwtService jwtService;
@@ -75,8 +72,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // Token 구성: "Bearer {Access_Token} {Refresh_Token}"
             List<String> tokens = Arrays.asList(jwtToken.split(" "));
-            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"와 "{Refresh_Token}"
-            if (tokens.size() == 3) {
+            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"
+            if (tokens.size() == 2) {
                 // Access Token 추출
                 String accessToken = tokens.get(ACCESS_TOKEN_INDEX);
                 subject = jwtService.extractSubject(accessToken);

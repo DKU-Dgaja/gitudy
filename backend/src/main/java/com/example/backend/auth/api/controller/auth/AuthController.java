@@ -40,6 +40,7 @@ import static com.example.backend.domain.define.account.user.constant.UserRole.U
 @RestController
 public class AuthController {
     private final static int REFRESH_TOKEN_INDEX = 2;
+    private final static int ACCESS_TOKEN_INDEX = 1;
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
@@ -80,8 +81,8 @@ public class AuthController {
         List<String> tokens = Arrays.asList(token.split(" "));
 
 
-        if (tokens.size() == 3) {
-            authService.logout(tokens.get(REFRESH_TOKEN_INDEX));
+        if (tokens.size() == 2) {
+            authService.logout(tokens.get(ACCESS_TOKEN_INDEX));
 
             return JsonResult.successOf("로그아웃 되었습니다.");
         } else {

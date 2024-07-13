@@ -1,15 +1,16 @@
 package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -19,22 +20,29 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.refreshToken.RefreshToken;
+import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.userdetails.UserDetails;
 
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static com.example.backend.auth.config.fixture.UserFixture.generateOauthResponse;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AuthServiceTest extends MockTestConfig {
 
@@ -49,6 +57,12 @@ class AuthServiceTest extends MockTestConfig {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
 
     @AfterEach
     void tearDown() {
@@ -378,6 +392,33 @@ class AuthServiceTest extends MockTestConfig {
 
         // then
         assertDoesNotThrow(() -> authService.nickNameDuplicationCheck(request));
+    }
+
+    @Test
+    void 로그아웃_토큰_삭제_테스트() {
+        //given
+        User savedUser = userRepository.save(generateGoogleUser());
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("role", savedUser.getRole().name());
+        map.put("platformId", savedUser.getPlatformId());
+        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
+
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .refreshToken(refreshToken)
+                .subject(savedUser.getUsername())
+                .build();
+        refreshTokenService.saveRefreshToken(refreshTokenEntity);
+
+        // when
+        authService.logout(accessToken);
+
+        // then
+        Optional<RefreshToken> deletedRefreshToken = refreshTokenRepository.findBySubject(savedUser.getUsername());
+        assertFalse(deletedRefreshToken.isPresent());
     }
 
 }
