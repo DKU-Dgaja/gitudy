@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -73,19 +74,23 @@ public class RefreshTokenService {
 
         String sub = jwtService.extractAllClaims(accessToken).getSubject();
 
-        RefreshToken rtk = refreshTokenRepository.findBySubject(sub).orElseThrow(() -> {
-            log.warn(">>>> Token Not Exist : {}", ExceptionMessage.REFRESHTOKEN_NOT_EXIST.getText());
-            throw new JwtException(ExceptionMessage.REFRESHTOKEN_NOT_EXIST);
-        });
+        Optional<RefreshToken> rtk = refreshTokenRepository.findBySubject(sub);
 
-        // refreshToken 유효성 검사
-        if (!jwtService.isTokenValid(rtk.getRefreshToken(), rtk.getSubject())) {
-            log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.REFRESHTOKEN_INVALID.getText());
-            throw new JwtException(ExceptionMessage.REFRESHTOKEN_INVALID);
-        }
+        rtk.ifPresentOrElse(
+                refreshToken -> {
 
-        refreshTokenRepository.delete(rtk);
-        log.info(">>>> {} 님의 RefreshToken이 삭제되었습니다.", sub);
+                    // refreshToken 유효성 검사
+                    if (!jwtService.isTokenValid(refreshToken.getRefreshToken(), refreshToken.getSubject())) {
+                        log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.REFRESHTOKEN_INVALID.getText());
+                        throw new JwtException(ExceptionMessage.REFRESHTOKEN_INVALID);
+                    }
+
+                    refreshTokenRepository.delete(refreshToken);
+                    log.info(">>>> {} 님의 RefreshToken이 삭제되었습니다.", sub);
+                },
+                () -> log.warn(">>>> Token Not Exist : {}", ExceptionMessage.REFRESHTOKEN_NOT_EXIST.getText())
+        );
+
     }
 
 }
