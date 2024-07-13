@@ -39,8 +39,7 @@ import static com.example.backend.domain.define.account.user.constant.UserRole.U
 @RequestMapping("/auth")
 @RestController
 public class AuthController {
-    private final static int REFRESH_TOKEN_INDEX = 2;
-    private final static int ACCESS_TOKEN_INDEX = 1;
+    private final static int TOKEN_INDEX = 1;
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
@@ -82,7 +81,7 @@ public class AuthController {
 
 
         if (tokens.size() == 2) {
-            authService.logout(tokens.get(ACCESS_TOKEN_INDEX));
+            authService.logout(tokens.get(TOKEN_INDEX));
 
             return JsonResult.successOf("로그아웃 되었습니다.");
         } else {
@@ -97,8 +96,8 @@ public class AuthController {
     @PostMapping("/reissue")
     public JsonResult<?> reissueAccessToken(@RequestHeader(name = "Authorization") String token) {
         List<String> tokens = Arrays.asList(token.split(" "));
-        if (tokens.size() == 3) {
-            ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(tokens.get(REFRESH_TOKEN_INDEX));
+        if (tokens.size() == 2) {
+            ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(tokens.get(TOKEN_INDEX));
 
             return JsonResult.successOf(reissueResponse);
         } else {
