@@ -61,8 +61,6 @@ class FcmControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
-
 
         // when
         doNothing().when(fcmService).saveFcmTokenRequest(any(User.class), any(FcmTokenSaveRequest.class));
@@ -84,7 +82,6 @@ class FcmControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
 
         doNothing().when(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class));
@@ -108,7 +105,6 @@ class FcmControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
 
         doNothing().when(fcmService).sendMessageMultiDevice(any(FcmMultiTokenRequest.class));

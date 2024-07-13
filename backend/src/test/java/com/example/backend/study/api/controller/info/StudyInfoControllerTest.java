@@ -90,7 +90,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
@@ -119,7 +118,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
@@ -147,7 +145,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
@@ -169,7 +166,6 @@ class StudyInfoControllerTest extends MockTestConfig {
         StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(savedUser.getId()));
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
@@ -196,7 +192,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
 
@@ -229,7 +224,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         List<StudyCategory> studyCategories = createDefaultPublicStudyCategories(CATEGORY_SIZE);
 
@@ -258,7 +252,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
@@ -287,7 +280,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
@@ -316,7 +308,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
@@ -344,7 +335,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
@@ -372,7 +362,6 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
@@ -400,7 +389,6 @@ class StudyInfoControllerTest extends MockTestConfig {
         StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(studyInfoService.selectStudyInfoDetail(any(Long.class), any(Long.class)))
@@ -427,7 +415,6 @@ class StudyInfoControllerTest extends MockTestConfig {
         User user = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(studyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))
@@ -451,10 +438,8 @@ class StudyInfoControllerTest extends MockTestConfig {
     void 전체스터디_개수_조회_성공_테스트() throws Exception {
         // given
         User user = userRepository.save(generateAuthUser());
-        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(user.getId()));
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(studyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))

@@ -7,7 +7,6 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.auth.api.service.token.RefreshTokenService;
@@ -28,11 +27,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.UserDetails;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
@@ -42,7 +38,7 @@ import static com.example.backend.domain.define.account.user.constant.UserRole.U
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 class AuthServiceTest extends MockTestConfig {
 
@@ -144,7 +140,6 @@ class AuthServiceTest extends MockTestConfig {
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 성공 테스트")
     public void registerUnauthUserSuccessTest() {
-        UserPlatformType platformType = KAKAO;
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
@@ -154,7 +149,7 @@ class AuthServiceTest extends MockTestConfig {
         User unauthUser = userRepository.save(User.builder()
                 .role(UserRole.UNAUTH)
                 .platformId(platformId)
-                .platformType(platformType)
+                .platformType(KAKAO)
                 .name(name)
                 .profileImageUrl(profileImageUrl)
                 .build());
@@ -181,7 +176,6 @@ class AuthServiceTest extends MockTestConfig {
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 실패 테스트")
     public void registerUnauthUserFailTest() {
-        UserPlatformType platformType = KAKAO;
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
@@ -189,7 +183,7 @@ class AuthServiceTest extends MockTestConfig {
 
         User user = User.builder()
                 .platformId(platformId)
-                .platformType(platformType)
+                .platformType(KAKAO)
                 .role(USER)
                 .name(name)
                 .profileImageUrl(profileImageUrl)
@@ -329,7 +323,6 @@ class AuthServiceTest extends MockTestConfig {
         boolean updateProfilePublicYn = false;
         SocialInfo updateSocialInfo = SocialInfo.builder().blogLink("test@naver.com").build();
 
-//        User user = userRepository.save(generateAuthUser());
         UserUpdateServiceRequest request = UserUpdateServiceRequest.builder()
                 .userId(1L)
                 .name(updateName)

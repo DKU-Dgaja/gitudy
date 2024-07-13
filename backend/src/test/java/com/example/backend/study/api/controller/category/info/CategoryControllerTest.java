@@ -81,7 +81,6 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
         when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
@@ -107,7 +106,6 @@ class CategoryControllerTest extends MockTestConfig {
         User user = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         CategoryRegisterRequest request = CategoryRegisterRequest.builder()
                 .name(inValidContent)
@@ -137,7 +135,6 @@ class CategoryControllerTest extends MockTestConfig {
         User user = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         CategoryRegisterRequest request = CategoryRegisterRequest.builder()
                 .name(inValidContent)
@@ -165,7 +162,6 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
@@ -197,7 +193,6 @@ class CategoryControllerTest extends MockTestConfig {
         User user = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
@@ -230,7 +225,6 @@ class CategoryControllerTest extends MockTestConfig {
         User user = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
@@ -261,7 +255,6 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
@@ -291,7 +284,6 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
@@ -317,7 +309,7 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
 
         StudyCategory studyCategory
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
@@ -344,7 +336,7 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
+
         CategoryListAndCursorIdxResponse response
                 = StudyCategoryFixture.generateCategoryListAndCursorIdxResponse(3);
 
@@ -374,9 +366,6 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
-        CategoryListAndCursorIdxResponse response
-                = StudyCategoryFixture.generateCategoryListAndCursorIdxResponse(3);
 
 
         //when
@@ -404,9 +393,7 @@ class CategoryControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
-        CategoryListAndCursorIdxResponse response
-                = StudyCategoryFixture.generateCategoryListAndCursorIdxResponse(3);
+
 
         // when
         mockMvc.perform(get("/category/" + studyInfo.getId())

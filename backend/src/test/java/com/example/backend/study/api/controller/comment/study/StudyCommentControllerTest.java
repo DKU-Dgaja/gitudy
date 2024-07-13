@@ -80,7 +80,6 @@ class StudyCommentControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId()));
 
@@ -110,7 +109,6 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
         StudyComment studyComment =
@@ -139,7 +137,6 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
         StudyComment studyComment =
@@ -167,7 +164,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
+
         StudyCommentListAndCursorIdxResponse response
                 = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
 
@@ -197,7 +194,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
+
         StudyCommentListAndCursorIdxResponse response
                 = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
 
@@ -228,7 +225,6 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
                 .when(studyMemberService)
@@ -255,7 +251,6 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
