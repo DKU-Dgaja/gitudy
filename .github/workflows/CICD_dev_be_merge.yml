@@ -41,8 +41,10 @@ jobs:
     # 멀티모듈 빌드하기
     - name: 멀티모듈 전체 빌드
       run: |
-        ./backend/gradlew clean build -x test
-        ./webhooks/gradlew clean build
+        cd backend
+        ./gradlew clean build -x test
+        cd ../webhooks
+        ./gradlew clean build
 
   deployment:
     name: docker deployment
