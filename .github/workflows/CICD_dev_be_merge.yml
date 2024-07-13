@@ -29,16 +29,19 @@ jobs:
         echo "${{ secrets.APPLICATION_DEV }}" > ./backend/src/main/resources/application-dev.yml
         echo "${{ secrets.APPLICATION_DB }}" > ./backend/src/main/resources/database.yml
         echo "${{ secrets.FCM_SERVICE_ACCOUNT_KEY }}" > ./backend/src/main/resources/serviceAccountKey.json
+        echo "${{ secrets.WEBHOOKS_YML }}" > ./webhooks/src/main/resources/application.yml
 
     # gradlew를 실행시키기 위해 권한 부여
     - name: Gradlew에게 실행권한 부여
-      run: chmod +x ./backend/gradlew
+      run: |
+        chmod +x ./backend/gradlew
+        chmod +x ./webhooks/gradlew
 
     # 멀티모듈 빌드하기
     - name: 멀티모듈 전체 빌드
       run: |
-        cd ./backend
-        ./gradlew clean build -x test
+        ./backend/gradlew clean build -x test
+        ./webhooks/gradlew clean build
 
   deployment:
     name: docker deployment
