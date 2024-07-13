@@ -61,4 +61,5 @@ jobs:
           cd ./backend
           docker-compose down
           docker rmi `docker images | grep gitudy | awk '{print $3}'`
+          docker rmi `docker images | grep webhooks | awk '{print $3}'`
           docker-compose up -d
