@@ -4,6 +4,7 @@ on:
   push:
     branches: [ dev ]
     paths:
+      - '.github/workflows/**'
       - 'backend/**'
       - 'webhooks/**'
 
