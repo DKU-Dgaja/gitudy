@@ -81,6 +81,7 @@ public class UserFixture {
                 .platformType(GITHUB)
                 .name("이름")
                 .profileImageUrl("프로필이미지")
+                .githubApiToken("githubApiToken")
                 .build();
     }
 
