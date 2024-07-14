@@ -46,7 +46,7 @@ public class GithubURLBuilder implements OAuthURLBuilder {
                 + "&client_id=" + clientId          // 클라이언트 ID
                 + "&redirect_uri=" + redirectUri    // 리다이렉트 URI
                 + "&state=" + state                 // CSRF 방지
-                + "&scope=openid";                  // 리소스 접근 범위: openid로 고정
+                + "&scope=openid,repo";                  // 리소스 접근 범위: openid로 고정
     }
 
     // "https://github.com/login/oauth/access_token?..."

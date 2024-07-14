@@ -22,6 +22,8 @@ import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -44,6 +46,7 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final GithubApiTokenRepository githubApiTokenRepository;
 
     @Transactional
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
@@ -70,7 +73,14 @@ public class AuthService {
                             .build();
 
                     log.info(">>>> [ UNAUTH 권한으로 사용자를 DB에 등록합니다. 이후 회원가입이 필요합니다 ] <<<<");
-                    return userRepository.save(saveUser);
+
+                    User user = userRepository.save(saveUser);
+                    githubApiTokenRepository.save(GithubApiToken.builder()
+                            .userId(user.getId())
+                            .githubApiToken(loginResponse.getGithubApiToken())
+                            .build());
+
+                    return user;
                 });
 
         /*

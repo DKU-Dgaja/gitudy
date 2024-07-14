@@ -36,7 +36,7 @@ class GithubURLBuilderTest extends TestConfig {
                 + "&client_id=" + clientId
                 + "&redirect_uri=" + redirectUri
                 + "&state=" + state
-                + "&scope=openid");
+                + "&scope=openid,repo");
     }
 
     @Test

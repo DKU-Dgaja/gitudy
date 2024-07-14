@@ -22,6 +22,8 @@ import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -64,6 +66,9 @@ class AuthServiceTest extends MockTestConfig {
     @Autowired
     private RefreshTokenRepository refreshTokenRepository;
 
+    @Autowired
+    private GithubApiTokenRepository githubApiTokenRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
@@ -75,6 +80,7 @@ class AuthServiceTest extends MockTestConfig {
         // given
         String code = "code";
         String state = "state";
+        String token = "githubApiToken";
 
         OAuthResponse oAuthResponse = generateOauthResponse();
         UserPlatformType platformType = oAuthResponse.getPlatformType();
@@ -87,10 +93,14 @@ class AuthServiceTest extends MockTestConfig {
         authService.login(GITHUB, code, state);
 
         User user = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).get();
+        GithubApiToken githubApiToken = githubApiTokenRepository.findById(user.getId()).get();
 
         // then
         assertThat(user).isNotNull();
         assertThat(user.getRole().name()).isEqualTo(UserRole.UNAUTH.name());
+
+        // githubApiToken 생성 검증
+        assertThat(githubApiToken.getGithubApiToken()).isEqualTo(token);
     }
 
     @Test

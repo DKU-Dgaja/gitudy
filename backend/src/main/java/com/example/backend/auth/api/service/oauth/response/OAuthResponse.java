@@ -12,12 +12,13 @@ public class OAuthResponse {
     private UserPlatformType platformType;
     private String name;
     private String profileImageUrl;
-
+    private String githubApiToken;
     @Builder
-    public OAuthResponse(String platformId, UserPlatformType platformType, String name, String profileImageUrl) {
+    public OAuthResponse(String platformId, UserPlatformType platformType, String name, String profileImageUrl, String githubApiToken) {
         this.platformId = platformId;
         this.platformType = platformType;
         this.name = name;
         this.profileImageUrl = profileImageUrl;
+        this.githubApiToken = githubApiToken;
     }
 }
