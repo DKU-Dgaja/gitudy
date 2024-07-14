@@ -1,14 +1,13 @@
 package com.example.backend.auth.config.security.filter;
 
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.api.service.token.RefreshTokenService;
+import com.example.backend.common.exception.ErrorResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
-import com.example.backend.common.response.JsonResult;
+import org.springframework.http.ResponseEntity;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
-import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -33,6 +32,8 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 
 
 /*
@@ -161,10 +162,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void jwtExceptionHandler(HttpServletResponse response, ExceptionMessage message) throws IOException {
         log.error(">>>> [ JWT 토큰 인증 중 Error 발생 : {} ] <<<<", message.getText());
 
-        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setStatus(UNAUTHORIZED.value());
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(objectMapper.writeValueAsString(JsonResult.failOf(message.getText())));
+        response.getWriter().write(objectMapper.writeValueAsString(
+                ErrorResponse.from(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), message.getText())));
     }
 
 }
