@@ -23,6 +23,7 @@ import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,8 +40,9 @@ import static com.example.backend.domain.define.account.user.constant.UserRole.U
 @RequestMapping("/auth")
 @RestController
 public class AuthController {
-    private final static int REFRESH_TOKEN_INDEX = 2;
-    private final static int ACCESS_TOKEN_INDEX = 1;
+    private final static int TOKEN_INDEX = 7;
+    private final static String AUTHORIZATION = "Authorization";
+    private final static String BEARER = "Bearer ";
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
@@ -77,12 +79,14 @@ public class AuthController {
 
     @ApiResponse(responseCode = "200", description = "로그아웃 성공")
     @PostMapping("/logout")
-    public JsonResult<?> logout(@RequestHeader(name = "Authorization") String token) {
-        List<String> tokens = Arrays.asList(token.split(" "));
+    public JsonResult<?> logout(HttpServletRequest request) {
 
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
 
-        if (tokens.size() == 2) {
-            authService.logout(tokens.get(ACCESS_TOKEN_INDEX));
+        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
+            String token = authorizationHeader.substring(TOKEN_INDEX);
+
+            authService.logout(token);
 
             return JsonResult.successOf("로그아웃 되었습니다.");
         } else {
@@ -95,10 +99,13 @@ public class AuthController {
     // JWT 토큰이 만료되었을 때 재발급을 처리할 컨트롤러
     @ApiResponse(responseCode = "200", description = "토큰 재발급 성공", content = @Content(schema = @Schema(implementation = ReissueAccessTokenResponse.class)))
     @PostMapping("/reissue")
-    public JsonResult<?> reissueAccessToken(@RequestHeader(name = "Authorization") String token) {
-        List<String> tokens = Arrays.asList(token.split(" "));
-        if (tokens.size() == 3) {
-            ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(tokens.get(REFRESH_TOKEN_INDEX));
+    public JsonResult<?> reissueAccessToken(HttpServletRequest request) {
+        String authorizationHeader = request.getHeader(AUTHORIZATION);
+
+        if (authorizationHeader != null && authorizationHeader.startsWith(BEARER)) {
+            String token = authorizationHeader.substring(TOKEN_INDEX);
+
+            ReissueAccessTokenResponse reissueResponse = authService.reissueAccessToken(token);
 
             return JsonResult.successOf(reissueResponse);
         } else {

@@ -76,7 +76,6 @@ class AuthControllerTest extends MockTestConfig {
         map.put("platformType", String.valueOf(savedUser.getPlatformType()));
 
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         mockMvc.perform(post("/auth/logout")
@@ -92,7 +91,6 @@ class AuthControllerTest extends MockTestConfig {
     @DisplayName("로그아웃 실패 테스트 - 잘못된 토큰으로 요청시 예외 발생")
     void logoutTestWhenInvalidToken() throws Exception {
         String accessToken = "strangeToken";
-        String refreshToken = "strangeToken";
 
         // when
         mockMvc.perform(
@@ -111,7 +109,6 @@ class AuthControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateUNAUTHUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // 유효성 검사 통과하는 request
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
@@ -140,7 +137,6 @@ class AuthControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthLoginResponse.builder()
                 .accessToken(accessToken)
@@ -175,7 +171,6 @@ class AuthControllerTest extends MockTestConfig {
         map.put("platformType", String.valueOf(user.getPlatformType()));
 
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
         mockMvc.perform(get("/auth/info")
@@ -194,7 +189,6 @@ class AuthControllerTest extends MockTestConfig {
     void userInfoWhenInvalidToken() throws Exception {
         // given
         String accessToken = "strangeToken";
-        String refreshToken = "strangeToken";
 
         // when
         mockMvc.perform(get("/auth/info")
@@ -217,7 +211,6 @@ class AuthControllerTest extends MockTestConfig {
         map.put("platformType", String.valueOf(savedUser.getPlatformType()));
 
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
         mockMvc.perform(get("/auth/info")
@@ -237,7 +230,6 @@ class AuthControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
@@ -265,7 +257,6 @@ class AuthControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
@@ -288,7 +279,6 @@ class AuthControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
                 .name(savedUser.getName())
@@ -322,7 +312,6 @@ class AuthControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
                 .name(savedUser.getName())
@@ -359,7 +348,6 @@ class AuthControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         UserUpdateRequest updateRequest = UserUpdateRequest.builder()
                 .name(savedUser.getName())
@@ -391,7 +379,6 @@ class AuthControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
@@ -416,7 +403,6 @@ class AuthControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         // when
         when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
