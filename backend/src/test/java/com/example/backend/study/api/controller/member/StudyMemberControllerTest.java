@@ -15,6 +15,7 @@ import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
@@ -25,6 +26,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
@@ -83,7 +85,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
         studyInfoRepository.save(studyInfo);
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyMemberService.readStudyMembers(any(Long.class), any(boolean.class))).thenReturn(new ArrayList<>());
+        when(studyMemberService.readStudyMembers(any(Long.class), any(boolean.class))).thenReturn(List.of(StudyMembersResponse.builder().build()));
 
 
         //when , then
@@ -91,7 +93,8 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isNotEmpty());
 
     }
 
@@ -121,8 +124,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .param("resignUserId", String.valueOf(studyMember.getUserId())))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").value("Resign Member Success"));
+                .andExpect(status().isOk());
     }
 
 
@@ -151,8 +153,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").value("Withdrawal Member Success"));
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -178,8 +179,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").value("Apply StudyMember Success"));
+                .andExpect(status().isOk());
 
     }
 
@@ -203,8 +203,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").value("Apply Approve or Refuse StudyMember Success"));
+                .andExpect(status().isOk());
 
     }
 
@@ -228,8 +227,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").value("Apply cancel StudyMember Success"));
+                .andExpect(status().isOk());
 
     }
 
@@ -261,8 +259,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -282,7 +279,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                 .build();
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
-        when(studyMemberService.applyListStudyMember(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+        when(studyMemberService.applyListStudyMember(any(Long.class), any(), any(Long.class))).thenReturn(response);
 
         //when , then
         mockMvc.perform(get("/member/" + studyInfo.getId() + "/apply")
@@ -293,8 +290,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isEmpty())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -320,8 +316,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").value("Notify to StudyMember Success"));
+                .andExpect(status().isOk());
 
     }
 
@@ -348,8 +343,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_obj").value("Notify to StudyLeader Success"));
+                .andExpect(status().isOk());
 
     }
 }

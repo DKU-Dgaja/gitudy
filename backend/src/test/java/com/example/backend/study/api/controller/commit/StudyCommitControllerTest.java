@@ -74,8 +74,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -95,13 +94,11 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
-                        .param("cursorIdx", "")
                         .param("limit", "20"))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
 
     }
@@ -126,7 +123,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
 
     }
@@ -151,7 +148,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
 
@@ -177,8 +174,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj.commit_sha").value(commitSha))
+                .andExpect(jsonPath("$.commit_sha").value(commitSha))
                 .andDo(print());
     }
 
@@ -203,7 +199,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.COMMIT_NOT_FOUND.getText()))
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.COMMIT_NOT_FOUND.getText()))
                 .andDo(print());
     }
 
@@ -228,8 +224,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("커밋 승인이 완료되었습니다."))
                 .andDo(print());
     }
 
@@ -259,8 +253,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("커밋 거절이 완료되었습니다."))
                 .andDo(print());
     }
 
@@ -288,7 +280,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value(errorMsg))
+                .andExpect(jsonPath("$.message").value(errorMsg))
                 .andDo(print());
     }
 
@@ -312,8 +304,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj[0].commit_sha").value(commitSha))
+                .andExpect(jsonPath("$[0].commit_sha").value(commitSha))
                 .andDo(print());
     }
 
@@ -335,7 +326,7 @@ class StudyCommitControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.STUDY_MEMBER_NOT_LEADER.getText()))
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.STUDY_MEMBER_NOT_LEADER.getText()))
                 .andDo(print());
     }
 }

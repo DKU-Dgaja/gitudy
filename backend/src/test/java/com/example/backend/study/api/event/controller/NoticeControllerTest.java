@@ -63,10 +63,8 @@ class NoticeControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
-        List<UserNoticeList> userNoticeList = new ArrayList<>(); // 빈 리스트
-
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        when(noticeService.ReadNoticeList(any(UserInfoResponse.class), any(LocalDateTime.class), anyLong())).thenReturn(userNoticeList);
+        when(noticeService.ReadNoticeList(any(UserInfoResponse.class), any(LocalDateTime.class), anyLong())).thenReturn(List.of(UserNoticeList.builder().build()));
 
         // when
         mockMvc.perform(get("/notice")
@@ -77,7 +75,7 @@ class NoticeControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -98,8 +96,6 @@ class NoticeControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("Notice delete Success"))
                 .andDo(print());
     }
 
@@ -119,8 +115,6 @@ class NoticeControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("All Notice delete Success"))
                 .andDo(print());
     }
 }

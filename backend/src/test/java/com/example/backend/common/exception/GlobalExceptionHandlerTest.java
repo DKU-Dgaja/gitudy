@@ -30,7 +30,7 @@ class GlobalExceptionHandlerTest {
 
         // then
         assertEquals(result.getStatusCode().value(), HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getBody().getResMsg()).isEqualTo(expectedResponseMessage);
+        assertThat(result.getBody().message()).isEqualTo(expectedResponseMessage);
 
     }
 
@@ -49,7 +49,7 @@ class GlobalExceptionHandlerTest {
 
         // then
         assertEquals(result.getStatusCode().value(), HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getBody().getResMsg()).isEqualTo(expectedResponseMessage);
+        assertThat(result.getBody().message()).isEqualTo(expectedResponseMessage);
 
     }
 
@@ -64,7 +64,7 @@ class GlobalExceptionHandlerTest {
 
         // then
         assertEquals(result.getStatusCode().value(), HttpStatus.UNAUTHORIZED.value());
-        assertThat(result.getBody().getResMsg()).isEqualTo(ExceptionMessage.JWT_MALFORMED.getText());
+        assertThat(result.getBody().message()).isEqualTo(ExceptionMessage.JWT_MALFORMED.getText());
     }
 
     @Test
@@ -78,6 +78,6 @@ class GlobalExceptionHandlerTest {
 
         // then
         assertEquals(result.getStatusCode().value(), HttpStatus.BAD_REQUEST.value());
-        assertThat(result.getBody().getResMsg()).isEqualTo(ExceptionMessage.AUTH_NOT_FOUND.getText());
+        assertThat(result.getBody().message()).isEqualTo(ExceptionMessage.AUTH_NOT_FOUND.getText());
     }
 }
