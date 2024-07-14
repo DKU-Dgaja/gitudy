@@ -1,7 +1,6 @@
 package com.example.backend.study.api.event.controller;
 
 
-import org.springframework.http.ResponseEntity;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
@@ -11,6 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

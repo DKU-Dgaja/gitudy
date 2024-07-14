@@ -3,7 +3,6 @@ package com.example.backend.auth.api.service.oauth.adapter.kakao;
 
 import com.example.backend.TestConfig;
 import com.example.backend.auth.api.service.oauth.builder.kakao.KakaoURLBuilder;
-
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;

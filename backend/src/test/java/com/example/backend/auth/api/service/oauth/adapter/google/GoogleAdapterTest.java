@@ -6,7 +6,6 @@ import com.example.backend.auth.api.service.oauth.builder.google.GoogleURLBuilde
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.oauth.OAuthException;
-
 import com.example.backend.external.clients.oauth.google.GoogleProfileClients;
 import com.example.backend.external.clients.oauth.google.GoogleTokenClients;
 import com.example.backend.external.clients.oauth.google.response.GoogleProfileResponse;

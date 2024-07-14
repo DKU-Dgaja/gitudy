@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.category.info;
 
 import com.example.backend.auth.api.service.auth.AuthService;
-import org.springframework.http.ResponseEntity;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.category.info.request.CategoryRegisterRequest;
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
@@ -14,6 +13,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,6 +1,5 @@
 package com.example.backend.study.api.controller.info.response;
 
-import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.Builder;
 import lombok.Getter;
 

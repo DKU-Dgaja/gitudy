@@ -23,7 +23,6 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.*;
-import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +38,6 @@ import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_L
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyInfoServiceTest extends TestConfig {
