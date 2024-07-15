@@ -108,9 +108,7 @@ public class AuthService {
 
         // 사용자의 Refresh Token이 이미 존재하면 토큰 삭제
         Optional<RefreshToken> existingToken = refreshTokenRepository.findBySubject(user.getUsername());
-        if (existingToken.isPresent()) {
-            refreshTokenRepository.delete(existingToken.get());
-        }
+        existingToken.ifPresent(refreshTokenRepository::delete);
 
         // Access Token 생성
         final String jwtAccessToken = jwtService.generateAccessToken(claims, user);
@@ -185,40 +183,12 @@ public class AuthService {
         findUser.updateRegister(request.getName(), request.getGithubId(), request.isPushAlarmYn());
 
         // JWT Access Token, Refresh Token 재발급
-        JwtToken tokens = createJwtToken(findUser);
+        JwtToken tokens = generateJwtToken(findUser);
 
         return AuthLoginResponse.builder()
                 .accessToken(tokens.getAccessToken())
                 .refreshToken(tokens.getRefreshToken())
                 .role(findUser.getRole())
-                .build();
-    }
-
-    private JwtToken createJwtToken(User user) {
-        // JWT 토큰 생성을 위한 claims 생성
-        HashMap<String, String> claims = new HashMap<>();
-        claims.put(ROLE_CLAIM, user.getRole().name());
-        claims.put(PLATFORM_ID_CLAIM, user.getPlatformId());
-        claims.put(PLATFORM_TYPE_CLAIM, String.valueOf(user.getPlatformType()));
-
-        // Access Token 생성
-        final String accessToken = jwtService.generateAccessToken(claims, user);
-        // Refresh Token 생성
-        final String refreshToken = jwtService.generateRefreshToken(claims, user);
-
-        log.info(">>>> {} generate Tokens", user.getName());
-
-        // Refresh Token 저장 - REDIS
-        RefreshToken rt = RefreshToken.builder()
-                .refreshToken(refreshToken)
-                .subject(user.getUsername())
-                .build();
-        refreshTokenService.saveRefreshToken(rt);
-
-
-        return JwtToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
     }
 
