@@ -197,7 +197,7 @@ public class AuthService {
         String[] platformIdAndPlatformType = extractFromSubject(userName);
         String platformId = platformIdAndPlatformType[0];
         String platformType = platformIdAndPlatformType[1];
-        User user = userRepository.findByPlatformIdAndPlatformType(platformId, UserPlatformType.KAKAO.valueOf(platformType)).orElseThrow(() -> {
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId, UserPlatformType.valueOf(platformType)).orElseThrow(() -> {
             log.warn(">>>> User Delete Fail : {}", ExceptionMessage.AUTH_NOT_FOUND.getText());
             throw new AuthException(ExceptionMessage.AUTH_NOT_FOUND);
         });
