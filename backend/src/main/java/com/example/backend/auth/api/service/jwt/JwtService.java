@@ -44,10 +44,6 @@ public class JwtService {
     /*
      *   RefreshToken 생성
      */
-    public String generateRefreshToken(UserDetails userDetails) {
-        return generateAccessToken(new HashMap<>(), userDetails, new Date(System.currentTimeMillis() + 7 * DAY));
-    }
-
     public String generateRefreshToken(Map<String, String> extraClaims, UserDetails userDetails) {
         return generateRefreshToken(extraClaims, userDetails, new Date(System.currentTimeMillis() + 7 * DAY));
     }
