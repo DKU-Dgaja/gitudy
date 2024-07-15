@@ -22,7 +22,7 @@ class SplashViewModel: ViewModel() {
             _availableTokenCheck.value = false
             Log.e(
                 "SplashViewModel",
-                "checkTokenResponse status: ${checkTokenResponse.code()}\ncheckTokenResponse message: ${checkTokenResponse.message()}"
+                "checkTokenResponse status: ${checkTokenResponse.code()}\ncheckTokenResponse message: ${checkTokenResponse.errorBody()!!.string()}"
             )
         }
     }

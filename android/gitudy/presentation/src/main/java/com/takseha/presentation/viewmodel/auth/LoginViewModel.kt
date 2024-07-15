@@ -21,24 +21,24 @@ class LoginViewModel(application: Application) : AndroidViewModel(application) {
     fun startLogin(platformType: String) = viewModelScope.launch {
         tokenManager = TokenManager(getApplication())
 
-        val loginPageInfos = tokenManager.getLoginPages()
+        val loginPageInfoList = tokenManager.getLoginPages()
 
-        if (loginPageInfos != null) {
+        if (loginPageInfoList != null) {
             _loginPageUrl.value = when (platformType) {
-                "KAKAO" -> loginPageInfos.filter { it.platformType == "KAKAO" }
+                "KAKAO" -> loginPageInfoList.filter { it.platformType == "KAKAO" }
                     .joinToString("") { it.url }
 
-                "GOOGLE" -> loginPageInfos.filter { it.platformType == "GOOGLE" }
+                "GOOGLE" -> loginPageInfoList.filter { it.platformType == "GOOGLE" }
                     .joinToString("") { it.url }
 
-                "GITHUB" -> loginPageInfos.filter { it.platformType == "GITHUB" }
+                "GITHUB" -> loginPageInfoList.filter { it.platformType == "GITHUB" }
                     .joinToString("") { it.url }
 
                 else -> null
             }
             Log.d("LoginViewModel", "url: ${loginPageUrl.value}")
         } else {
-            Log.e("LoginViewModel", "loginPageInfos is null")
+            Log.e("LoginViewModel", "loginPageInfoList is null")
         }
     }
 }

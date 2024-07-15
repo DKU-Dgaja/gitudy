@@ -44,16 +44,11 @@ class SplashActivity : AppCompatActivity() {
 
     private fun setMainHome(availableTokenState: Boolean) {
         if (availableTokenState) {
-//            Handler(Looper.getMainLooper()).postDelayed({
-//                startActivity(Intent(this, MainHomeActivity::class.java))
-//                finish()
-//            }, 2000)
             Handler(Looper.getMainLooper()).postDelayed({
-                startActivity(Intent(this, PopupAgreementActivity::class.java))
+                startActivity(Intent(this, MainHomeActivity::class.java))
                 finish()
             }, 2000)
         }
-
         // !availableTokenState이면 TokenInterrupter에 의해 Login page로 이동
     }
 }

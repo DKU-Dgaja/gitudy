@@ -24,7 +24,7 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
 
         if (tokenResponse != null) {
             _role.value = tokenResponse.role
-            Log.d("LoginWebViewViewModel", "Bearer ${tokenResponse.accessToken} ${tokenResponse.refreshToken}")
+            Log.d("LoginWebViewViewModel", "access token: ${tokenResponse.accessToken}\nrefresh token: ${tokenResponse.refreshToken}")
         } else {
             Log.e("LoginWebViewViewModel", "token 생성 실패")
         }

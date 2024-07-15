@@ -38,7 +38,7 @@ class MainHomeViewModel: ViewModel() {
         val userInfoResponse = gitudyAuthRepository.getUserInfo()
 
         if (userInfoResponse.isSuccessful) {
-            val userInfo = userInfoResponse.body()!!.userInfo
+            val userInfo = userInfoResponse.body()!!
             _uiState.update {
                 it.copy(
                     name = userInfo.name,
