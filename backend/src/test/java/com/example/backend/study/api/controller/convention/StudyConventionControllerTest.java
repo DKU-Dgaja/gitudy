@@ -95,8 +95,6 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyConvention register Success"))
                 .andDo(print());
 
     }
@@ -124,7 +122,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
                                 .build())))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value(expectedError))
+                .andExpect(jsonPath("$.message").value(expectedError))
                 .andDo(print());
     }
 
@@ -155,8 +153,6 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyConvention update Success"))
                 .andDo(print());
 
     }
@@ -194,7 +190,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
                                 .build())))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value(expectedError))
+                .andExpect(jsonPath("$.message").value(expectedError))
                 .andDo(print());
     }
 
@@ -222,8 +218,6 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyConvention delete Success"))
                 .andDo(print());
     }
 
@@ -251,9 +245,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj.name").value(response.getName()))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$.name").value(response.getName()))
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -287,8 +280,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -312,18 +304,15 @@ public class StudyConventionControllerTest extends MockTestConfig {
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyConventionService.readStudyConventionList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+        when(studyConventionService.readStudyConventionList(any(Long.class), any(), any(Long.class))).thenReturn(response);
 
         // when, then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .param("cursorIdx", "")
                         .param("limit", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isEmpty())
                 .andDo(print());
     }
 }

@@ -100,8 +100,6 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("Study Register Success."))
                 .andDo(print());
     }
 
@@ -127,8 +125,9 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
+
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value("maximumMember: must be less than or equal to 10"))
+                .andExpect(jsonPath("$.message").value("maximumMember: must be less than or equal to 10"))
                 .andDo(print());
     }
 
@@ -154,8 +153,9 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
+
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value("maximumMember: must be greater than or equal to 1"))
+                .andExpect(jsonPath("$.message").value("maximumMember: must be greater than or equal to 1"))
                 .andDo(print());
     }
 
@@ -177,10 +177,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         // then
         mockMvc.perform(delete("/study/" + studyInfo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
-                )
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"));
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+                .andExpect(status().isOk());
     }
 
 
@@ -211,8 +210,6 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyInfoUpdateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyInfo update Success"))
                 .andDo(print());
 
     }
@@ -240,7 +237,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$").isNotEmpty())
+                .andExpect(jsonPath("$.user_id").value(savedUser.getId()))
                 .andDo(print());
 
     }
@@ -269,7 +267,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -283,7 +281,7 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(studyInfoService.selectStudyInfoList(any(Long.class), any(), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -297,7 +295,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -324,7 +322,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
 
@@ -351,7 +349,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -378,7 +376,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
 
@@ -405,7 +403,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -430,7 +428,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.count").value(1))
                 .andDo(print());
     }
 
@@ -455,7 +453,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$.count").value(1))
                 .andDo(print());
     }
 }

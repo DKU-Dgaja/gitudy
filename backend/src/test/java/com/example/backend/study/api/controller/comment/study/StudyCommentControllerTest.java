@@ -97,8 +97,6 @@ class StudyCommentControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentRegisterRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyComment register Success"))
                 .andDo(print());
     }
 
@@ -125,8 +123,6 @@ class StudyCommentControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentUpdateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyComment update Success"))
                 .andDo(print());
     }
 
@@ -151,8 +147,6 @@ class StudyCommentControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyComment deleted successfully"))
                 .andDo(print());
     }
 
@@ -181,8 +175,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$.study_comment_list").isNotEmpty())
                 .andDo(print());
     }
 
@@ -199,22 +192,19 @@ class StudyCommentControllerTest extends MockTestConfig {
                 = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommentService.selectStudyCommentList(any(Long.class), any(Long.class), any(Long.class)))
+        when(studyCommentService.selectStudyCommentList(any(Long.class), any(), any(Long.class)))
                 .thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
-                        .param("cursorIdx", "")
                         .param("limit", "5"))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isEmpty())
+                .andExpect(jsonPath("$.study_comment_list").isNotEmpty())
                 .andDo(print());
-
     }
 
     @Test
@@ -239,7 +229,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
     }
 
@@ -261,7 +251,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
 }

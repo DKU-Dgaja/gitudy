@@ -5,17 +5,13 @@ import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
-import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.IntStream;
 
-import static com.example.backend.study.api.service.todo.StudyTodoServiceTest.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("NonAsciiCharacters")

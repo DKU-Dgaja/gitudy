@@ -3,8 +3,6 @@ package com.example.backend.domain.define.study.convention;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
 
-import java.util.List;
-
 public class StudyConventionFixture {
 
     // 테스트용 컨벤션 등록

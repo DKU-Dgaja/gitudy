@@ -6,7 +6,8 @@ import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.*;
-import static com.example.backend.domain.define.account.user.constant.UserRole.*;
+import static com.example.backend.domain.define.account.user.constant.UserRole.UNAUTH;
+import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 
 public class UserFixture {
     public static User generateAuthUser() {

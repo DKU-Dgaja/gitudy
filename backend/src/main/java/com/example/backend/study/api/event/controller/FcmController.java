@@ -1,7 +1,6 @@
 package com.example.backend.study.api.event.controller;
 
 
-import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.FcmSingleTokenRequest;
@@ -11,6 +10,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,30 +33,30 @@ public class FcmController {
      */
     @ApiResponse(responseCode = "200", description = "FCM Single 성공")
     @PostMapping("/single")
-    public JsonResult<?> sendMessageSingleDevice(@RequestBody FcmSingleTokenRequest token) throws FirebaseMessagingException {
+    public ResponseEntity<Void> sendMessageSingleDevice(@RequestBody FcmSingleTokenRequest token) throws FirebaseMessagingException {
 
         fcmService.sendMessageSingleDevice(token);
 
-        return JsonResult.successOf("Fcm Single Success");
+        return ResponseEntity.ok().build();
     }
   
 
     @ApiResponse(responseCode = "200", description = "FCM Multi 성공")
     @PostMapping("/multi")
-    public JsonResult<?> sendMessageMultiDevice(@RequestBody FcmMultiTokenRequest token) throws FirebaseMessagingException {
+    public ResponseEntity<Void> sendMessageMultiDevice(@RequestBody FcmMultiTokenRequest token) throws FirebaseMessagingException {
 
         fcmService.sendMessageMultiDevice(token);
 
-        return JsonResult.successOf("Fcm Multi Success");
+        return ResponseEntity.ok().build();
     }
 
 
     @ApiResponse(responseCode = "200", description = "FCM token 저장 성공")
     @PostMapping("")
-    public JsonResult<?> saveFcmToken(@AuthenticationPrincipal User userPrincipal,
-                                      @RequestBody FcmTokenSaveRequest token) {
+    public ResponseEntity<Void> saveFcmToken(@AuthenticationPrincipal User userPrincipal,
+                                          @RequestBody FcmTokenSaveRequest token) {
         fcmService.saveFcmTokenRequest(userPrincipal, token);
-        return JsonResult.successOf("FCM token save Success.");
+        return ResponseEntity.ok().build();
     }
 }
 
