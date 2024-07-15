@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class ConventionResponse(
-    @SerializedName("res_code")
-    val resCode: Int,
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")

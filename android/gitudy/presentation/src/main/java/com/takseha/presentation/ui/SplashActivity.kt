@@ -11,6 +11,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.ui.auth.LoginActivity
+import com.takseha.presentation.ui.auth.PopupAgreementActivity
 import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.auth.SplashViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -47,11 +48,7 @@ class SplashActivity : AppCompatActivity() {
                 startActivity(Intent(this, MainHomeActivity::class.java))
                 finish()
             }, 2000)
-        } else {
-            Handler(Looper.getMainLooper()).postDelayed({
-                startActivity(Intent(this, LoginActivity::class.java))
-                finish()
-            }, 2000)
         }
+        // !availableTokenState이면 TokenInterrupter에 의해 Login page로 이동
     }
 }

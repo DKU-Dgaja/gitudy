@@ -17,19 +17,12 @@ class SplashViewModel: ViewModel() {
         val checkTokenResponse = gitudyAuthRepository.getUserInfo()
 
         if (checkTokenResponse.isSuccessful) {
-            val resCode = checkTokenResponse.body()!!.resCode
-            val resMsg = checkTokenResponse.body()!!.resMsg
-
-            if (resCode == 200 && resMsg == "OK") {
-                _availableTokenCheck.value = true
-            } else {
-                _availableTokenCheck.value = false
-                Log.e("SplashViewModel", "https status error: $resCode, $resMsg")
-            }
+            _availableTokenCheck.value = true
         } else {
+            _availableTokenCheck.value = false
             Log.e(
                 "SplashViewModel",
-                "checkTokenResponse status: ${checkTokenResponse.code()}\ncheckTokenResponse message: ${checkTokenResponse.message()}"
+                "checkTokenResponse status: ${checkTokenResponse.code()}\ncheckTokenResponse message: ${checkTokenResponse.errorBody()!!.string()}"
             )
         }
     }

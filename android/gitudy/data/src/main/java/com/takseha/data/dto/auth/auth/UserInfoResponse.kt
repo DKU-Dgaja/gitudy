@@ -3,15 +3,6 @@ package com.takseha.data.dto.auth.auth
 import com.google.gson.annotations.SerializedName
 
 data class UserInfoResponse(
-    @SerializedName("res_code")
-    val resCode: Int,
-    @SerializedName("res_msg")
-    val resMsg: String,
-    @SerializedName("res_obj")
-    val userInfo: UserInfo
-)
-
-data class UserInfo(
     @SerializedName("github_id")
     val githubId: String,
     @SerializedName("name")

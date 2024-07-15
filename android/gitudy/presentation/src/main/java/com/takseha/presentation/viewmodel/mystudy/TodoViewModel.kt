@@ -24,21 +24,15 @@ class TodoViewModel: ViewModel() {
         )
 
         if (todoListInfoResponse.isSuccessful) {
-            val resCode = todoListInfoResponse.body()!!.resCode
-            val resMsg = todoListInfoResponse.body()!!.resMsg
             val todoBody = todoListInfoResponse.body()!!.todoBody
             Log.d("MyStudyMainViewModel", "todo body: $todoBody")
 
-            if (resCode == 200 && resMsg == "OK") {
-                _uiState.update {
-                    it.copy(
-                        todoListInfo = todoBody.todoList
-                    )
-                }
-                Log.d("MyStudyMainViewModel", "todoList: ${todoBody.todoList}")
-            } else {
-                Log.e("MyStudyMainViewModel", "https status error: $resCode, $resMsg")
+            _uiState.update {
+                it.copy(
+                    todoListInfo = todoBody.todoList
+                )
             }
+            Log.d("MyStudyMainViewModel", "todoList: ${todoBody.todoList}")
         } else {
             Log.e(
                 "MyStudyMainViewModel",

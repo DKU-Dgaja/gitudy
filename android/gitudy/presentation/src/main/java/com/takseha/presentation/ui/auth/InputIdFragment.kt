@@ -49,6 +49,9 @@ class InputIdFragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val githubIdLength = inputIdEditText.length()
 
+                    idCheckText.text = ""   // text 초기화
+                    confirmBtn.isEnabled = false    // 확인 버튼 초기화
+
                     isIdOkBtn.isEnabled = githubIdLength > 0
                 }
 

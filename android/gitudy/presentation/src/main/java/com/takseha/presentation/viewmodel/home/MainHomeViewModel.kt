@@ -1,10 +1,9 @@
 package com.takseha.presentation.viewmodel.home
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
@@ -20,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-class MainHomeViewModel(application: Application) : AndroidViewModel(application) {
+class MainHomeViewModel: ViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
     private var gitudyStudyRepository = GitudyStudyRepository()
 
@@ -39,23 +38,16 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         val userInfoResponse = gitudyAuthRepository.getUserInfo()
 
         if (userInfoResponse.isSuccessful) {
-            val resCode = userInfoResponse.body()!!.resCode
-            val resMsg = userInfoResponse.body()!!.resMsg
-            val userInfo = userInfoResponse.body()!!.userInfo
-
-            if (resCode == 200 && resMsg == "OK") {
-                _uiState.update {
-                    it.copy(
-                        name = userInfo.name,
-                        score = userInfo.score,
-                        githubId = userInfo.githubId,
-                        profileImgUrl = userInfo.profileImageUrl
-                    )
-                }
-                getProgressInfo(uiState)
-            } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+            val userInfo = userInfoResponse.body()!!
+            _uiState.update {
+                it.copy(
+                    name = userInfo.name,
+                    score = userInfo.score,
+                    githubId = userInfo.githubId,
+                    profileImgUrl = userInfo.profileImageUrl
+                )
             }
+            getProgressInfo(uiState)
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -127,52 +119,43 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         )
 
         if (myStudyListResponse.isSuccessful) {
-            val resCode = myStudyListResponse.body()!!.resCode
-            val resMsg = myStudyListResponse.body()!!.resMsg
             val myStudyListInfo = myStudyListResponse.body()!!.studyListInfo
 
+            _cursorIdxRes.value = myStudyListInfo.cursorIdx
 
-            if (resCode == 200 && resMsg == "OK") {
-                _cursorIdxRes.value = myStudyListInfo.cursorIdx
+            val studies = myStudyListInfo.studyInfoList
+            val studiesWithTodo = studies.map { study ->
+                val todo = getFirstTodoInfo(study.id)
 
-                val studies = myStudyListInfo.studyInfoList
-                val studiesWithTodo = studies.map { study ->
-                    val todo = getFirstTodoInfo(study.id)
-
-                    if (todo != null) {
-                        val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
-                        val todoCheck =
-                            if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
-                        MyStudyWithTodo(
-                            backgroundColorList[study.id % 4],
-                            study,
-                            todo.title,
-                            todo.todoDate,
-                            todoCheck,
-                            todoCheckNum
-                        )
-                    } else {
-                        MyStudyWithTodo(
-                            backgroundColorList[study.id % 4],
-                            study,
-                            null,
-                            null,
-                            TodoStatus.TODO_EMPTY,
-                            null
-                        )
-                    }
-                }
-                _myStudyState.update {
-                    it.copy(
-                        myStudiesWithTodo = studiesWithTodo
+                if (todo != null) {
+                    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
+                    val todoCheck =
+                        if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
+                    MyStudyWithTodo(
+                        backgroundColorList[study.id % 4],
+                        study,
+                        todo.title,
+                        todo.todoDate,
+                        todoCheck,
+                        todoCheckNum
+                    )
+                } else {
+                    MyStudyWithTodo(
+                        backgroundColorList[study.id % 4],
+                        study,
+                        null,
+                        null,
+                        TodoStatus.TODO_EMPTY,
+                        null
                     )
                 }
-
-                Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
-                Log.d("MainHomeViewModel", "_uiState: ${_uiState.value}")
-            } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
+            _myStudyState.update {
+                it.copy(
+                    myStudiesWithTodo = studiesWithTodo
+                )
+            }
+            Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -189,23 +172,16 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         )
 
         if (todoInfoResponse.isSuccessful) {
-            val resCode = todoInfoResponse.body()!!.resCode
-            val resMsg = todoInfoResponse.body()!!.resMsg
             val todoBody = todoInfoResponse.body()!!.todoBody
-            Log.d("MainHomeViewModel", "todo body: $todoBody")
 
-            if (resCode == 200 && resMsg == "OK") {
-                if (todoBody.todoList.isNotEmpty()) {
-                    val todo = todoBody.todoList.first()
-                    Log.d("MainHomeViewModel", "todo first: $todo")
+            if (todoBody.todoList.isNotEmpty()) {
+                val todo = todoBody.todoList.first()
+                Log.d("MainHomeViewModel", "todo first: $todo")
 
-                    return todo
-                } else {
-                    Log.d("MainHomeViewModel", "No To-Do")
-                    return null
-                }
+                return todo
             } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+                Log.d("MainHomeViewModel", "No To-Do")
+                return null
             }
         } else {
             Log.e(
@@ -224,15 +200,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         )
 
         if (todoProgressResponse.isSuccessful) {
-            val resCode = todoProgressResponse.body()!!.resCode
-            val resMsg = todoProgressResponse.body()!!.resMsg
-            val todoProgress = todoProgressResponse.body()!!.todoProgress
-
-            if (resCode == 200 && resMsg == "OK") {
-                return todoProgress
-            } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
-            }
+            todoProgressResponse.body()!!.todoProgress
         } else {
             Log.e(
                 "MainHomeViewModel",

@@ -23,21 +23,15 @@ class StudyApplyViewModel: ViewModel() {
         val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
 
         if (myStudyInfoResponse.isSuccessful) {
-            val resCode = myStudyInfoResponse.body()!!.resCode
-            val resMsg = myStudyInfoResponse.body()!!.resMsg
             val myStudyInfo = myStudyInfoResponse.body()!!.myStudyInfo
 
-            if (resCode == 200 && resMsg == "OK") {
-                _uiState.update {
-                    it.copy(
-                        studyInfo = myStudyInfo,
-                    )
-                }
-
-                Log.d("StudyApplyViewModel", "_uiState: ${_uiState.value}")
-            } else {
-                Log.e("StudyApplyViewModel", "https status error: $resCode, $resMsg")
+            _uiState.update {
+                it.copy(
+                    studyInfo = myStudyInfo,
+                )
             }
+
+            Log.d("StudyApplyViewModel", "_uiState: ${_uiState.value}")
         } else {
             Log.e(
                 "StudyApplyViewModel",

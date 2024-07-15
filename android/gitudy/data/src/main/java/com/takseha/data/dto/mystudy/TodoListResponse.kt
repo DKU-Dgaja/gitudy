@@ -5,8 +5,6 @@ import com.google.gson.annotations.SerializedName
 import com.takseha.data.dto.feed.StudyListInfo
 
 data class TodoListResponse(
-    @SerializedName("res_code")
-    val resCode: Int,
     @SerializedName("res_msg")
     val resMsg: String,
     @SerializedName("res_obj")
