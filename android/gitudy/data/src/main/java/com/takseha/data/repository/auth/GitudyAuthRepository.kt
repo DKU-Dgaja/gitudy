@@ -6,7 +6,6 @@ import com.takseha.data.dto.auth.register.RegisterRequest
 
 class GitudyAuthRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyAuthApi::class.java)
-    suspend fun getLoginPage() = client.getLoginPage()
 
     suspend fun checkCorrectNickname(
         request: String

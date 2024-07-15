@@ -3,13 +3,6 @@ package com.takseha.data.dto.auth.login
 
 import com.google.gson.annotations.SerializedName
 
-data class LoginPageResponse(
-    @SerializedName("res_msg")
-    val resMsg: String,
-    @SerializedName("res_obj")
-    val loginPageInfos: List<LoginPageInfo>
-)
-
 data class LoginPageInfo(
     @SerializedName("platform_type")
     val platformType: String,

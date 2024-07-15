@@ -17,7 +17,7 @@ class TokenInterceptor(private val tokenManager: TokenManager, private val navig
         val response = chain.proceed(request)
 
         // 토큰이 만료된 경우
-        if (response.code() == 401) {
+        if (response.code() == 401 || response.code() == 400) {
             synchronized(this) {
                 // 토큰 갱신 시도
                 val newToken = runBlocking { tokenManager.reissueTokens() }
