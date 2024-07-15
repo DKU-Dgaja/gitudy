@@ -27,10 +27,10 @@ public class SecurityConfig {
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
                                 // register
                                 .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
-                                // update
-                                .requestMatchers("/auth/update").hasAnyAuthority("USER", "ADMIN")
                                 // UnAuth Area
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/auth/loginPage").permitAll()
+                                .requestMatchers("/auth/login").permitAll()
+                                .requestMatchers("/auth/check-nickname").permitAll()
                                 // Others
                                 .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )
