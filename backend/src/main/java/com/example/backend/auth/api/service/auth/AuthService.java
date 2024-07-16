@@ -108,9 +108,7 @@ public class AuthService {
 
         // 사용자의 Refresh Token이 이미 존재하면 토큰 삭제
         Optional<RefreshToken> existingToken = refreshTokenRepository.findBySubject(user.getUsername());
-        if (existingToken.isPresent()) {
-            refreshTokenRepository.delete(existingToken.get());
-        }
+        existingToken.ifPresent(refreshTokenRepository::delete);
 
         // Access Token 생성
         final String jwtAccessToken = jwtService.generateAccessToken(claims, user);
@@ -172,7 +170,7 @@ public class AuthService {
         User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElseThrow(() -> {
             // UNAUTH인 토큰을 받고 회원 탈퇴 후 그 토큰으로 회원가입 요청시 예외 처리
             log.warn(">>>> User Not Exist : {}", ExceptionMessage.AUTH_INVALID_REGISTER.getText());
-            throw new AuthException(ExceptionMessage.AUTH_INVALID_REGISTER);
+            return new AuthException(ExceptionMessage.AUTH_INVALID_REGISTER);
         });
 
         // UNAUTH 토큰으로 회원가입을 요청했지만 이미 update되어 UNAUTH가 아닌 사용자 예외 처리
@@ -185,7 +183,7 @@ public class AuthService {
         findUser.updateRegister(request.getName(), request.getGithubId(), request.isPushAlarmYn());
 
         // JWT Access Token, Refresh Token 재발급
-        JwtToken tokens = createJwtToken(findUser);
+        JwtToken tokens = generateJwtToken(findUser);
 
         return AuthLoginResponse.builder()
                 .accessToken(tokens.getAccessToken())
@@ -194,42 +192,14 @@ public class AuthService {
                 .build();
     }
 
-    private JwtToken createJwtToken(User user) {
-        // JWT 토큰 생성을 위한 claims 생성
-        HashMap<String, String> claims = new HashMap<>();
-        claims.put(ROLE_CLAIM, user.getRole().name());
-        claims.put(PLATFORM_ID_CLAIM, user.getPlatformId());
-        claims.put(PLATFORM_TYPE_CLAIM, String.valueOf(user.getPlatformType()));
-
-        // Access Token 생성
-        final String accessToken = jwtService.generateAccessToken(claims, user);
-        // Refresh Token 생성
-        final String refreshToken = jwtService.generateRefreshToken(claims, user);
-
-        log.info(">>>> {} generate Tokens", user.getName());
-
-        // Refresh Token 저장 - REDIS
-        RefreshToken rt = RefreshToken.builder()
-                .refreshToken(refreshToken)
-                .subject(user.getUsername())
-                .build();
-        refreshTokenService.saveRefreshToken(rt);
-
-
-        return JwtToken.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
-    }
-
     @Transactional
     public void userDelete(String userName) {
         String[] platformIdAndPlatformType = extractFromSubject(userName);
         String platformId = platformIdAndPlatformType[0];
         String platformType = platformIdAndPlatformType[1];
-        User user = userRepository.findByPlatformIdAndPlatformType(platformId, UserPlatformType.KAKAO.valueOf(platformType)).orElseThrow(() -> {
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId, UserPlatformType.valueOf(platformType)).orElseThrow(() -> {
             log.warn(">>>> User Delete Fail : {}", ExceptionMessage.AUTH_NOT_FOUND.getText());
-            throw new AuthException(ExceptionMessage.AUTH_NOT_FOUND);
+            return new AuthException(ExceptionMessage.AUTH_NOT_FOUND);
         });
 
         try {
@@ -250,7 +220,7 @@ public class AuthService {
         User findUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType())
                 .orElseThrow(() -> {
                     log.error(">>>> User not found for platformId {} and platformType {} <<<<", user.getPlatformId(), user.getPlatformType());
-                    throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                    return new UserException(ExceptionMessage.USER_NOT_FOUND);
                 });
 
         // 로그인된 사용자의 ID와 수정을 요청한 회원 정보의 ID와 비교
@@ -265,7 +235,7 @@ public class AuthService {
     public UserUpdatePageResponse updateUserPage(Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_FOUND.getText());
-            throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
         });
 
         return UserUpdatePageResponse.of(user);
@@ -277,7 +247,7 @@ public class AuthService {
 
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_FOUND.getText());
-            throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
         });
 
         user.updateUser(request.getName(),
@@ -290,7 +260,7 @@ public class AuthService {
     public void updatePushAlarmYn(Long userId, boolean pushAlarmEnable) {
         User user = userRepository.findById(userId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_FOUND.getText());
-            throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+            return new UserException(ExceptionMessage.USER_NOT_FOUND);
         });
 
         user.updatePushAlarmYn(pushAlarmEnable);
@@ -300,7 +270,7 @@ public class AuthService {
         User findUser = userRepository.findByPlatformIdAndPlatformType(contextUser.getPlatformId(), contextUser.getPlatformType())
                 .orElseThrow(() -> {
                     log.error(">>>> User not found for platformId {} and platformType {} <<<<", contextUser.getPlatformId(), contextUser.getPlatformType());
-                    throw new UserException(ExceptionMessage.USER_NOT_FOUND);
+                    return new UserException(ExceptionMessage.USER_NOT_FOUND);
                 });
 
         return UserInfoResponse.of(findUser);

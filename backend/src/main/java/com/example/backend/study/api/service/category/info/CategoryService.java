@@ -64,10 +64,9 @@ public class CategoryService {
     }
 
     public StudyCategory findByIdOrThrowCategoryException(Long categoryId) {
-        StudyCategory studyCategory = studyCategoryRepository.findById(categoryId).orElseThrow(() -> {
+        return studyCategoryRepository.findById(categoryId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", categoryId, ExceptionMessage.CATEGORY_NOT_FOUND.getText());
-            throw new CategoryException(ExceptionMessage.CATEGORY_NOT_FOUND);
+            return new CategoryException(ExceptionMessage.CATEGORY_NOT_FOUND);
         });
-        return studyCategory;
     }
 }

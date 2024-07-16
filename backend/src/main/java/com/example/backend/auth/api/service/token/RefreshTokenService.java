@@ -38,7 +38,7 @@ public class RefreshTokenService {
 
         refreshTokenRepository.findById(refreshToken).orElseThrow(() -> {
             log.warn(">>>> Token Not Exist : {}", ExceptionMessage.JWT_NOT_EXIST_RTK.getText());
-            throw new JwtException(ExceptionMessage.JWT_NOT_EXIST_RTK);
+            return new JwtException(ExceptionMessage.JWT_NOT_EXIST_RTK);
         });
 
         String role = claims.get("role", String.class);

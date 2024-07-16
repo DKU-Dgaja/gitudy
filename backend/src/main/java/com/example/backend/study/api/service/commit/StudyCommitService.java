@@ -127,7 +127,7 @@ public class StudyCommitService {
         // 검증할 컨벤션 조회
         StudyConvention conventions = studyConventionRepository.findByStudyInfoIdAndContent(study.getId(), DEFAULT_CONTENT).orElseThrow(() -> {
             log.error(">>>> {} : {} <<<<", DEFAULT_CONTENT, ExceptionMessage.CONVENTION_NOT_FOUND.getText());
-            throw new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
+            return new ConventionException(ExceptionMessage.CONVENTION_NOT_FOUND);
         });
 
         // 저장할 커밋 필터링

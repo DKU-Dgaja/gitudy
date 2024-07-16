@@ -105,9 +105,7 @@ public class StudyInfoService {
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
 
-        UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoryNames);
-
-        return response;
+        return getUpdateStudyInfoPageResponse(studyInfo, categoryNames);
     }
 
     // 정렬된 스터디 조회
@@ -187,7 +185,7 @@ public class StudyInfoService {
     }
 
     private static UpdateStudyInfoPageResponse getUpdateStudyInfoPageResponse(StudyInfo studyInfo, List<String> categoryNames) {
-        UpdateStudyInfoPageResponse response = UpdateStudyInfoPageResponse.builder()
+        return UpdateStudyInfoPageResponse.builder()
                 .userId(studyInfo.getUserId())
                 .topic(studyInfo.getTopic())
                 .endDate(studyInfo.getEndDate())
@@ -200,7 +198,6 @@ public class StudyInfoService {
                 .periodType(studyInfo.getPeriodType())
                 .categoryNames(categoryNames)
                 .build();
-        return response;
     }
 
     private void updateWithdrawalStudyMember(Long studyInfoId) {
