@@ -36,8 +36,8 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "Todo 등록 성공")
     @PostMapping("/{studyInfoId}/todo")
     public ResponseEntity<Void> registerStudyTodo(@AuthenticationPrincipal User user,
-                                               @PathVariable("studyInfoId") Long studyInfoId,
-                                               @Valid @RequestBody StudyTodoRequest studyTodoRequest) {
+                                                  @PathVariable("studyInfoId") Long studyInfoId,
+                                                  @Valid @RequestBody StudyTodoRequest studyTodoRequest) {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
@@ -50,9 +50,9 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "Todo 수정 성공")
     @PutMapping("/{studyInfoId}/todo/{todoId}")
     public ResponseEntity<Void> updateStudyTodo(@AuthenticationPrincipal User user,
-                                             @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                             @PathVariable(name = "todoId") Long todoId,
-                                             @Valid @RequestBody StudyTodoUpdateRequest studyTodoUpdateRequest) {
+                                                @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                @PathVariable(name = "todoId") Long todoId,
+                                                @Valid @RequestBody StudyTodoUpdateRequest studyTodoUpdateRequest) {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
@@ -65,8 +65,8 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "Todo 삭제 성공")
     @DeleteMapping("/{studyInfoId}/todo/{todoId}")
     public ResponseEntity<Void> deleteStudyTodo(@AuthenticationPrincipal User user,
-                                             @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                             @PathVariable(name = "todoId") Long todoId) {
+                                                @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                @PathVariable(name = "todoId") Long todoId) {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
@@ -80,10 +80,10 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "Todo 전체조회 성공 (커밋 리스트 포함)", content = @Content(schema = @Schema(implementation = StudyTodoListAndCursorIdxResponse.class)))
     @GetMapping("/{studyInfoId}/todo")
     public ResponseEntity<StudyTodoListAndCursorIdxResponse> readStudyTodoList(@AuthenticationPrincipal User user,
-                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                               @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
-                                               @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "3") Long limit,
-                                               @RequestParam(name = "fetchFlag", defaultValue = "false") boolean fetchFlag) {
+                                                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                                               @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
+                                                                               @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "3") Long limit,
+                                                                               @RequestParam(name = "fetchFlag", defaultValue = "false") boolean fetchFlag) {
         // 스터디 멤버인지 검증
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
@@ -94,8 +94,8 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "Todo 조회 성공", content = @Content(schema = @Schema(implementation = StudyTodoResponse.class)))
     @GetMapping("/{studyInfoId}/todo/{todoId}")
     public ResponseEntity<StudyTodoResponse> readStudyTodo(@AuthenticationPrincipal User user,
-                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                           @PathVariable(name = "todoId") Long todoId) {
+                                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                           @PathVariable(name = "todoId") Long todoId) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
@@ -119,7 +119,7 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "마감일이 가장 가까운 Todo의 진행률 조회", content = @Content(schema = @Schema(implementation = StudyTodoProgressResponse.class)))
     @GetMapping("/{studyInfoId}/todo/progress")
     public ResponseEntity<StudyTodoProgressResponse> readStudyTodoProgress(@AuthenticationPrincipal User user,
-                                                   @PathVariable(name = "studyInfoId") Long studyInfoId) {
+                                                                           @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
         // 스터디 멤버인지 검증
         studyMemberService.isValidateStudyMember(user, studyInfoId);
@@ -131,7 +131,7 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "특정 스터디의 커밋 리스트 패치")
     @GetMapping("/{studyInfoId}/todo/fetch")
     public ResponseEntity<Void> fetchTodoCommit(@AuthenticationPrincipal User user,
-                                             @PathVariable(name = "studyInfoId") Long studyInfoId) {
+                                                @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
         studyTodoService.fetchTodoCommit(studyInfoId);
@@ -143,8 +143,8 @@ public class StudyTodoController {
     @ApiResponse(responseCode = "200", description = "Todo 별 커밋 리스트 조회", content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @GetMapping("/{studyInfoId}/todo/{todoId}/commits")
     public ResponseEntity<List<CommitInfoResponse>> selectTodoCommits(@AuthenticationPrincipal User user,
-                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                               @PathVariable(name = "todoId") Long todoId) {
+                                                                      @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                                      @PathVariable(name = "todoId") Long todoId) {
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
         return ResponseEntity.ok().body(studyTodoService.selectTodoCommits(todoId));

@@ -37,8 +37,8 @@ public class CategoryController {
     @ApiResponse(responseCode = "200", description = "카테고리 수정 성공")
     @PatchMapping("/{categoryId}")
     public ResponseEntity<Void> updateStudyComment(@AuthenticationPrincipal User user,
-                                                @PathVariable(name = "categoryId") Long categoryId,
-                                                @Valid @RequestBody CategoryUpdateRequest categoryUpdateRequest) {
+                                                   @PathVariable(name = "categoryId") Long categoryId,
+                                                   @Valid @RequestBody CategoryUpdateRequest categoryUpdateRequest) {
         authService.findUserInfo(user);
         categoryService.updateCategory(categoryUpdateRequest, categoryId);
         return ResponseEntity.ok().build();
@@ -47,21 +47,19 @@ public class CategoryController {
     @ApiResponse(responseCode = "200", description = "카테고리 삭제 성공")
     @DeleteMapping("/{categoryId}")
     public ResponseEntity<Void> deleteStudyComment(@AuthenticationPrincipal User user,
-                                                @PathVariable(name = "categoryId") Long categoryId
+                                                   @PathVariable(name = "categoryId") Long categoryId
     ) {
         authService.findUserInfo(user);
         categoryService.deleteCategory(categoryId);
         return ResponseEntity.ok().build();
     }
 
-    @ApiResponse(responseCode = "200",
-            description = "카테고리 조회 성공",
-            content = @Content(schema = @Schema(implementation = CategoryListAndCursorIdxResponse.class)))
+    @ApiResponse(responseCode = "200", description = "카테고리 조회 성공", content = @Content(schema = @Schema(implementation = CategoryListAndCursorIdxResponse.class)))
     @GetMapping("/{studyInfoId}")
     public ResponseEntity<CategoryListAndCursorIdxResponse> StudyCommentList(@AuthenticationPrincipal User user,
-                                              @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                              @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
-                                              @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
+                                                                             @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                                             @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx") Long cursorIdx,
+                                                                             @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
         authService.findUserInfo(user);
         CategoryListAndCursorIdxResponse response = categoryService.selectCategoryList(studyInfoId, cursorIdx, limit);

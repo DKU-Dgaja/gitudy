@@ -61,10 +61,9 @@ public class AuthController {
 
     @ApiResponse(responseCode = "200", description = "로그인 요청 성공", content = @Content(schema = @Schema(implementation = AuthLoginResponse.class)))
     @GetMapping("/{platformType}/login")
-    public ResponseEntity<AuthLoginResponse> login(
-            @PathVariable("platformType") UserPlatformType platformType,
-            @RequestParam("code") String code,
-            @RequestParam("state") String loginState) {
+    public ResponseEntity<AuthLoginResponse> login(@PathVariable("platformType") UserPlatformType platformType,
+                                                   @RequestParam("code") String code,
+                                                   @RequestParam("state") String loginState) {
 
         // state 값이 유효한지 검증
         if (!loginStateService.isValidLoginState(loginState)) {
@@ -130,7 +129,7 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "회원가입 성공", content = @Content(schema = @Schema(implementation = AuthLoginResponse.class)))
     @PostMapping("/register")
     public ResponseEntity<AuthLoginResponse> register(@AuthenticationPrincipal User user,
-                                      @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
+                                                      @Valid @RequestBody AuthRegisterRequest request) throws AuthException {
 
         AuthLoginResponse response = authService.register(AuthServiceRegisterRequest.of(request), user);
 
@@ -159,7 +158,7 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "회원정보 수정 요청 성공")
     @PostMapping("/update")
     public ResponseEntity<Void> updateUser(@AuthenticationPrincipal User user,
-                                        @Valid @RequestBody UserUpdateRequest request) {
+                                           @Valid @RequestBody UserUpdateRequest request) {
 
         // Jwt 토큰을 이용해 유저 정보 추출
         UserInfoResponse userInfo = authService.findUserInfo(user);
@@ -173,7 +172,7 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "푸시 알림 여부 수정 요청 성공")
     @GetMapping("/update/pushAlarmYn/{pushAlarmEnable}")
     public ResponseEntity<Void> updatePushAlarmYn(@AuthenticationPrincipal User user,
-                                               @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
+                                                  @PathVariable(name = "pushAlarmEnable") boolean pushAlarmEnable) {
 
         // Jwt 토큰을 이용해 유저 정보 추출
         UserInfoResponse userInfo = authService.findUserInfo(user);

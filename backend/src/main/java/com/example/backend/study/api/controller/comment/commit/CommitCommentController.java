@@ -44,8 +44,8 @@ public class CommitCommentController {
     @ApiResponse(responseCode = "200", description = "커밋 댓글 등록 성공")
     @PostMapping("/{commitId}/comments")
     public ResponseEntity<Void> addCommitComment(@AuthenticationPrincipal User user,
-                                              @PathVariable(name = "commitId") Long commitId,
-                                              @Valid @RequestBody AddCommitCommentRequest request) {
+                                                 @PathVariable(name = "commitId") Long commitId,
+                                                 @Valid @RequestBody AddCommitCommentRequest request) {
 
         // 댓글을 달 수 있는 권한이 있는지 확인 (활동중인 스터디원인지 판단)
         UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
@@ -60,9 +60,9 @@ public class CommitCommentController {
     @ApiResponse(responseCode = "200", description = "커밋 댓글 수정 성공")
     @PatchMapping("/{commitId}/comments/{commentId}")
     public ResponseEntity<Void> updateCommitComment(@AuthenticationPrincipal User user,
-                                                 @PathVariable(name = "commitId") Long commitId,
-                                                 @PathVariable(name = "commentId") Long commentId,
-                                                 @Valid @RequestBody AddCommitCommentRequest request) {
+                                                    @PathVariable(name = "commitId") Long commitId,
+                                                    @PathVariable(name = "commentId") Long commentId,
+                                                    @Valid @RequestBody AddCommitCommentRequest request) {
 
         // 활동중인 스터디원인지 판단
         UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
@@ -77,8 +77,8 @@ public class CommitCommentController {
     @ApiResponse(responseCode = "200", description = "커밋 댓글 삭제 성공")
     @DeleteMapping("/{commitId}/comments/{commentId}")
     public ResponseEntity<Void> deleteCommitComment(@AuthenticationPrincipal User user,
-                                                 @PathVariable(name = "commitId") Long commitId,
-                                                 @PathVariable(name = "commentId") Long commentId) {
+                                                    @PathVariable(name = "commitId") Long commitId,
+                                                    @PathVariable(name = "commentId") Long commentId) {
 
         // 활동중인 스터디원인지 판단
         UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
