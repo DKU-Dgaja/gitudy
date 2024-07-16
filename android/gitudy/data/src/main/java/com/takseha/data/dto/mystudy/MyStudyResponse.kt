@@ -1,17 +1,10 @@
 package com.takseha.data.dto.mystudy
 
 import com.google.gson.annotations.SerializedName
-import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 
-data class MyStudyResponse(
-    @SerializedName("res_msg")
-    val resMsg: String,
-    @SerializedName("res_obj")
-    val myStudyInfo: MyStudyInfo
-)
-
-data class MyStudyInfo(
+data class MyStudyInfoResponse(
     @SerializedName("category_names")
     val categoryNames: List<String> = listOf(),
     @SerializedName("created_date_time")
@@ -29,7 +22,7 @@ data class MyStudyInfo(
     @SerializedName("modified_date_time")
     val modifiedDateTime: String = "",
     @SerializedName("period_type")
-    val periodType: StudyPeriod = StudyPeriod.STUDY_PERIOD_WEEK,
+    val periodType: StudyPeriodStatus = StudyPeriodStatus.STUDY_PERIOD_WEEK,
     @SerializedName("profile_image_url")
     val profileImageUrl: String = "",
     @SerializedName("score")
@@ -40,6 +33,8 @@ data class MyStudyInfo(
     val topic: String = "",
     @SerializedName("user_id")
     val userId: Int = 0,
+    @SerializedName("is_leader")
+    val isLeader: Boolean = false,
     @SerializedName("repository_info")
     val githubLinkInfo: RepositoryInfo = RepositoryInfo()
 )
