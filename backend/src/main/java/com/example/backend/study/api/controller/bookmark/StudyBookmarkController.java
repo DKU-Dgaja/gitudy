@@ -29,8 +29,8 @@ public class StudyBookmarkController {
     @ApiResponse(responseCode = "200", description = "북마크 조회 성공", content = @Content(schema = @Schema(implementation = BookmarkInfoListAndCursorIdxResponse.class)))
     @GetMapping("")
     public ResponseEntity<BookmarkInfoListAndCursorIdxResponse> userBookmarkList(@AuthenticationPrincipal User user,
-                                              @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
-                                              @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
+                                                                                 @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
+                                                                                 @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
         UserInfoResponse userInfo = authService.findUserInfo(user);
         List<BookmarkInfoResponse> bookmarkInfoList = studyBookmarkService.selectUserBookmarkList(userInfo.getUserId(), cursorIdx, limit);
@@ -47,7 +47,7 @@ public class StudyBookmarkController {
     @ApiResponse(responseCode = "200", description = "북마크 등록/삭제 성공")
     @GetMapping("study/{studyInfoId}")
     public ResponseEntity<Void> handleBookmark(@AuthenticationPrincipal User user,
-                                            @PathVariable(name = "studyInfoId") Long studyInfoId) {
+                                               @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
         // 시큐리티 컨텍스트의 user와 일치하는 DB user 정보 조회
         UserInfoResponse userInfo = authService.findUserInfo(user);

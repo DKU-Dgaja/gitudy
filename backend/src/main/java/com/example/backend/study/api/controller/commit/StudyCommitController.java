@@ -30,14 +30,12 @@ public class StudyCommitController {
     private final StudyMemberService studyMemberService;
     private final AuthService authService;
 
-    @ApiResponse(responseCode = "200",
-            description = "마이 커밋 조회 성공",
-            content = @Content(schema = @Schema(implementation = CommitInfoListAndCursorIdxResponse.class)))
+    @ApiResponse(responseCode = "200", description = "마이 커밋 조회 성공", content = @Content(schema = @Schema(implementation = CommitInfoListAndCursorIdxResponse.class)))
     @GetMapping("")
     public ResponseEntity<CommitInfoListAndCursorIdxResponse> userCommitList(@AuthenticationPrincipal User user,
-                                            @RequestParam(name = "studyInfoId", required = false) Long studyInfoId,
-                                            @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
-                                            @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "20") Long limit) {
+                                                                             @RequestParam(name = "studyInfoId", required = false) Long studyInfoId,
+                                                                             @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
+                                                                             @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "20") Long limit) {
 
         UserInfoResponse userInfo = authService.findUserInfo(user);
 
@@ -52,12 +50,11 @@ public class StudyCommitController {
         return ResponseEntity.ok().body(response);
     }
 
-    @ApiResponse(responseCode = "200", description = "커밋 상세 페이지 조회 성공",
-            content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
+    @ApiResponse(responseCode = "200", description = "커밋 상세 페이지 조회 성공", content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @GetMapping("/{commitId}")
     public ResponseEntity<CommitInfoResponse> commitDetails(@AuthenticationPrincipal User user,
-                                           @RequestParam(name = "studyInfoId") Long studyInfoId,
-                                           @PathVariable(name = "commitId") Long commitId) {
+                                                            @RequestParam(name = "studyInfoId") Long studyInfoId,
+                                                            @PathVariable(name = "commitId") Long commitId) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
@@ -67,8 +64,8 @@ public class StudyCommitController {
     @ApiResponse(responseCode = "200", description = "커밋 승인 성공")
     @GetMapping("/{commitId}/approve")
     public ResponseEntity<Void> approveCommit(@AuthenticationPrincipal User user,
-                                           @RequestParam(name = "studyInfoId") Long studyInfoId,
-                                           @PathVariable(name = "commitId") Long commitId) {
+                                              @RequestParam(name = "studyInfoId") Long studyInfoId,
+                                              @PathVariable(name = "commitId") Long commitId) {
 
         // 팀장 권한 검사
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
@@ -81,9 +78,9 @@ public class StudyCommitController {
     @ApiResponse(responseCode = "200", description = "커밋 거절 성공")
     @GetMapping("/{commitId}/reject")
     public ResponseEntity<Void> rejectCommit(@AuthenticationPrincipal User user,
-                                          @RequestParam(name = "studyInfoId") Long studyInfoId,
-                                          @Valid @RequestBody CommitRejectionRequest request,
-                                          @PathVariable(name = "commitId") Long commitId) {
+                                             @RequestParam(name = "studyInfoId") Long studyInfoId,
+                                             @Valid @RequestBody CommitRejectionRequest request,
+                                             @PathVariable(name = "commitId") Long commitId) {
 
         // 팀장 권한 검사
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
@@ -93,11 +90,10 @@ public class StudyCommitController {
         return ResponseEntity.ok().build();
     }
 
-    @ApiResponse(responseCode = "200", description = "팀장의 승인을 기다리는 커밋 리스트 반환 성공",
-            content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
+    @ApiResponse(responseCode = "200", description = "팀장의 승인을 기다리는 커밋 리스트 반환 성공", content = @Content(schema = @Schema(implementation = CommitInfoResponse.class)))
     @GetMapping("/waiting")
     public ResponseEntity<List<CommitInfoResponse>> waitingCommitList(@AuthenticationPrincipal User user,
-                                               @RequestParam(name = "studyInfoId") Long studyInfoId) {
+                                                                      @RequestParam(name = "studyInfoId") Long studyInfoId) {
         // 팀장 권한 검사
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 

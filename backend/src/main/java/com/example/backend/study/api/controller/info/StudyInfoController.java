@@ -54,8 +54,8 @@ public class StudyInfoController {
     @ApiResponse(responseCode = "200", description = "스터디 정보 수정 성공")
     @PatchMapping("/{studyInfoId}")
     public ResponseEntity<Void> updateStudyInfo(@AuthenticationPrincipal User user,
-                                             @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                             @Valid @RequestBody StudyInfoUpdateRequest studyInfoUpdateRequest) {
+                                                @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                @Valid @RequestBody StudyInfoUpdateRequest studyInfoUpdateRequest) {
 
         // 리더인지 확인
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
@@ -79,11 +79,11 @@ public class StudyInfoController {
             StudyInfoListAndCursorIdxResponse.class)))
     @GetMapping("/")
     public ResponseEntity<StudyInfoListAndCursorIdxResponse> myStudyInfoListByParameter(@AuthenticationPrincipal User user,
-                                                        @Min(value = 0, message = "Cursor index cannot be negative")
-                                                        @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
-                                                        @RequestParam(name = "limit", defaultValue = "20") Long limit,
-                                                        @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
-                                                        @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
+                                                                                        @Min(value = 0, message = "Cursor index cannot be negative")
+                                                                                        @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
+                                                                                        @RequestParam(name = "limit", defaultValue = "20") Long limit,
+                                                                                        @RequestParam(name = "sortBy", defaultValue = "createdDateTime") String sortBy,
+                                                                                        @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy
     ) {
         UserInfoResponse findUser = authService.findUserInfo(user);
         return ResponseEntity.ok().body(studyInfoService.selectStudyInfoList(findUser.getUserId(), cursorIdx, limit, sortBy, myStudy));
@@ -94,7 +94,7 @@ public class StudyInfoController {
             StudyInfoDetailResponse.class)))
     @GetMapping("/{studyInfoId}")
     public ResponseEntity<StudyInfoDetailResponse> getStudyInfo(@AuthenticationPrincipal User user,
-                                          @PathVariable(name = "studyInfoId") Long studyInfoId) {
+                                                                @PathVariable(name = "studyInfoId") Long studyInfoId) {
         UserInfoResponse userInfoResponse = authService.findUserInfo(user);
         return ResponseEntity.ok().body(studyInfoService.selectStudyInfoDetail(studyInfoId, userInfoResponse.getUserId()));
     }
@@ -104,7 +104,7 @@ public class StudyInfoController {
             StudyInfoCountResponse.class)))
     @GetMapping("/count")
     public ResponseEntity<StudyInfoCountResponse> getStudyInfoCount(@AuthenticationPrincipal User user,
-                                               @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy) {
+                                                                    @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy) {
         UserInfoResponse findUser = authService.findUserInfo(user);
         return ResponseEntity.ok().body(studyInfoService.getStudyInfoCount(findUser.getUserId(), myStudy));
     }
