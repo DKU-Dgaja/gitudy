@@ -1,6 +1,5 @@
 package com.takseha.data
 
-import android.util.Log
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -11,13 +10,17 @@ class TokenInterceptor(private val tokenManager: TokenManager, private val navig
         var request = chain.request()
 
         // 토큰을 헤더에 추가
-        request = addTokenToRequest(request, tokenManager.accessToken)
+        request = if (request.url().encodedPath().contains("/auth/reissue")) {
+            addTokenToRequest(request, tokenManager.refreshToken)
+        } else {
+            addTokenToRequest(request, tokenManager.accessToken)
+        }
 
         // 원래 요청을 실행
         val response = chain.proceed(request)
 
         // 토큰이 만료된 경우
-        if (response.code() == 401 || response.code() == 400) {
+        if (response.code() == 401) {
             synchronized(this) {
                 // 토큰 갱신 시도
                 val newToken = runBlocking { tokenManager.reissueTokens() }

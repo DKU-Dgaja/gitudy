@@ -3,9 +3,9 @@ package com.takseha.data
 import android.content.Context
 import android.util.Log
 import com.takseha.data.api.gitudy.auth.GitudyAuthApi
-import com.takseha.data.dto.auth.login.LoginPageInfo
+import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.LoginResponse
-import com.takseha.data.dto.auth.register.ReissueTokenInfo
+import com.takseha.data.dto.auth.login.ReissueTokenResponse
 import com.takseha.data.sharedPreferences.SP
 import com.takseha.data.sharedPreferences.SPKey
 import kotlinx.coroutines.Dispatchers
@@ -34,14 +34,13 @@ class TokenManager(context: Context) {
             prefs.savePref(SPKey.REFRESH_TOKEN, value!!)
         }
 
-    suspend fun getLoginPages(): List<LoginPageInfo>? {
+    suspend fun getLoginPages(): LoginPageInfoResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val response = loginApi.getLoginPage()
 
                 if (response.isSuccessful) {
-                    val loginPageInfoList = response.body()!!
-                    loginPageInfoList
+                    response.body()
                 } else {
                     Log.e("TokenManager", "response status: ${response.code()}\nresponse message: ${response.message()}")
                     null
@@ -72,15 +71,15 @@ class TokenManager(context: Context) {
         }
     }
 
-    suspend fun reissueTokens(): ReissueTokenInfo? {
+    suspend fun reissueTokens(): ReissueTokenResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                val bearerToken = "Bearer $refreshToken"
-                val response = loginApi.reissueTokens(bearerToken)
+                val response = loginApi.reissueTokens()
+
                 if (response.isSuccessful) {
-                    accessToken = response.body()!!.tokenInfo.accessToken
-                    refreshToken = response.body()!!.tokenInfo.refreshToken
-                    response.body()!!.tokenInfo
+                    accessToken = response.body()!!.accessToken
+                    refreshToken = response.body()!!.refreshToken
+                    response.body()
                 } else {
                     Log.e("TokenManager", "response status: ${response.code()}\nresponse message:${response.errorBody()!!.string()}")
                     null
