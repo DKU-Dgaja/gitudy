@@ -7,7 +7,6 @@ import com.example.backend.study.api.controller.comment.commit.request.AddCommit
 import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;
 import com.example.backend.study.api.service.comment.commit.CommitCommentService;
 import com.example.backend.study.api.service.member.StudyMemberService;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -29,7 +28,7 @@ public class CommitCommentController {
     private final StudyMemberService studyMemberService;
     private final AuthService authService;
 
-    @ApiResponse(responseCode = "200", description = "커밋 댓글 리스트 조회 성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CommitCommentInfoResponse.class))))
+    @ApiResponse(responseCode = "200", description = "커밋 댓글 리스트 조회 성공", content = @Content(schema = @Schema(implementation = CommitCommentInfoResponse.class)))
     @GetMapping("/{commitId}/comments")
     public ResponseEntity<List<CommitCommentInfoResponse>> commitCommentList(@AuthenticationPrincipal User user,
                                                                              @RequestParam(name = "studyInfoId") Long studyInfoId,
