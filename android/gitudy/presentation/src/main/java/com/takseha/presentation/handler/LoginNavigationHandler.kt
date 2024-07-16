@@ -2,7 +2,7 @@ package com.takseha.presentation.handler
 
 import android.content.Context
 import android.content.Intent
-import com.takseha.data.NavigationHandler
+import com.takseha.data.token.NavigationHandler
 import com.takseha.presentation.ui.auth.LoginActivity
 
 class LoginNavigationHandler(private val context: Context) : NavigationHandler {
