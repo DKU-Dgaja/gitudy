@@ -47,10 +47,10 @@ class SecurityConfigTest extends MockTestConfig {
     }
 
     @Test
-    @DisplayName("모든 사용자는 인증 없이 \"/auth/**\" URI에 접근 가능하다.")
+    @DisplayName("모든 사용자는 인증 없이 \"/auth/loginPage\" URI에 접근 가능하다.")
     void authUriPermitAllTest() throws Exception {
         // given
-        String uri = "/auth/test";
+        String uri = "/auth/loginPage";
 
         // when
         mockMvc.perform(
@@ -64,7 +64,7 @@ class SecurityConfigTest extends MockTestConfig {
     @DisplayName("인증 받은 사용자(USER, ADMIN)은 모든 엔드포인트에 접근할 수 있다.")
     void authUserTest() throws Exception {
         // given
-        String uri = "/test";
+        String uri = "/auth/info";
 
         // USER 권한 사용자 저장
         User user = User.builder()

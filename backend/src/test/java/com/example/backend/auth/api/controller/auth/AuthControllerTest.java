@@ -227,8 +227,7 @@ class AuthControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andExpect(status().isForbidden())
                 .andDo(print());
 
     }

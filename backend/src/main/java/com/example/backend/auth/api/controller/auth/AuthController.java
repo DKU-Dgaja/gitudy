@@ -32,8 +32,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.example.backend.domain.define.account.user.constant.UserRole.UNAUTH;
-
 @Slf4j
 @RequiredArgsConstructor
 @RequestMapping("/auth")
@@ -116,11 +114,6 @@ public class AuthController {
     @ApiResponse(responseCode = "200", description = "회원정보 조회 성공", content = @Content(schema = @Schema(implementation = UserInfoResponse.class)))
     @GetMapping("/info")
     public ResponseEntity<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
-
-        if (user.getRole() == UNAUTH) {
-            log.error(">>>> {} <<<<", ExceptionMessage.UNAUTHORIZED_AUTHORITY);
-            throw new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY);
-        }
 
         UserInfoResponse userInfoResponse = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());
 
