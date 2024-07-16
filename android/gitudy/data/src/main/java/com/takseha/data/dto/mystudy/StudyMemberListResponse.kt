@@ -3,7 +3,7 @@ package com.takseha.data.dto.mystudy
 
 import com.google.gson.annotations.SerializedName
 
-class StudyMemberResponse: ArrayList<StudyMember>()
+class StudyMemberListResponse: ArrayList<StudyMember>()
 
 data class StudyMember(
     @SerializedName("name")
