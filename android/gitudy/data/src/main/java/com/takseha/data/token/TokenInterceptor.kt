@@ -1,4 +1,4 @@
-package com.takseha.data
+package com.takseha.data.token
 
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor

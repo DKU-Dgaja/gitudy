@@ -1,7 +1,8 @@
-package com.takseha.data
+package com.takseha.data.token
 
 import android.content.Context
 import android.util.Log
+import com.takseha.data.BuildConfig
 import com.takseha.data.api.gitudy.auth.GitudyAuthApi
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.LoginResponse
