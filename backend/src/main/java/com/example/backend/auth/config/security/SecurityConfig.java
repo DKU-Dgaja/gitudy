@@ -29,7 +29,7 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
                                 // UnAuth Area
                                 .requestMatchers("/auth/loginPage").permitAll()
-                                .requestMatchers("/auth/login").permitAll()
+                                .requestMatchers("/auth/*/login").permitAll()
                                 .requestMatchers("/auth/check-nickname").permitAll()
                                 // Others
                                 .anyRequest().hasAnyAuthority("USER", "ADMIN")
