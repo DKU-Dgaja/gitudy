@@ -1,15 +1,25 @@
 package com.example.backend.domain.define.study.todo.mapping.repository;
 
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
+import static com.example.backend.domain.define.account.user.QUser.user;
+import static com.example.backend.domain.define.study.todo.info.QStudyTodo.studyTodo;
 import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMapping.studyTodoMapping;
+import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.*;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class StudyTodoMappingRepositoryImpl implements StudyTodoMappingRepositoryCustom {
@@ -30,8 +40,30 @@ public class StudyTodoMappingRepositoryImpl implements StudyTodoMappingRepositor
                 .select(studyTodoMapping.count())
                 .from(studyTodoMapping)
                 .where(studyTodoMapping.todoId.eq(todoId)
-                        .and(studyTodoMapping.status.eq(StudyTodoStatus.TODO_COMPLETE)))
+                        .and(studyTodoMapping.status.eq(TODO_COMPLETE)))
                 .fetchOne()
                 .intValue();
+    }
+
+    @Override
+    @Transactional
+    public boolean updateByUserIdAndTodoId(Long userId, Long todoId, StudyTodoStatus updateStatus) {
+        StudyTodoMapping todoMapping = queryFactory.selectFrom(studyTodoMapping)
+                .where(studyTodoMapping.userId.eq(userId)
+                        .and(studyTodoMapping.todoId.eq(todoId)))
+                .fetchOne();
+
+        if (todoMapping == null) return false;
+
+        // 같은 투두에 두번째 업데이트일 경우 첫번째 업데이트 시의 Status를 유지한다.
+        if (todoMapping.getStatus() != TODO_INCOMPLETE) return true;
+
+        // 투두 지각 여부 업데이트
+        long updatedRows = queryFactory.update(studyTodoMapping)
+                .set(studyTodoMapping.status, updateStatus)
+                .where(studyTodoMapping.id.eq(todoMapping.getId()))
+                .execute();
+
+        return updatedRows > 0;
     }
 }
