@@ -24,7 +24,7 @@ class TodoViewModel: ViewModel() {
         )
 
         if (todoListInfoResponse.isSuccessful) {
-            val todoBody = todoListInfoResponse.body()!!.todoBody
+            val todoBody = todoListInfoResponse.body()!!
             Log.d("MyStudyMainViewModel", "todo body: $todoBody")
 
             _uiState.update {

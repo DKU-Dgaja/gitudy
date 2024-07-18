@@ -32,7 +32,7 @@ class FeedHomeViewModel : ViewModel() {
         )
 
         if (feedListResponse.isSuccessful) {
-            val feedStudyListInfo = feedListResponse.body()!!.studyListInfo
+            val feedStudyListInfo = feedListResponse.body()!!
 
             _cursorIdxRes.value = feedStudyListInfo.cursorIdx
             _uiState.update { it.copy(studyInfoList = feedStudyListInfo.studyInfoList) }

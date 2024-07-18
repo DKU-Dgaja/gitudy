@@ -8,14 +8,12 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
-import kotlin.math.abs
 
 class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
     private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
@@ -71,11 +69,11 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         return studyInfoList.size
     }
 
-    private fun setCommitRule(periodType: StudyPeriod): String {
+    private fun setCommitRule(periodType: StudyPeriodStatus): String {
         when (periodType) {
-            StudyPeriod.STUDY_PERIOD_EVERYDAY -> return context.getString(R.string.feed_rule_everyday)
-            StudyPeriod.STUDY_PERIOD_WEEK -> return context.getString(R.string.feed_rule_week)
-            StudyPeriod.STUDY_PERIOD_NONE -> return context.getString(R.string.feed_rule_free)
+            StudyPeriodStatus.STUDY_PERIOD_EVERYDAY -> return context.getString(R.string.feed_rule_everyday)
+            StudyPeriodStatus.STUDY_PERIOD_WEEK -> return context.getString(R.string.feed_rule_week)
+            StudyPeriodStatus.STUDY_PERIOD_NONE -> return context.getString(R.string.feed_rule_free)
         }
     }
 
