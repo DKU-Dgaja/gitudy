@@ -122,40 +122,49 @@ class MainHomeViewModel : ViewModel() {
             val myStudyListInfo = myStudyListResponse.body()!!
 
             _cursorIdxRes.value = myStudyListInfo.cursorIdx
+            Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
 
             val studies = myStudyListInfo.studyInfoList
-            val studiesWithTodo = studies.map { study ->
-                val todo = getFirstTodoInfo(study.id)
-
-                if (todo != null) {
-                    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
-                    val todoCheck =
-                        if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
-                    MyStudyWithTodo(
-                        backgroundColorList[study.id % 4],
-                        study,
-                        todo.title,
-                        todo.todoDate,
-                        todoCheck,
-                        todoCheckNum
+            if (studies.isEmpty()) {
+                _myStudyState.update {
+                    it.copy(
+                        isMyStudiesEmpty = true
                     )
-                } else {
-                    MyStudyWithTodo(
-                        backgroundColorList[study.id % 4],
-                        study,
-                        null,
-                        null,
-                        TodoStatus.TODO_EMPTY,
-                        null
+                }
+            } else {
+                val studiesWithTodo = studies.map { study ->
+                    val todo = getFirstTodoInfo(study.id)
+
+                    if (todo != null) {
+                        val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
+                        val todoCheck =
+                            if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
+                        MyStudyWithTodo(
+                            backgroundColorList[study.id % 4],
+                            study,
+                            todo.title,
+                            todo.todoDate,
+                            todoCheck,
+                            todoCheckNum
+                        )
+                    } else {
+                        MyStudyWithTodo(
+                            backgroundColorList[study.id % 4],
+                            study,
+                            null,
+                            null,
+                            TodoStatus.TODO_EMPTY,
+                            null
+                        )
+                    }
+                }
+                _myStudyState.update {
+                    it.copy(
+                        myStudiesWithTodo = studiesWithTodo,
+                        isMyStudiesEmpty = false
                     )
                 }
             }
-            _myStudyState.update {
-                it.copy(
-                    myStudiesWithTodo = studiesWithTodo
-                )
-            }
-            Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -219,9 +228,10 @@ data class MainHomeUserInfoUiState(
 //    var rank: Int,
     var progressScore: Int = 0,
     var progressMax: Int = 15,
-    var characterImgSrc: Int = R.drawable.character_bebe_to_15,
+    var characterImgSrc: Int = R.drawable.character_bebe_to_15
 ) : Serializable
 
 data class MainHomeMyStudyUiState(
-    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf(),
+    var isMyStudiesEmpty: Boolean = false
 )

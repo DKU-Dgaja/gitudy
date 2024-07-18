@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     android:background="@color/BACKGROUND"
+    android:clipToPadding="false"
     tools:context=".ui.home.MainHomeFragment">
 
     <androidx.cardview.widget.CardView
@@ -136,7 +136,8 @@
                 android:layout_height="35dp"
                 android:layout_gravity="center"
                 android:layout_marginBottom="5dp"
-                android:src="@drawable/logo_git" />
+                android:src="@drawable/ic_plus_c_300"
+                android:textColor="@color/GS_300" />
 
             <TextView
                 style="@style/B3_2"

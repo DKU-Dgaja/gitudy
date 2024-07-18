@@ -32,7 +32,7 @@
     <!-- Strings related to study -->
     <string name="study_my_cnt">마이스터디</string>
     <string name="study_name">단국알고깃터디</string>
-    <string name="study_no_my_study">가입 중인 스터디가 없습니다</string>
+    <string name="study_no_my_study">가입 중인 스터디가 없어요</string>
     <string name="study_commit_rule">주 1회 커밋 필수</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
@@ -47,7 +47,7 @@
     <string name="to_do_deadline">마감일 </string>
     <string name="to_do_deadline_date">%d.%d.%d</string>
     <string name="to_do_add">새로운 TO-DO를\n추가하시겠습니까?</string>
-    <string name="no_to_do_alarm">등록한 TO-DO가 없습니다</string>
+    <string name="no_to_do_alarm">등록된 TO-DO가 없어요</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
     <string name="commit_github_url_basic">https://github.com/DKU-Dgaja/gitudy-study-jusung/commit/%s</string>
     <string name="no_commit_convention">커밋 컨벤션을 등록해 주세요!</string>
@@ -65,14 +65,14 @@
     <string name="study_to_do_check">/%d</string>
     <string name="study_member_rv">/%d명</string>
     <string name="study_total_day_cnt">D+%d</string>
-    <string name="study_to_do_empty">마감 예정인 To-Do가 없습니다!</string>
+    <string name="study_to_do_empty">마감 예정인 To-Do가 없어요!</string>
     <string name="study_to_do_commit_info">%s • %s •</string>
 
 
     <!-- Strings related to feed -->
     <string name="feed_cnt">전체스터디</string>
     <string name="feed_explanation">"야금야금, 하지만 확실하게"\n이 스터디는 코딩 테스트를 준비하시는 분들이 각자 알고리즘 문제를 풀고, 서로 학습한 내용을 공유하며 동기부여 형성을 하도록 하는 스터디입니다.</string>
-    <string name="study_no_study">운영 중인 스터디가 없습니다</string>
+    <string name="study_no_study">운영 중인 스터디가 없어요</string>
     <string name="feed_rule_week">주 1일 커밋 필수</string>
     <string name="feed_rule_everyday">매일 커밋 필수 </string>
     <string name="feed_rule_free">자율 커밋</string>
@@ -98,8 +98,8 @@
     <string name="profile_github_link">www.github.com</string>
     <string name="profile_blog_link">www.naver.com</string>
     <string name="profile_linkedin_link">www.linkedin.com</string>
-    <string name="profile_no_commit_list">커밋 기록이 없습니다</string>
-    <string name="profile_no_saved_study">저장한 스터디가 없습니다</string>
+    <string name="profile_no_commit_list">커밋 기록이 없어요</string>
+    <string name="profile_no_saved_study">저장한 스터디가 없어요</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

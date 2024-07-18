@@ -35,8 +35,20 @@ class FeedHomeViewModel : ViewModel() {
             val feedStudyListInfo = feedListResponse.body()!!
 
             _cursorIdxRes.value = feedStudyListInfo.cursorIdx
-            _uiState.update { it.copy(studyInfoList = feedStudyListInfo.studyInfoList) }
             Log.d("FeedHomeViewModel", _cursorIdxRes.value.toString())
+
+            if (feedStudyListInfo.studyInfoList.isEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        isFeedEmpty = true
+                    )
+                }
+            } else {
+                _uiState.update { it.copy(
+                    studyInfoList = feedStudyListInfo.studyInfoList,
+                    isFeedEmpty = false
+                ) }
+            }
         } else {
             Log.e(
                 "FeedHomeViewModel",
@@ -47,5 +59,6 @@ class FeedHomeViewModel : ViewModel() {
 }
 
 data class FeedHomeUiState(
-    var studyInfoList: List<StudyInfo> = listOf()
+    var studyInfoList: List<StudyInfo> = listOf(),
+    var isFeedEmpty: Boolean = false
 )
