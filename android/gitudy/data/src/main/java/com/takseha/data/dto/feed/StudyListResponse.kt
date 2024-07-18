@@ -27,13 +27,13 @@ data class StudyInfo(
     @SerializedName("maximum_member")
     val maximumMember: Int,
     @SerializedName("period_type")
-    val periodType: String,
+    val periodType: StudyPeriodStatus,
     @SerializedName("profile_image_url")
     val profileImageUrl: String,
     @SerializedName("score")
     val score: Int,
     @SerializedName("status")
-    val status: String,
+    val status: StudyStatus,
     @SerializedName("topic")
     val topic: String,
     @SerializedName("user_id")

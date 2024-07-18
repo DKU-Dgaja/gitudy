@@ -1,6 +1,7 @@
 package com.takseha.data.dto.auth.auth
 
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.auth.login.RoleStatus
 
 data class UserInfoResponse(
     @SerializedName("github_id")
@@ -16,7 +17,7 @@ data class UserInfoResponse(
     @SerializedName("push_alarm_yn")
     val pushAlarmYn: Boolean,
     @SerializedName("role")
-    val role: String,
+    val role: RoleStatus,
     @SerializedName("score")
     val score: Int,
     @SerializedName("user_id")

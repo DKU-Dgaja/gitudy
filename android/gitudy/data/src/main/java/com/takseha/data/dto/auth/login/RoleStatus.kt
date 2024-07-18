@@ -1,5 +1,5 @@
 package com.takseha.data.dto.auth.login
 
-enum class UserRoleStatus {
+enum class RoleStatus {
     ADMIN, UNAUTH, USER, WITHDRAW
 }
