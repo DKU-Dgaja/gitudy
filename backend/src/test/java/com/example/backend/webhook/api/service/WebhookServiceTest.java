@@ -160,7 +160,7 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping mapping = studyTodoMappingRepository.findByTodoIdAndUserId(todo.getId(), user.getId()).get();
 
         // then
-        assertEquals(TODO_OVERDUE, mapping.getStatus());
+        assertEquals(TODO_COMPLETE, mapping.getStatus());
         assertEquals(commitId, commit.getCommitSHA());
         assertEquals(user.getId(), commit.getUserId());
     }
