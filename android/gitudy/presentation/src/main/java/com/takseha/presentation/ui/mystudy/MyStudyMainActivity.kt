@@ -12,22 +12,20 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.MyStudyInfo
+import com.takseha.data.dto.mystudy.MyStudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MemberRankRVAdapter
-import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
 import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
-import kotlin.math.abs
 
 class MyStudyMainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMyStudyMainBinding
@@ -94,7 +92,7 @@ class MyStudyMainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: MyStudyInfo) {
+    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: MyStudyInfoResponse) {
         with(binding) {
             studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
             studyName.text = myStudyInfo.topic
@@ -160,11 +158,11 @@ class MyStudyMainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setCommitRule(periodType: StudyPeriod): String {
+    private fun setCommitRule(periodType: StudyPeriodStatus): String {
         when (periodType) {
-            StudyPeriod.STUDY_PERIOD_EVERYDAY -> return baseContext.getString(R.string.feed_rule_everyday)
-            StudyPeriod.STUDY_PERIOD_WEEK -> return baseContext.getString(R.string.feed_rule_week)
-            StudyPeriod.STUDY_PERIOD_NONE -> return baseContext.getString(R.string.feed_rule_free)
+            StudyPeriodStatus.STUDY_PERIOD_EVERYDAY -> return baseContext.getString(R.string.feed_rule_everyday)
+            StudyPeriodStatus.STUDY_PERIOD_WEEK -> return baseContext.getString(R.string.feed_rule_week)
+            StudyPeriodStatus.STUDY_PERIOD_NONE -> return baseContext.getString(R.string.feed_rule_free)
         }
     }
 

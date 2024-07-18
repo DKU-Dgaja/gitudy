@@ -2,7 +2,7 @@ package com.takseha.data.dto.auth.register
 
 import com.google.gson.annotations.SerializedName
 
-data class GithubIdResponse(
+data class GithubIdCheckResponse(
     @SerializedName("avatar_url")
     val avatarUrl: String,
     @SerializedName("bio")

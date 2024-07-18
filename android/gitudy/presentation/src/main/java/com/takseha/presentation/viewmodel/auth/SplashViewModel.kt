@@ -19,7 +19,13 @@ class SplashViewModel: ViewModel() {
         if (checkTokenResponse.isSuccessful) {
             _availableTokenCheck.value = true
         } else {
-            _availableTokenCheck.value = false
+            if (checkTokenResponse.code() == 401 || checkTokenResponse.code() == 403) {
+                // token 문제일 때
+                _availableTokenCheck.value = false
+            } else {
+                // 다른 문제일 때
+                // todo: 서버에 문제가 있습니다. 이런 식의 팝업창 띄우기
+            }
             Log.e(
                 "SplashViewModel",
                 "checkTokenResponse status: ${checkTokenResponse.code()}\ncheckTokenResponse message: ${checkTokenResponse.errorBody()!!.string()}"

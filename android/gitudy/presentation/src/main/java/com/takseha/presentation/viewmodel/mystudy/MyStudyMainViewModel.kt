@@ -3,7 +3,7 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.mystudy.MyStudyInfo
+import com.takseha.data.dto.mystudy.MyStudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
@@ -25,7 +25,7 @@ class MyStudyMainViewModel: ViewModel() {
         val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
 
         if (myStudyInfoResponse.isSuccessful) {
-            val myStudyInfo = myStudyInfoResponse.body()!!.myStudyInfo
+            val myStudyInfo = myStudyInfoResponse.body()!!
 
             val todo = getFirstTodoInfo(studyInfoId)
             val convention = getConvention(studyInfoId)
@@ -57,7 +57,7 @@ class MyStudyMainViewModel: ViewModel() {
         )
 
         if (todoInfoResponse.isSuccessful) {
-            val todoBody = todoInfoResponse.body()!!.todoBody
+            val todoBody = todoInfoResponse.body()!!
 
             if (todoBody.todoList.isNotEmpty()) {
                 val todo = todoBody.todoList.first()
@@ -110,7 +110,7 @@ class MyStudyMainViewModel: ViewModel() {
             gitudyMemberRepository.getStudyMemberList(studyInfoId, true)
 
         if (studyMemberListResponse.isSuccessful) {
-            studyMemberListResponse.body()!!.studyMemberList
+            studyMemberListResponse.body()!!
         } else {
             Log.e(
                 "MyStudyMainViewModel",
@@ -119,15 +119,13 @@ class MyStudyMainViewModel: ViewModel() {
             return listOf()
         }
         Log.e(
-            "MyStudyMainViewModel",
-            "통신 에러"
-        )
+            "MyStudyMainViewModel", "통신 에러")
         return listOf()
     }
 }
 
 data class MyStudyMainInfoState(
-    var myStudyInfo: MyStudyInfo = MyStudyInfo(),
+    var myStudyInfo: MyStudyInfoResponse = MyStudyInfoResponse(),
     var todoInfo: Todo? = null,
     var conventionInfo: StudyConvention? = null,
     var studyMemberListInfo: List<StudyMember> = listOf()

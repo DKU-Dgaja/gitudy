@@ -17,15 +17,7 @@ class AddTodoViewModel: ViewModel() {
         val newTodoResponse = gitudyStudyRepository.makeNewTodo(studyInfoId, request)
 
         if (newTodoResponse.isSuccessful) {
-            val resCode = newTodoResponse.body()!!.resCode
-            val resMsg = newTodoResponse.body()!!.resMsg
-            val resObj = newTodoResponse.body()!!.resObj
-
-            if (resCode == 200 && resMsg == "OK") {
-                Log.d("AddTodoViewModel", resObj)
-            } else {
-                Log.e("AddTodoViewModel", "https status error: $resCode, $resMsg")
-            }
+            Log.d("AddTodoViewModel", newTodoResponse.code().toString())
         } else {
             Log.e("AddTodoViewModel", "newTodoResponse status: ${newTodoResponse.code()}\nnewTodoResponse message: ${newTodoResponse.message()}")
         }

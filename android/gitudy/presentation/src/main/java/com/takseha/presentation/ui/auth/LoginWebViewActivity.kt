@@ -3,10 +3,10 @@ package com.takseha.presentation.ui.auth
 import android.content.Intent
 import android.net.Uri
 import android.net.UrlQuerySanitizer
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.data.dto.auth.login.LoginRequest
@@ -62,7 +62,7 @@ class LoginWebViewActivity : AppCompatActivity() {
                 viewModel.saveAllTokens(platformType, authCode.code, authCode.state)
                 viewModel.role.observe(this@LoginWebViewActivity) {
                     val intent = Intent(view!!.context, SocialLoginCompleteActivity::class.java)
-                    intent.putExtra("role", it)
+                    intent.putExtra("role", it.toString())
                     startActivity(intent)
                 }
 

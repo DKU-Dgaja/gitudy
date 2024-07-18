@@ -1,4 +1,4 @@
-package com.takseha.data
+package com.takseha.data.token
 
 interface NavigationHandler {
     fun navigateToLogin()

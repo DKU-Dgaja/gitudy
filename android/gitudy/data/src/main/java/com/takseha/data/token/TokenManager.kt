@@ -1,11 +1,13 @@
-package com.takseha.data
+package com.takseha.data.token
 
 import android.content.Context
 import android.util.Log
-import com.takseha.data.api.gitudy.auth.GitudyAuthApi
-import com.takseha.data.dto.auth.login.LoginPageInfo
-import com.takseha.data.dto.auth.login.LoginResponse
-import com.takseha.data.dto.auth.register.ReissueTokenInfo
+import com.takseha.data.BuildConfig
+import com.takseha.data.api.gitudy.auth.GitudyAuthService
+import com.takseha.data.dto.auth.login.LoginPageInfoResponse
+import com.takseha.data.dto.auth.login.TokenResponse
+import com.takseha.data.dto.auth.login.ReissueTokenResponse
+import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.sharedPreferences.SP
 import com.takseha.data.sharedPreferences.SPKey
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +21,7 @@ class TokenManager(context: Context) {
         .baseUrl(BuildConfig.GITUDY_BASE_URL)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    private val loginApi = retrofit.create(GitudyAuthApi::class.java)
+    private val loginApi = retrofit.create(GitudyAuthService::class.java)
 
 
     var accessToken: String?
@@ -34,16 +36,15 @@ class TokenManager(context: Context) {
             prefs.savePref(SPKey.REFRESH_TOKEN, value!!)
         }
 
-    suspend fun getLoginPages(): List<LoginPageInfo>? {
+    suspend fun getLoginPages(): LoginPageInfoResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val response = loginApi.getLoginPage()
 
                 if (response.isSuccessful) {
-                    val loginPageInfoList = response.body()!!
-                    loginPageInfoList
+                    response.body()
                 } else {
-                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message: ${response.message()}")
+                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message: ${response.errorBody()?.string()}")
                     null
                 }
             } catch (e: Exception) {
@@ -52,7 +53,7 @@ class TokenManager(context: Context) {
             }
         }
     }
-    suspend fun getLoginTokens(platformType: String, code: String, state: String): LoginResponse? {
+    suspend fun getLoginTokens(platformType: String, code: String, state: String): TokenResponse? {
         return withContext(Dispatchers.IO) {
             try {
                 val response = loginApi.getLoginTokens(platformType, code, state)
@@ -62,7 +63,7 @@ class TokenManager(context: Context) {
                     refreshToken = response.body()!!.refreshToken
                     response.body()!!
                 } else {
-                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message: ${response.message()}")
+                    Log.e("TokenManager", "login response status: ${response.code()}\nlogin response message: ${response.message()}")
                     null
                 }
             } catch (e: Exception) {
@@ -72,15 +73,35 @@ class TokenManager(context: Context) {
         }
     }
 
-    suspend fun reissueTokens(): ReissueTokenInfo? {
+    suspend fun getRegisterTokens(request: RegisterRequest): TokenResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                val bearerToken = "Bearer $refreshToken"
-                val response = loginApi.reissueTokens(bearerToken)
+                val response = loginApi.getRegisterTokens(request)
+
                 if (response.isSuccessful) {
-                    accessToken = response.body()!!.tokenInfo.accessToken
-                    refreshToken = response.body()!!.tokenInfo.refreshToken
-                    response.body()!!.tokenInfo
+                    accessToken = response.body()!!.accessToken
+                    refreshToken = response.body()!!.refreshToken
+                    response.body()!!
+                } else {
+                    Log.e("TokenManager", "register response status: ${response.code()}\nregister response message: ${response.message()}")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("TokenManager", e.message.toString())
+                null
+            }
+        }
+    }
+
+    suspend fun reissueTokens(): ReissueTokenResponse? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response = loginApi.reissueTokens()
+
+                if (response.isSuccessful) {
+                    accessToken = response.body()!!.accessToken
+                    refreshToken = response.body()!!.refreshToken
+                    response.body()
                 } else {
                     Log.e("TokenManager", "response status: ${response.code()}\nresponse message:${response.errorBody()!!.string()}")
                     null

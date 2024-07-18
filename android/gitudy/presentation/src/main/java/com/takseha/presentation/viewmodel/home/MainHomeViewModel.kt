@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
-import com.takseha.data.dto.mystudy.TodoProgress
+import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.data.repository.auth.GitudyAuthRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
@@ -19,7 +19,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-class MainHomeViewModel: ViewModel() {
+class MainHomeViewModel : ViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
     private var gitudyStudyRepository = GitudyStudyRepository()
 
@@ -119,7 +119,7 @@ class MainHomeViewModel: ViewModel() {
         )
 
         if (myStudyListResponse.isSuccessful) {
-            val myStudyListInfo = myStudyListResponse.body()!!.studyListInfo
+            val myStudyListInfo = myStudyListResponse.body()!!
 
             _cursorIdxRes.value = myStudyListInfo.cursorIdx
 
@@ -172,7 +172,7 @@ class MainHomeViewModel: ViewModel() {
         )
 
         if (todoInfoResponse.isSuccessful) {
-            val todoBody = todoInfoResponse.body()!!.todoBody
+            val todoBody = todoInfoResponse.body()!!
 
             if (todoBody.todoList.isNotEmpty()) {
                 val todo = todoBody.todoList.first()
@@ -194,13 +194,13 @@ class MainHomeViewModel: ViewModel() {
         return null
     }
 
-    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgress? {
+    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgressResponse? {
         val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
             studyInfoId
         )
 
         if (todoProgressResponse.isSuccessful) {
-            todoProgressResponse.body()!!.todoProgress
+            todoProgressResponse.body()!!
         } else {
             Log.e(
                 "MainHomeViewModel",

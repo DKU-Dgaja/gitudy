@@ -1,13 +1,13 @@
 package com.takseha.data.repository.study
 
 import com.takseha.data.api.gitudy.RetrofitInstance
-import com.takseha.data.api.gitudy.study.GitudyStudyApi
+import com.takseha.data.api.gitudy.study.GitudyStudyService
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.SetConventionRequest
 
 class GitudyStudyRepository {
-    private val client = RetrofitInstance.getInstance().create(GitudyStudyApi::class.java)
+    private val client = RetrofitInstance.getInstance().create(GitudyStudyService::class.java)
 
     suspend fun getStudyList(
         cursorIdx: Long?,

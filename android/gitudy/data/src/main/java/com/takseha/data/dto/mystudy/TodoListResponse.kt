@@ -2,20 +2,12 @@ package com.takseha.data.dto.mystudy
 
 
 import com.google.gson.annotations.SerializedName
-import com.takseha.data.dto.feed.StudyListInfo
 
 data class TodoListResponse(
-    @SerializedName("res_msg")
-    val resMsg: String,
-    @SerializedName("res_obj")
-    val todoBody: TodoBody
-)
-
-data class TodoBody(
-    @SerializedName("cursor_idx")
-    val cursorIdx: Int,
     @SerializedName("todo_list")
-    val todoList: List<Todo>
+    val todoList: List<Todo>,
+    @SerializedName("cursor_idx")
+    val cursorIdx: Int
 )
 
 data class Todo(

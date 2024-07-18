@@ -1,26 +1,18 @@
 package com.takseha.presentation.ui.feed
 
 import android.os.Bundle
-import android.text.BoringLayout
 import android.util.Log
-import android.view.KeyEvent
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.flowWithLifecycle
-import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentMakeStudy2Binding
 import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
-import kotlinx.coroutines.flow.collectLatest
-import kotlinx.coroutines.launch
 
 class MakeStudy2Fragment : Fragment() {
     private var _binding: FragmentMakeStudy2Binding? = null
@@ -57,7 +49,7 @@ class MakeStudy2Fragment : Fragment() {
             }
             nextBtn.setOnClickListener {
                 val commitTime =
-                    if (freeCheck.isChecked) StudyPeriod.STUDY_PERIOD_NONE else if (oneDayCheck.isChecked) StudyPeriod.STUDY_PERIOD_WEEK else StudyPeriod.STUDY_PERIOD_EVERYDAY
+                    if (freeCheck.isChecked) StudyPeriodStatus.STUDY_PERIOD_NONE else if (oneDayCheck.isChecked) StudyPeriodStatus.STUDY_PERIOD_WEEK else StudyPeriodStatus.STUDY_PERIOD_EVERYDAY
                 val isPublic =
                     if (publicCheck.isChecked) StudyStatus.STUDY_PUBLIC else StudyStatus.STUDY_PRIVATE
 

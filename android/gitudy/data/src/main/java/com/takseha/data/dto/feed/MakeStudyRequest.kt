@@ -11,7 +11,7 @@ data class MakeStudyRequest(
     @SerializedName("maximum_member")
     val maximumMember: Int = 10,
     @SerializedName("period_type")
-    val periodType: StudyPeriod = StudyPeriod.STUDY_PERIOD_WEEK,
+    val periodType: StudyPeriodStatus = StudyPeriodStatus.STUDY_PERIOD_WEEK,
     @SerializedName("profile_image_url")
     val profileImageUrl: String = "",
     @SerializedName("branch_name")

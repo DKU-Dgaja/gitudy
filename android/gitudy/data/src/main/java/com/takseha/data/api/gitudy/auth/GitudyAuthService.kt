@@ -1,30 +1,27 @@
 package com.takseha.data.api.gitudy.auth
 
 import com.takseha.data.dto.auth.auth.UserInfoResponse
-import com.takseha.data.dto.auth.login.LoginPageInfo
-import com.takseha.data.dto.auth.login.LoginResponse
-import com.takseha.data.dto.auth.register.NickNameResponse
+import com.takseha.data.dto.auth.login.LoginPageInfoResponse
+import com.takseha.data.dto.auth.login.TokenResponse
+import com.takseha.data.dto.auth.login.ReissueTokenResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
-import com.takseha.data.dto.auth.register.RegisterResponse
-import com.takseha.data.dto.auth.register.ReissueResponse
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface GitudyAuthApi {
+interface GitudyAuthService {
     @GET("/auth/loginPage")
-    suspend fun getLoginPage(): Response<List<LoginPageInfo>>
+    suspend fun getLoginPage(): Response<LoginPageInfoResponse>
 
     @GET("/auth/{platformType}/login")
     suspend fun getLoginTokens(
         @Path("platformType") platformType: String,
         @Query("code") code: String,
         @Query("state") state: String
-    ): Response<LoginResponse>
+    ): Response<TokenResponse>
 
     @POST("/auth/check-nickname")
     suspend fun checkCorrectNickname(
@@ -33,14 +30,13 @@ interface GitudyAuthApi {
 
 
     @POST("/auth/register")
-    suspend fun register(
+    suspend fun getRegisterTokens(
         @Body request: RegisterRequest
-    ): Response<RegisterResponse>
+    ): Response<TokenResponse>
 
     @POST("/auth/reissue")
     suspend fun reissueTokens(
-        @Header("Authorization") bearerToken: String
-    ): Response<ReissueResponse>
+    ): Response<ReissueTokenResponse>
 
     @GET("/auth/info")
     suspend fun getUserInfo(
