@@ -171,4 +171,15 @@ public class UserFixture {
                 .pushAlarmYn(false)
                 .build();
     }
+
+    public static User generateAuthJusung() {
+        return User.builder()
+                .platformId("platformId")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이주성")
+                .githubId("jusung-c")
+                .profileImageUrl("www.naver.com")
+                .pushAlarmYn(false)
+                .build();    }
 }

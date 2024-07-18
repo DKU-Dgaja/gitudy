@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.createDefaultStudyInfoList;
@@ -293,5 +294,33 @@ class StudyInfoRepositoryTest extends TestConfig {
             assertTrue(currentCreatedDateTime.compareTo(previousCreatedDateTime) <= 0);
             previousCreatedDateTime = currentCreatedDateTime;
         }
+    }
+
+    @Test
+    void 레포지토리_정보를_이용해_스터디_조회_성공_테스트() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+
+        // when
+        StudyInfo findStudy = studyInfoRepository.findByRepositoryFullName(study.getRepositoryInfo().getOwner(), study.getRepositoryInfo().getName()).get();
+
+        // then
+        assertEquals(study.getId(), findStudy.getId());
+    }
+
+    @Test
+    void 레포지토리_정보를_이용해_스터디_조회_실패_테스트() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+
+        String invalidName = "invalid-name";
+
+        // when
+        Optional<StudyInfo> findStudy = studyInfoRepository.findByRepositoryFullName(study.getRepositoryInfo().getOwner(), invalidName);
+
+        // then
+        assertTrue(findStudy.isEmpty());
     }
 }

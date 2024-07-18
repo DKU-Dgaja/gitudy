@@ -140,4 +140,34 @@ class StudyMemberRepositoryTest extends TestConfig {
                 .collect(Collectors.toSet());
         assertTrue(studyInfoIdsFromMembers.containsAll(studyInfoIds));
     }
+
+    @Test
+    void GitHubId와_StudyInfoId를_통해_사용자가_활동중인_멤버인지_판단한다_성공_케이스() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(savedUser.getId(), study.getId()));
+
+        // when
+        boolean result = studyMemberRepository.existsStudyMemberByGithubIdAndStudyInfoId(savedUser.getGithubId(), study.getUserId());
+
+        // then
+        assertTrue(result);
+    }
+
+    @Test
+    void GitHubId와_StudyInfoId를_통해_사용자가_활동중인_멤버인지_판단한다_실패_케이스() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(savedUser.getId(), study.getId()));
+
+        String invalidGithubId = "invalid";
+
+        // when
+        boolean result = studyMemberRepository.existsStudyMemberByGithubIdAndStudyInfoId(invalidGithubId, study.getUserId());
+
+        // then
+        assertFalse(result);
+    }
 }
