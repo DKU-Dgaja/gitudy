@@ -68,8 +68,8 @@ class StudyCommitServiceTest extends TestConfig {
         studyCommitRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
         studyTodoRepository.deleteAllInBatch();
-        studyInfoRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
+        studyConventionRepository.deleteAllInBatch();
     }
 
     @Test
