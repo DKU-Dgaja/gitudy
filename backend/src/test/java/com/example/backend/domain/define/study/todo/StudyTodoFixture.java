@@ -7,6 +7,8 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 
 import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.IntStream;
 
 import static com.example.backend.study.api.service.todo.StudyTodoServiceTest.*;
 
@@ -71,8 +73,8 @@ public class StudyTodoFixture {
                 .build();
     }
 
-    //테스트용 studyTodo List 생성
-    public static StudyTodo createStudyTodoList(Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
+    // 테스트용 studyTodo 생성
+    public static StudyTodo createStudyTodoCustom(Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
 
         return StudyTodo.builder()
                 .studyInfoId(studyInfoId)
@@ -104,6 +106,13 @@ public class StudyTodoFixture {
                 .title(expectedTitle)
                 .todoDate(todoDate)
                 .build();
+    }
+
+    public static List<StudyTodo> createStudyTodoList(Long studyId, int count) {
+
+        return IntStream.rangeClosed(1, count)
+                        .mapToObj(i -> createStudyTodo(studyId))
+                .toList();
     }
 
 }

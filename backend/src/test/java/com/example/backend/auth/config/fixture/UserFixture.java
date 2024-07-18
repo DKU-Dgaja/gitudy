@@ -181,5 +181,6 @@ public class UserFixture {
                 .githubId("jusung-c")
                 .profileImageUrl("www.naver.com")
                 .pushAlarmYn(false)
-                .build();    }
+                .build();
+    }
 }
