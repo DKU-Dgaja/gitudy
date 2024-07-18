@@ -1,12 +1,10 @@
 package com.takseha.data.api.gitudy.study
 
 import com.takseha.data.dto.feed.MakeStudyRequest
-import com.takseha.data.dto.feed.MakeStudyResponse
 import com.takseha.data.dto.feed.StudyListResponse
 import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
-import com.takseha.data.dto.mystudy.MakeTodoResponse
-import com.takseha.data.dto.mystudy.MyStudyResponse
+import com.takseha.data.dto.mystudy.MyStudyInfoResponse
 import com.takseha.data.dto.mystudy.SetConventionRequest
 import com.takseha.data.dto.mystudy.SetConventionResponse
 import com.takseha.data.dto.mystudy.TodoListResponse
@@ -18,7 +16,7 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 
-interface GitudyStudyApi {
+interface GitudyStudyService {
     @GET("/study/")
     suspend fun getStudyList(
         @Query("cursorIdx") cursorIdx: Long?,
@@ -30,7 +28,7 @@ interface GitudyStudyApi {
     @POST("/study/")
     suspend fun makeNewStudy(
         @Body request: MakeStudyRequest
-    ): Response<MakeStudyResponse>
+    ): Response<Void>
 
     @GET("/study/{studyInfoId}/todo")
     suspend fun getTodoList(
@@ -43,7 +41,7 @@ interface GitudyStudyApi {
     suspend fun makeNewTodo(
         @Path("studyInfoId") studyInfoId: Int,
         @Body request: MakeTodoRequest
-    ): Response<MakeTodoResponse>
+    ): Response<Void>
 
     @GET("/study/{studyInfoId}/todo/progress")
     suspend fun getTodoProgress(
@@ -53,7 +51,7 @@ interface GitudyStudyApi {
     @GET("/study/{studyInfoId}")
     suspend fun getMyStudyInfo(
         @Path("studyInfoId") studyInfoId: Int
-    ): Response<MyStudyResponse>
+    ): Response<MyStudyInfoResponse>
 
     @POST("/study/{studyInfoId}/convention")
     suspend fun setConvention(

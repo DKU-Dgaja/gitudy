@@ -1,11 +1,11 @@
 package com.takseha.data.repository.member
 
 import com.takseha.data.api.gitudy.RetrofitInstance
-import com.takseha.data.api.gitudy.member.GitudyMemberApi
+import com.takseha.data.api.gitudy.member.GitudyMemberService
 import com.takseha.data.dto.feed.MessageRequest
 
 class GitudyMemberRepository {
-    private val client = RetrofitInstance.getInstance().create(GitudyMemberApi::class.java)
+    private val client = RetrofitInstance.getInstance().create(GitudyMemberService::class.java)
 
     suspend fun applyStudy(
         studyInfoId: Int,
