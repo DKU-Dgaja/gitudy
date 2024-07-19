@@ -6,7 +6,6 @@ import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.MyStudyInfoResponse
 import com.takseha.data.dto.mystudy.SetConventionRequest
-import com.takseha.data.dto.mystudy.SetConventionResponse
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import retrofit2.Response
@@ -57,7 +56,7 @@ interface GitudyStudyService {
     suspend fun setConvention(
         @Path("studyInfoId") studyInfoId: Int,
         @Body request: SetConventionRequest
-    ): Response<SetConventionResponse>
+    ): Response<Void>
 
     @GET("/study/{studyInfoId}/convention")
     suspend fun getConvention(
