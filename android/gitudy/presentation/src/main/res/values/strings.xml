@@ -50,11 +50,9 @@
     <string name="no_to_do_alarm">등록된 TO-DO가 없어요</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
     <string name="commit_github_url_basic">https://github.com/DKU-Dgaja/gitudy-study-jusung/commit/%s</string>
-    <string name="no_commit_convention">커밋 컨벤션을 등록해 주세요!</string>
-    <string name="commit_convention">ex) [문제 플랫폼]#문제번호:사용언어</string>
-    <string name="commit_convention_content">ex) ^\\[[A-Z]+\\]#\\d+\\:[\\w+]+</string>
-    <string name="commit_convention_description">ex) [BOJ]#1234:Kotlin, [PRO]#1234:C++</string>
-    <string name="commit_convention_add">컨벤션 추가하기</string>
+    <string name="commit_convention">ToDoCode 메세지</string>
+    <string name="commit_convention_description">커밋할 때, 해당 To-Do의\nToDoCode를 커밋 메세지 맨 앞에 넣어주세요.\n띄어쓰기 한 칸은 필수!</string>
+    <string name="commit_convention_ex">3Dck8A [BOJ]#1234:JAVA\n45jB9r [PROG]Lv2_34번:c++</string>
     <string name="message_select_noti">%님에게 전달할\n메시지를 선택해주세요</string>
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
