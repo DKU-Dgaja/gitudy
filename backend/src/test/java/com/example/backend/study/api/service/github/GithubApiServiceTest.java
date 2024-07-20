@@ -453,7 +453,7 @@ class GithubApiServiceTest extends TestConfig {
     }
 
     // 웹에서 테스트 해야 합니다.
-    @Test
+    //@Test
     void 깃허브_레포지토리_생성_테스트() throws IOException {
         // given
         String repoName = "test-repo2";
