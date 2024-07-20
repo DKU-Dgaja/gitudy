@@ -17,6 +17,7 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.*;
+import com.example.backend.study.api.service.github.GithubApiService;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -47,6 +48,7 @@ public class StudyInfoService {
     private final StudyCategoryRepository studyCategoryRepository;
     private final UserRepository userRepository;
     private final StudyConventionRepository studyConventionRepository;
+    private final GithubApiService githubApiService;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
@@ -65,6 +67,9 @@ public class StudyInfoService {
 
         // 기본 컨벤션 생성
         registerDefaultConvention(studyInfo.getId());
+
+        // github에 스터디 레포지토리 생성
+        githubApiService.createRepository(studyInfo.getRepositoryInfo(), "README.md를 작성해주세요.");
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
     }

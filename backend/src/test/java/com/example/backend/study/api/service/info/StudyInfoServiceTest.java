@@ -14,6 +14,7 @@ import com.example.backend.domain.define.study.category.mapping.repository.Study
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -23,9 +24,11 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.*;
+import com.example.backend.study.api.service.github.GithubApiService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -38,6 +41,9 @@ import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_L
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyInfoServiceTest extends TestConfig {
@@ -58,6 +64,8 @@ class StudyInfoServiceTest extends TestConfig {
     private StudyCategoryRepository studyCategoryRepository;
     @Autowired
     private StudyConventionRepository studyConventionRepository;
+    @MockBean
+    private GithubApiService githubApiService;
 
     @AfterEach
     void tearDown() {
@@ -121,6 +129,9 @@ class StudyInfoServiceTest extends TestConfig {
         // 기본 컨벤션이 잘 생성되었는지 검증
         assertEquals(1, convention.size());
         assertEquals(expectedConvention, convention.get(0).getContent());
+
+        // github api가 작동했는지 확인
+        verify(githubApiService, times(1)).createRepository(any(RepositoryInfo.class), any(String.class));
     }
 
 
