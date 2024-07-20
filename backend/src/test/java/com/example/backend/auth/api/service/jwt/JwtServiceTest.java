@@ -233,7 +233,6 @@ class JwtServiceTest extends TestConfig {
         String platformId = savedUser.getPlatformId();
         String platformType = String.valueOf(savedUser.getPlatformType());
 
-
         HashMap<String, String> map = new HashMap<>();
         map.put("role", role);
         map.put("platformId", platformId);
@@ -246,31 +245,5 @@ class JwtServiceTest extends TestConfig {
         // then
         assertThrows(ExpiredJwtException.class,
                 () -> jwtService.isTokenValid(expiredToken, platformId+"_"+platformType));
-    }
-    @Test
-    void 무제한_토큰_만들기() {
-        String key = "3e46db1c90098ae0dc37ea641d11f79f1f3f0f10e2624471e0c643f3696bd12662b6e6623b49440b74447f243c4340bdf9a2532ee557818fbd5258348879afec";
-
-        SecretKey secretKey = Keys.hmacShaKeyFor(Base64.getDecoder().decode(key));
-
-        Map<String, String> claims = new HashMap<>();
-        claims.put("role", "USER");
-        claims.put("platformId", "149556660");
-        claims.put("platformType", "GITHUB");
-
-        String sub = "149556660_GITHUB";
-
-        Date issuedAt = new Date(System.currentTimeMillis());
-        Date expiration = new Date(1735689600000L); // 2025년 1월 1일 (Unix 시간 1735689600000 밀리초)
-
-        String token = Jwts.builder()
-                .setClaims(claims)
-                .setSubject(sub)  // User의 식별자
-                .setIssuedAt(issuedAt)
-                .setExpiration(expiration)
-                .signWith(secretKey)
-                .compact();
-
-        System.out.println("Generated Token: " + token);
     }
 }

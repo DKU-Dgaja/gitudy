@@ -25,14 +25,14 @@ public class SecurityConfig {
                         authorizeHttpRequest
                                 // Swagger 추가
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/auth/v3/**", "/auth/swagger-ui/**").permitAll()
+                                // Webhook Area
+                                .requestMatchers("/webhook/**").hasAnyAuthority("ADMIN")
                                 // register
                                 .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
                                 // UnAuth Area
                                 .requestMatchers("/auth/loginPage").permitAll()
                                 .requestMatchers("/auth/*/login").permitAll()
                                 .requestMatchers("/auth/check-nickname").permitAll()
-                                // Webhook Area
-                                .requestMatchers("/webhook/**").permitAll()
                                 // Others
                                 .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )
