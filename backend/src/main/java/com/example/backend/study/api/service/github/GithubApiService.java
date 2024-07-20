@@ -119,8 +119,7 @@ public class GithubApiService {
 
             GHRepository repository = repoBuilder.create();
 
-            // 웹훅 추가
-            repository.createHook("web", Map.of("url", webhookUrl, "content_type", "json"), Collections.emptyList(), true);
+            addWebHook(repository, webhookUrl);
 
             log.info(">>>> [ {} 레포지토리가 생성되었습니다. ] <<<<", repoInfo.getName());
             return repository;
@@ -128,6 +127,19 @@ public class GithubApiService {
             log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_CREATE_REPOSITORY_ERROR.getText(), e.getMessage());
             throw new GithubApiException(ExceptionMessage.GITHUB_API_CREATE_REPOSITORY_ERROR);
         }
+    }
+
+    private static void addWebHook(GHRepository repository, String webhookUrl) throws IOException {
+        // 웹훅 추가
+        repository.createHook(
+                "web",
+                Map.of(
+                        "url", webhookUrl,
+                        "content_type", "application/json"
+                ),
+                Collections.emptyList(),
+                true
+        );
     }
 
     private boolean repositoryExists(GitHub gitHub, String repoName) {
