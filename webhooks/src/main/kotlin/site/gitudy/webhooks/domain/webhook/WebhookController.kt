@@ -25,7 +25,7 @@ class WebhookController(
         @RequestHeader("X-GitHub-Hook-Installation-Target-Type") githubTargetType: String,
         @RequestBody gitHubPushEvent: GitHubPushEvent
     ) {
-        webhookService.save(githubDelivery, githubEvent, githubHookId, githubTargetId, githubTargetType, gitHubPushEvent)
+        webhookService.saveCommit(githubDelivery, githubEvent, githubHookId, githubTargetId, githubTargetType, gitHubPushEvent)
         log.suspendInfo("Webhook saved successfully")
     }
 }
