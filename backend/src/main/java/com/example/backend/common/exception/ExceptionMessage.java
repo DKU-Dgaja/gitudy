@@ -82,6 +82,8 @@ public enum ExceptionMessage {
     GITHUB_API_GET_REPOSITORY_ERROR("Repository 정보를 불러오는 데에 실패했습니다."),
     GITHUB_API_GET_COMMITS_ERROR("커밋 리스트를 불러오는데 실패했습니다."),
     GITHUB_API_GET_COMMIT_ERROR("커밋을 불러오는데 실패했습니다."),
+    GITHUB_API_CREATE_REPOSITORY_ERROR ("GitHub 레포지토리 생성 중 오류가 발생했습니다."),
+    GITHUB_API_REPOSITORY_ALREADY_EXISTS("해당 이름의 레포지토리가 이미 존재합니다."),
 
     // CategoryException
     CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),
