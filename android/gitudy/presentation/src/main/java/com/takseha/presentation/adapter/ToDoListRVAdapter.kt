@@ -14,7 +14,7 @@ import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.databinding.ItemTodoBinding
 import java.time.LocalDate
 
-class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private val onCommitClickListener: OnCommitClickListener) :
+class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private val onClickListener: OnClickListener) :
     RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
     // 임시 커밋 리스트
     private var commitList: List<Commit> = listOf(
@@ -68,8 +68,9 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private 
         )
     )
 
-    interface OnCommitClickListener {
+    interface OnClickListener {
         fun onCommitClick(commit: Commit)
+        fun onTodoClick(todo: Todo)
     }
 
     class ViewHolder(val binding: ItemTodoBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -103,7 +104,7 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private 
     }
 
     private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
-        val commitListRVAdapter = CommitListRVAdapter(context, commitList, onCommitClickListener)
+        val commitListRVAdapter = CommitListRVAdapter(context, commitList, onClickListener)
 
         commitListView.adapter = commitListRVAdapter
         commitListView.layoutManager = LinearLayoutManager(context)
