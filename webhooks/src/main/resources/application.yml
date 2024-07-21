@@ -5,5 +5,9 @@ spring:
     mongodb:
       uri: mongodb://root:1234@localhost:27017/webhooks?authSource=admin
 
+gitudy:
+  server:
+    token: 1234
+
 server:
   port: 8080
