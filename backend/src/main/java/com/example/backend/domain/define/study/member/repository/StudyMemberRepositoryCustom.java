@@ -31,4 +31,7 @@ public interface StudyMemberRepositoryCustom {
 
     // StudyInfoId를 통해 승인 대기중인 멤버들의 가입신청 목록을 가져온다.
     List<StudyMemberApplyResponse> findStudyApplyListByStudyInfoId_CursorPaging(Long studyInfoId, Long cursorIdx, Long limit);
+
+    // GitHubId와 StudyInfoId를 통해 사용자가 해당 스터디의 활동중인 멤버인지 판별한다.
+    boolean existsStudyMemberByGithubIdAndStudyInfoId(String githubId, Long studyInfoId);
 }

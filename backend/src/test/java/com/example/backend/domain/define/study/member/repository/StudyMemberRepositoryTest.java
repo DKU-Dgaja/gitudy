@@ -4,11 +4,14 @@ import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
+import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.info.response.StudyMemberWithUserInfoResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -33,20 +36,32 @@ class StudyMemberRepositoryTest extends TestConfig {
     @Autowired
     private StudyInfoRepository studyInfoRepository;
 
+    @Autowired
+    StudyTodoRepository studyTodoRepository;
+
+    @Autowired
+    StudyTodoMappingRepository studyTodoMappingRepository;
+
+    @Autowired
+    StudyCommitRepository studyCommitRepository;
+
     @AfterEach
     void tearDown() {
         studyMemberRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
         studyInfoRepository.deleteAllInBatch();
+        studyTodoRepository.deleteAllInBatch();
+        studyTodoMappingRepository.deleteAllInBatch();
+        studyCommitRepository.deleteAllInBatch();
     }
 
     @Test
     void 해당_유저가_스터디의_활동중인_스터디원인지_확인_스터디원일_경우() {
         // given
-        Long userId = 1L;
-        Long studyInfoId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
 
-        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userId, studyInfoId));
+        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
 
         // when
         assertTrue(studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
@@ -55,10 +70,10 @@ class StudyMemberRepositoryTest extends TestConfig {
     @Test
     void 해당_유저가_스터디의_활동중인_스터디원인지_확인_테스트_스터디원이_아닐_경우() {
         // given
-        Long userId = 1L;
-        Long studyInfoId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
 
-        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createStudyMemberResigned(userId, studyInfoId));
+        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createStudyMemberResigned(user.getId(), study.getId()));
 
         // when
         assertFalse(studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
@@ -67,10 +82,10 @@ class StudyMemberRepositoryTest extends TestConfig {
     @Test
     void 해당_유저가_스터디장일_경우() {
         // given
-        Long userId = 1L;
-        Long studyInfoId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
 
-        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(userId, studyInfoId));
+        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(user.getId(), study.getId()));
 
         // when
         assertTrue(studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
@@ -79,10 +94,10 @@ class StudyMemberRepositoryTest extends TestConfig {
     @Test
     void 해당_유저가_스터디장이_아닐_경우() {
         // given
-        Long userId = 1L;
-        Long studyInfoId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
 
-        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userId, studyInfoId));
+        StudyMember savedMember = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
 
         // when
         assertFalse(studyMemberRepository.isStudyLeaderByUserIdAndStudyInfoId(savedMember.getUserId(), savedMember.getStudyInfoId()));
@@ -91,24 +106,25 @@ class StudyMemberRepositoryTest extends TestConfig {
     @Test
     void 해당_스터디의_활동중인_스터디원일_경우() {
         // given
-        Long leaderId = 1L;
-        Long withdrawalId = 2L;
-        Long studyInfoId = 1L;
+        User leader = userRepository.save(UserFixture.generateAuthUser());
+        User withdrawal = userRepository.save(UserFixture.generateKaKaoUser());
 
-        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(leaderId, studyInfoId));
-        studyMemberRepository.save(StudyMemberFixture.createStudyMemberWithdrawal(withdrawalId, studyInfoId));
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(leader.getId()));
+
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(leader.getId(), study.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberWithdrawal(withdrawal.getId(), study.getId()));
 
         // when
-        List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
+        List<StudyMember> activeMembers = studyMemberRepository.findActiveMembersByStudyInfoId(study.getId());
 
         // then
         assertFalse(activeMembers.isEmpty());
         assertTrue(activeMembers.stream()
-                .anyMatch(member -> member.getUserId().equals(leaderId) &&
-                        member.getStudyInfoId().equals(studyInfoId)));
+                .anyMatch(member -> member.getUserId().equals(leader.getId()) &&
+                        member.getStudyInfoId().equals(study.getId())));
         assertFalse(activeMembers.stream()
-                .anyMatch(member -> member.getUserId().equals(withdrawalId) &&
-                        member.getStudyInfoId().equals(studyInfoId)));
+                .anyMatch(member -> member.getUserId().equals(withdrawal.getId()) &&
+                        member.getStudyInfoId().equals(study.getId())));
     }
     @Test
     void studyInfoIdList를_통해_스터디들의_모든_멤버를_조회(){
@@ -139,5 +155,35 @@ class StudyMemberRepositoryTest extends TestConfig {
                 .map(StudyMemberWithUserInfoResponse::getStudyInfoId)
                 .collect(Collectors.toSet());
         assertTrue(studyInfoIdsFromMembers.containsAll(studyInfoIds));
+    }
+
+    @Test
+    void GitHubId와_StudyInfoId를_통해_사용자가_활동중인_멤버인지_판단한다_성공_케이스() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthJusung());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateDeletedStudyInfo(savedUser.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(savedUser.getId(), study.getId()));
+
+        // when
+        boolean result = studyMemberRepository.existsStudyMemberByGithubIdAndStudyInfoId(savedUser.getGithubId(), study.getId());
+
+        // then
+        assertTrue(result);
+    }
+
+    @Test
+    void GitHubId와_StudyInfoId를_통해_사용자가_활동중인_멤버인지_판단한다_실패_케이스() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(savedUser.getId(), study.getId()));
+
+        String invalidGithubId = "invalid";
+
+        // when
+        boolean result = studyMemberRepository.existsStudyMemberByGithubIdAndStudyInfoId(invalidGithubId, study.getUserId());
+
+        // then
+        assertFalse(result);
     }
 }

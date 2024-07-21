@@ -6,8 +6,7 @@ import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.*;
-import static com.example.backend.domain.define.account.user.constant.UserRole.UNAUTH;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
+import static com.example.backend.domain.define.account.user.constant.UserRole.*;
 
 public class UserFixture {
     public static User generateAuthUser() {
@@ -18,6 +17,17 @@ public class UserFixture {
                 .name("이름")
                 .githubId("깃허브아이디")
                 .profileImageUrl("프로필이미지")
+                .build();
+    }
+
+    public static User generateAdminUser() {
+        return User.builder()
+                .platformId("111")
+                .platformType(GITHUB)
+                .role(ADMIN)
+                .name("관리자")
+                .githubId("관리자")
+                .profileImageUrl("관리자")
                 .build();
     }
 
@@ -168,6 +178,18 @@ public class UserFixture {
                 .name("이름")
                 .githubId("깃허브아이디")
                 .profileImageUrl("프로필이미지")
+                .pushAlarmYn(false)
+                .build();
+    }
+
+    public static User generateAuthJusung() {
+        return User.builder()
+                .platformId("platformId")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이주성")
+                .githubId("jusung-c")
+                .profileImageUrl("www.naver.com")
                 .pushAlarmYn(false)
                 .build();
     }
