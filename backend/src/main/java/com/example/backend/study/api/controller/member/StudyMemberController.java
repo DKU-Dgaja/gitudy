@@ -3,7 +3,6 @@ package com.example.backend.study.api.controller.member;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;
 import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
