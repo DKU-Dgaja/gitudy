@@ -87,7 +87,7 @@ public class StudyTodoController {
         // 스터디 멤버인지 검증
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        return ResponseEntity.ok().body(studyTodoService.readStudyTodoList(studyInfoId, cursorIdx, limit, fetchFlag));
+        return ResponseEntity.ok().body(studyTodoService.readStudyTodoList(studyInfoId, cursorIdx, limit));
     }
 
     // Todo 단일조회
@@ -125,18 +125,6 @@ public class StudyTodoController {
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
         return ResponseEntity.ok().body(studyTodoService.readStudyTodoProgress(studyInfoId));
-    }
-
-    // 커밋 패치 로직
-    @ApiResponse(responseCode = "200", description = "특정 스터디의 커밋 리스트 패치")
-    @GetMapping("/{studyInfoId}/todo/fetch")
-    public ResponseEntity<Void> fetchTodoCommit(@AuthenticationPrincipal User user,
-                                                @PathVariable(name = "studyInfoId") Long studyInfoId) {
-
-        studyMemberService.isValidateStudyMember(user, studyInfoId);
-        studyTodoService.fetchTodoCommit(studyInfoId);
-
-        return ResponseEntity.ok().build();
     }
 
     // Todo별 커밋 리스트 조회

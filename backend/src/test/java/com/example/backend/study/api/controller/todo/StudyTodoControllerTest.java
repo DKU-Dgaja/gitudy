@@ -202,7 +202,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class), anyBoolean())).thenReturn(response);
+        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
@@ -234,7 +234,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoList(any(Long.class), any(), any(Long.class), anyBoolean())).thenReturn(response);
+        when(studyTodoService.readStudyTodoList(any(Long.class), any(), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
@@ -341,29 +341,6 @@ public class StudyTodoControllerTest extends MockTestConfig {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
-    }
-
-
-    @Test
-    void 커밋_패치_요청_성공_테스트() throws Exception {
-        // given
-        User savedUser = generateAuthUser();
-        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
-        String accessToken = jwtService.generateAccessToken(map, savedUser);
-
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
-                .thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyTodoService).fetchTodoCommit(any(Long.class));
-
-        // when
-        mockMvc.perform(get("/study/" + 1L + "/todo/fetch")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-
-                // then
-                .andExpect(status().isOk())
-                .andDo(print());
-
     }
 
     @Test

@@ -73,9 +73,6 @@ public class StudyTodoServiceTest extends MockTestConfig {
     private StudyCommitRepository studyCommitRepository;
 
     @MockBean
-    private StudyCommitService studyCommitService;
-    
-    @MockBean
     private TodoRegisterMemberListener todoRegisterMemberListener;
 
     public final static String expectedTitle = "백준 1234번 풀기";
@@ -264,10 +261,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyCommit commit2 = StudyCommitFixture.createDefaultStudyCommit(leader.getId(), studyInfo.getId(), studyTodo3.getId(), "sha2");
         studyCommitRepository.saveAll(List.of(commit1, commit2));
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
-
         // when
-        StudyTodoListAndCursorIdxResponse responses = studyTodoService.readStudyTodoList(studyInfo.getId(), cursorIdx, Limit, true);
+        StudyTodoListAndCursorIdxResponse responses = studyTodoService.readStudyTodoList(studyInfo.getId(), cursorIdx, Limit);
 
         // then
         assertNotNull(responses);
@@ -310,10 +305,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         }
         studyCommitRepository.saveAll(commitList);
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
-
         // when
-        StudyTodoListAndCursorIdxResponse firstPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit, true);
+        StudyTodoListAndCursorIdxResponse firstPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), CursorIdx, Limit);
 
         // then
         assertNotNull(firstPageResponse);
@@ -330,7 +323,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
 
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
         Long newCursorIdx = firstPageResponse.getCursorIdx();
-        StudyTodoListAndCursorIdxResponse secondPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx, 3L, true);
+        StudyTodoListAndCursorIdxResponse secondPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx, 3L);
 
         // 두 번째 페이지의 데이터 검증
         assertNotNull(secondPageResponse);
@@ -347,7 +340,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
 
         // 새로운 커서 인덱스를 사용하여 다음 페이지 조회
         Long newCursorIdx2 = secondPageResponse.getCursorIdx();
-        StudyTodoListAndCursorIdxResponse thirdPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx2, 3L, true);
+        StudyTodoListAndCursorIdxResponse thirdPageResponse = studyTodoService.readStudyTodoList(studyInfo.getId(), newCursorIdx2, 3L);
 
         // 세 번째 페이지의 데이터 검증
         assertNotNull(thirdPageResponse);
@@ -392,10 +385,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         // 합친 리스트 저장
         studyTodoRepository.saveAll(allTodos);
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
-
         // when
-        StudyTodoListAndCursorIdxResponse responseForStudy1 = studyTodoService.readStudyTodoList(studyInfo1.getId(), CursorIdx, Limit, true);
+        StudyTodoListAndCursorIdxResponse responseForStudy1 = studyTodoService.readStudyTodoList(studyInfo1.getId(), CursorIdx, Limit);
 
         // then
         assertNotNull(responseForStudy1);
@@ -404,10 +395,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         responseForStudy1.getTodoList().forEach(todo ->
                 assertTrue(todo.getTitle().contains("1번 투두 제목"), "모든 투두 항목은 '1번 투두 제목' 을 포함해야 한다"));
 
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
-
         // when
-        StudyTodoListAndCursorIdxResponse responseForStudy2 = studyTodoService.readStudyTodoList(studyInfo2.getId(), CursorIdx, Limit, true);
+        StudyTodoListAndCursorIdxResponse responseForStudy2 = studyTodoService.readStudyTodoList(studyInfo2.getId(), CursorIdx, Limit);
 
         // then
         assertNotNull(responseForStudy2);
@@ -463,7 +452,6 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2));
 
         // when
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
         List<StudyTodoStatusResponse> results = studyTodoService.readStudyTodoStatus(studyInfo.getId(), studyTodo.getId());
 
 
@@ -502,7 +490,6 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2, studyTodoMapping3));
 
         // when
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
         StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(studyInfo.getId());
 
 
@@ -510,32 +497,6 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertEquals(response.getTodoId(), studyTodo.getId());
         assertEquals(response.getTotalMemberCount(), expectedTotalMemberCnt);
         assertEquals(response.getCompleteMemberCount(), expectedCompleteMemberCnt);
-
-    }
-
-    @Test
-    void 커밋_패치_요청_성공_테스트() {
-        // given
-        int expectedTodoCnt = 4;
-
-        User leader = userRepository.save(generateAuthUser());
-
-        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
-        studyInfoRepository.save(studyInfo);
-
-        StudyTodo studyTodo1 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        StudyTodo studyTodo2 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        StudyTodo studyTodo3 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        StudyTodo studyTodo4 = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        studyTodoRepository.saveAll(List.of(studyTodo1, studyTodo2, studyTodo3, studyTodo4));
-
-        doNothing().when(studyCommitService).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
-
-        // when
-        studyTodoService.fetchTodoCommit(studyInfo.getId());
-
-        // then
-        verify(studyCommitService, times(expectedTodoCnt)).fetchRemoteCommitsAndSave(any(StudyInfo.class), any(StudyTodo.class), any(Integer.class));
 
     }
 
