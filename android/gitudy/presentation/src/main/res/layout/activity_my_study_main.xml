@@ -378,20 +378,6 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toTopOf="parent" />
 
-                        <TextView
-                            android:id="@+id/noConventionAlarm"
-                            style="@style/B6_1"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center_vertical"
-                            android:layout_marginLeft="12dp"
-                            android:text="@string/no_commit_convention"
-                            android:textColor="@color/BASIC_BLUE"
-                            android:visibility="gone"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            app:layout_constraintStart_toEndOf="@+id/commitConventionImg"
-                            app:layout_constraintTop_toTopOf="parent" />
-
                         <LinearLayout
                             android:id="@+id/commitConventionText"
                             android:layout_width="wrap_content"
