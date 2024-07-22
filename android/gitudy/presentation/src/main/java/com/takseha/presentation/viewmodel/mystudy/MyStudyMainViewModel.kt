@@ -85,7 +85,7 @@ class MyStudyMainViewModel: ViewModel() {
         )
 
         if (conventionInfoResponse.isSuccessful) {
-            val conventionInfo = conventionInfoResponse.body()!!.conventionInfo
+            val conventionInfo = conventionInfoResponse.body()!!
             Log.d("MyStudyMainViewModel", "conventionInfo: $conventionInfo")
 
             if (conventionInfo.studyConventionList.isNotEmpty()) {

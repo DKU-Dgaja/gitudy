@@ -80,7 +80,7 @@
     <string name="feed_make_study_2">주 %d일 커밋/%s 마감/%d명</string>
     <string name="feed_apply_study">해당 스터디에\n가입하시겠습니까?</string>
     <string name="feed_apply_study_cancel">해당 스터디 가입을\n취소하시겠습니까?</string>
-    <string name="feed_make_study_github_repo">연동할 깃허브 레포지토리 링크를 입력해주세요\n* main branch 커밋 내용이 현재 스터디와 연동됩니다</string>
+    <string name="feed_make_study_github_repo">생성할 깃허브 레포지토리 이름을 입력해주세요\n* 입력한 이름으로 회원님의 깃허브 계정에 레포지토리가 생성돼요</string>
 
 
     <!-- Strings related to login -->

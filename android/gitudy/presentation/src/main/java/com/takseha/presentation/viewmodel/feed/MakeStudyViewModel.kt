@@ -22,8 +22,7 @@ class MakeStudyViewModel: ViewModel() {
     val newStudyInfoState = _newStudyInfoState.asStateFlow()
 
     fun setStudyIntro(title: String, detail: String, githubRepo: String) {
-        val parts = githubRepo.removePrefix("https://github.com/").split("/")
-        _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryInfo = RepositoryInfo(owner = parts[0], name = parts[1], branchName = "main")) }
+        _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryInfo = RepositoryInfo(owner = "jusung-c", name = githubRepo, branchName = "main")) }
     }
     fun setStudyRule(commitTimes: StudyPeriodStatus, isPublic: StudyStatus, maxMember: Int) {
         _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = backgroundColorList[randIdx]) }

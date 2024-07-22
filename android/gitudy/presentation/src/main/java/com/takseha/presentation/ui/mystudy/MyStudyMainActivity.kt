@@ -137,15 +137,8 @@ class MyStudyMainActivity : AppCompatActivity() {
 
     private fun setConventionInfo(conventionInfo: StudyConvention?) {
         with(binding) {
-            if (conventionInfo == null) {
-                commitConventionText.visibility = View.GONE
-                noConventionAlarm.visibility = View.VISIBLE
-            } else {
-                commitConventionText.visibility = View.VISIBLE
-                noConventionAlarm.visibility = View.GONE
-
-                commitConvention.text = conventionInfo.name
-            }
+            commitConventionText.visibility = View.VISIBLE
+            commitConvention.text = conventionInfo?.name
         }
     }
 
