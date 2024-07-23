@@ -1,23 +1,18 @@
 package com.example.backend.domain.define.study.todo.mapping.repository;
 
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import com.querydsl.core.Tuple;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
-import static com.example.backend.domain.define.account.user.QUser.user;
-import static com.example.backend.domain.define.study.todo.info.QStudyTodo.studyTodo;
 import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMapping.studyTodoMapping;
-import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.*;
+import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
+import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 
 @Slf4j
 @Component

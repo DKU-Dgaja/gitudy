@@ -3,9 +3,7 @@ package com.example.backend.domain.define.study.todo.mapping.repository;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 
-import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 public interface StudyTodoMappingRepositoryCustom {
 

@@ -72,7 +72,6 @@ dependencies {
     // Github API
     implementation 'org.kohsuke:github-api:1.319'
 
-
     // Firebase
     implementation group: 'com.google.firebase', name: 'firebase-admin', version: '9.2.0'
 
