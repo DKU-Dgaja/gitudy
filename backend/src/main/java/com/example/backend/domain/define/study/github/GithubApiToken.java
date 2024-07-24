@@ -1,24 +1,14 @@
 package com.example.backend.domain.define.study.github;
 
 import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
-@Getter
-@ToString
-@RedisHash(value = "github")
-@NoArgsConstructor
 @Builder
-public class GithubApiToken {
-    @Id
-    private Long userId;
-    private String githubApiToken;
-
-    public GithubApiToken(Long userId, String githubApiToken) {
-        this.userId = userId;
-        this.githubApiToken = githubApiToken;
-    }
+@RedisHash(value = "githubToken")
+public record GithubApiToken (
+        @Id String githubApiToken,
+        @Indexed Long userId
+){
 }

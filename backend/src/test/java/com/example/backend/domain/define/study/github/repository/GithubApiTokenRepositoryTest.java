@@ -5,12 +5,18 @@ import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.GithubApiTokenFixture;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GithubApiTokenRepositoryTest extends TestConfig {
     @Autowired
@@ -24,21 +30,61 @@ class GithubApiTokenRepositoryTest extends TestConfig {
         githubApiTokenRepository.deleteAll();
         userRepository.deleteAllInBatch();
     }
+
     @Test
-    @DisplayName("github api token을 저장할 수 있다.")
-    void saveGithubApiToken() {
+    void 깃허브토큰_저장_테스트() {
         // given
         User user = userRepository.save(UserFixture.generateAuthUser());
-        GithubApiToken githubApiToken = githubApiTokenRepository.save(GithubApiToken.builder()
-                .userId(user.getId())
-                .githubApiToken("token")
-                .build());
+        String token = "userTestToken";
+
+        githubApiTokenRepository.save(GithubApiTokenFixture.createToken(token, user.getId()));
 
         // when
-        GithubApiToken savedGithubApiToken = githubApiTokenRepository.findById(githubApiToken.getUserId()).get();
+        GithubApiToken savedToken = githubApiTokenRepository.findById(token).get();
 
         // then
-        assertThat(githubApiToken.getUserId()).isEqualTo(savedGithubApiToken.getUserId());
-        assertThat(githubApiToken.getGithubApiToken()).isEqualTo(savedGithubApiToken.getGithubApiToken());
+        assertThat(user.getId()).isEqualTo(savedToken.userId());
+        assertThat(token).isEqualTo(savedToken.githubApiToken());
     }
+
+    @Test
+    void 사용자_아이디로_깃허브토큰_조회_테스트() {
+        // given
+        User userA = userRepository.save(UserFixture.generateGoogleUser());
+        String userAToken = "A";
+
+        User userB = userRepository.save(UserFixture.generateKaKaoUser());
+        String userBToken = "B";
+
+        githubApiTokenRepository.save(GithubApiTokenFixture.createToken(userAToken, userA.getId()));
+        githubApiTokenRepository.save(GithubApiTokenFixture.createToken(userBToken, userB.getId()));
+
+        // when
+        var findToken = githubApiTokenRepository.findByUserId(userA.getId()).get();
+
+        // then
+        assertEquals(userA.getId(), findToken.userId());
+        assertEquals(userAToken, findToken.githubApiToken());
+    }
+
+    @Test
+    void 사용자_아이디로_깃허브토큰이_존재하는지_테스트() {
+        // given
+        User userA = userRepository.save(UserFixture.generateGoogleUser());
+        String userAToken = "A";
+
+        User userB = userRepository.save(UserFixture.generateKaKaoUser());
+        String userBToken = "B";
+
+        Long invalidId = Long.MAX_VALUE;
+
+        githubApiTokenRepository.save(GithubApiTokenFixture.createToken(userAToken, userA.getId()));
+        githubApiTokenRepository.save(GithubApiTokenFixture.createToken(userBToken, userB.getId()));
+
+        // when & then
+        assertTrue(githubApiTokenRepository.existsByUserId(userA.getId()));
+        assertTrue(githubApiTokenRepository.existsByUserId(userB.getId()));
+        assertFalse(githubApiTokenRepository.existsByUserId(invalidId));
+    }
+
 }
