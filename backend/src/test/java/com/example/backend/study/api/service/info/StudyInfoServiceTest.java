@@ -131,7 +131,7 @@ class StudyInfoServiceTest extends TestConfig {
         assertEquals(expectedConvention, convention.get(0).getContent());
 
         // github api가 작동했는지 확인
-        verify(githubApiService, times(1)).createRepository(any(RepositoryInfo.class), any(String.class));
+        verify(githubApiService, times(1)).createRepository(any(String.class), any(RepositoryInfo.class), any(String.class));
     }
 
 

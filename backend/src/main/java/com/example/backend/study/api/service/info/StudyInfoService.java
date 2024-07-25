@@ -10,6 +10,8 @@ import com.example.backend.domain.define.study.category.mapping.StudyCategoryMap
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -18,6 +20,7 @@ import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRe
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.*;
 import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +41,7 @@ import static com.example.backend.domain.define.study.member.constant.StudyMembe
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudyInfoService {
+    private final GithubApiTokenRepository githubApiTokenRepository;
     private final static String DEFAULT_NAME = "default convention";
     private final static String DEFAULT_CONTENT = "^[a-zA-Z0-9]{6} .*";
 
@@ -49,6 +53,7 @@ public class StudyInfoService {
     private final UserRepository userRepository;
     private final StudyConventionRepository studyConventionRepository;
     private final GithubApiService githubApiService;
+    private final GithubApiTokenService githubApiTokenService;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
@@ -69,7 +74,8 @@ public class StudyInfoService {
         registerDefaultConvention(studyInfo.getId());
 
         // github에 스터디 레포지토리 생성
-        githubApiService.createRepository(studyInfo.getRepositoryInfo(), "README.md를 작성해주세요.");
+        GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
+        githubApiService.createRepository(token.githubApiToken(), studyInfo.getRepositoryInfo(), "README.md를 작성해주세요.");
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
     }
