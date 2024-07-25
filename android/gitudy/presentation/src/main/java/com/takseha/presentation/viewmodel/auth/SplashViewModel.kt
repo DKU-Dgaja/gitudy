@@ -18,7 +18,7 @@ class SplashViewModel: ViewModel() {
         val checkTokenResponse = gitudyAuthRepository.getUserInfo()
 
         if (checkTokenResponse.isSuccessful) {
-            if (checkTokenResponse.body()?.role == RoleStatus.WITHDRAW) _availableTokenCheck.value = false else _availableTokenCheck.value = true
+            if (checkTokenResponse.body()?.role == RoleStatus.WITHDRAW || checkTokenResponse.body()?.role == RoleStatus.UNAUTH) _availableTokenCheck.value = false else _availableTokenCheck.value = true
         } else {
             if (checkTokenResponse.code() == 401 || checkTokenResponse.code() == 403) {
                 // token 문제일 때

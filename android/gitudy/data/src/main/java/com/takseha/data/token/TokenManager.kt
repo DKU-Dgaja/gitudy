@@ -76,7 +76,8 @@ class TokenManager(context: Context) {
     suspend fun getRegisterTokens(request: RegisterRequest): TokenResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                val response = loginApi.getRegisterTokens(request)
+                val token = "Bearer $accessToken"
+                val response = loginApi.getRegisterTokens(token, request)
 
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
