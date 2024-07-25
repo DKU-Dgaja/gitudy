@@ -50,11 +50,11 @@ class GithubApiTokenRepositoryTest extends TestConfig {
     @Test
     void 사용자_아이디로_깃허브토큰_조회_테스트() {
         // given
-        User userA = userRepository.save(UserFixture.generateGoogleUser());
         String userAToken = "A";
+        User userA = userRepository.save(UserFixture.generateAuthUserByPlatformId(userAToken));
 
-        User userB = userRepository.save(UserFixture.generateKaKaoUser());
         String userBToken = "B";
+        User userB = userRepository.save(UserFixture.generateAuthUserByPlatformId(userBToken));
 
         githubApiTokenRepository.save(GithubApiTokenFixture.createToken(userAToken, userA.getId()));
         githubApiTokenRepository.save(GithubApiTokenFixture.createToken(userBToken, userB.getId()));

@@ -58,12 +58,6 @@ public class GithubApiService {
         try {
             GitHub gitHub = connectGithub(githubApiToken);
 
-            // 레포지토리 이름 중복 확인
-            if (repositoryExists(gitHub, repoInfo.getOwner() + "/" + repoInfo.getName())) {
-                log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), repoInfo.getName());
-                throw new GithubApiException(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS);
-            }
-
             GHCreateRepositoryBuilder repoBuilder = gitHub.createRepository(repoInfo.getName())
                     .description(description)
                     .private_(false)  // 공개 레포지토리로 설정
@@ -95,9 +89,10 @@ public class GithubApiService {
         );
     }
 
-    private boolean repositoryExists(GitHub gitHub, String repoName) {
+    public boolean repositoryExists(String token, String owner, String repoName) {
         try {
-            GHRepository repository = gitHub.getRepository(repoName);
+            GitHub gitHub = connectGithub(token);
+            GHRepository repository = gitHub.getRepository(owner + "/" + repoName);
             return repository != null;
         } catch (IOException e) {
             return false;  // 레포지토리를 찾을 수 없는 경우 예외가 발생하며, 이 경우 레포지토리가 존재하지 않음을 의미

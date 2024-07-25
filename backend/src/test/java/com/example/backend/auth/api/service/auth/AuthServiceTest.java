@@ -67,6 +67,7 @@ class AuthServiceTest extends MockTestConfig {
 
     @AfterEach
     void tearDown() {
+        githubApiTokenRepository.deleteAll();
         userRepository.deleteAllInBatch();
     }
 

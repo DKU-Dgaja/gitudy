@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -289,5 +290,17 @@ public class StudyInfoService {
                     return StudyInfoListWithMemberResponse.from(studyInfo, userInfo);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void checkDuplicateRepoName(UserInfoResponse userInfo, String repoName) {
+
+        // 사용자의 깃허브 토큰 조회
+        GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
+
+        // 레포지토리 이름 중복 확인
+        if (githubApiService.repositoryExists(token.githubApiToken(), userInfo.getGithubId(), repoName)) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), repoName);
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS);
+        }
     }
 }

@@ -473,6 +473,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
@@ -495,6 +498,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
@@ -519,6 +525,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
@@ -542,6 +551,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
@@ -565,6 +577,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
@@ -588,6 +603,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))

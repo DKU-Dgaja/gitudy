@@ -151,4 +151,24 @@ class GithubApiServiceTest extends TestConfig {
         return hooks.stream()
                 .anyMatch(hook -> webhookUrl.equals(hook.getConfig().get("url")));
     }
+
+    @Test
+    void 해당_레포지토리가_이미_존재하는_경우_true를_반환한다() {
+        // given
+        String owner = "jusung-c";
+        String repo = "Algo";
+
+        // when
+        assertTrue(githubApiService.repositoryExists(githubApiToken, owner, repo));
+    }
+
+    @Test
+    void 해당_레포지토리가_존재하지_않는_경우_false를_반환한다() {
+        // given
+        String owner = "jusung-c";
+        String repo = "non-exist-repo";
+
+        // when
+        assertFalse(githubApiService.repositoryExists(githubApiToken, owner, repo));
+    }
 }
