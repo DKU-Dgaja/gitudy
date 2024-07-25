@@ -63,7 +63,7 @@ class TokenManager(context: Context) {
                     refreshToken = response.body()!!.refreshToken
                     response.body()!!
                 } else {
-                    Log.e("TokenManager", "login response status: ${response.code()}\nlogin response message: ${response.message()}")
+                    Log.e("TokenManager", "login response status: ${response.code()}\nlogin response message: ${response.errorBody()?.string()}")
                     null
                 }
             } catch (e: Exception) {
@@ -83,7 +83,7 @@ class TokenManager(context: Context) {
                     refreshToken = response.body()!!.refreshToken
                     response.body()!!
                 } else {
-                    Log.e("TokenManager", "register response status: ${response.code()}\nregister response message: ${response.message()}")
+                    Log.e("TokenManager", "register response status: ${response.code()}\nregister response message: ${response.errorBody()?.string()}")
                     null
                 }
             } catch (e: Exception) {

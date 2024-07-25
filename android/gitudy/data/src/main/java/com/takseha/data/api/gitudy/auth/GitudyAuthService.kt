@@ -28,7 +28,6 @@ interface GitudyAuthService {
         @Body request: String
     ): Response<Void>
 
-
     @POST("/auth/register")
     suspend fun getRegisterTokens(
         @Body request: RegisterRequest

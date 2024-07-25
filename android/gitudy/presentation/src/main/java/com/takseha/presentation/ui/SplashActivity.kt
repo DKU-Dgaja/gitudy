@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import com.takseha.data.sharedPreferences.SP
 import com.takseha.data.sharedPreferences.SPKey
 import com.takseha.presentation.R
+import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.ui.auth.LoginActivity
 import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.auth.SplashViewModel
@@ -30,6 +31,9 @@ class SplashActivity : AppCompatActivity() {
         lifecycleScope.launch {
             viewModel.checkAvailableToken()
         }
+
+        MyFirebaseMessagingService().getFirebaseToken()
+
         Log.d("SplashActivity", "access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\nrefresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}")
 
         viewModel.availableTokenCheck.observe(this@SplashActivity) {

@@ -47,7 +47,7 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
             }
         } catch (e: IllegalArgumentException) {
             // role == null일 때
-            Log.e("SocialLoginCompleteActivity", "role: $role", e)
+            Log.e("SocialLoginCompleteActivity", e.message.toString())
             startActivity(Intent(this, PopupAgreementActivity::class.java))
         }
     }
