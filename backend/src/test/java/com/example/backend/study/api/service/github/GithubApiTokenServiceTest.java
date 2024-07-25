@@ -2,15 +2,17 @@ package com.example.backend.study.api.service.github;
 
 import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.github.GithubApiTokenException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GithubApiTokenServiceTest extends TestConfig {
     @Autowired
@@ -26,6 +28,17 @@ class GithubApiTokenServiceTest extends TestConfig {
     void tearDown() {
         githubApiTokenRepository.deleteAll();
         userRepository.deleteAllInBatch();
+    }
+
+    @Test
+    void 깃허브토큰_조회_실패_테스트() {
+        User user = userRepository.save(UserFixture.generateGoogleUser());
+
+        var e = assertThrows(GithubApiTokenException.class, () -> {
+            githubApiTokenService.getToken(user.getId());
+        });
+
+        assertEquals(ExceptionMessage.GITHUB_API_TOKEN_NOT_EXIST.getText(), e.getMessage());
     }
 
     @Test

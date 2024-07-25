@@ -42,6 +42,9 @@ class GithubApiServiceTest extends TestConfig {
     @Value("${github.api.webhookURL}")
     private String webhookUrl;
 
+    @Value("${github.api.token}")
+    private String githubApiToken;
+
     @Autowired
     private GithubApiService githubApiService;
 
@@ -84,7 +87,7 @@ class GithubApiServiceTest extends TestConfig {
                 .build();
 
         // when
-        GHRepository repository = githubApiService.getRepository(repo);
+        GHRepository repository = githubApiService.getRepository(githubApiToken, repo);
 
         // then
         assertAll(
@@ -106,7 +109,7 @@ class GithubApiServiceTest extends TestConfig {
                 .build();
 
         // when
-        GHRepository createdRepository = githubApiService.createRepository(repoInfo, description);
+        GHRepository createdRepository = githubApiService.createRepository(githubApiToken, repoInfo, description);
 
         // then
         assertNotNull(createdRepository);
@@ -133,11 +136,11 @@ class GithubApiServiceTest extends TestConfig {
                 .build();
 
         // 먼저 동일한 이름의 레포지토리를 생성하여 중복 상태를 만듭니다.
-        githubApiService.createRepository(repoInfo, description);
+        githubApiService.createRepository(githubApiToken, repoInfo, description);
 
         // when, then
         GithubApiException exception = assertThrows(GithubApiException.class, () -> {
-            githubApiService.createRepository(repoInfo, description);
+            githubApiService.createRepository(githubApiToken, repoInfo, description);
         });
 
         assertEquals(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), exception.getMessage());
