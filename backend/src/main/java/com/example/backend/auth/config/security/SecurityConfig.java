@@ -27,12 +27,14 @@ public class SecurityConfig {
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/auth/v3/**", "/auth/swagger-ui/**").permitAll()
                                 // Webhook Area
                                 .requestMatchers("/webhook/**").hasAnyAuthority("ADMIN")
-                                // register
-                                .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
-                                // UnAuth Area
-                                .requestMatchers("/auth/loginPage").permitAll()
-                                .requestMatchers("/auth/*/login").permitAll()
-                                .requestMatchers("/auth/check-nickname").permitAll()
+//                                // register
+//                                .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
+//                                // UnAuth Area
+//                                .requestMatchers("/auth/loginPage").permitAll()
+//                                .requestMatchers("/auth/*/login").permitAll()
+//                                .requestMatchers("/auth/check-nickname").permitAll()
+                                // auth 임시 허용
+                                .requestMatchers("/auth/**").permitAll()
                                 // Others
                                 .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )
