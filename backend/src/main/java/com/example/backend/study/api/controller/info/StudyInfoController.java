@@ -3,6 +3,7 @@ package com.example.backend.study.api.controller.info;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.study.api.controller.info.request.RepoNameCheckRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoCountResponse;
@@ -37,6 +38,13 @@ public class StudyInfoController {
                                            @Valid @RequestBody StudyInfoRegisterRequest studyInfoRequest) {
         UserInfoResponse findUser = authService.findUserInfo(user);
         studyInfoService.registerStudy(studyInfoRequest, findUser);
+        return ResponseEntity.ok().build();
+    }
+
+    @ApiResponse(responseCode = "200", description = "스터디 레포지토리 이름 검증 성공")
+    @PostMapping("/check-name")
+    public ResponseEntity<Void> repoNameValidCheck(@Valid @RequestBody RepoNameCheckRequest request) {
+
         return ResponseEntity.ok().build();
     }
 

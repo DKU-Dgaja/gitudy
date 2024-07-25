@@ -11,7 +11,6 @@ import com.example.backend.domain.define.study.category.mapping.repository.Study
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
-import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -41,7 +40,6 @@ import static com.example.backend.domain.define.study.member.constant.StudyMembe
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudyInfoService {
-    private final GithubApiTokenRepository githubApiTokenRepository;
     private final static String DEFAULT_NAME = "default convention";
     private final static String DEFAULT_CONTENT = "^[a-zA-Z0-9]{6} .*";
 

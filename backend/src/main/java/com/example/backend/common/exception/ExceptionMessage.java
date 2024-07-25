@@ -95,7 +95,14 @@ public enum ExceptionMessage {
     FCM_DEVICE_NOT_FOUND("해당 유저의 기기를 찾을 수 없습니다."),
 
     // Notice Exception
-    NOTICE_NOT_FOUND("해당 알림을 찾을 수 없습니다.")
+    NOTICE_NOT_FOUND("해당 알림을 찾을 수 없습니다."),
+
+    // Repository Name Convention
+    STUDY_REPOSITORY_NAME_EMPTY("레포지토리 이름은 공백일 수 없습니다."),
+    STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS("레포지토리 이름은 연속된 특수 문자를 포함할 수 없습니다."),
+    STUDY_REPOSITORY_NAME_INVALID_CHARS("레포지토리 이름은 영문자, 숫자, '-', '_', '.'만 포함할 수 있습니다."),
+    STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR("레포지토리 이름은 '-', '_', '.'으로 끝날 수 없습니다."),
+
     ;
     private final String text;
 }

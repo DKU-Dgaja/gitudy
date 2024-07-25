@@ -4,6 +4,7 @@ import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -12,6 +13,7 @@ import com.example.backend.domain.define.study.category.info.repository.StudyCat
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.study.api.controller.info.request.RepoNameCheckRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.StudyInfoCountResponse;
@@ -19,6 +21,7 @@ import com.example.backend.study.api.controller.info.response.StudyInfoRegisterR
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
@@ -36,6 +39,7 @@ import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUs
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.CATEGORY_SIZE;
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.createDefaultPublicStudyCategories;
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
+import static org.hamcrest.Matchers.containsString;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
@@ -454,6 +458,146 @@ class StudyInfoControllerTest extends MockTestConfig {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.count").value(1))
+                .andDo(print());
+    }
+
+    @Test
+    void 레포지토리_이름_검증_성공_테스트() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        String valid = "test-repo";
+
+        RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
+
+        // when
+        mockMvc.perform(post("/study/check-name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
+    void 레포지토리_이름이_공백이면_유효성_검증에_실패한다() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        String valid = "";
+
+        RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
+
+        // when
+        mockMvc.perform(post("/study/check-name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())))
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_EMPTY.getText())))
+                .andDo(print());
+    }
+
+    @Test
+    void 레포지토리_이름에_허용되지_않은_문자를_사용하면_유효성_검증에_실패한다() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        String valid = "test!repo";
+
+        RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
+
+        // when
+        mockMvc.perform(post("/study/check-name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())))
+                .andDo(print());
+    }
+
+    @Test
+    void 레포지토리_이름에_특수문자를_연속으로_사용하면_유효성_검증에_실패한다() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        String valid = "test--repo";
+
+        RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
+
+        // when
+        mockMvc.perform(post("/study/check-name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS.getText())))
+                .andDo(print());
+    }
+
+    @Test
+    void 레포지토리_이름의_끝에_특수문자를_사용하면_유효성_검증에_실패한다() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        String valid = "test-repo.";
+
+        RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
+
+        // when
+        mockMvc.perform(post("/study/check-name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR.getText())))
+                .andDo(print());
+    }
+
+    @Test
+    void 레포지토리_이름이_동시에_여러가지_조건을_지키지_못하면_해당하는_예외_메세지가_전부_반환된다() throws Exception {
+        // given
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        String valid = "test--repo@-";
+
+        RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
+
+        // when
+        mockMvc.perform(post("/study/check-name")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
+
+                // then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())))
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS.getText())))
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR.getText())))
                 .andDo(print());
     }
 }
