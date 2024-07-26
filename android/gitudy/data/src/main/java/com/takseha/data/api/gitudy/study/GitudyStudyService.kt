@@ -10,8 +10,10 @@ import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
+import retrofit2.http.PUT
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -35,6 +37,19 @@ interface GitudyStudyService {
         @Query("cursorIdx") cursorIdx: Long?,
         @Query("limit") limit: Long,
     ): Response<TodoListResponse>
+
+    @PUT("/study/{studyInfoId}/todo/{todoId}")
+    suspend fun updateTodo(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Path("todoId") todoId: Int,
+        @Body request: MakeTodoRequest
+    ): Response<Void>
+
+    @DELETE("/study/{studyInfoId}/todo/{todoId}")
+    suspend fun deleteTodo(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Path("todoId") todoId: Int
+    ): Response<Void>
 
     @POST("/study/{studyInfoId}/todo")
     suspend fun makeNewTodo(

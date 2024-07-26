@@ -47,6 +47,8 @@
     <string name="to_do_deadline">마감일 </string>
     <string name="to_do_deadline_date">%d.%d.%d</string>
     <string name="to_do_add">새로운 TO-DO를\n추가하시겠습니까?</string>
+    <string name="to_do_update">수정된 TO-DO를\n저장하시겠습니까?</string>
+    <string name="to_do_delete">현재 TO-DO를\n삭제하시겠습니까?</string>
     <string name="no_to_do_alarm">등록된 TO-DO가 없어요</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
     <string name="commit_github_url_basic">https://github.com/DKU-Dgaja/gitudy-study-jusung/commit/%s</string>

@@ -61,12 +61,20 @@ class MyStudyMainViewModel: ViewModel() {
 
             if (todoBody.todoList.isNotEmpty()) {
                 val todo = todoBody.todoList.first()
-                Log.d("MyStudyMainViewModel", "todo first: $todo")
 
                 return todo
             } else {
-                Log.d("MyStudyMainViewModel", "No To-Do")
-                return null
+                Log.d("MainHomeViewModel", "No To-Do")
+                return Todo(
+                    detail = "No To-Do",
+                    id = -1,
+                    studyInfoId = studyInfoId,
+                    title = "No To-Do",
+                    todoDate = "",
+                    todoCode = "",
+                    todoLink = "",
+                    commitList = listOf()
+                )
             }
         } else {
             Log.e(

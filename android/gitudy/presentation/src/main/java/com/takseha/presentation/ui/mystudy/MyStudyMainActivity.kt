@@ -113,24 +113,30 @@ class MyStudyMainActivity : AppCompatActivity() {
             if (todoInfo == null) {
                 todoDetailLayout.visibility = View.GONE
                 todoDetailBody.visibility = View.GONE
-                noTodoAlarm.visibility = View.VISIBLE
-            } else {
-                todoDetailLayout.visibility = View.VISIBLE
-                todoDetailBody.visibility = View.VISIBLE
                 noTodoAlarm.visibility = View.GONE
+            } else {
+                if (todoInfo.id != -1) {
+                    todoDetailLayout.visibility = View.VISIBLE
+                    todoDetailBody.visibility = View.VISIBLE
+                    noTodoAlarm.visibility = View.GONE
 
-                todoDetailTitle.text = todoInfo.title
-                todoDetailText.text = todoInfo.detail
-                todoTime.text = todoInfo.todoDate
-                todoCode.text = todoInfo.todoCode
-                if (todoInfo.todoDate == LocalDate.now().toString()) {
-                    todoTime.setTextColor(
-                        ContextCompat.getColor(
-                        this@MyStudyMainActivity,
-                        R.color.BASIC_RED
-                    ))
+                    todoDetailTitle.text = todoInfo.title
+                    todoDetailText.text = todoInfo.detail
+                    todoTime.text = todoInfo.todoDate
+                    todoCode.text = todoInfo.todoCode
+                    if (todoInfo.todoDate == LocalDate.now().toString()) {
+                        todoTime.setTextColor(
+                            ContextCompat.getColor(
+                                this@MyStudyMainActivity,
+                                R.color.BASIC_RED
+                            ))
+                    }
+                    firstTodoLink = todoInfo.todoLink
+                } else {
+                    todoDetailLayout.visibility = View.GONE
+                    todoDetailBody.visibility = View.GONE
+                    noTodoAlarm.visibility = View.VISIBLE
                 }
-                firstTodoLink = todoInfo.todoLink
             }
         }
     }
