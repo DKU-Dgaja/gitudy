@@ -37,6 +37,7 @@ interface GitudyAuthService {
 
     @POST("/auth/reissue")
     suspend fun reissueTokens(
+        @Header("Authorization") token: String
     ): Response<ReissueTokenResponse>
 
     @GET("/auth/info")

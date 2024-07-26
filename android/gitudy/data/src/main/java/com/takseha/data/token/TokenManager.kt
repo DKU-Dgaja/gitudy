@@ -97,7 +97,8 @@ class TokenManager(context: Context) {
     suspend fun reissueTokens(): ReissueTokenResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                val response = loginApi.reissueTokens()
+                val token = "Bearer $refreshToken"
+                val response = loginApi.reissueTokens(token)
 
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
