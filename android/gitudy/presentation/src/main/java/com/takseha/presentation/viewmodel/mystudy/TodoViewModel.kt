@@ -25,18 +25,18 @@ class TodoViewModel: ViewModel() {
 
         if (todoListInfoResponse.isSuccessful) {
             val todoBody = todoListInfoResponse.body()!!
-            Log.d("MyStudyMainViewModel", "todo body: $todoBody")
+            Log.d("TodoViewModel", "todo body: $todoBody")
 
             _uiState.update {
                 it.copy(
                     todoListInfo = todoBody.todoList
                 )
             }
-            Log.d("MyStudyMainViewModel", "todoList: ${todoBody.todoList}")
+            Log.d("TodoViewModel", "todoList: ${todoBody.todoList}")
         } else {
             Log.e(
-                "MyStudyMainViewModel",
-                "todoListInfoResponse status: ${todoListInfoResponse.code()}\ntodoListInfoResponse message: ${todoListInfoResponse.message()}"
+                "TodoViewModel",
+                "todoListInfoResponse status: ${todoListInfoResponse.code()}\ntodoListInfoResponse message: ${todoListInfoResponse.errorBody()?.string()}"
             )
         }
     }

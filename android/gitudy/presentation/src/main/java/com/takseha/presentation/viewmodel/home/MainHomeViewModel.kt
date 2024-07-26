@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoProgressResponse
@@ -136,24 +138,35 @@ class MainHomeViewModel : ViewModel() {
                     val todo = getFirstTodoInfo(study.id)
 
                     if (todo != null) {
-                        val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
-                        val todoCheck =
-                            if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
-                        MyStudyWithTodo(
-                            backgroundColorList[study.id % 4],
-                            study,
-                            todo.title,
-                            todo.todoDate,
-                            todoCheck,
-                            todoCheckNum
-                        )
+                        if (todo.id != -1) {
+                            val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount
+                            val todoCheck =
+                                if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
+                            MyStudyWithTodo(
+                                backgroundColorList[study.id % 4],
+                                study,
+                                todo.title,
+                                todo.todoDate,
+                                todoCheck,
+                                todoCheckNum
+                            )
+                        } else {
+                            MyStudyWithTodo(
+                                backgroundColorList[study.id % 4],
+                                study,
+                                null,
+                                null,
+                                TodoStatus.TODO_EMPTY,
+                                null
+                            )
+                        }
                     } else {
                         MyStudyWithTodo(
                             backgroundColorList[study.id % 4],
                             study,
                             null,
                             null,
-                            TodoStatus.TODO_EMPTY,
+                            TodoStatus.TODO_INCOMPLETE,
                             null
                         )
                     }
@@ -165,6 +178,7 @@ class MainHomeViewModel : ViewModel() {
                     )
                 }
             }
+            Log.d("MainHomeViewModel", myStudyState.value.toString())
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -185,12 +199,20 @@ class MainHomeViewModel : ViewModel() {
 
             if (todoBody.todoList.isNotEmpty()) {
                 val todo = todoBody.todoList.first()
-                Log.d("MainHomeViewModel", "todo first: $todo")
 
                 return todo
             } else {
                 Log.d("MainHomeViewModel", "No To-Do")
-                return null
+                return Todo(
+                    detail = "No To-Do",
+                    id = -1,
+                    studyInfoId = studyInfoId,
+                    title = "No To-Do",
+                    todoDate = "",
+                    todoCode = "",
+                    todoLink = "",
+                    commitList = listOf()
+                )
             }
         } else {
             Log.e(
@@ -209,7 +231,7 @@ class MainHomeViewModel : ViewModel() {
         )
 
         if (todoProgressResponse.isSuccessful) {
-            todoProgressResponse.body()!!
+            return todoProgressResponse.body()!!
         } else {
             Log.e(
                 "MainHomeViewModel",
