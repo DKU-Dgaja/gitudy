@@ -80,7 +80,7 @@ class TodoViewModel : ViewModel() {
         detail: String,
         todoDate: String
     ) = viewModelScope.launch {
-        val request = MakeTodoRequest(detail, title, todoDate, todoLink)
+        val request = MakeTodoRequest(detail = detail, title = title, todoDate = todoDate, todoLink = todoLink)
 
         val updateTodoResponse = gitudyStudyRepository.updateTodo(
             studyInfoId,

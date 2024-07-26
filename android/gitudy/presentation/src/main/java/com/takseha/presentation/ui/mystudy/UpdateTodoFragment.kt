@@ -164,7 +164,7 @@ class UpdateTodoFragment : Fragment() {
             applyBtn.setOnClickListener {
                 todoDate = closeTimeText.text.toString()
                 Log.d("AddTodoActivity", todoDate)
-                showUpdateTodoDialog(studyInfoId, todoId, title, detail, todoLink, todoDate)
+                showUpdateTodoDialog(studyInfoId, todoId, title, todoLink, detail, todoDate)
             }
         }
 

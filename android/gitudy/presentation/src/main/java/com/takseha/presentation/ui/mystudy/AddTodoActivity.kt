@@ -159,7 +159,7 @@ class AddTodoActivity : AppCompatActivity() {
         val customDialog = CustomDialog(this)
         customDialog.setAlertText(getString(R.string.to_do_add))
         customDialog.setOnConfirmClickListener {
-            viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
+            viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
             finish()
         }
         customDialog.show()
