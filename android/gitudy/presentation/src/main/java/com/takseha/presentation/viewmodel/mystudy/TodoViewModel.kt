@@ -3,6 +3,7 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,6 +38,39 @@ class TodoViewModel: ViewModel() {
             Log.e(
                 "TodoViewModel",
                 "todoListInfoResponse status: ${todoListInfoResponse.code()}\ntodoListInfoResponse message: ${todoListInfoResponse.errorBody()?.string()}"
+            )
+        }
+    }
+
+    fun updateTodo(studyInfoId: Int, todoId: Int, request: MakeTodoRequest) = viewModelScope.launch {
+        val updateTodoResponse = gitudyStudyRepository.updateTodo(
+            studyInfoId,
+            todoId,
+            request
+        )
+
+        if (updateTodoResponse.isSuccessful) {
+            Log.d("TodoViewModel", "updateTodoResponse: ${updateTodoResponse.code()}")
+        } else {
+            Log.e(
+                "TodoViewModel",
+                "updateTodoResponse status: ${updateTodoResponse.code()}\nupdateTodoResponse message: ${updateTodoResponse.errorBody()?.string()}"
+            )
+        }
+    }
+
+    fun deleteTodo(studyInfoId: Int, todoId: Int) = viewModelScope.launch {
+        val deleteTodoResponse = gitudyStudyRepository.deleteTodo(
+            studyInfoId,
+            todoId
+        )
+
+        if (deleteTodoResponse.isSuccessful) {
+            Log.d("TodoViewModel", "deleteTodoResponse: ${deleteTodoResponse.code()}")
+        } else {
+            Log.e(
+                "TodoViewModel",
+                "deleteTodoResponse status: ${deleteTodoResponse.code()}\ndeleteTodoResponse message: ${deleteTodoResponse.errorBody()?.string()}"
             )
         }
     }
