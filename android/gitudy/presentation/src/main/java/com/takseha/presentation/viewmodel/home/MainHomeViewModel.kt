@@ -199,7 +199,6 @@ class MainHomeViewModel : ViewModel() {
 
             if (todoBody.todoList.isNotEmpty()) {
                 val todo = todoBody.todoList.first()
-
                 return todo
             } else {
                 Log.d("MainHomeViewModel", "No To-Do")

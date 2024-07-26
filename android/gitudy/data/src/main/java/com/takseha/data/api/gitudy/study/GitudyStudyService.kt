@@ -6,6 +6,7 @@ import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.MyStudyInfoResponse
 import com.takseha.data.dto.mystudy.SetConventionRequest
+import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import retrofit2.Response
@@ -37,6 +38,12 @@ interface GitudyStudyService {
         @Query("cursorIdx") cursorIdx: Long?,
         @Query("limit") limit: Long,
     ): Response<TodoListResponse>
+
+    @GET("/study/{studyInfoId}/todo/{todoId}")
+    suspend fun getTodo(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Path("todoId") todoId: Int,
+    ): Response<Todo>
 
     @PUT("/study/{studyInfoId}/todo/{todoId}")
     suspend fun updateTodo(

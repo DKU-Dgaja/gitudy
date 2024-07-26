@@ -11,11 +11,13 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class TodoViewModel: ViewModel() {
+class TodoViewModel : ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
 
-    private val _uiState = MutableStateFlow(TodoListInfoState())
-    val uiState = _uiState.asStateFlow()
+    private val _todoListState = MutableStateFlow(TodoListInfoState())
+    val todoListState = _todoListState.asStateFlow()
+    private val _todoState = MutableStateFlow(Todo())
+    val todoState = _todoState.asStateFlow()
 
     fun getTodoList(studyInfoId: Int) = viewModelScope.launch {
         val todoListInfoResponse = gitudyStudyRepository.getTodoList(
@@ -28,7 +30,7 @@ class TodoViewModel: ViewModel() {
             val todoBody = todoListInfoResponse.body()!!
             Log.d("TodoViewModel", "todo body: $todoBody")
 
-            _uiState.update {
+            _todoListState.update {
                 it.copy(
                     todoListInfo = todoBody.todoList
                 )
@@ -37,12 +39,49 @@ class TodoViewModel: ViewModel() {
         } else {
             Log.e(
                 "TodoViewModel",
-                "todoListInfoResponse status: ${todoListInfoResponse.code()}\ntodoListInfoResponse message: ${todoListInfoResponse.errorBody()?.string()}"
+                "todoListInfoResponse status: ${todoListInfoResponse.code()}\ntodoListInfoResponse message: ${
+                    todoListInfoResponse.errorBody()?.string()
+                }"
             )
         }
     }
 
-    fun updateTodo(studyInfoId: Int, todoId: Int, request: MakeTodoRequest) = viewModelScope.launch {
+    fun getTodo(studyInfoId: Int, todoId: Int) = viewModelScope.launch {
+        val getTodoResponse = gitudyStudyRepository.getTodo(
+            studyInfoId,
+            todoId
+        )
+
+        if (getTodoResponse.isSuccessful) {
+            val todoInfo = getTodoResponse.body()!!
+            _todoState.update {
+                it.copy(
+                    title = todoInfo.title,
+                    todoLink = todoInfo.todoLink,
+                    detail = todoInfo.detail,
+                    todoDate = todoInfo.todoDate
+                )
+            }
+        } else {
+            Log.e(
+                "TodoViewModel",
+                "getTodoResponse status: ${getTodoResponse.code()}\ngetTodoResponse message: ${
+                    getTodoResponse.errorBody()?.string()
+                }"
+            )
+        }
+    }
+
+    fun updateTodo(
+        studyInfoId: Int,
+        todoId: Int,
+        title: String,
+        todoLink: String,
+        detail: String,
+        todoDate: String
+    ) = viewModelScope.launch {
+        val request = MakeTodoRequest(detail, title, todoDate, todoLink)
+
         val updateTodoResponse = gitudyStudyRepository.updateTodo(
             studyInfoId,
             todoId,
@@ -54,7 +93,9 @@ class TodoViewModel: ViewModel() {
         } else {
             Log.e(
                 "TodoViewModel",
-                "updateTodoResponse status: ${updateTodoResponse.code()}\nupdateTodoResponse message: ${updateTodoResponse.errorBody()?.string()}"
+                "updateTodoResponse status: ${updateTodoResponse.code()}\nupdateTodoResponse message: ${
+                    updateTodoResponse.errorBody()?.string()
+                }"
             )
         }
     }
@@ -70,7 +111,9 @@ class TodoViewModel: ViewModel() {
         } else {
             Log.e(
                 "TodoViewModel",
-                "deleteTodoResponse status: ${deleteTodoResponse.code()}\ndeleteTodoResponse message: ${deleteTodoResponse.errorBody()?.string()}"
+                "deleteTodoResponse status: ${deleteTodoResponse.code()}\ndeleteTodoResponse message: ${
+                    deleteTodoResponse.errorBody()?.string()
+                }"
             )
         }
     }

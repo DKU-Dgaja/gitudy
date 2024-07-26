@@ -1,7 +1,5 @@
 package com.takseha.presentation.ui.mystudy
 
-import android.content.res.ColorStateList
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -41,8 +39,8 @@ class ToDoFragment : Fragment() {
 
         viewModel.getTodoList(studyInfoId)
         lifecycleScope.launch {
-            viewModel.uiState.collectLatest {
-                setTodoInfo(it.todoListInfo)
+            viewModel.todoListState.collectLatest {
+                setTodoList(it.todoListInfo)
 
                 // TODO: 커밋 히스토리 함께 보기 설정
                 if (binding.commitWithTodoCheckBtn.isChecked) {
@@ -60,7 +58,7 @@ class ToDoFragment : Fragment() {
         }
     }
 
-    private fun setTodoInfo(todoList: List<Todo>) {
+    private fun setTodoList(todoList: List<Todo>) {
         with(binding) {
             val todoListRVAdapter = ToDoListRVAdapter(requireContext(), todoList)
 
@@ -78,7 +76,10 @@ class ToDoFragment : Fragment() {
             }
 
             override fun onUpdateClick(view: View, position: Int) {
-                view.findNavController().navigate(R.id.action_toDoFragment_to_updateTodoFragment)
+                val bundle = Bundle().apply {
+                    putInt("todoId", todoList[position].id)
+                }
+                view.findNavController().navigate(R.id.action_toDoFragment_to_updateTodoFragment, bundle)
             }
 
             override fun onDeleteClick(view: View, position: Int) {

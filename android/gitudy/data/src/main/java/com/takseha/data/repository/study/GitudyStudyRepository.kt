@@ -26,6 +26,11 @@ class GitudyStudyRepository {
         limit: Long,
     ) = client.getTodoList(studyInfoId, cursorIdx, limit)
 
+    suspend fun getTodo(
+        studyInfoId: Int,
+        todoId: Int
+    ) = client.getTodo(studyInfoId, todoId)
+
     suspend fun updateTodo(
         studyInfoId: Int,
         todoId: Int,
