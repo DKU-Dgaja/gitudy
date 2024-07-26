@@ -3,75 +3,28 @@ package com.takseha.presentation.adapter
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
 import android.view.ViewGroup
+import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.Commit
-import com.takseha.data.dto.mystudy.CommitStatus
-import com.takseha.data.dto.mystudy.LikeCount
 import com.takseha.data.dto.mystudy.Todo
+import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemTodoBinding
 import java.time.LocalDate
 
-class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private val onClickListener: OnClickListener) :
-    RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
-    // 임시 커밋 리스트
-    private var commitList: List<Commit> = listOf(
-        Commit(
-            "2024-06-09",
-            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
-            1,
-            LikeCount(0),
-            "6PHP1b #7576:Kotlin",
-            "이주성",
-            CommitStatus.COMMIT_APPROVAL,
-            17,
-            13,
-            13
-        ),
-        Commit(
-            "2024-06-09",
-            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
-            1,
-            LikeCount(0),
-            "6PHP1b #7576:JAVA",
-            "이정우",
-            CommitStatus.COMMIT_REJECTION,
-            17,
-            13,
-            14
-        ),
-        Commit(
-            "2024-06-10",
-            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
-            1,
-            LikeCount(0),
-            "6PHP1b #7576:C++",
-            "구영민",
-            CommitStatus.COMMIT_APPROVAL,
-            17,
-            13,
-            12
-        ),
-        Commit(
-            "2024-06-11",
-            "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
-            1,
-            LikeCount(0),
-            "6PHP1b #7576:C++",
-            "탁세하",
-            CommitStatus.COMMIT_WAITING,
-            17,
-            13,
-            11
-        )
-    )
-
+class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onCommitClick(commit: Commit)
-        fun onTodoClick(todo: Todo)
+        fun onUpdateClick(view: View, position: Int)
+        fun onDeleteClick(view: View, position: Int)
+        fun onLinkClick(view: View, position: Int)
     }
+    var onClickListener: OnClickListener? = null
 
     class ViewHolder(val binding: ItemTodoBinding) : RecyclerView.ViewHolder(binding.root) {
         var todoDate = binding.todoDate
@@ -80,6 +33,7 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private 
         var todoDetail = binding.todoDetailText
         var todoCode = binding.todoCode
         var todoLinkBtn = binding.todoLinkBtn
+        var moreBtn = binding.moreBtn
         var commitList = binding.commitList
     }
 
@@ -96,19 +50,56 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, private 
         holder.todoTime.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
         holder.todoCode.text = todoList[position].todoCode
-        holder.todoLinkBtn.setOnClickListener {
-            // todoList[position].todoLink웹뷰로 이동
+        setCommitList(holder.commitList, todoList[position].commitList)
+
+        if (todoList[position].todoDate == LocalDate.now().toString()) {
+            holder.todoTime.setTextColor(
+                ContextCompat.getColor(
+                    context,
+                    R.color.BASIC_RED
+                )
+            )
         }
-        // setCommitList(holder.commitList, todoList[position].commitList)
-        setCommitList(holder.commitList, commitList)
+
+        holder.moreBtn.setOnClickListener { v ->
+            // more 버튼 클릭 이벤트 처리
+            showPopupMenu(v, position)
+        }
+        holder.todoLinkBtn.setOnClickListener { v ->
+            // todoList[position].todoLink웹뷰로 이동
+            this.onClickListener?.onLinkClick(v, position)
+        }
     }
 
     private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
-        val commitListRVAdapter = CommitListRVAdapter(context, commitList, onClickListener)
+        val commitListRVAdapter = CommitListRVAdapter(context, commitList, this.onClickListener!!)
 
         commitListView.adapter = commitListRVAdapter
         commitListView.layoutManager = LinearLayoutManager(context)
     }
+
+    private fun showPopupMenu(view: View, position: Int) {
+        val popup = PopupMenu(context, view)
+        popup.inflate(R.menu.todo_item_menu)
+
+        popup.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.menu_edit -> {
+                    // 수정 버튼 클릭 처리
+                    this.onClickListener?.onUpdateClick(view, position)
+                    true
+                }
+                R.id.menu_delete -> {
+                    // 삭제 버튼 클릭 처리
+                    this.onClickListener?.onDeleteClick(view, position)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
+    }
+
 
     override fun getItemCount(): Int {
         return todoList.size

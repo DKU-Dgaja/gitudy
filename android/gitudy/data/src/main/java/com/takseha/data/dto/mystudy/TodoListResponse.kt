@@ -12,19 +12,19 @@ data class TodoListResponse(
 
 data class Todo(
     @SerializedName("detail")
-    val detail: String,
+    val detail: String = "",
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("study_info_id")
-    val studyInfoId: Int,
+    val studyInfoId: Int = 0,
     @SerializedName("title")
-    val title: String,
+    val title: String = "",
     @SerializedName("todo_date")
-    val todoDate: String,
+    val todoDate: String = "",
     @SerializedName("todo_code")
-    val todoCode: String,
+    val todoCode: String = "",
     @SerializedName("todo_link")
-    val todoLink: String,
+    val todoLink: String = "",
     @SerializedName("commits")
-    val commitList: List<Commit>
+    val commitList: List<Commit> = listOf()
 )

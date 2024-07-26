@@ -1,41 +1,67 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.app.DatePickerDialog
-import android.app.Dialog
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.icu.util.Calendar
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.TextView
-import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import com.takseha.presentation.R
-import com.takseha.presentation.databinding.ActivityAddTodoBinding
-import com.takseha.presentation.databinding.LayoutDialogBinding
+import com.takseha.presentation.databinding.FragmentUpdateTodoBinding
 import com.takseha.presentation.ui.common.CustomDialog
-import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
+import com.takseha.presentation.viewmodel.mystudy.TodoViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 
-class AddTodoActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityAddTodoBinding
-    private val viewModel: AddTodoViewModel by viewModels()
+class UpdateTodoFragment : Fragment() {
+    private var _binding: FragmentUpdateTodoBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: TodoViewModel by viewModels()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_add_todo)
-        setBinding()
-        window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
+    }
 
-        val studyInfoId = intent.getIntExtra("studyInfoId", 0)
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentUpdateTodoBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        val studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
+        val todoId = requireArguments().getInt("todoId")
+
+        viewModel.getTodo(studyInfoId, todoId)
+        lifecycleScope.launch {
+            viewModel.todoState.collectLatest {
+                with(binding) {
+                    todoTitleText.setText(it.title)
+                    todoLinkText.setText(it.todoLink)
+                    todoDetailText.setText(it.detail)
+                    closeTimeText.text = it.todoDate
+
+                    applyBtn.isEnabled = false
+                }
+            }
+        }
 
         with(binding) {
             var title = todoTitleText.text.toString()
@@ -115,21 +141,33 @@ class AddTodoActivity : AppCompatActivity() {
                 }
             })
 
-            closeTimeText.text = LocalDate.now().toString()
             closeTime.setOnClickListener {
                 showDatePickerDialog(closeTimeText)
             }
 
+            closeTimeText.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+                override fun afterTextChanged(s: Editable?) {
+                    applyBtn.isEnabled =
+                        title.isNotEmpty() && detail.isNotEmpty() && closeTimeText.text.isNotEmpty()
+                }
+            })
+
+
             backBtn.setOnClickListener {
-                finish()
+                it.findNavController().popBackStack()
             }
 
             applyBtn.setOnClickListener {
                 todoDate = closeTimeText.text.toString()
                 Log.d("AddTodoActivity", todoDate)
-                showAddTodoDialog(studyInfoId, title, detail, todoLink, todoDate)
+                showUpdateTodoDialog(studyInfoId, todoId, title, detail, todoLink, todoDate)
             }
         }
+
     }
 
     private fun showDatePickerDialog(closeTimeText: TextView) {
@@ -139,12 +177,12 @@ class AddTodoActivity : AppCompatActivity() {
         val day = calendar.get(Calendar.DAY_OF_MONTH)
 
         val datePickerDialog = DatePickerDialog(
-            this, R.style.CustomDatePicker,
+            requireContext(), R.style.CustomDatePicker,
             { _, selectedYear, selectedMonth, selectedDay ->
                 closeTimeText.text = String.format("%d-%02d-%02d", selectedYear, selectedMonth + 1, selectedDay)
                 closeTimeText.setTextColor(
                     ContextCompat.getColor(
-                        this,
+                        requireContext(),
                         R.color.GS_900
                     )
                 )
@@ -155,19 +193,18 @@ class AddTodoActivity : AppCompatActivity() {
         datePickerDialog.show()
     }
 
-    private fun showAddTodoDialog(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.to_do_add))
+    private fun showUpdateTodoDialog(studyInfoId: Int, todoId: Int, title: String, todoLink: String, detail: String, todoDate: String) {
+        val customDialog = CustomDialog(requireContext())
+        customDialog.setAlertText(getString(R.string.to_do_update))
         customDialog.setOnConfirmClickListener {
-            viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
-            finish()
+            viewModel.updateTodo(studyInfoId, todoId, title, todoLink, detail, todoDate)
+            view?.findNavController()?.popBackStack()
         }
         customDialog.show()
     }
 
-    private fun setBinding() {
-        binding = ActivityAddTodoBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
