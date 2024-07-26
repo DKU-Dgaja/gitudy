@@ -29,7 +29,7 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
     class ViewHolder(val binding: ItemTodoBinding) : RecyclerView.ViewHolder(binding.root) {
         var todoDate = binding.todoDate
         var todoTitle = binding.todoDetailTitle
-        var todoTime = binding.todoTime
+        var todoSetDate = binding.todoSetDate
         var todoDetail = binding.todoDetailText
         var todoCode = binding.todoCode
         var todoLinkBtn = binding.todoLinkBtn
@@ -45,15 +45,15 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.todoDate.text = (LocalDate.now().minusDays((position * 7).toLong())).toString()
+        holder.todoSetDate.text = LocalDate.now().toString()
         holder.todoTitle.text = todoList[position].title
-        holder.todoTime.text = todoList[position].todoDate
+        holder.todoDate.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
         holder.todoCode.text = todoList[position].todoCode
         setCommitList(holder.commitList, todoList[position].commitList)
 
         if (todoList[position].todoDate == LocalDate.now().toString()) {
-            holder.todoTime.setTextColor(
+            holder.todoDate.setTextColor(
                 ContextCompat.getColor(
                     context,
                     R.color.BASIC_RED
