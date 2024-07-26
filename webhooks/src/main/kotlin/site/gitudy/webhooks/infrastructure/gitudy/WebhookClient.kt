@@ -15,7 +15,7 @@ class WebhookClient(
 ) {
     private val log = logger<WebhookClient>()
     suspend fun saveWebhookCommit(request: WebhookCommitRequest) {
-        val response = WebClient.create("gitudy")
+        val response = WebClient.create("gitudy:8080")
             .post()
             .uri("/webhook/commit")
             .header("Authorization", "Bearer $serverToken")
