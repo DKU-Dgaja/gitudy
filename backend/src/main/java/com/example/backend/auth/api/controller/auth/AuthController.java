@@ -12,6 +12,8 @@ import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequ
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
+import com.example.backend.auth.api.service.rank.RankingService;
+import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -19,6 +21,7 @@ import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -43,6 +46,8 @@ public class AuthController {
     private final AuthService authService;
     private final OAuthService oAuthService;
     private final LoginStateService loginStateService;
+    private final RankingService rankingService;
+    private final StudyMemberService studyMemberService;
 
 
     @ApiResponse(responseCode = "200", description = "로그인페이지 요청 성공", content = @Content(schema = @Schema(implementation = AuthLoginPageResponse.class)))
@@ -185,4 +190,14 @@ public class AuthController {
 
         return ResponseEntity.ok().build();
     }
+
+    @ApiResponse(responseCode = "200", description = "특정유저 랭킹 요청 성공")
+    @GetMapping("/user-rank")
+    public ResponseEntity<UserRankingResponse> userRanking(@AuthenticationPrincipal User user) {
+
+        UserRankingResponse response = rankingService.getUserRankings(user);
+
+        return ResponseEntity.ok().body(response);
+    }
+
 }
