@@ -3,22 +3,15 @@ package com.example.backend.study.api.service.github;
 import com.example.backend.TestConfig;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
-import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
-import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.domain.define.study.todo.StudyTodoFixture;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.service.github.response.GithubCommitResponse;
+import com.example.backend.external.clients.github.GithubApiTokenClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHHook;
@@ -27,17 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class GithubApiServiceTest extends TestConfig {
-    private final String REPOSITORY_OWNER = "jusung-c";
-    private final String REPOSITORY_NAME = "Github-Api-Test";
+    private static final String NEW_TOKEN = "new_token";
 
     @Value("${github.api.webhookURL}")
     private String webhookUrl;
@@ -66,6 +55,12 @@ class GithubApiServiceTest extends TestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
+    @Autowired
+    private GithubApiTokenService githubApiTokenService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
@@ -75,25 +70,6 @@ class GithubApiServiceTest extends TestConfig {
         studyInfoRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
-    }
-
-    @Test
-    void 깃허브_레포지토리_조회_테스트() {
-        // given
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        // when
-        GHRepository repository = githubApiService.getRepository(githubApiToken, repo);
-
-        // then
-        assertAll(
-                () -> assertEquals(repository.getOwnerName(), REPOSITORY_OWNER),
-                () -> assertEquals(repository.getName(), REPOSITORY_NAME)
-        );
     }
 
     // 웹에서 테스트 해야 합니다.
