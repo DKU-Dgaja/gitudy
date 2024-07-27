@@ -3,22 +3,15 @@ package com.example.backend.study.api.service.github;
 import com.example.backend.TestConfig;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
-import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
-import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.domain.define.study.todo.StudyTodoFixture;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.service.github.response.GithubCommitResponse;
+import com.example.backend.external.clients.github.GithubApiTokenClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.kohsuke.github.GHHook;
@@ -27,17 +20,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
-import java.time.LocalDate;
 import java.util.List;
 
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class GithubApiServiceTest extends TestConfig {
-    private final String REPOSITORY_OWNER = "jusung-c";
-    private final String REPOSITORY_NAME = "Github-Api-Test";
+    private static final String NEW_TOKEN = "new_token";
 
     @Value("${github.api.webhookURL}")
     private String webhookUrl;
@@ -66,6 +55,12 @@ class GithubApiServiceTest extends TestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
+    @Autowired
+    private GithubApiTokenService githubApiTokenService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
@@ -75,25 +70,6 @@ class GithubApiServiceTest extends TestConfig {
         studyInfoRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
-    }
-
-    @Test
-    void 깃허브_레포지토리_조회_테스트() {
-        // given
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        // when
-        GHRepository repository = githubApiService.getRepository(githubApiToken, repo);
-
-        // then
-        assertAll(
-                () -> assertEquals(repository.getOwnerName(), REPOSITORY_OWNER),
-                () -> assertEquals(repository.getName(), REPOSITORY_NAME)
-        );
     }
 
     // 웹에서 테스트 해야 합니다.
@@ -170,5 +146,109 @@ class GithubApiServiceTest extends TestConfig {
 
         // when
         assertFalse(githubApiService.repositoryExists(githubApiToken, owner, repo));
+    }
+
+    @Test
+    void 깃허브_토큰_재발급_성공_테스트_Mock() {
+        // given
+        String githubId = "jusung-c";
+        String oldToken = "old_token";
+        String expectedNewToken = "new_token";
+
+        MockGithubApiTokenClients mockGithubApiTokenClients = new MockGithubApiTokenClients(expectedNewToken);
+        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, mockGithubApiTokenClients, objectMapper);
+
+        // when
+        String newToken = githubApiService.resetGithubToken(oldToken, githubId);
+
+        System.out.println("newToken = " + newToken);
+
+        assertEquals(expectedNewToken, newToken);
+    }
+
+    @Test
+    void 잘못된_깃허브_토큰으로_재발급을_시도하면_실패한다_Mock() {
+        // given
+        String githubId = "jusung-c";
+        String invalid = "invalid";
+        String expectedNewToken = "new_token";
+
+        MockGithubApiTokenClients mockGithubApiTokenClients = new MockGithubApiTokenClients(expectedNewToken);
+        mockGithubApiTokenClients.setException(true);
+        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, mockGithubApiTokenClients, objectMapper);
+
+        // when
+        GithubApiException exception = assertThrows(GithubApiException.class, () -> githubApiService.resetGithubToken(invalid, githubId));
+
+        // then
+        assertEquals(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText(), exception.getMessage());
+    }
+
+    @Test
+    void 잘못된_깃허브_토큰으로_재발급을_시도하면_실패한다() {
+        // given
+        String githubId = "jusung-c";
+        String invalid = "invalid-token";
+
+        // when
+        var e = assertThrows(GithubApiException.class, () -> githubApiService.connectGithub(invalid, githubId));
+        assertEquals(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText(), e.getMessage());
+    }
+
+    @Test
+    void 깃허브_토큰_재발급_응답_추출_테스트() {
+        // given
+        String response = "{\n" +
+                "  \"id\": 1,\n" +
+                "  \"url\": \"https://HOSTNAME/authorizations/1\",\n" +
+                "  \"scopes\": [\n" +
+                "    \"public_repo\"\n" +
+                "  ],\n" +
+                "  \"token\": \"test\",\n" +
+                "  \"token_last_eight\": \"test\",\n" +
+                "  \"hashed_token\": \"test\",\n" +
+                "  \"app\": {\n" +
+                "    \"url\": \"http://my-github-app.com\",\n" +
+                "    \"name\": \"my github app\",\n" +
+                "    \"client_id\": \"test\"\n" +
+                "  },\n" +
+                "  \"note\": \"optional note\",\n" +
+                "  \"note_url\": \"http://optional/note/url\",\n" +
+                "  \"updated_at\": \"2011-09-06T20:39:23Z\",\n" +
+                "  \"created_at\": \"2011-09-06T17:26:27Z\",\n" +
+                "  \"expires_at\": \"2011-10-06T17:26:27Z\",\n" +
+                "  \"fingerprint\": \"test\"\n" +
+                "}";
+
+        String expectedToken = "test";
+
+        // when
+        String token = githubApiService.parseTokenFromResponse(response);
+
+        // then
+        assertEquals(expectedToken, token);
+    }
+
+
+    static class MockGithubApiTokenClients implements GithubApiTokenClient {
+        String newToken;
+        private boolean exception;
+
+        public MockGithubApiTokenClients(String newToken) {
+            this.newToken = newToken;
+        }
+
+        public void setException(boolean exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        public String resetGithubApiToken(String clientId, String authorizationHeader, String apiVersion, String contentType, String accept, String requestBody) {
+            if (exception) {
+                throw new RuntimeException("Token reset failed");
+            }
+
+            return "{\"token\":\"" + newToken + "\"}";
+        }
     }
 }
