@@ -28,6 +28,11 @@ public class StudyInfoFixture {
                 .status(STUDY_PUBLIC)
                 .currentMember(1)
                 .maximumMember(10)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("user")
+                        .name("name")
+                        .branchName("main")
+                        .build())
                 .build();
     }
 
