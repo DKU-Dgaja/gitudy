@@ -68,6 +68,7 @@ class AuthServiceTest extends MockTestConfig {
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
+        githubApiTokenRepository.deleteAll();
     }
 
     @Test
@@ -89,14 +90,14 @@ class AuthServiceTest extends MockTestConfig {
         authService.login(GITHUB, code, state);
 
         User user = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).get();
-        GithubApiToken githubApiToken = githubApiTokenRepository.findById(user.getId()).get();
+        GithubApiToken githubApiToken = githubApiTokenRepository.findByUserId(user.getId()).get();
 
         // then
         assertThat(user).isNotNull();
         assertThat(user.getRole().name()).isEqualTo(UserRole.UNAUTH.name());
 
         // githubApiToken 생성 검증
-        assertThat(githubApiToken.getGithubApiToken()).isEqualTo(token);
+        assertThat(githubApiToken.githubApiToken()).isEqualTo(token);
     }
 
     @Test

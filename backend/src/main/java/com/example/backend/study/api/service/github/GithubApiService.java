@@ -22,16 +22,14 @@ import java.util.Map;
 @Transactional(readOnly = true)
 @Service
 public class GithubApiService {
-    @Value("${github.api.token}")
-    private String token;
 
     @Value("${github.api.webhookURL}")
     private String webhookUrl;
 
     // 깃허브 통신을 위한 커넥션 생성
-    public GitHub connectGithub(String token) {
+    public GitHub connectGithub(String githubApiToken) {
         try {
-            GitHub github = new GitHubBuilder().withOAuthToken(token).build();
+            GitHub github = new GitHubBuilder().withOAuthToken(githubApiToken).build();
             github.checkApiUrlValidity();
             log.info(">>>> [ 깃허브 api 연결에 성공하였습니다. ] <<<<");
 
@@ -44,9 +42,9 @@ public class GithubApiService {
     }
 
     // 레포지토리 정보 가져오기
-    public GHRepository getRepository(RepositoryInfo studyInfo) {
+    public GHRepository getRepository(String githubApiToken, RepositoryInfo studyInfo) {
         try {
-            GitHub gitHub = connectGithub(token);
+            GitHub gitHub = connectGithub(githubApiToken);
             return gitHub.getRepository(studyInfo.getOwner() + "/" + studyInfo.getName());
         } catch (IOException e) {
             log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_REPOSITORY_ERROR.getText(), e.getMessage());
@@ -56,9 +54,9 @@ public class GithubApiService {
 
     // 깃허브 레포지토리 생성 메서드
     @Transactional
-    public GHRepository createRepository(RepositoryInfo repoInfo, String description) {
+    public GHRepository createRepository(String githubApiToken, RepositoryInfo repoInfo, String description) {
         try {
-            GitHub gitHub = connectGithub(token);
+            GitHub gitHub = connectGithub(githubApiToken);
 
             // 레포지토리 이름 중복 확인
             if (repositoryExists(gitHub, repoInfo.getOwner() + "/" + repoInfo.getName())) {
