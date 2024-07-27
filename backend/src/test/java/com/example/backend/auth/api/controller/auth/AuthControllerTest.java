@@ -11,6 +11,8 @@ import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequ
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.api.service.rank.RankingService;
+import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -59,6 +61,9 @@ class AuthControllerTest extends MockTestConfig {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private RankingService rankingService;
 
     @AfterEach
     void tearDown() {
@@ -478,6 +483,25 @@ class AuthControllerTest extends MockTestConfig {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(expectedError))
+                .andDo(print());
+    }
+
+    @Test
+    void 특정_유저_활동점수_랭킹_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+
+        when(rankingService.getUserRankings(savedUser)).thenReturn(any(UserRankingResponse.class));
+
+        // when
+        mockMvc.perform(get("/auth/user-rank")
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
