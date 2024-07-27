@@ -127,7 +127,7 @@ class AddTodoActivity : AppCompatActivity() {
             applyBtn.setOnClickListener {
                 todoDate = closeTimeText.text.toString()
                 Log.d("AddTodoActivity", todoDate)
-                showAddTodoDialog(studyInfoId, title, detail, todoLink, todoDate)
+                showAddTodoDialog(studyInfoId, title, todoLink, detail, todoDate)
             }
         }
     }

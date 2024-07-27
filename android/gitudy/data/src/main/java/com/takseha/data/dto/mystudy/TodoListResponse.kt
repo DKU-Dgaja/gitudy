@@ -25,6 +25,8 @@ data class Todo(
     val todoCode: String = "",
     @SerializedName("todo_link")
     val todoLink: String = "",
+    @SerializedName("created_date_time")
+    val todoSetDate: String = "",
     @SerializedName("commits")
     val commitList: List<Commit> = listOf()
 )

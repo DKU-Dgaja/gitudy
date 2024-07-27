@@ -16,6 +16,7 @@ import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemTodoBinding
 import java.time.LocalDate
+import java.time.LocalDateTime
 
 class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
     interface OnClickListener {
@@ -45,7 +46,7 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.todoSetDate.text = LocalDate.now().toString()
+        holder.todoSetDate.text = LocalDateTime.parse(todoList[position].todoSetDate).toLocalDate().toString()
         holder.todoTitle.text = todoList[position].title
         holder.todoDate.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
