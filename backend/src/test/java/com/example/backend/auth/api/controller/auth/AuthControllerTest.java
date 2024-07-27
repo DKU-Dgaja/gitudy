@@ -209,28 +209,28 @@ class AuthControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.message").value(ExceptionMessage.JWT_MALFORMED.getText()));
     }
 
-//    @Test
-//    @DisplayName("유저정보 조회 실패 테스트 - 잘못된 권한")
-//    void userInfoWhenInvalidAuthority() throws Exception {
-//        User user = generateUNAUTHUser();
-//        User savedUser = userRepository.save(user);
-//
-//        HashMap<String, String> map = new HashMap<>();
-//        map.put("role", savedUser.getRole().name());
-//        map.put("platformId", savedUser.getPlatformId());
-//        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
-//
-//        String accessToken = jwtService.generateAccessToken(map, user);
-//
-//        // when
-//        mockMvc.perform(get("/auth/info")
-//                        .contentType(MediaType.APPLICATION_JSON)
-//                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-//                // then
-//                .andExpect(status().isForbidden())
-//                .andDo(print());
-//
-//    }
+    @Test
+    @DisplayName("유저정보 조회 실패 테스트 - 잘못된 권한")
+    void userInfoWhenInvalidAuthority() throws Exception {
+        User user = generateUNAUTHUser();
+        User savedUser = userRepository.save(user);
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("role", savedUser.getRole().name());
+        map.put("platformId", savedUser.getPlatformId());
+        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
+
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        // when
+        mockMvc.perform(get("/auth/info")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+                // then
+                .andExpect(status().isForbidden())
+                .andDo(print());
+
+    }
 
     @Test
     void 사용자_정보_수정_페이지_성공_테스트() throws Exception {
