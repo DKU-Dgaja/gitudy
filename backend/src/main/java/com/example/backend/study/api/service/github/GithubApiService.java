@@ -1,5 +1,6 @@
 package com.example.backend.study.api.service.github;
 
+import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
@@ -37,6 +38,7 @@ public class GithubApiService {
 
     private final GithubApiTokenService githubApiTokenService;
 
+    private final AuthService authService;
     private final GithubApiTokenClient githubApiTokenClient;
     private final ObjectMapper objectMapper;
 
@@ -48,24 +50,21 @@ public class GithubApiService {
         } catch (IOException e) {
             if (isTokenExpired(e)) {
 
-
                 log.warn(">>>> 유효하지 않은 토큰입니다. 재발급을 시도합니다...");
 
                 // 재발급을 위한 유저 조회
-
+                Long userId = authService.findUserIdByGithubIdOrElseThrowException(githubId);
 
                 // 토큰 재발급
-                String newToken = resetGithubToken(githubApiToken, githubId);
-
-                System.out.println("newToken = " + newToken);
+                String newToken = resetGithubToken(githubApiToken, userId);
 
                 // 깃허브 api 연결 재시도
                 try {
                     return tryConnectGithub(newToken);
                 } catch (IOException re) {
 
-                    // 재시도 후에도 실패한 경우 토큰 삭제
-//                    githubApiTokenService.deleteToken(userId);
+                    // 재시도 후에도 실패한 경우는 토큰을 아예 삭제
+                    githubApiTokenService.deleteToken(userId);
 
                     log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_RESET_TOKEN_RETRY_FAIL.getText(), re.getMessage());
                     throw new GithubApiException(ExceptionMessage.GITHUB_API_RESET_TOKEN_RETRY_FAIL);
@@ -79,7 +78,7 @@ public class GithubApiService {
     }
 
     @Transactional
-    public String resetGithubToken(String oldToken, String githubId) {
+    public String resetGithubToken(String oldToken, Long userId) {
         String authorizationHeader = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         String requestBody = "{\"access_token\":\"" + oldToken + "\"}";
         String apiVersion = "2022-11-28";
@@ -97,15 +96,11 @@ public class GithubApiService {
 
             String newToken = parseTokenFromResponse(response);
 
-            System.out.println("newToken = " + newToken);
-
             // 재발급 받은 토큰으로 업데이트
-            // githubApiTokenService.saveToken(newToken, githubId); // 예시로 주석 처리
+             githubApiTokenService.saveToken(newToken, userId);
+
             return newToken;
         } catch (RuntimeException e) {
-
-            System.out.println("e.getMessage() = " + e.getMessage());
-
             log.error(">>>> [ {} ] <<<<", ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText());
             throw new GithubApiException(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL);
         }

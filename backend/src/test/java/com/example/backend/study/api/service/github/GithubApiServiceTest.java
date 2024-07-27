@@ -1,10 +1,14 @@
 package com.example.backend.study.api.service.github;
 
 import com.example.backend.TestConfig;
+import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -61,6 +65,9 @@ class GithubApiServiceTest extends TestConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
+    @Autowired
+    private AuthService authService;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
@@ -97,7 +104,6 @@ class GithubApiServiceTest extends TestConfig {
         boolean webhookRegistered = isWebhookRegistered(createdRepository, webhookUrl);
         assertTrue(webhookRegistered, "웹훅이 등록되지 않았습니다.");
     }
-
 
     // 웹에서 테스트 해야 합니다.
     // @Test
@@ -151,48 +157,41 @@ class GithubApiServiceTest extends TestConfig {
     @Test
     void 깃허브_토큰_재발급_성공_테스트_Mock() {
         // given
-        String githubId = "jusung-c";
         String oldToken = "old_token";
         String expectedNewToken = "new_token";
 
+        User user = userRepository.save(UserFixture.generateAuthJusung());
+        githubApiTokenService.saveToken(oldToken, user.getId());
+
         MockGithubApiTokenClients mockGithubApiTokenClients = new MockGithubApiTokenClients(expectedNewToken);
-        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, mockGithubApiTokenClients, objectMapper);
+        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, authService, mockGithubApiTokenClients, objectMapper);
 
         // when
-        String newToken = githubApiService.resetGithubToken(oldToken, githubId);
-
-        System.out.println("newToken = " + newToken);
+        String newToken = githubApiService.resetGithubToken(oldToken, user.getId());
+        GithubApiToken savedToken = githubApiTokenService.getToken(user.getId());
 
         assertEquals(expectedNewToken, newToken);
+        assertEquals(expectedNewToken, savedToken.githubApiToken());
     }
 
     @Test
     void 잘못된_깃허브_토큰으로_재발급을_시도하면_실패한다_Mock() {
         // given
-        String githubId = "jusung-c";
         String invalid = "invalid";
         String expectedNewToken = "new_token";
 
+        User user = userRepository.save(UserFixture.generateAuthJusung());
+        githubApiTokenService.saveToken(invalid, user.getId());
+
         MockGithubApiTokenClients mockGithubApiTokenClients = new MockGithubApiTokenClients(expectedNewToken);
         mockGithubApiTokenClients.setException(true);
-        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, mockGithubApiTokenClients, objectMapper);
+        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, authService, mockGithubApiTokenClients, objectMapper);
 
         // when
-        GithubApiException exception = assertThrows(GithubApiException.class, () -> githubApiService.resetGithubToken(invalid, githubId));
+        GithubApiException exception = assertThrows(GithubApiException.class, () -> githubApiService.resetGithubToken(invalid, user.getId()));
 
         // then
         assertEquals(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText(), exception.getMessage());
-    }
-
-    @Test
-    void 잘못된_깃허브_토큰으로_재발급을_시도하면_실패한다() {
-        // given
-        String githubId = "jusung-c";
-        String invalid = "invalid-token";
-
-        // when
-        var e = assertThrows(GithubApiException.class, () -> githubApiService.connectGithub(invalid, githubId));
-        assertEquals(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText(), e.getMessage());
     }
 
     @Test
