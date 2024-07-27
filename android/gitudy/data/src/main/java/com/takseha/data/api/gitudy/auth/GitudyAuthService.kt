@@ -8,6 +8,7 @@ import com.takseha.data.dto.auth.register.RegisterRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -28,14 +29,15 @@ interface GitudyAuthService {
         @Body request: String
     ): Response<Void>
 
-
     @POST("/auth/register")
     suspend fun getRegisterTokens(
+        @Header("Authorization") token: String,
         @Body request: RegisterRequest
     ): Response<TokenResponse>
 
     @POST("/auth/reissue")
     suspend fun reissueTokens(
+        @Header("Authorization") token: String
     ): Response<ReissueTokenResponse>
 
     @GET("/auth/info")

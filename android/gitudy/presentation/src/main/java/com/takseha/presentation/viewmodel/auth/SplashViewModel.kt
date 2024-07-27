@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import com.takseha.data.dto.auth.login.RoleStatus
 import com.takseha.data.repository.auth.GitudyAuthRepository
 
 class SplashViewModel: ViewModel() {
@@ -17,7 +18,7 @@ class SplashViewModel: ViewModel() {
         val checkTokenResponse = gitudyAuthRepository.getUserInfo()
 
         if (checkTokenResponse.isSuccessful) {
-            _availableTokenCheck.value = true
+            if (checkTokenResponse.body()?.role == RoleStatus.WITHDRAW || checkTokenResponse.body()?.role == RoleStatus.UNAUTH) _availableTokenCheck.value = false else _availableTokenCheck.value = true
         } else {
             if (checkTokenResponse.code() == 401 || checkTokenResponse.code() == 403) {
                 // token 문제일 때

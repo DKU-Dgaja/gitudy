@@ -11,7 +11,7 @@ class AddTodoViewModel: ViewModel() {
     private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
 
     fun makeNewTodo(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) = viewModelScope.launch {
-        val request = MakeTodoRequest(detail, title, todoDate, todoLink)
+        val request = MakeTodoRequest(detail = detail, title = title, todoDate = todoDate, todoLink = todoLink)
         Log.d("AddTodoViewModel", request.toString())
 
         val newTodoResponse = gitudyStudyRepository.makeNewTodo(studyInfoId, request)

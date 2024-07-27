@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
+import com.takseha.data.dto.mystudy.RepositoryInfo
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,7 +22,7 @@ class MakeStudyViewModel: ViewModel() {
     val newStudyInfoState = _newStudyInfoState.asStateFlow()
 
     fun setStudyIntro(title: String, detail: String, githubRepo: String) {
-        _newStudyInfoState.update { it.copy(topic = title, info = detail, branchName = githubRepo) }
+        _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryInfo = RepositoryInfo(owner = "jusung-c", name = githubRepo, branchName = "main")) }
     }
     fun setStudyRule(commitTimes: StudyPeriodStatus, isPublic: StudyStatus, maxMember: Int) {
         _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = backgroundColorList[randIdx]) }
@@ -37,7 +38,7 @@ class MakeStudyViewModel: ViewModel() {
         if (newStudyResponse.isSuccessful) {
             Log.d("MakeStudyViewModel", newStudyResponse.code().toString())
         } else {
-            Log.e("MakeStudyViewModel", "newStudyResponse status: ${newStudyResponse.code()}\nnewStudyResponse message: ${newStudyResponse.message()}")
+            Log.e("MakeStudyViewModel", "newStudyResponse status: ${newStudyResponse.code()}\nnewStudyResponse message: ${newStudyResponse.errorBody()?.string()}")
         }
     }
 }

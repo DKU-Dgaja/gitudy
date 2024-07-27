@@ -12,8 +12,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyInfo
+import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.FeedRVAdapter
+import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentFeedHomeBinding
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -56,17 +58,11 @@ class FeedHomeFragment : Fragment() {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.getFeedList(null, 10, "createdDateTime")
                 viewModel.uiState.collectLatest {
-                    if (it.studyInfoList.isNotEmpty()) {
-                        val feedRVAdapter = FeedRVAdapter(requireContext(), it.studyInfoList)
-
-                        if (feedRVAdapter.itemCount == 0) {
-                            isNoStudyLayout.visibility = View.VISIBLE
-                        }
-
-                        feedList.adapter = feedRVAdapter
-                        feedList.layoutManager = LinearLayoutManager(requireContext())
-
-                        clickFeedItem(feedRVAdapter, it.studyInfoList)
+                    if (!it.isFeedEmpty) {
+                        binding.isNoStudyLayout.visibility = View.GONE
+                        setFeedList(it.studyInfoList)
+                    } else {
+                        binding.isNoStudyLayout.visibility = View.VISIBLE
                     }
                 }
             }
@@ -75,6 +71,17 @@ class FeedHomeFragment : Fragment() {
                 viewModel.getFeedList(null, 10, "createdDateTime")
                 swipeRefreshFeedList.isRefreshing = false
             }
+        }
+    }
+
+    private fun setFeedList(studyList: List<StudyInfo>) {
+        with(binding) {
+            val feedRVAdapter = FeedRVAdapter(requireContext(), studyList)
+
+            feedList.adapter = feedRVAdapter
+            feedList.layoutManager = LinearLayoutManager(requireContext())
+
+            clickFeedItem(feedRVAdapter, studyList)
         }
     }
 

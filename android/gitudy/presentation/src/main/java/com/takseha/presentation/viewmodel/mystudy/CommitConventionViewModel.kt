@@ -7,6 +7,7 @@ import com.takseha.data.dto.mystudy.SetConventionRequest
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.launch
 
+// 추후 삭제 예정
 class CommitConventionViewModel: ViewModel() {
     private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
 
@@ -24,15 +25,7 @@ class CommitConventionViewModel: ViewModel() {
             gitudyStudyRepository.setConvention(studyInfoId, request)
 
         if (newConventionResponse.isSuccessful) {
-            val resCode = newConventionResponse.body()!!.resCode
-            val resMsg = newConventionResponse.body()!!.resMsg
-            val resObj = newConventionResponse.body()!!.resObj
-
-            if (resCode == 200 && resMsg == "OK") {
-                Log.d("CommitConventionViewModel", resObj)
-            } else {
-                Log.e("CommitConventionViewModel", "https status error: $resCode, $resMsg")
-            }
+            Log.d("CommitConventionViewModel", newConventionResponse.code().toString())
         } else {
             Log.e(
                 "CommitConventionViewModel",

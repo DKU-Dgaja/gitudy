@@ -13,11 +13,7 @@ class TokenInterceptor(
         var request = chain.request()
 
         // 토큰을 헤더에 추가
-        request = if (request.url().encodedPath().contains("/auth/reissue")) {
-            addTokenToRequest(request, tokenManager.refreshToken)
-        } else {
-            addTokenToRequest(request, tokenManager.accessToken)
-        }
+        request = addTokenToRequest(request, tokenManager.accessToken)
 
         // 원래 요청을 실행
         val response = chain.proceed(request)
