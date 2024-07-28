@@ -3,7 +3,7 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.mystudy.MyStudyInfoResponse
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
@@ -22,7 +22,7 @@ class MyStudyMainViewModel: ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     fun getMyStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
+        val myStudyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
 
         if (myStudyInfoResponse.isSuccessful) {
             val myStudyInfo = myStudyInfoResponse.body()!!
@@ -133,7 +133,7 @@ class MyStudyMainViewModel: ViewModel() {
 }
 
 data class MyStudyMainInfoState(
-    var myStudyInfo: MyStudyInfoResponse = MyStudyInfoResponse(),
+    var myStudyInfo: StudyInfoResponse = StudyInfoResponse(),
     var todoInfo: Todo? = null,
     var conventionInfo: StudyConvention? = null,
     var studyMemberListInfo: List<StudyMember> = listOf()

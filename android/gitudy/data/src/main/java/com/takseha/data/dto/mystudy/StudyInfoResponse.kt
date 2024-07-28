@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 
-data class MyStudyInfoResponse(
+data class StudyInfoResponse(
     @SerializedName("category_names")
     val categoryNames: List<String> = listOf(),
     @SerializedName("created_date_time")

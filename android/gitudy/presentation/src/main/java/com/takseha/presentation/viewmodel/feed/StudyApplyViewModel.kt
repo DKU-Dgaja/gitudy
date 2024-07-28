@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MessageRequest
-import com.takseha.data.dto.mystudy.MyStudyInfoResponse
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.repository.member.GitudyMemberRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,14 +20,14 @@ class StudyApplyViewModel: ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     fun getStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
+        val studyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
 
-        if (myStudyInfoResponse.isSuccessful) {
-            val myStudyInfo = myStudyInfoResponse.body()!!
+        if (studyInfoResponse.isSuccessful) {
+            val studyInfo = studyInfoResponse.body()!!
 
             _uiState.update {
                 it.copy(
-                    studyInfo = myStudyInfo,
+                    studyInfo = studyInfo
                 )
             }
 
@@ -35,7 +35,7 @@ class StudyApplyViewModel: ViewModel() {
         } else {
             Log.e(
                 "StudyApplyViewModel",
-                "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.message()}"
+                "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.message()}"
             )
         }
     }
@@ -55,5 +55,5 @@ class StudyApplyViewModel: ViewModel() {
 }
 
 data class StudyMainInfoState(
-    var studyInfo: MyStudyInfoResponse = MyStudyInfoResponse()
+    var studyInfo: StudyInfoResponse = StudyInfoResponse()
 )

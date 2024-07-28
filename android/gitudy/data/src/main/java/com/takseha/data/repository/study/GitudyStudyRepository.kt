@@ -51,9 +51,9 @@ class GitudyStudyRepository {
         studyInfoId: Int
     ) = client.getTodoProgress(studyInfoId)
 
-    suspend fun getMyStudyInfo(
+    suspend fun getStudyInfo(
         studyInfoId: Int
-    ) = client.getMyStudyInfo(studyInfoId)
+    ) = client.getStudyInfo(studyInfoId)
 
     suspend fun setConvention(
         studyInfoId: Int,
