@@ -5,7 +5,7 @@ import com.example.backend.study.api.controller.comment.study.request.StudyComme
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
-import com.example.backend.study.api.service.comment.study.response.UserInfoForStudyCommentResponse;
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,9 +57,9 @@ public class StudyCommentFixture {
                 .cursorIdx(cursorIdx)
                 .build();
     }
-    public static UserInfoForStudyCommentResponse createDefaultUserInfoResponse(Long userId) {
-        return UserInfoForStudyCommentResponse.builder()
-                .userId(userId)
+    public static UserNameAndProfileImageResponse createDefaultUserInfoResponse(Long userId) {
+        return UserNameAndProfileImageResponse.builder()
+                .id(userId)
                 .name("user")
                 .profileImageUrl("profileImageUrl")
                 .build();
