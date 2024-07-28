@@ -529,7 +529,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="30dp"
-                    android:text="방명록"
+                    android:text="응원의 한마디"
                     android:textColor="@color/GS_900"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider3" />
@@ -557,6 +557,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="56dp"
                     android:layout_marginBottom="10dp"
+                    android:layout_marginTop="20dp"
                     android:gravity="bottom"
                     android:orientation="horizontal"
                     app:layout_constraintEnd_toEndOf="parent"

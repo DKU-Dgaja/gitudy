@@ -3,8 +3,9 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.mystudy.StudyInfoResponse
+import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.repository.member.GitudyMemberRepository
@@ -20,6 +21,9 @@ class MyStudyMainViewModel: ViewModel() {
 
     private val _uiState = MutableStateFlow(MyStudyMainInfoState())
     val uiState = _uiState.asStateFlow()
+
+    private val _commentState = MutableStateFlow<List<StudyComment>>(emptyList())
+    val commentState = _commentState.asStateFlow()
 
     fun getMyStudyInfo(studyInfoId: Int) = viewModelScope.launch {
         val myStudyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
@@ -45,6 +49,20 @@ class MyStudyMainViewModel: ViewModel() {
             Log.e(
                 "MyStudyMainViewModel",
                 "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.message()}"
+            )
+        }
+    }
+
+    fun getStudyComments(studyInfoId: Int) = viewModelScope.launch {
+        val studyCommentListResponse =
+            gitudyStudyRepository.getStudyComments(studyInfoId, null, 3)
+
+        if (studyCommentListResponse.isSuccessful) {
+            _commentState.value = studyCommentListResponse.body()?.studyCommentList ?: emptyList()
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "studyCommentListResponse status: ${studyCommentListResponse.code()}\nstudyCommentListResponse message: ${studyCommentListResponse.message()}"
             )
         }
     }
@@ -118,7 +136,7 @@ class MyStudyMainViewModel: ViewModel() {
             gitudyMemberRepository.getStudyMemberList(studyInfoId, true)
 
         if (studyMemberListResponse.isSuccessful) {
-            studyMemberListResponse.body()!!
+            return studyMemberListResponse.body()!!
         } else {
             Log.e(
                 "MyStudyMainViewModel",
@@ -126,9 +144,22 @@ class MyStudyMainViewModel: ViewModel() {
             )
             return listOf()
         }
-        Log.e(
-            "MyStudyMainViewModel", "통신 에러")
-        return listOf()
+    }
+
+    fun makeStudyComment(studyInfoId: Int, content: String) = viewModelScope.launch {
+        val newStudyCommentResponse =
+            gitudyStudyRepository.makeStudyComment(studyInfoId, content)
+
+        if (newStudyCommentResponse.isSuccessful) {
+            // commentList 상태 업데이트
+            getStudyComments(studyInfoId)
+            Log.d("MyStudyMainViewModel", newStudyCommentResponse.code().toString())
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "newStudyCommentResponse status: ${newStudyCommentResponse.code()}\nnewStudyCommentResponse message: ${newStudyCommentResponse.message()}"
+            )
+        }
     }
 }
 
@@ -136,6 +167,5 @@ data class MyStudyMainInfoState(
     var myStudyInfo: StudyInfoResponse = StudyInfoResponse(),
     var todoInfo: Todo? = null,
     var conventionInfo: StudyConvention? = null,
-    var studyMemberListInfo: List<StudyMember> = listOf()
-    // TODO: comment 추가
+    var studyMemberListInfo: List<StudyMember> = listOf(),
 )

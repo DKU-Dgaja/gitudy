@@ -1,11 +1,15 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -14,11 +18,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyConvention
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
 import com.takseha.presentation.ui.home.MainHomeActivity
@@ -45,12 +50,15 @@ class MyStudyMainActivity : AppCompatActivity() {
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
         val studyImgColor = intent.getStringExtra("studyImgColor")
+        var comment = ""
         Log.d("MyStudyMainActivity", studyInfoId.toString())
 
         window.statusBarColor = Color.parseColor(studyImgColor)
 
         viewModel.getMyStudyInfo(studyInfoId)
+        viewModel.getStudyComments(studyInfoId)
         setTotalInfo(studyInfoId, studyImgColor!!)
+        setStudyComments()
 
         with(binding) {
             backBtn.setOnClickListener {
@@ -75,7 +83,33 @@ class MyStudyMainActivity : AppCompatActivity() {
             }
             swipeRefreshMyStudyMain.setOnRefreshListener {
                 viewModel.getMyStudyInfo(studyInfoId)
+                viewModel.getStudyComments(studyInfoId)
                 swipeRefreshMyStudyMain.isRefreshing = false
+            }
+
+            newCommentBody.addTextChangedListener(object : TextWatcher {
+                override fun beforeTextChanged(
+                    s: CharSequence?,
+                    start: Int,
+                    count: Int,
+                    after: Int
+                ) {
+                }
+
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                }
+
+                override fun afterTextChanged(s: Editable?) {
+                    comment = newCommentBody.text.toString()
+                    postBtn.isEnabled = comment.isNotEmpty()
+                }
+            })
+            postBtn.setOnClickListener {
+                viewModel.makeStudyComment(studyInfoId, comment)
+
+                newCommentBody.setText("")
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(newCommentBody.windowToken, 0)
             }
         }
     }
@@ -170,6 +204,19 @@ class MyStudyMainActivity : AppCompatActivity() {
             StudyStatus.STUDY_PRIVATE -> return baseContext.getString(R.string.study_lock)
             StudyStatus.STUDY_PUBLIC -> return baseContext.getString(R.string.study_unlock)
             StudyStatus.STUDY_DELETED -> return baseContext.getString(R.string.study_deleted)
+        }
+    }
+
+    private fun setStudyComments() {
+        lifecycleScope.launch {
+            viewModel.commentState.collectLatest {
+                with(binding) {
+                    val commentListRVAdapter = CommentListRVAdapter(this@MyStudyMainActivity, it)
+
+                    commentList.adapter = commentListRVAdapter
+                    commentList.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
+                }
+            }
         }
     }
 
