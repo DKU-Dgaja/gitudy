@@ -5,6 +5,7 @@ import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoAndRankingResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
@@ -12,7 +13,6 @@ import com.example.backend.auth.api.service.auth.request.UserUpdateServiceReques
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.rank.RankingService;
-import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -176,7 +176,8 @@ class AuthControllerTest extends MockTestConfig {
     void userInfoSuccessTest() throws Exception {
         //given
         User user = generateAuthUser();
-        UserInfoResponse savedUser = UserInfoResponse.of(userRepository.save(user));
+        UserInfoAndRankingResponse savedUser = UserInfoAndRankingResponse.of(userRepository.save(user), 1L);
+
 
         when(authService.getUserByInfo(user.getPlatformId(), GITHUB)).thenReturn(savedUser);
 
@@ -486,22 +487,4 @@ class AuthControllerTest extends MockTestConfig {
                 .andDo(print());
     }
 
-    @Test
-    void 특정_유저_활동점수_랭킹_테스트() throws Exception {
-        // given
-        User savedUser = userRepository.save(generateAuthUser());
-
-        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
-        String accessToken = jwtService.generateAccessToken(map, savedUser);
-
-        when(rankingService.getUserRankings(savedUser)).thenReturn(any(UserRankingResponse.class));
-
-        // when
-        mockMvc.perform(get("/auth/user-rank")
-                .contentType(MediaType.APPLICATION_JSON)
-                .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-
-                .andExpect(status().isOk())
-                .andDo(print());
-    }
 }
