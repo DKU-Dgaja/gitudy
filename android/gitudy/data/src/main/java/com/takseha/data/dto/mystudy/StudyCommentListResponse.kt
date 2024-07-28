@@ -2,6 +2,7 @@ package com.takseha.data.dto.mystudy
 
 
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.feed.UserInfo
 
 data class StudyCommentListResponse(
     @SerializedName("cursor_idx")
@@ -20,15 +21,5 @@ data class StudyComment(
     @SerializedName("user_id")
     val userId: Int,
     @SerializedName("user_info_response")
-    val userInfo: UserInfoResponse
-)
-
-// TODO: 추후 UserInfo와 통합
-data class UserInfoResponse(
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("profile_image_url")
-    val profileImageUrl: String,
-    @SerializedName("user_id")
-    val userId: Int
+    val userInfo: UserInfo
 )
