@@ -139,7 +139,8 @@ class MainHomeViewModel : ViewModel() {
 
                     if (todo != null) {
                         if (todo.id != -1) {
-                            val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount
+                        //    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: 0
+                            val todoCheckNum = 0
                             val todoCheck =
                                 if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
                             MyStudyWithTodo(
@@ -187,6 +188,7 @@ class MainHomeViewModel : ViewModel() {
         }
     }
 
+    // TODO: getFirstTodoInfo api 관련 수정하기 -> 마감일 임박 투두 불러오기
     private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
         val todoInfoResponse = gitudyStudyRepository.getTodoList(
             studyInfoId,
@@ -224,13 +226,14 @@ class MainHomeViewModel : ViewModel() {
         return null
     }
 
+    // TODO: getTodoProgress api 관련 수정
     private suspend fun getTodoProgress(studyInfoId: Int): TodoProgressResponse? {
         val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
             studyInfoId
         )
 
         if (todoProgressResponse.isSuccessful) {
-            return todoProgressResponse.body()!!
+            return todoProgressResponse.body()
         } else {
             Log.e(
                 "MainHomeViewModel",
