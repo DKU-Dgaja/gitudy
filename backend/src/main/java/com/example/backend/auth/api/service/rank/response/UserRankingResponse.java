@@ -11,5 +11,5 @@ public class UserRankingResponse {
 
     private int score;
 
-    private int ranking;
+    private Long ranking;
 }

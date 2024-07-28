@@ -42,8 +42,11 @@ public class RankingService {
             score = (double) user.getScore();
             saveUserScore(user.getId(), score.intValue());
         }
-        int ranking = zSetOps.reverseRank(USER_RANKING_KEY, user.getId()).intValue() + 1;
-        return new UserRankingResponse(score.intValue(), ranking);
+        Long ranking = zSetOps.reverseRank(USER_RANKING_KEY, user.getId());
+        if (ranking == null) {
+            return new UserRankingResponse(score.intValue(), 0L); // 랭킹이 없으면 0 반환
+        }
+        return new UserRankingResponse(score.intValue(), ranking + 1);
     }
 
 
