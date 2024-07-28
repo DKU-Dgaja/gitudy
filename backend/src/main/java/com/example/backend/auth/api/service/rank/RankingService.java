@@ -4,6 +4,7 @@ package com.example.backend.auth.api.service.rank;
 import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -20,6 +21,11 @@ public class RankingService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserRepository userRepository;
     public static final String USER_RANKING_KEY = "user_ranking";
+
+    @PostConstruct
+    public void init() {
+        updateUserRanking();
+    }
 
 
     // 사용자 점수를 Redis Sorted Set에 저장
@@ -49,11 +55,7 @@ public class RankingService {
         return new UserRankingResponse(score.intValue(), ranking + 1);
     }
 
-
-    /* 백업용 로직
-        Redis 데이터를 백업하거나 복구할 때나 mysql에 있는 점수데이터와 redis에 저장되는 점수가 다를경우 사용하면 될거같다.
-        나중에 월마다 유저 랭킹을 초기화한다던지 그럴때 사용하면 좋을듯
-    */
+    // 어플리케이션 로드 시점에 Cache Warming 작업
     public void updateUserRanking() {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
         List<User> users = userRepository.findAll();
