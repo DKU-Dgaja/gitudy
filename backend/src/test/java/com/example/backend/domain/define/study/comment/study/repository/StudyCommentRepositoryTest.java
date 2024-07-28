@@ -56,7 +56,7 @@ class StudyCommentRepositoryTest extends TestConfig {
         // then
         for (StudyCommentResponse b : StudyCommentListResponse) {
             assertTrue(b.getId() < cursorIdx);
-            assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
+            assertEquals(user.getId(), b.getUserInfoResponse().getId());
             assertEquals(study.getId(), b.getStudyInfoId());
         }
     }
@@ -77,7 +77,7 @@ class StudyCommentRepositoryTest extends TestConfig {
         // then
         assertEquals(LIMIT, StudyCommentListResponse.size());
         for (StudyCommentResponse b : StudyCommentListResponse) {
-            assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
+            assertEquals(user.getId(), b.getUserInfoResponse().getId());
             assertEquals(study.getId(), b.getStudyInfoId());
         }
     }

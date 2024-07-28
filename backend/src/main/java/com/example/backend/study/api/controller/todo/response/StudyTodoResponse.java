@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @Builder
@@ -30,6 +31,8 @@ public class StudyTodoResponse {
 
     private String todoCode;     // To do를 식별할 6자리 코드
 
+    private LocalDateTime createdDateTime; // To do 생성 시간
+
     public static StudyTodoResponse of(StudyTodo studyTodo) {
         return StudyTodoResponse.builder()
                 .id(studyTodo.getId())
@@ -39,6 +42,7 @@ public class StudyTodoResponse {
                 .todoLink(studyTodo.getTodoLink())
                 .todoDate(studyTodo.getTodoDate())
                 .todoCode(studyTodo.getTodoCode())
+                .createdDateTime(studyTodo.getCreatedDateTime())
                 .build();
     }
 }

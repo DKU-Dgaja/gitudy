@@ -1,6 +1,6 @@
 package com.example.backend.study.api.controller.comment.study.response;
 
-import com.example.backend.study.api.service.comment.study.response.UserInfoForStudyCommentResponse;
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -11,11 +11,11 @@ public class StudyCommentResponse {
     private Long id;
     private Long studyInfoId;
     private Long userId;
-    private UserInfoForStudyCommentResponse userInfoResponse;
+    private UserNameAndProfileImageResponse userInfoResponse;
     private String content;
 
     @Builder
-    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, String content, UserInfoForStudyCommentResponse userInfoResponse) {
+    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, String content, UserNameAndProfileImageResponse userInfoResponse) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.userId = userId;

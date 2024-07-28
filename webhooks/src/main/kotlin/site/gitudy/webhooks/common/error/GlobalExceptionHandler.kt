@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.BodyInserters
 import org.springframework.web.reactive.function.server.*
 import reactor.core.publisher.Mono
+import site.gitudy.webhooks.utils.logger
 
 @Component
 @Order(-2)
@@ -24,6 +25,7 @@ class GlobalExceptionHandler(
     WebProperties.Resources(),
     applicationContext
 ) {
+    private val log = logger<GlobalExceptionHandler>()
     init {
         this.setMessageWriters(configurer.writers)
     }
@@ -39,6 +41,7 @@ class GlobalExceptionHandler(
             is RuntimeException -> errorMap("400", "BAD_REQUEST", error.message!!)
             else -> errorMap("400", "ERROR", error.message!!)
         }
+        log.error("Error: $errorPropertiesMap")
         return ServerResponse.status(HttpStatus.valueOf(errorPropertiesMap["error"]!!["status"]!!.toInt()))
             .contentType(MediaType.APPLICATION_JSON)
             .body(BodyInserters.fromValue<Map<String, Any>>(errorPropertiesMap))

@@ -13,7 +13,7 @@ import com.takseha.data.dto.mystudy.LikeCount
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCommitBinding
 
-class CommitListRVAdapter(val context : Context, val commitList : List<Commit>, val onCommitClickListener: ToDoListRVAdapter.OnCommitClickListener) : RecyclerView.Adapter<CommitListRVAdapter.ViewHolder>() {
+class CommitListRVAdapter(val context : Context, val commitList : List<Commit>, val onClickListener: ToDoListRVAdapter.OnClickListener) : RecyclerView.Adapter<CommitListRVAdapter.ViewHolder>() {
 
     inner class ViewHolder(val binding: ItemCommitBinding) : RecyclerView.ViewHolder(binding.root) {
         var commitTitle = binding.commitTitle
@@ -36,7 +36,7 @@ class CommitListRVAdapter(val context : Context, val commitList : List<Commit>, 
                         13,
                         11
                     )
-                    onCommitClickListener.onCommitClick(commit)
+                    onClickListener.onCommitClick(commit)
                 }
             }
         }
