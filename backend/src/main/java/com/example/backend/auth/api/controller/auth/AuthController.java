@@ -3,17 +3,13 @@ package com.example.backend.auth.api.controller.auth;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
-import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
-import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
-import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
-import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.controller.auth.response.*;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.rank.RankingService;
-import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.auth.api.service.state.LoginStateService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -117,9 +113,9 @@ public class AuthController {
 
     @ApiResponse(responseCode = "200", description = "회원정보 조회 성공", content = @Content(schema = @Schema(implementation = UserInfoResponse.class)))
     @GetMapping("/info")
-    public ResponseEntity<UserInfoResponse> userInfo(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserInfoAndRankingResponse> userInfo(@AuthenticationPrincipal User user) {
 
-        UserInfoResponse userInfoResponse = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());
+        UserInfoAndRankingResponse userInfoResponse = authService.getUserByInfo(user.getPlatformId(), user.getPlatformType());
 
         return ResponseEntity.ok().body(userInfoResponse);
     }
@@ -189,15 +185,6 @@ public class AuthController {
         authService.nickNameDuplicationCheck(request);
 
         return ResponseEntity.ok().build();
-    }
-
-    @ApiResponse(responseCode = "200", description = "특정유저 랭킹 요청 성공")
-    @GetMapping("/user-rank")
-    public ResponseEntity<UserRankingResponse> userRanking(@AuthenticationPrincipal User user) {
-
-        UserRankingResponse response = rankingService.getUserRankings(user);
-
-        return ResponseEntity.ok().body(response);
     }
 
 }
