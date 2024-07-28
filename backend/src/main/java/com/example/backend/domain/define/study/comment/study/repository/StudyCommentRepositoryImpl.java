@@ -1,7 +1,7 @@
 package com.example.backend.domain.define.study.comment.study.repository;
 
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
-import com.example.backend.study.api.service.comment.study.response.UserInfoForStudyCommentResponse;
+import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -28,7 +28,7 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom 
                         studyComment.userId,
                         studyComment.content,
                         Projections.constructor(
-                                UserInfoForStudyCommentResponse.class,
+                                UserNameAndProfileImageResponse.class,
                                 user.id,
                                 user.name,
                                 user.profileImageUrl
