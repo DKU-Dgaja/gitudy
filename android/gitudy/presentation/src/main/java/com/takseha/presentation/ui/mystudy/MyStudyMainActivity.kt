@@ -18,6 +18,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
+import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
@@ -46,19 +47,16 @@ class MyStudyMainActivity : AppCompatActivity() {
         /*
         Todo: 팀장/팀원 판별해서 todo 등록 버튼 유무 정하기
         Todo: todo link 버튼 눌렀을 떄 webView 나타나게 하기
+        Todo: StudyColor
          */
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
-        val studyImgColor = intent.getStringExtra("studyImgColor")
         var comment = ""
-        Log.d("MyStudyMainActivity", studyInfoId.toString())
-
-        window.statusBarColor = Color.parseColor(studyImgColor)
 
         viewModel.getMyStudyInfo(studyInfoId)
         viewModel.getStudyComments(studyInfoId)
-        setTotalInfo(studyInfoId, studyImgColor!!)
-        setStudyComments()
+
+        observeViewModel()
 
         with(binding) {
             backBtn.setOnClickListener {
@@ -80,11 +78,6 @@ class MyStudyMainActivity : AppCompatActivity() {
                 intent.putExtra("studyInfoId", studyInfoId)
                 intent.putExtra("conventionInfo", viewModel.uiState.value.conventionInfo)
                 startActivity(intent)
-            }
-            swipeRefreshMyStudyMain.setOnRefreshListener {
-                viewModel.getMyStudyInfo(studyInfoId)
-                viewModel.getStudyComments(studyInfoId)
-                swipeRefreshMyStudyMain.isRefreshing = false
             }
 
             newCommentBody.addTextChangedListener(object : TextWatcher {
@@ -115,15 +108,30 @@ class MyStudyMainActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setTotalInfo(studyInfoId: Int, studyImgColor: String) {
+    private fun observeViewModel() {
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
-                setMyStudyInfo(studyInfoId, studyImgColor, it.myStudyInfo)
+                window.statusBarColor = Color.parseColor(it.myStudyInfo.profileImageUrl)
+                setMyStudyInfo(it.myStudyInfo.id, it.myStudyInfo.profileImageUrl, it.myStudyInfo)
                 setTodoInfo(it.todoInfo)
                 setConventionInfo(it.conventionInfo)
                 setMemberRank(it.studyMemberListInfo)
             }
         }
+
+        lifecycleScope.launch {
+            viewModel.commentState.collectLatest {
+                setStudyComments(it)
+            }
+        }
+    }
+
+    // 원래 페이지로 돌아왔을 때 state 업데이트
+    override fun onResume() {
+        super.onResume()
+        val studyInfoId = intent.getIntExtra("studyInfoId", 0)
+        viewModel.getMyStudyInfo(studyInfoId)
+        viewModel.getStudyComments(studyInfoId)
     }
 
     private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {
@@ -185,7 +193,6 @@ class MyStudyMainActivity : AppCompatActivity() {
     private fun setMemberRank(studyMemberList: List<StudyMember>) {
         with(binding) {
             val memberRankRVAdapter = MemberRankRVAdapter(this@MyStudyMainActivity, studyMemberList)
-
             rankingListInTeam.adapter = memberRankRVAdapter
             rankingListInTeam.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
         }
@@ -207,16 +214,11 @@ class MyStudyMainActivity : AppCompatActivity() {
         }
     }
 
-    private fun setStudyComments() {
-        lifecycleScope.launch {
-            viewModel.commentState.collectLatest {
-                with(binding) {
-                    val commentListRVAdapter = CommentListRVAdapter(this@MyStudyMainActivity, it)
-
-                    commentList.adapter = commentListRVAdapter
-                    commentList.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
-                }
-            }
+    private fun setStudyComments(comments: List<StudyComment>) {
+        with(binding) {
+            val commentListRVAdapter = CommentListRVAdapter(this@MyStudyMainActivity, comments)
+            commentList.adapter = commentListRVAdapter
+            commentList.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
         }
     }
 

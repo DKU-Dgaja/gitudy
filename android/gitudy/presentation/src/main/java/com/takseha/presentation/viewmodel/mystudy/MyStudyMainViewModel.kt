@@ -30,7 +30,6 @@ class MyStudyMainViewModel: ViewModel() {
 
         if (myStudyInfoResponse.isSuccessful) {
             val myStudyInfo = myStudyInfoResponse.body()!!
-
             val todo = getFirstTodoInfo(studyInfoId)
             val convention = getConvention(studyInfoId)
             val studyMemberList = getStudyMemberList(studyInfoId)
