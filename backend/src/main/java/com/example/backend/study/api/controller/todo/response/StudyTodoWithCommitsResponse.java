@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Getter
@@ -32,7 +33,11 @@ public class StudyTodoWithCommitsResponse {
 
     private String todoCode;     // To do를 식별할 6자리 코드
 
+    private LocalDateTime createdDateTime; // To do 생성 날짜
+
     private List<CommitInfoResponse> commits;  // 커밋 리스트
+
+
 
     public static StudyTodoWithCommitsResponse of(StudyTodo studyTodo, List<CommitInfoResponse> commits) {
         return StudyTodoWithCommitsResponse.builder()
@@ -43,6 +48,7 @@ public class StudyTodoWithCommitsResponse {
                 .todoLink(studyTodo.getTodoLink())
                 .todoDate(studyTodo.getTodoDate())
                 .todoCode(studyTodo.getTodoCode())
+                .createdDateTime(studyTodo.getCreatedDateTime())
                 .commits(commits)
                 .build();
     }

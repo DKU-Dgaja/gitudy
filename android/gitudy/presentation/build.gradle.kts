@@ -4,7 +4,6 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
-
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
@@ -37,11 +36,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    viewBinding {
-        enable = true
-    }
-    dataBinding {
-        enable = true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
 }
 

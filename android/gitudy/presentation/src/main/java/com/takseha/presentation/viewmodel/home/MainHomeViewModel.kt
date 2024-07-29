@@ -5,6 +5,8 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoProgressResponse
@@ -122,40 +124,61 @@ class MainHomeViewModel : ViewModel() {
             val myStudyListInfo = myStudyListResponse.body()!!
 
             _cursorIdxRes.value = myStudyListInfo.cursorIdx
+            Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
 
             val studies = myStudyListInfo.studyInfoList
-            val studiesWithTodo = studies.map { study ->
-                val todo = getFirstTodoInfo(study.id)
-
-                if (todo != null) {
-                    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
-                    val todoCheck =
-                        if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
-                    MyStudyWithTodo(
-                        backgroundColorList[study.id % 4],
-                        study,
-                        todo.title,
-                        todo.todoDate,
-                        todoCheck,
-                        todoCheckNum
+            if (studies.isEmpty()) {
+                _myStudyState.update {
+                    it.copy(
+                        isMyStudiesEmpty = true
                     )
-                } else {
-                    MyStudyWithTodo(
-                        backgroundColorList[study.id % 4],
-                        study,
-                        null,
-                        null,
-                        TodoStatus.TODO_EMPTY,
-                        null
+                }
+            } else {
+                val studiesWithTodo = studies.map { study ->
+                    val todo = getFirstTodoInfo(study.id)
+
+                    if (todo != null) {
+                        if (todo.id != -1) {
+                            val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount
+                            val todoCheck =
+                                if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
+                            MyStudyWithTodo(
+                                backgroundColorList[study.id % 4],
+                                study,
+                                todo.title,
+                                todo.todoDate,
+                                todoCheck,
+                                todoCheckNum
+                            )
+                        } else {
+                            MyStudyWithTodo(
+                                backgroundColorList[study.id % 4],
+                                study,
+                                null,
+                                null,
+                                TodoStatus.TODO_EMPTY,
+                                null
+                            )
+                        }
+                    } else {
+                        MyStudyWithTodo(
+                            backgroundColorList[study.id % 4],
+                            study,
+                            null,
+                            null,
+                            TodoStatus.TODO_INCOMPLETE,
+                            null
+                        )
+                    }
+                }
+                _myStudyState.update {
+                    it.copy(
+                        myStudiesWithTodo = studiesWithTodo,
+                        isMyStudiesEmpty = false
                     )
                 }
             }
-            _myStudyState.update {
-                it.copy(
-                    myStudiesWithTodo = studiesWithTodo
-                )
-            }
-            Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
+            Log.d("MainHomeViewModel", myStudyState.value.toString())
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -176,12 +199,19 @@ class MainHomeViewModel : ViewModel() {
 
             if (todoBody.todoList.isNotEmpty()) {
                 val todo = todoBody.todoList.first()
-                Log.d("MainHomeViewModel", "todo first: $todo")
-
                 return todo
             } else {
                 Log.d("MainHomeViewModel", "No To-Do")
-                return null
+                return Todo(
+                    detail = "No To-Do",
+                    id = -1,
+                    studyInfoId = studyInfoId,
+                    title = "No To-Do",
+                    todoDate = "",
+                    todoCode = "",
+                    todoLink = "",
+                    commitList = listOf()
+                )
             }
         } else {
             Log.e(
@@ -200,7 +230,7 @@ class MainHomeViewModel : ViewModel() {
         )
 
         if (todoProgressResponse.isSuccessful) {
-            todoProgressResponse.body()!!
+            return todoProgressResponse.body()!!
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -219,9 +249,10 @@ data class MainHomeUserInfoUiState(
 //    var rank: Int,
     var progressScore: Int = 0,
     var progressMax: Int = 15,
-    var characterImgSrc: Int = R.drawable.character_bebe_to_15,
+    var characterImgSrc: Int = R.drawable.character_bebe_to_15
 ) : Serializable
 
 data class MainHomeMyStudyUiState(
-    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf(),
+    var isMyStudiesEmpty: Boolean = false
 )

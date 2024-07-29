@@ -57,19 +57,6 @@
         android:layout_marginTop="26dp"
         android:text="적용 중"
         android:textColor="@color/BASIC_BLUE"
-        android:visibility="gone"
-        app:layout_constraintStart_toEndOf="@+id/convientionTitle"
-        app:layout_constraintTop_toBottomOf="@+id/conventionEditTitle" />
-
-    <TextView
-        android:id="@+id/isNotConventionText"
-        style="@style/B4_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="6dp"
-        android:layout_marginTop="26dp"
-        android:text="미적용"
-        android:textColor="@color/GS_500"
         android:visibility="visible"
         app:layout_constraintStart_toEndOf="@+id/convientionTitle"
         app:layout_constraintTop_toBottomOf="@+id/conventionEditTitle" />
@@ -104,19 +91,16 @@
                 style="@style/B7_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
                 android:text="컨벤션"
                 android:textColor="@color/GS_500" />
 
-            <EditText
-                android:id="@+id/conventionEditText"
+            <TextView
+                android:id="@+id/conventionName"
                 style="@style/B6_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="10dp"
-                android:background="@null"
-                android:hint="@string/commit_convention"
-                android:maxLength="20"
+                android:text="@string/commit_convention"
                 android:textColor="@color/BASIC_BLUE"
                 android:textColorHint="@color/GS_300" />
 
@@ -124,54 +108,31 @@
                 style="@style/B7_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:text="정규식"
+                android:text="설명"
                 android:textColor="@color/GS_500" />
 
-            <EditText
-                android:id="@+id/contentEditText"
-                style="@style/B6_1"
+            <TextView
+                android:id="@+id/conventionDescription"
+                style="@style/B7_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-                android:background="@null"
-                android:hint="@string/commit_convention_content"
-                android:textColor="@color/BLACK"
-                android:textColorHint="@color/GS_300" />
+                android:text="@string/commit_convention_description"
+                android:textColor="@color/GS_800"
+                android:layout_marginBottom="10dp"/>
 
             <TextView
                 style="@style/B7_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:text="설명"
+                android:text="ex)"
                 android:textColor="@color/GS_500" />
 
-            <EditText
-                android:id="@+id/descriptionEditText"
+            <TextView
                 style="@style/B7_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@null"
-                android:hint="@string/commit_convention_description"
-                android:maxLength="50"
-                android:textColor="@color/BLACK"
-                android:textColorHint="@color/GS_300" />
+                android:text="@string/commit_convention_ex"
+                android:textColor="@color/GS_800" />
         </LinearLayout>
     </LinearLayout>
-
-    <Button
-        android:id="@+id/saveBtn"
-        style="@style/B5_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/selector_btn_r8_enable"
-        android:enabled="false"
-        android:paddingTop="18dp"
-        android:paddingBottom="18dp"
-        android:text="@string/save"
-        android:textColor="@drawable/selector_text_color_enable"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,6 +7,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
 import androidx.annotation.RequiresApi
@@ -62,8 +64,11 @@ class MainHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.apply {
                 myStudyState.collectLatest {
-                    if (it.myStudiesWithTodo.isNotEmpty()) {
+                    if (!it.isMyStudiesEmpty) {
+                        binding.isNoStudyLayout.visibility = GONE
                         setMyStudyList(it.myStudiesWithTodo)
+                    } else {
+                        binding.isNoStudyLayout.visibility = VISIBLE
                     }
                 }
             }
@@ -85,10 +90,6 @@ class MainHomeFragment : Fragment() {
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
         with(binding) {
             val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
-
-            if (myStudyRVAdapter.itemCount == 0) {
-                isNoStudyLayout.visibility = View.VISIBLE
-            }
 
             myStudyList.adapter = myStudyRVAdapter
             myStudyList.layoutManager = LinearLayoutManager(requireContext())

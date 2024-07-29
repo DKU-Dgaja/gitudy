@@ -63,7 +63,7 @@ class TokenManager(context: Context) {
                     refreshToken = response.body()!!.refreshToken
                     response.body()!!
                 } else {
-                    Log.e("TokenManager", "login response status: ${response.code()}\nlogin response message: ${response.message()}")
+                    Log.e("TokenManager", "login response status: ${response.code()}\nlogin response message: ${response.errorBody()?.string()}")
                     null
                 }
             } catch (e: Exception) {
@@ -76,14 +76,15 @@ class TokenManager(context: Context) {
     suspend fun getRegisterTokens(request: RegisterRequest): TokenResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                val response = loginApi.getRegisterTokens(request)
+                val token = "Bearer $accessToken"
+                val response = loginApi.getRegisterTokens(token, request)
 
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
                     refreshToken = response.body()!!.refreshToken
                     response.body()!!
                 } else {
-                    Log.e("TokenManager", "register response status: ${response.code()}\nregister response message: ${response.message()}")
+                    Log.e("TokenManager", "register response status: ${response.code()}\nregister response message: ${response.errorBody()?.string()}")
                     null
                 }
             } catch (e: Exception) {
@@ -96,7 +97,8 @@ class TokenManager(context: Context) {
     suspend fun reissueTokens(): ReissueTokenResponse? {
         return withContext(Dispatchers.IO) {
             try {
-                val response = loginApi.reissueTokens()
+                val token = "Bearer $refreshToken"
+                val response = loginApi.reissueTokens(token)
 
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
