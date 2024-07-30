@@ -707,7 +707,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // github api가 작동했는지 확인
         verify(githubApiService, times(1)).addCollaborator(any(String.class), any(RepositoryInfo.class), any(String.class));
-        verify(githubApiService, times(1)).acceptInvitation(any(String.class));
+        verify(githubApiService, times(1)).acceptInvitation(any(String.class), any(String.class));
 
         // github api가 작동했는지 확인
         verify(githubApiTokenService, times(2)).getToken((any(Long.class)));
@@ -742,7 +742,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
         // github api가 작동했는지 확인
         verify(githubApiService, times(1)).addCollaborator(any(String.class), any(RepositoryInfo.class), any(String.class));
-        verify(githubApiService, times(1)).acceptInvitation(any(String.class));
+        verify(githubApiService, times(1)).acceptInvitation(any(String.class), any(String.class));
 
         // github api가 작동했는지 확인
         verify(githubApiTokenService, times(2)).getToken((any(Long.class)));

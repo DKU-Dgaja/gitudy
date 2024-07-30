@@ -41,6 +41,7 @@ public enum ExceptionMessage {
     // UserException
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
     USER_NAME_DUPLICATION("중복된 이름입니다."),
+    USER_NOT_FOUND_WITH_GITHUB_ID("깃허브 계정에 해당하는 사용자를 찾을 수 없습니다."),
 
     // CommitException
     COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),
@@ -88,8 +89,10 @@ public enum ExceptionMessage {
     GITHUB_API_ACCEPT_INVITATION_ERROR("초대 수락 중 오류가 발생하였습니다."),
     GITHUB_API_NO_INVITATIONS_FOUND("초대를 찾을 수 없습니다."),
 
-    // GithubApiTokenException
+    // GithubApiTokenException,
     GITHUB_API_TOKEN_NOT_EXIST("사용자 id에 해당하는 GithubApiToken이 존재하지 않습니다."),
+    GITHUB_API_RESET_TOKEN_FAIL("깃허브 토큰 재발급에 실패했습니다."),
+    GITHUB_API_RESET_TOKEN_RETRY_FAIL("깃허브 토큰 재발급 후 재시도해봤으나 실패했습니다."),
 
     // CategoryException
     CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),

@@ -282,7 +282,7 @@ public class StudyMemberService {
                     repoInfo, findUser.getGithubId());
 
             // 스터디원의 초대 수락
-            githubApiService.acceptInvitation(githubApiTokenService.getToken(findUser.getId()).githubApiToken());
+            githubApiService.acceptInvitation(githubApiTokenService.getToken(findUser.getId()).githubApiToken(), findUser.getGithubId());
 
         } else {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_REFUSED);
