@@ -50,7 +50,6 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
-    private final GithubApiTokenRepository githubApiTokenRepository;
     private final RankingService rankingService;
     private final FcmTokenRepository fcmTokenRepository;
     private final GithubApiTokenService githubApiTokenService;
