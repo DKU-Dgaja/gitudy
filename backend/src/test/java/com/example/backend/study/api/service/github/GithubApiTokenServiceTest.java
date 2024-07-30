@@ -6,7 +6,6 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiTokenException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;

@@ -5,7 +5,6 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
-import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;

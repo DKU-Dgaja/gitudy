@@ -15,9 +15,6 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.time.LocalDate;
 
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_OVERDUE;

@@ -7,13 +7,8 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.github.GithubApiTokenFixture;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;

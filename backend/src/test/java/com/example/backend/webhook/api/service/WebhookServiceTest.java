@@ -21,7 +21,6 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
-import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.webhook.api.controller.request.WebhookPayload;

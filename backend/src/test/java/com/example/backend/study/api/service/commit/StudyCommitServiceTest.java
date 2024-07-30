@@ -2,22 +2,14 @@ package com.example.backend.study.api.service.commit;
 
 import com.example.backend.TestConfig;
 import com.example.backend.common.exception.commit.CommitException;
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
-import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
-import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.domain.define.study.todo.StudyTodoFixture;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -29,8 +21,6 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
 import static org.junit.jupiter.api.Assertions.*;
 
