@@ -27,6 +27,10 @@ import java.util.Map;
 @Service
 public class GithubApiService {
 
+    private static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
+    private static final String API_VERSION = "2022-11-28";
+    private static final String ACCEPT_HEADER = "application/vnd.github+json";
+
     @Value("${github.api.webhookURL}")
     private String webhookUrl;
 
@@ -79,18 +83,16 @@ public class GithubApiService {
 
     @Transactional
     public String resetGithubToken(String oldToken, Long userId) {
-        String authorizationHeader = "Basic " + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
+        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
         String requestBody = "{\"access_token\":\"" + oldToken + "\"}";
-        String apiVersion = "2022-11-28";
-        String accept = "application/vnd.github+json";
 
         try {
             String response = githubApiTokenClient.resetGithubApiToken(
                     clientId,
                     authorizationHeader,
-                    apiVersion,
+                    API_VERSION,
                     MediaType.APPLICATION_JSON_VALUE,
-                    accept,
+                    ACCEPT_HEADER,
                     requestBody
             );
 
