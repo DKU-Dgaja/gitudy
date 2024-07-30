@@ -15,12 +15,14 @@ public class AuthServiceRegisterRequest {
     private String name;
     private String githubId;
     private boolean pushAlarmYn;
+    private String fcmToken;
 
     public static AuthServiceRegisterRequest of(AuthRegisterRequest request) {
         return AuthServiceRegisterRequest.builder()
                 .name(request.getName())
                 .githubId(request.getGithubId())
                 .pushAlarmYn(request.isPushAlarmYn())
+                .fcmToken(request.getFcmToken())
                 .build();
     }
 }

@@ -126,6 +126,7 @@ class AuthControllerTest extends MockTestConfig {
                 .name("구영민")
                 .githubId("test@1234")
                 .pushAlarmYn(false)
+                .fcmToken("token")
                 .build();
 
         when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class)))
