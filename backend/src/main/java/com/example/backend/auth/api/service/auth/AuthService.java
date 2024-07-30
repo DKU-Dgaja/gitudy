@@ -20,6 +20,8 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.fcm.FcmToken;
+import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
@@ -47,6 +49,8 @@ public class AuthService {
     private final JwtService jwtService;
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
+    private final GithubApiTokenRepository githubApiTokenRepository;
+    private final FcmTokenRepository fcmTokenRepository;
     private final GithubApiTokenService githubApiTokenService;
 
     @Transactional
@@ -181,6 +185,13 @@ public class AuthService {
 
         // 회원가입 정보 DB 반영
         findUser.updateRegister(request.getName(), request.getGithubId(), request.isPushAlarmYn());
+
+        // fcmToken 저장
+        FcmToken fcmToken = FcmToken.builder()
+                .userId(user.getId())
+                .fcmToken(request.getFcmToken())
+                .build();
+        fcmTokenRepository.save(fcmToken);
 
         // JWT Access Token, Refresh Token 재발급
         JwtToken tokens = generateJwtToken(findUser);

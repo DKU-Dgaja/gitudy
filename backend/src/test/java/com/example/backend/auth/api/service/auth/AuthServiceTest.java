@@ -170,6 +170,7 @@ class AuthServiceTest extends MockTestConfig {
                 .githubId(githubId)
                 .name(name)
                 .pushAlarmYn(true)
+                .fcmToken("token")
                 .build();
 
         // when

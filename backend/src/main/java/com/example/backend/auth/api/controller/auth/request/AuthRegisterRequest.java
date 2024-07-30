@@ -19,4 +19,6 @@ public class AuthRegisterRequest {
 
     private boolean pushAlarmYn;
 
+    private String fcmToken;
+
 }
