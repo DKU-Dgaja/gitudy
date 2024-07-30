@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -11,8 +12,8 @@ import com.example.backend.domain.define.study.category.mapping.repository.Study
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
-import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -41,9 +42,9 @@ import static com.example.backend.domain.define.study.member.constant.StudyMembe
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class StudyInfoService {
-    private final GithubApiTokenRepository githubApiTokenRepository;
     private final static String DEFAULT_NAME = "default convention";
     private final static String DEFAULT_CONTENT = "^[a-zA-Z0-9]{6} .*";
+    private final static String DEFAULT_BRANCH = "main";
 
     private final StudyInfoRepository studyInfoRepository;
     private final StudyMemberRepository memberRepository;
@@ -256,7 +257,11 @@ public class StudyInfoService {
                 .lastCommitDay(null)
                 .profileImageUrl(request.getProfileImageUrl())
                 .notice(null)
-                .repositoryInfo(request.getRepositoryInfo())
+                .repositoryInfo(RepositoryInfo.builder()
+                        .name(request.getRepositoryName())
+                        .owner(userInfo.getGithubId())
+                        .branchName(DEFAULT_BRANCH)
+                        .build())
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);
@@ -291,5 +296,17 @@ public class StudyInfoService {
                     return StudyInfoListWithMemberResponse.from(studyInfo, userInfo);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void checkDuplicateRepoName(UserInfoResponse userInfo, String repoName) {
+
+        // 사용자의 깃허브 토큰 조회
+        GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
+
+        // 레포지토리 이름 중복 확인
+        if (githubApiService.repositoryExists(token.githubApiToken(), userInfo.getGithubId(), repoName)) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), repoName);
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS);
+        }
     }
 }

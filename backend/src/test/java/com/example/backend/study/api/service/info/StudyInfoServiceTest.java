@@ -1,8 +1,11 @@
 package com.example.backend.study.api.service.info;
 
+import com.example.backend.MockTestConfig;
 import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -30,12 +33,14 @@ import com.example.backend.study.api.service.github.GithubApiTokenService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.IntStream;
 
+import static com.example.backend.auth.config.fixture.UserFixture.generateAuthJusung;
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.CATEGORY_SIZE;
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.createDefaultPublicStudyCategories;
@@ -47,8 +52,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
-class StudyInfoServiceTest extends TestConfig {
-    private final static int DATA_SIZE = 10;
+class StudyInfoServiceTest extends MockTestConfig {
     private final static Long LIMIT = 10L;
     private final static String SORTBY = "score";
     @Autowired
@@ -66,9 +70,9 @@ class StudyInfoServiceTest extends TestConfig {
     @Autowired
     private StudyConventionRepository studyConventionRepository;
     @MockBean
-    private GithubApiService githubApiService;
-    @MockBean
     private GithubApiTokenService githubApiTokenService;
+    @MockBean
+    private GithubApiService githubApiService;
 
     @AfterEach
     void tearDown() {
@@ -120,9 +124,7 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertEquals(studyInfoRegisterRequest.getStatus(), registeredStudy.getStatus()),
                 () -> assertEquals(studyInfoRegisterRequest.getMaximumMember(), registeredStudy.getMaximumMember()),
                 () -> assertEquals(studyInfoRegisterRequest.getProfileImageUrl(), registeredStudy.getProfileImageUrl()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getOwner(), registeredStudy.getRepositoryInfo().getOwner()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getName(), registeredStudy.getRepositoryInfo().getName()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getBranchName(), registeredStudy.getRepositoryInfo().getBranchName()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryName(), registeredStudy.getRepositoryInfo().getName()),
                 () -> assertEquals(studyInfoRegisterRequest.getPeriodType(), registeredStudy.getPeriodType()),
                 () -> assertIterableEquals(studyInfoRegisterRequest.getCategoriesId(), registeredStudy.getCategoriesId())
         );
@@ -859,5 +861,37 @@ class StudyInfoServiceTest extends TestConfig {
 
         // then
         assertEquals(expectedMyStudySize, response.getCount());
+    }
+
+    @Test
+    void 레포지토리가_이미_존재할_경우_예외발생() {
+        // given
+        User user = userRepository.save(UserFixture.generateKaKaoUser());
+
+        String existName = "exist";
+
+        // when
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(new GithubApiToken("token", user.getId()));
+        when(githubApiService.repositoryExists(any(String.class), any(String.class), any(String.class)))
+                .thenReturn(true);
+
+        var e = assertThrows(GithubApiException.class, () -> studyInfoService.checkDuplicateRepoName(UserInfoResponse.of(user), existName));
+
+        assertEquals(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), e.getMessage());
+    }
+
+    @Test
+    void 레포지토리가_존재하지_않는_경우_성공() {
+        // given
+        User user = userRepository.save(UserFixture.generateKaKaoUser());
+
+        String newName = "new";
+
+        // when
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(new GithubApiToken("token", user.getId()));
+        when(githubApiService.repositoryExists(any(String.class), any(String.class), any(String.class)))
+                .thenReturn(false);
+
+        studyInfoService.checkDuplicateRepoName(UserInfoResponse.of(user), newName);
     }
 }
