@@ -1,7 +1,6 @@
 package com.example.backend.study.api.service.github;
 
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.common.exception.github.GithubApiTokenException;
 import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;

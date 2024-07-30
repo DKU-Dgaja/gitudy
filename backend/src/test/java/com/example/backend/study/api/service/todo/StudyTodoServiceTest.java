@@ -25,7 +25,6 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.*;
-import com.example.backend.study.api.service.commit.StudyCommitService;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.google.firebase.messaging.FirebaseMessagingException;
@@ -44,7 +43,7 @@ import static com.example.backend.domain.define.study.todo.mapping.constant.Stud
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
 
 public class StudyTodoServiceTest extends MockTestConfig {
 
