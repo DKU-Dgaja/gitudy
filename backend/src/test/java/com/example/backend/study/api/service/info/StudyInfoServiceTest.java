@@ -73,8 +73,6 @@ class StudyInfoServiceTest extends MockTestConfig {
     private GithubApiTokenService githubApiTokenService;
     @MockBean
     private GithubApiService githubApiService;
-    @MockBean
-    private GithubApiTokenService githubApiTokenService;
 
     @AfterEach
     void tearDown() {
@@ -126,9 +124,7 @@ class StudyInfoServiceTest extends MockTestConfig {
                 () -> assertEquals(studyInfoRegisterRequest.getStatus(), registeredStudy.getStatus()),
                 () -> assertEquals(studyInfoRegisterRequest.getMaximumMember(), registeredStudy.getMaximumMember()),
                 () -> assertEquals(studyInfoRegisterRequest.getProfileImageUrl(), registeredStudy.getProfileImageUrl()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getOwner(), registeredStudy.getRepositoryInfo().getOwner()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getName(), registeredStudy.getRepositoryInfo().getName()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getBranchName(), registeredStudy.getRepositoryInfo().getBranchName()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryName(), registeredStudy.getRepositoryInfo().getName()),
                 () -> assertEquals(studyInfoRegisterRequest.getPeriodType(), registeredStudy.getPeriodType()),
                 () -> assertIterableEquals(studyInfoRegisterRequest.getCategoriesId(), registeredStudy.getCategoriesId())
         );

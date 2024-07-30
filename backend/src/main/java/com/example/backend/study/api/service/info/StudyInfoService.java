@@ -13,6 +13,7 @@ import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
@@ -43,6 +44,7 @@ import static com.example.backend.domain.define.study.member.constant.StudyMembe
 public class StudyInfoService {
     private final static String DEFAULT_NAME = "default convention";
     private final static String DEFAULT_CONTENT = "^[a-zA-Z0-9]{6} .*";
+    private final static String DEFAULT_BRANCH = "main";
 
     private final StudyInfoRepository studyInfoRepository;
     private final StudyMemberRepository memberRepository;
@@ -255,7 +257,11 @@ public class StudyInfoService {
                 .lastCommitDay(null)
                 .profileImageUrl(request.getProfileImageUrl())
                 .notice(null)
-                .repositoryInfo(request.getRepositoryInfo())
+                .repositoryInfo(RepositoryInfo.builder()
+                        .name(request.getRepositoryName())
+                        .owner(userInfo.getGithubId())
+                        .branchName(DEFAULT_BRANCH)
+                        .build())
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);

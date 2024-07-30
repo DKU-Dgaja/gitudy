@@ -150,7 +150,6 @@ public class GithubApiService {
         GitHub gitHub = connectGithub(githubApiToken, repoInfo.getOwner());
 
         try {
-
             GHCreateRepositoryBuilder repoBuilder = gitHub.createRepository(repoInfo.getName())
                     .description(description)
                     .private_(false)
@@ -221,7 +220,6 @@ public class GithubApiService {
         }
     }
 
-
     private static void addWebHook(GHRepository repository, String webhookUrl) throws IOException {
         // 웹훅 추가
         repository.createHook(
@@ -236,8 +234,9 @@ public class GithubApiService {
     }
 
     public boolean repositoryExists(String token, String owner, String repoName) {
+        GitHub gitHub = connectGithub(token, owner);
+
         try {
-            GitHub gitHub = connectGithub(token);
             GHRepository repository = gitHub.getRepository(owner + "/" + repoName);
             return repository != null;
         } catch (IOException e) {
