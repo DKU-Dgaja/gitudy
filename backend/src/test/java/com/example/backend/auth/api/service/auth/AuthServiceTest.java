@@ -3,7 +3,7 @@ package com.example.backend.auth.api.service.auth;
 import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
-import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoAndRankingResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -258,7 +258,7 @@ class AuthServiceTest extends MockTestConfig {
         System.out.println("savedUser = " + savedUser.getPlatformType());
 
         // when
-        UserInfoResponse expectedUser = authService.getUserByInfo(savedUser.getPlatformId(), savedUser.getPlatformType());
+        UserInfoAndRankingResponse expectedUser = authService.getUserByInfo(savedUser.getPlatformId(), savedUser.getPlatformType());
 
         // then
         assertThat(expectedUser).isNotNull();

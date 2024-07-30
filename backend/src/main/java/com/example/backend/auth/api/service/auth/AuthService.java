@@ -3,6 +3,7 @@ package com.example.backend.auth.api.service.auth;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoAndRankingResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
@@ -11,6 +12,8 @@ import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.auth.api.service.rank.RankingService;
+import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -50,6 +53,7 @@ public class AuthService {
     private final RefreshTokenService refreshTokenService;
     private final RefreshTokenRepository refreshTokenRepository;
     private final GithubApiTokenRepository githubApiTokenRepository;
+    private final RankingService rankingService;
     private final FcmTokenRepository fcmTokenRepository;
     private final GithubApiTokenService githubApiTokenService;
 
@@ -156,17 +160,17 @@ public class AuthService {
         }
     }
 
-    public UserInfoResponse getUserByInfo(String platformId, UserPlatformType platformType) {
+    public UserInfoAndRankingResponse getUserByInfo(String platformId, UserPlatformType platformType) {
 
-        User userInfoResponse = userRepository.findByPlatformIdAndPlatformType(platformId, platformType)
+        User user = userRepository.findByPlatformIdAndPlatformType(platformId, platformType)
                 .orElseThrow(() -> {
                     log.warn(">>>> User not found with platformId: {} platformType: {}", platformId, platformType);
                     throw new UserException(ExceptionMessage.USER_NOT_FOUND);
                 });
 
+        UserRankingResponse rankingResponse = rankingService.getUserRankings(user);
 
-        return UserInfoResponse.of(userInfoResponse);
-
+        return UserInfoAndRankingResponse.of(user, rankingResponse.getRanking());
     }
 
     @Transactional

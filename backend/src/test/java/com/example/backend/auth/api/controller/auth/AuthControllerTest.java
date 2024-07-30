@@ -5,12 +5,14 @@ import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoAndRankingResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.auth.response.UserUpdatePageResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.api.service.rank.RankingService;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -59,6 +61,9 @@ class AuthControllerTest extends MockTestConfig {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @MockBean
+    private RankingService rankingService;
 
     @AfterEach
     void tearDown() {
@@ -172,7 +177,8 @@ class AuthControllerTest extends MockTestConfig {
     void userInfoSuccessTest() throws Exception {
         //given
         User user = generateAuthUser();
-        UserInfoResponse savedUser = UserInfoResponse.of(userRepository.save(user));
+        UserInfoAndRankingResponse savedUser = UserInfoAndRankingResponse.of(userRepository.save(user), 1L);
+
 
         when(authService.getUserByInfo(user.getPlatformId(), GITHUB)).thenReturn(savedUser);
 
@@ -481,4 +487,5 @@ class AuthControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.message").value(expectedError))
                 .andDo(print());
     }
+
 }
