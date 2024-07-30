@@ -17,9 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -161,9 +159,8 @@ public class GithubApiService {
 
             GHCreateRepositoryBuilder repoBuilder = gitHub.createRepository(repoInfo.getName())
                     .description(description)
-                    .private_(false)  // 공개 레포지토리로 설정
-                    .autoInit(true);  // 기본 README 파일 추가
-
+                    .private_(false)
+                    .autoInit(true);
             GHRepository repository = repoBuilder.create();
 
             addWebHook(repository, webhookUrl);
@@ -176,6 +173,60 @@ public class GithubApiService {
             throw new GithubApiException(ExceptionMessage.GITHUB_API_CREATE_REPOSITORY_ERROR);
         }
     }
+
+
+    // 레포지토리에 Collaborator 추가
+    @Transactional
+    public void addCollaborator(String githubApiToken, RepositoryInfo repo, String githubId) {
+        GitHub gitHub = connectGithub(githubApiToken, repo.getOwner());
+
+        try {
+            GHRepository repository = gitHub.getRepository(repo.getOwner() + "/" + repo.getName());
+            GHUser user = gitHub.getUser(githubId);
+            repository.addCollaborators(GHOrganization.Permission.PUSH, user);
+            log.info(">>>> [ {} 사용자를 {} 레포지토리의 Collaborator로 추가했습니다. ] <<<<", githubId, repo.getName());
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_ADD_COLLABORATOR_ERROR.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_ADD_COLLABORATOR_ERROR);
+        }
+    }
+
+    @Transactional
+    public void acceptInvitation(String githubApiToken, String githubId) {
+        GitHub gitHub = connectGithub(githubApiToken, githubId);
+
+        try {
+            List<GHInvitation> invitations = new ArrayList<>(gitHub.getMyInvitations());
+
+            if (invitations.isEmpty()) {
+                log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_NO_INVITATIONS_FOUND.getText(), "No invitations found");
+                throw new GithubApiException(ExceptionMessage.GITHUB_API_NO_INVITATIONS_FOUND);
+            } else {
+                // 가장 최근 초대를 찾기 위해 invitations 리스트를 날짜 기준으로 정렬
+                sortInvitations(invitations);
+                GHInvitation latestInvitation = invitations.get(0);
+                log.info(">>>> [ Latest Invitation ID: {} ] <<<<", latestInvitation.getId());
+                latestInvitation.accept();
+                log.info(">>>> [ Invitation accepted. ] <<<<");
+            }
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_ACCEPT_INVITATION_ERROR.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_ACCEPT_INVITATION_ERROR);
+        }
+    }
+
+    private static void sortInvitations(List<GHInvitation> invitations) {
+        invitations.sort(Comparator.comparing(GithubApiService::getCreatedAtSafe).reversed());
+    }
+
+    private static Date getCreatedAtSafe(GHInvitation invitation) {
+        try {
+            return invitation.getCreatedAt();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
     private static void addWebHook(GHRepository repository, String webhookUrl) throws IOException {
         // 웹훅 추가

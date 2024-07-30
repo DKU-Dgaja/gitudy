@@ -85,6 +85,9 @@ public enum ExceptionMessage {
     GITHUB_API_GET_COMMIT_ERROR("커밋을 불러오는데 실패했습니다."),
     GITHUB_API_CREATE_REPOSITORY_ERROR ("GitHub 레포지토리 생성 중 오류가 발생했습니다."),
     GITHUB_API_REPOSITORY_ALREADY_EXISTS("해당 이름의 레포지토리가 이미 존재합니다."),
+    GITHUB_API_ADD_COLLABORATOR_ERROR("GitHub Collaborator 추가가 실패했습니다."),
+    GITHUB_API_ACCEPT_INVITATION_ERROR("초대 수락 중 오류가 발생하였습니다."),
+    GITHUB_API_NO_INVITATIONS_FOUND("초대를 찾을 수 없습니다."),
 
     // GithubApiTokenException,
     GITHUB_API_TOKEN_NOT_EXIST("사용자 id에 해당하는 GithubApiToken이 존재하지 않습니다."),
