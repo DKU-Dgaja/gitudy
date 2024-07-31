@@ -22,7 +22,7 @@ class MakeStudyViewModel: ViewModel() {
     val newStudyInfoState = _newStudyInfoState.asStateFlow()
 
     fun setStudyIntro(title: String, detail: String, githubRepo: String) {
-        _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryInfo = RepositoryInfo(owner = "jusung-c", name = githubRepo, branchName = "main")) }
+        _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryName = githubRepo) }
     }
     fun setStudyRule(commitTimes: StudyPeriodStatus, isPublic: StudyStatus, maxMember: Int) {
         _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = backgroundColorList[randIdx]) }
