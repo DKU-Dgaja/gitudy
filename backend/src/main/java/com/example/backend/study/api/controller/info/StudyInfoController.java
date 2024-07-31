@@ -10,7 +10,6 @@ import com.example.backend.study.api.controller.info.response.StudyInfoCountResp
 import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
 import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
-import com.example.backend.study.api.service.github.GithubApiService;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import io.swagger.v3.oas.annotations.media.Content;

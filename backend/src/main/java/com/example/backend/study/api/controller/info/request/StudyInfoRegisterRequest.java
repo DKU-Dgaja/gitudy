@@ -2,7 +2,6 @@ package com.example.backend.study.api.controller.info.request;
 
 
 import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import jakarta.validation.constraints.Max;
