@@ -46,7 +46,8 @@ class MainHomeViewModel : ViewModel() {
                     name = userInfo.name,
                     score = userInfo.score,
                     githubId = userInfo.githubId,
-                    profileImgUrl = userInfo.profileImageUrl
+                    profileImgUrl = userInfo.profileImageUrl,
+                    rank = userInfo.rank
                 )
             }
             getProgressInfo(uiState)
@@ -249,7 +250,7 @@ data class MainHomeUserInfoUiState(
     var score: Int = 0,
     var githubId: String = "",
     var profileImgUrl: String = "",
-//    var rank: Int,
+    var rank: Int = 0,
     var progressScore: Int = 0,
     var progressMax: Int = 15,
     var characterImgSrc: Int = R.drawable.character_bebe_to_15
