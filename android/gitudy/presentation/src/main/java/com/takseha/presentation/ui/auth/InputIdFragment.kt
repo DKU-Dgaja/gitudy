@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputIdBinding
+import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.viewmodel.auth.RegisterViewModel
 import kotlinx.coroutines.launch
 
@@ -90,11 +91,17 @@ class InputIdFragment : Fragment() {
             }
 
             confirmBtn.setOnClickListener { view ->
-                viewModel.setGithubId(inputIdEditText.text.toString())
-                viewModel.getRegisterTokens()
-                Log.d("InputIdFragment", viewModel.registerInfoState.value.toString())
-                view.findNavController()
-                    .navigate(R.id.action_inputIdFragment_to_loginCompleteFragment)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val fcmToken = MyFirebaseMessagingService.getFirebaseToken().toString()
+                    viewModel.apply {
+                        setGithubId(inputIdEditText.text.toString())
+                        setFCMToken(fcmToken)
+                        getRegisterTokens()
+                    }
+                    Log.d("InputIdFragment", viewModel.registerInfoState.value.toString())
+                    view.findNavController()
+                        .navigate(R.id.action_inputIdFragment_to_loginCompleteFragment)
+                }
             }
         }
     }
