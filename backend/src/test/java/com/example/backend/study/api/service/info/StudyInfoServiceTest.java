@@ -1,7 +1,6 @@
 package com.example.backend.study.api.service.info;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -33,14 +32,12 @@ import com.example.backend.study.api.service.github.GithubApiTokenService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.IntStream;
 
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthJusung;
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.CATEGORY_SIZE;
 import static com.example.backend.domain.define.study.StudyCategory.info.StudyCategoryFixture.createDefaultPublicStudyCategories;
