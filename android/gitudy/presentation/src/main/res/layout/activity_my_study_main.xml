@@ -57,7 +57,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="22dp"
+            android:layout_marginLeft="0.5"
             android:layout_marginTop="30dp"
             android:layout_marginRight="22dp"
             app:layout_constraintTop_toBottomOf="@+id/studyBackgroundImg">
@@ -529,12 +529,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
-                android:text="응원의 한마디"
+                android:text="@string/study_comment_title"
                 android:textColor="@color/GS_900"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
             <TextView
+                android:id="@+id/commentMoreBtn"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

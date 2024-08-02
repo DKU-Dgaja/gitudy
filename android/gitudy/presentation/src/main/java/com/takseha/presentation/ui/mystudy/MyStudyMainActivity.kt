@@ -54,7 +54,7 @@ class MyStudyMainActivity : AppCompatActivity() {
         var comment = ""
 
         viewModel.getMyStudyInfo(studyInfoId)
-        viewModel.getStudyComments(studyInfoId)
+        viewModel.getStudyComments(studyInfoId, 3)
 
         observeViewModel()
 
@@ -79,6 +79,11 @@ class MyStudyMainActivity : AppCompatActivity() {
                 intent.putExtra("conventionInfo", viewModel.uiState.value.conventionInfo)
                 startActivity(intent)
             }
+            commentMoreBtn.setOnClickListener {
+                val intent = Intent(this@MyStudyMainActivity, StudyCommentBoardActivity::class.java)
+                intent.putExtra("studyInfoId", studyInfoId)
+                startActivity(intent)
+            }
 
             newCommentBody.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
@@ -98,7 +103,7 @@ class MyStudyMainActivity : AppCompatActivity() {
                 }
             })
             postBtn.setOnClickListener {
-                viewModel.makeStudyComment(studyInfoId, comment)
+                viewModel.makeStudyComment(studyInfoId, comment, 3)
 
                 newCommentBody.setText("")
                 val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -131,7 +136,7 @@ class MyStudyMainActivity : AppCompatActivity() {
         super.onResume()
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
         viewModel.getMyStudyInfo(studyInfoId)
-        viewModel.getStudyComments(studyInfoId)
+        viewModel.getStudyComments(studyInfoId, 3)
     }
 
     private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {

@@ -52,9 +52,9 @@ class MyStudyMainViewModel: ViewModel() {
         }
     }
 
-    fun getStudyComments(studyInfoId: Int) = viewModelScope.launch {
+    fun getStudyComments(studyInfoId: Int, limit: Long) = viewModelScope.launch {
         val studyCommentListResponse =
-            gitudyStudyRepository.getStudyComments(studyInfoId, null, 3)
+            gitudyStudyRepository.getStudyComments(studyInfoId, null, limit)
 
         if (studyCommentListResponse.isSuccessful) {
             _commentState.value = studyCommentListResponse.body()?.studyCommentList ?: emptyList()
@@ -145,13 +145,13 @@ class MyStudyMainViewModel: ViewModel() {
         }
     }
 
-    fun makeStudyComment(studyInfoId: Int, content: String) = viewModelScope.launch {
+    fun makeStudyComment(studyInfoId: Int, content: String, limit: Long) = viewModelScope.launch {
         val newStudyCommentResponse =
             gitudyStudyRepository.makeStudyComment(studyInfoId, content)
 
         if (newStudyCommentResponse.isSuccessful) {
             // commentList 상태 업데이트
-            getStudyComments(studyInfoId)
+            getStudyComments(studyInfoId, limit)
             Log.d("MyStudyMainViewModel", newStudyCommentResponse.code().toString())
         } else {
             Log.e(
