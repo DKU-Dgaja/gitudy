@@ -15,12 +15,12 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MyStudyMainViewModel: ViewModel() {
+class MyStudyMainViewModel : ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
     private var gitudyMemberRepository = GitudyMemberRepository()
 
-    private val _uiState = MutableStateFlow(MyStudyMainInfoState())
-    val uiState = _uiState.asStateFlow()
+    private val _myStudyState = MutableStateFlow(MyStudyMainInfoState())
+    val myStudyState = _myStudyState.asStateFlow()
 
     private val _commentState = MutableStateFlow<List<StudyComment>>(emptyList())
     val commentState = _commentState.asStateFlow()
@@ -34,7 +34,7 @@ class MyStudyMainViewModel: ViewModel() {
             val convention = getConvention(studyInfoId)
             val studyMemberList = getStudyMemberList(studyInfoId)
 
-            _uiState.update {
+            _myStudyState.update {
                 it.copy(
                     myStudyInfo = myStudyInfo,
                     todoInfo = todo,
@@ -43,7 +43,7 @@ class MyStudyMainViewModel: ViewModel() {
                 )
             }
 
-            Log.d("MyStudyMainViewModel", "_uiState: ${_uiState.value}")
+            Log.d("MyStudyMainViewModel", "_myStudyState: ${_myStudyState.value}")
         } else {
             Log.e(
                 "MyStudyMainViewModel",
@@ -157,6 +157,45 @@ class MyStudyMainViewModel: ViewModel() {
             Log.e(
                 "MyStudyMainViewModel",
                 "newStudyCommentResponse status: ${newStudyCommentResponse.code()}\nnewStudyCommentResponse message: ${newStudyCommentResponse.message()}"
+            )
+        }
+    }
+
+    fun updateStudyComment(
+        studyInfoId: Int, studyCommentId: Int, content: String, limit: Long
+    ) = viewModelScope.launch {
+        val updateStudyCommentResponse = gitudyStudyRepository.updateStudyComment(
+            studyInfoId,
+            studyCommentId,
+            content
+        )
+        if (updateStudyCommentResponse.isSuccessful) {
+            getStudyComments(studyInfoId, limit)
+            Log.d("MyStudyMainViewModel", "updateStudyCommentResponse: ${updateStudyCommentResponse.code()}")
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "updateStudyCommentResponse status: ${updateStudyCommentResponse.code()}\nupdateStudyCommentResponse message: ${
+                    updateStudyCommentResponse.errorBody()?.string()
+                }"
+            )
+        }
+    }
+
+    fun deleteStudyComment(studyInfoId: Int, studyCommentId: Int, limit: Long) = viewModelScope.launch {
+        val deleteStudyCommentResponse = gitudyStudyRepository.deleteStudyComment(
+            studyInfoId,
+            studyCommentId
+        )
+        if (deleteStudyCommentResponse.isSuccessful) {
+            getStudyComments(studyInfoId, limit)
+            Log.d("deleteStudyCommentResponse", "deleteStudyCommentResponse: ${deleteStudyCommentResponse.code()}")
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "deleteStudyCommentResponse status: ${deleteStudyCommentResponse.code()}\ndeleteStudyCommentResponse message: ${
+                    deleteStudyCommentResponse.errorBody()?.string()
+                }"
             )
         }
     }

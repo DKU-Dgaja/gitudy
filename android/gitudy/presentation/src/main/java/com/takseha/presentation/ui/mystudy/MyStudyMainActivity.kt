@@ -15,9 +15,11 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
+import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
@@ -26,7 +28,9 @@ import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
+import com.takseha.presentation.adapter.ToDoListRVAdapter
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
+import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -76,7 +80,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             conventionLayout.setOnClickListener {
                 val intent = Intent(this@MyStudyMainActivity, CommitConventionActivity::class.java)
                 intent.putExtra("studyInfoId", studyInfoId)
-                intent.putExtra("conventionInfo", viewModel.uiState.value.conventionInfo)
+                intent.putExtra("conventionInfo", viewModel.myStudyState.value.conventionInfo)
                 startActivity(intent)
             }
             commentMoreBtn.setOnClickListener {
@@ -115,7 +119,7 @@ class MyStudyMainActivity : AppCompatActivity() {
     @RequiresApi(Build.VERSION_CODES.O)
     private fun observeViewModel() {
         lifecycleScope.launch {
-            viewModel.uiState.collectLatest {
+            viewModel.myStudyState.collectLatest {
                 window.statusBarColor = Color.parseColor(it.myStudyInfo.profileImageUrl)
                 setMyStudyInfo(it.myStudyInfo.id, it.myStudyInfo.profileImageUrl, it.myStudyInfo)
                 setTodoInfo(it.todoInfo)
@@ -224,7 +228,66 @@ class MyStudyMainActivity : AppCompatActivity() {
             val commentListRVAdapter = CommentListRVAdapter(this@MyStudyMainActivity, comments)
             commentList.adapter = commentListRVAdapter
             commentList.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
+
+            clickStudyCommentItem(commentListRVAdapter, comments)
         }
+    }
+
+    private fun clickStudyCommentItem(commentListRVAdapter: CommentListRVAdapter, commentList: List<StudyComment>) {
+        commentListRVAdapter.onClickListener = object : CommentListRVAdapter.OnClickListener {
+            override fun onUpdateClick(view: View, position: Int) {
+                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
+                var contentBody = commentViewHolder.binding.contentEditText
+                var confirmBtn = commentViewHolder.binding.confirmBtn
+                var content: String
+
+                contentBody.addTextChangedListener(object : TextWatcher {
+                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
+
+                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
+
+                    override fun afterTextChanged(s: Editable?) {
+                        content = contentBody.text.toString()
+                        confirmBtn.isEnabled = content.isNotEmpty()
+
+                        if (confirmBtn.isEnabled) confirmBtn.setTextColor(ContextCompat.getColor(this@MyStudyMainActivity, R.color.GS_700))
+                        else confirmBtn.setTextColor(ContextCompat.getColor(this@MyStudyMainActivity, R.color.GS_400))
+                    }
+                })
+            }
+
+            override fun onConfirmClick(view: View, position: Int) {
+                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
+                var content = commentViewHolder.binding.contentEditText.text.toString()
+
+                showUpdateCommentDialog(commentList[position].studyInfoId, commentList[position].id, content)
+            }
+
+            override fun onDeleteClick(view: View, position: Int) {
+                showDeleteCommentDialog(commentList[position].studyInfoId, commentList[position].id)
+            }
+        }
+    }
+
+    private fun showUpdateCommentDialog(studyInfoId: Int, studyCommentId: Int, content: String) {
+        val customDialog = CustomDialog(this)
+        customDialog.setAlertText(getString(R.string.study_comment_update))
+        customDialog.setOnConfirmClickListener {
+            viewModel.updateStudyComment(studyInfoId, studyCommentId, content, 3)
+        }
+        customDialog.setOnCancelClickListener {
+            viewModel.getStudyComments(studyInfoId, 3)
+        }
+        customDialog.show()
+    }
+
+    private fun showDeleteCommentDialog(studyInfoId: Int, studyCommentId: Int) {
+        val customDialog = CustomDialog(this)
+        customDialog.setAlertText(getString(R.string.study_comment_delete))
+        customDialog.setOnConfirmClickListener {
+            viewModel.deleteStudyComment(studyInfoId, studyCommentId, 3)
+        }
+        customDialog.show()
     }
 
     private fun setBinding() {

@@ -33,6 +33,20 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/confirmBtn"
+            style="@style/B7_2"
+            android:enabled="false"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="확인"
+            android:textColor="@color/GS_400"
+            android:layout_marginRight="11dp"
+            app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
             android:id="@+id/deleteBtn"
             android:visibility="gone"
             style="@style/B7_2"
@@ -53,6 +67,21 @@
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:text="안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!"
+            android:textColor="@color/GS_600"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profileImg"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <EditText
+            android:id="@+id/contentEditText"
+            style="B6_1"
+            android:visibility="gone"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="14dp"
+            android:background="@null"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
             android:textColor="@color/GS_600"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profileImg"
