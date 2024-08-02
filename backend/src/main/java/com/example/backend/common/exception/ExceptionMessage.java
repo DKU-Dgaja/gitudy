@@ -88,6 +88,7 @@ public enum ExceptionMessage {
     GITHUB_API_ADD_COLLABORATOR_ERROR("GitHub Collaborator 추가가 실패했습니다."),
     GITHUB_API_ACCEPT_INVITATION_ERROR("초대 수락 중 오류가 발생하였습니다."),
     GITHUB_API_NO_INVITATIONS_FOUND("초대를 찾을 수 없습니다."),
+    GITHUB_API_CREATE_TODO_FOLDER_FAIL("레포지토리 투두 폴더 생성에 실패했습니다."),
 
     // GithubApiTokenException,
     GITHUB_API_TOKEN_NOT_EXIST("사용자 id에 해당하는 GithubApiToken이 존재하지 않습니다."),

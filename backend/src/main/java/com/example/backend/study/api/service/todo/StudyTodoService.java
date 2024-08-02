@@ -20,6 +20,8 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.*;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +48,10 @@ public class StudyTodoService {
     private final UserService userService;
     private final ApplicationEventPublisher eventPublisher;
     private final StudyCommitRepository studyCommitRepository;
+    private final GithubApiService githubApiService;
+    private final GithubApiTokenService githubApiTokenService;
 
     private final static Long MAX_LIMIT = 10L;
-    private final static int PAGE_SIZE = 10;
 
     // Todo 등록
     @Transactional
@@ -70,6 +73,10 @@ public class StudyTodoService {
 
         // 한 번의 쿼리로 모든 매핑 저장
         studyTodoMappingRepository.saveAll(todoMappings);
+
+//        // 투두에 해당하는 폴더를 스터디 레포지토리에 생성
+//        githubApiTokenService.getToken()
+//        githubApiService.createTodoFolder();
 
         // 활동중인 멤버들의 userId 추출
         List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
