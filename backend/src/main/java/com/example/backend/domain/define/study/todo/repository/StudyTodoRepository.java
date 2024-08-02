@@ -18,6 +18,4 @@ public interface StudyTodoRepository extends JpaRepository<StudyTodo, Long>, Stu
 
     List<StudyTodo> findByStudyInfoIdAndTodoDateAfter(Long studyInfoId, LocalDate date);
 
-    Optional<StudyTodo> findByTodoCode(String todoCode);
-
 }

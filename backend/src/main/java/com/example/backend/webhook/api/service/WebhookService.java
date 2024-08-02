@@ -81,11 +81,8 @@ public class WebhookService {
         // 투두 코드 추출
         String todoCode = message.substring(TODO_CODE_START_INDEX, TODO_CODE_END_INDEX);
 
-        // 투두 특정
-        return studyTodoRepository.findByTodoCode(todoCode).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoCode, ExceptionMessage.TODO_NOT_FOUND.getText());
-            throw new TodoException(ExceptionMessage.TODO_NOT_FOUND);
-        });
+        // TODO: 폴더 정보를 통한 투두 특정 필요
+        return null;
     }
 
     private StudyInfo getStudyByPayLoad(String repositoryFullName) {
@@ -114,7 +111,7 @@ public class WebhookService {
 
         // 투두 mapping 상태 업데이트
         if (!studyTodoMappingRepository.updateByUserIdAndTodoId(userId, todo.getId(), updateStatus)) {
-            log.warn(">>>> Todo Code: {} {} <<<<", todo.getTodoCode(), ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
+            log.warn(">>>> Todo Id: {} {} <<<<", todo.getId(), ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
             throw new TodoException(ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
         }
 

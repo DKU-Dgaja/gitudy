@@ -269,8 +269,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertEquals(studyTodo1.getTitle(), responses.getTodoList().get(0).getTitle());
         assertEquals(studyTodo2.getTitle(), responses.getTodoList().get(1).getTitle());
 
-        assertNotNull(responses.getTodoList().get(0).getTodoCode());
-        assertNotNull(responses.getTodoList().get(1).getTodoCode());
+        assertNotNull(responses.getTodoList().get(0).getTodoFolder());
+        assertNotNull(responses.getTodoList().get(1).getTodoFolder());
 
 //        System.out.println("responses.getTodoList().get(0).getTodoCode(); = " + responses.getTodoList().get(0).getTodoCode());
 //        System.out.println("responses.getTodoList().get(1).getTodoCode(); = " + responses.getTodoList().get(1).getTodoCode());
@@ -423,9 +423,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
 
         //then
         assertEquals("백준 1234번 풀기", studyTodo.getTitle());
-        assertEquals(todo.getTodoCode(), response.getTodoCode());
+        assertEquals(todo.getTodoFolder(), response.getTodoFolder());
     }
-
 
     @Test
     @DisplayName("스터디원들의 특정 Todo에 대한 완료여부 조회 테스트")

@@ -78,7 +78,7 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
 
@@ -110,7 +110,7 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
 
@@ -144,7 +144,7 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createCompleteStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
         LocalDate commitDate = todo.getTodoDate().plusDays(1);
@@ -198,7 +198,7 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
 
@@ -223,7 +223,7 @@ class WebhookServiceTest extends TestConfig {
 
         String commitId = "123";
         String username = user.getGithubId();
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
 
         // 존재하지 않는 스터디
@@ -272,7 +272,7 @@ class WebhookServiceTest extends TestConfig {
         StudyMember member = studyMemberRepository.save(StudyMemberFixture.createStudyMemberResigned(user.getId(), study.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
 
