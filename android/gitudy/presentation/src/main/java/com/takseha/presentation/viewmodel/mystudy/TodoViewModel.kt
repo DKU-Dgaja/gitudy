@@ -87,7 +87,6 @@ class TodoViewModel : ViewModel() {
             todoId,
             request
         )
-
         if (updateTodoResponse.isSuccessful) {
             Log.d("TodoViewModel", "updateTodoResponse: ${updateTodoResponse.code()}")
         } else {
@@ -105,8 +104,8 @@ class TodoViewModel : ViewModel() {
             studyInfoId,
             todoId
         )
-
         if (deleteTodoResponse.isSuccessful) {
+            getTodoList(studyInfoId)
             Log.d("TodoViewModel", "deleteTodoResponse: ${deleteTodoResponse.code()}")
         } else {
             Log.e(

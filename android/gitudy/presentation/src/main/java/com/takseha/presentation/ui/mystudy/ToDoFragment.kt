@@ -58,6 +58,12 @@ class ToDoFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        val studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
+        viewModel.getTodoList(studyInfoId)
+    }
+
     private fun setTodoList(todoList: List<Todo>) {
         with(binding) {
             val todoListRVAdapter = ToDoListRVAdapter(requireContext(), todoList)

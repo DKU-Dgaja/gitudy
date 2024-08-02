@@ -4,7 +4,7 @@ import com.google.gson.annotations.SerializedName
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 
-data class MyStudyInfoResponse(
+data class StudyInfoResponse(
     @SerializedName("category_names")
     val categoryNames: List<String> = listOf(),
     @SerializedName("created_date_time")
@@ -24,7 +24,7 @@ data class MyStudyInfoResponse(
     @SerializedName("period_type")
     val periodType: StudyPeriodStatus = StudyPeriodStatus.STUDY_PERIOD_WEEK,
     @SerializedName("profile_image_url")
-    val profileImageUrl: String = "",
+    val profileImageUrl: String = "#ffffff",
     @SerializedName("score")
     val score: Int = 0,
     @SerializedName("status")

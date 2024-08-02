@@ -20,8 +20,6 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
 
-        MyFirebaseMessagingService().getFirebaseToken()
-
         binding.confirmBtn.setOnClickListener {
             val role = intent.getStringExtra("role").toString()
             Log.d("SocialLoginCompleteActivity", "role: $role")

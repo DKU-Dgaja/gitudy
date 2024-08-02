@@ -18,13 +18,12 @@ class TokenInterceptor(
         // 원래 요청을 실행
         val response = chain.proceed(request)
 
-        // 토큰이 만료된 경우
         if (response.code() == 401) {
             synchronized(this) {
-                // 토큰 갱신 시도
+                response.close()  // 이전 응답 닫기
+
                 val newToken = runBlocking { tokenManager.reissueTokens() }
                 if (newToken != null) {
-                    // 갱신된 토큰으로 요청 재시도
                     request = addTokenToRequest(request, newToken.accessToken)
                     return chain.proceed(request)
                 } else {

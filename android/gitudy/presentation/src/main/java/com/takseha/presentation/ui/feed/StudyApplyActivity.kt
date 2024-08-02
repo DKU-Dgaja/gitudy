@@ -8,7 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.MyStudyInfoResponse
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityStudyApplyBinding
 import com.takseha.presentation.ui.common.CustomDialog
@@ -38,7 +38,7 @@ class StudyApplyActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
-                setMyStudyInfo(studyInfoId, studyImgColor!!, it.studyInfo)
+                setStudyInfo(studyInfoId, studyImgColor!!, it.studyInfo)
             }
         }
 
@@ -55,7 +55,7 @@ class StudyApplyActivity : AppCompatActivity() {
         }
     }
 
-    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: MyStudyInfoResponse) {
+    private fun setStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {
         with(binding) {
             studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
             studyName.text = myStudyInfo.topic

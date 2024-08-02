@@ -51,6 +51,12 @@ class MyStudyHomeFragment : Fragment() {
         }
     }
 
+    // 원래 페이지로 돌아왔을 때 state 업데이트
+    override fun onResume() {
+        super.onResume()
+        viewModel.getMyStudyList(null, 7)
+    }
+
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
         with(binding) {
             val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)

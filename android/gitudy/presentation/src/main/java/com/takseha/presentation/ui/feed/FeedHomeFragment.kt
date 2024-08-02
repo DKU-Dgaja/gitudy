@@ -66,12 +66,13 @@ class FeedHomeFragment : Fragment() {
                     }
                 }
             }
-
-            swipeRefreshFeedList.setOnRefreshListener {
-                viewModel.getFeedList(null, 10, "createdDateTime")
-                swipeRefreshFeedList.isRefreshing = false
-            }
         }
+    }
+
+    // 원래 페이지로 돌아왔을 때 state 업데이트
+    override fun onResume() {
+        super.onResume()
+        viewModel.getFeedList(null, 10, "createdDateTime")
     }
 
     private fun setFeedList(studyList: List<StudyInfo>) {
