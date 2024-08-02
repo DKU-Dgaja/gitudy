@@ -4,6 +4,7 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -43,8 +44,8 @@ class CommentListRVAdapter(val context: Context, val commentList: List<StudyComm
         holder.date.text = "2024-07-29"
 
         // TODO: 내 댓글인지 확인하고 수정 삭제 버튼 visibility 결정하는 로직 추가하기
-        holder.updateBtn.visibility = GONE
-        holder.deleteBtn.visibility = GONE
+        holder.updateBtn.visibility = VISIBLE
+        holder.deleteBtn.visibility = VISIBLE
 
         holder.updateBtn.setOnClickListener { v ->
             this.onClickListener?.onUpdateClick(v, position)

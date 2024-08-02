@@ -6,17 +6,15 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="22dp"
-        android:paddingRight="22dp">
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/profileImg"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:background="@drawable/circle_non_stroke"
             android:clipToOutline="true"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="22dp"
             android:src="@drawable/logo_profile_default"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -49,12 +47,12 @@
         <TextView
             android:id="@+id/contentText"
             style="B6_1"
-            android:layout_width="230dp"
+            android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
-            android:text="안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!"
+            android:text="안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!안녕하세요~ 다들 화이팅!!!!"
             android:textColor="@color/GS_600"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profileImg"

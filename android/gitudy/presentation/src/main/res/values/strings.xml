@@ -59,6 +59,8 @@
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
+    <string name="study_comment_title">응원 한마디</string>
+    <string name="study_comment_description">멤버들에게 응원의 한마디를 남겨보세요!</string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
