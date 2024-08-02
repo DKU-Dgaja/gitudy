@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
@@ -15,11 +14,9 @@ import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
-import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
@@ -28,7 +25,6 @@ import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
-import com.takseha.presentation.adapter.ToDoListRVAdapter
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
 import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.ui.home.MainHomeActivity

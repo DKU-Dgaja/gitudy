@@ -1,13 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.app.DatePickerDialog
-import android.app.Dialog
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.icu.util.Calendar
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,10 +11,10 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityAddTodoBinding
-import com.takseha.presentation.databinding.LayoutDialogBinding
 import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
 import java.time.LocalDate
