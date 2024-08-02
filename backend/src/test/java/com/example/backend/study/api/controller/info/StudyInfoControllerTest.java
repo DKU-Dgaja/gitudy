@@ -4,6 +4,8 @@ import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.api.service.rank.RankingService;
+import com.example.backend.auth.api.service.rank.response.StudyRankingResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
@@ -74,6 +76,9 @@ class StudyInfoControllerTest extends MockTestConfig {
     private StudyCategoryRepository studyCategoryRepository;
     @MockBean
     private StudyMemberService studyMemberService;
+
+    @MockBean
+    private RankingService rankingService;
 
     @AfterEach
     void tearDown() {
@@ -615,6 +620,28 @@ class StudyInfoControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())))
                 .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS.getText())))
                 .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR.getText())))
+                .andDo(print());
+    }
+
+
+    @Test
+    void 특정_스터디_활동점수_랭킹_테스트() throws Exception {
+        //given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = studyInfoRepository.save(createPublicStudyInfoScore(savedUser.getId(), 10));
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+
+        when(rankingService.getStudyRankings(studyInfo)).thenReturn(any(StudyRankingResponse.class));
+
+        // when
+        mockMvc.perform(get("/study/rank/" + studyInfo.getId())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+                .andExpect(status().isOk())
                 .andDo(print());
     }
 }
