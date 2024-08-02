@@ -7,9 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.security.SecureRandom;
 import java.time.LocalDate;
-import java.util.Random;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -27,8 +25,8 @@ public class StudyTodo extends BaseEntity {
     @Column(name = "STUDY_INFO_ID", nullable = false)
     private Long studyInfoId;                   // 스터디 ID
 
-    @Column(name = "TODO_FOLDER", nullable = false)
-    private String todoFolder;                  // To do에 해당하는 폴더명
+    @Column(name = "TODO_FOLDER_NAME", nullable = false)
+    private String todoFolderName;                  // To do에 해당하는 폴더명
 
     @Column(name = "TITLE", nullable = false)
     private String title;                       // To do 이름
@@ -46,7 +44,7 @@ public class StudyTodo extends BaseEntity {
     @Builder
     public StudyTodo(Long studyInfoId, String title, String detail, String todoLink, LocalDate todoDate) {
         this.studyInfoId = studyInfoId;
-        this.todoFolder = title + "_" + todoDate.toString();
+        this.todoFolderName = title + "_" + todoDate.toString();
         this.title = title;
         this.detail = detail;
         this.todoLink = todoLink;
@@ -61,7 +59,7 @@ public class StudyTodo extends BaseEntity {
     }
 
     // 테스트를 위해 코드 업데이트 메서드 추가
-    public void updateTodoFolder(String todoFolder) {
-        this.todoFolder = todoFolder;
+    public void updateTodoFolderName(String todoFolderName) {
+        this.todoFolderName = todoFolderName;
     }
 }

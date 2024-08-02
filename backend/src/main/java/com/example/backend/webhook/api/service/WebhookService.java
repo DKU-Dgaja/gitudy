@@ -31,10 +31,6 @@ import java.util.regex.Pattern;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class WebhookService {
-    private final static Pattern DEFAULT_CONVENTION_PATTERN = Pattern.compile("^[a-zA-Z0-9]{6} .*");
-    private final static int TODO_CODE_START_INDEX = 0;
-    private final static int TODO_CODE_END_INDEX = 6;
-
     private final StudyInfoRepository studyInfoRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
@@ -45,17 +41,11 @@ public class WebhookService {
     @Transactional
     public void handleCommit(WebhookPayload payload) {
 
-        // 커밋 필터링
-        if (!checkConvention(payload.message())) {
-            log.warn(">>>> {} : {} <<<<", payload.message(), ExceptionMessage.CONVENTION_NOT_MATCHED.getText());
-            throw new ConventionException(ExceptionMessage.CONVENTION_NOT_MATCHED);
-        }
-
         // 스터디 특정
         StudyInfo study = getStudyByPayLoad(payload.repositoryFullName());
 
         // 투두 특정
-        StudyTodo todo = getTodoByPayLoad(payload.message());
+        StudyTodo todo = getTodoByPayLoad(payload.folderName());
 
         // 사용자 특정
         User user = getUserByPayLoad(payload.username());
@@ -77,12 +67,11 @@ public class WebhookService {
         });
     }
 
-    private StudyTodo getTodoByPayLoad(String message) {
-        // 투두 코드 추출
-        String todoCode = message.substring(TODO_CODE_START_INDEX, TODO_CODE_END_INDEX);
-
-        // TODO: 폴더 정보를 통한 투두 특정 필요
-        return null;
+    private StudyTodo getTodoByPayLoad(String folderName) {
+        return studyTodoRepository.findByTodoFolderName(folderName).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", folderName, ExceptionMessage.TODO_NOT_FOUND.getText());
+            throw new TodoException(ExceptionMessage.TODO_NOT_FOUND);
+        });
     }
 
     private StudyInfo getStudyByPayLoad(String repositoryFullName) {
@@ -96,11 +85,6 @@ public class WebhookService {
             log.warn(">>>> {} : {} <<<<", repositoryFullName, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             throw new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
-    }
-
-    private boolean checkConvention(String commitMsg) {
-        // 커밋 메세지가 정규식과 일치하는지 반환
-        return DEFAULT_CONVENTION_PATTERN.matcher(commitMsg).matches();
     }
 
     private void updateCommitAndTodoMappingStatus(Long userId, Long studyId, StudyTodo todo, WebhookPayload payload) {
