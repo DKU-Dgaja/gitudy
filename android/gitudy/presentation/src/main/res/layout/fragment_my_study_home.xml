@@ -9,41 +9,13 @@
     android:paddingRight="22dp"
     tools:context=".ui.mystudy.MyStudyHomeFragment">
 
-    <ImageView
-        android:id="@+id/gitImg"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="55dp"
-        android:src="@drawable/logo_git"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/searchBtn"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_search"
-        app:layout_constraintEnd_toStartOf="@+id/alarmBtn"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/alarmBtn"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="56dp"
-        android:src="@drawable/ic_alarm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/myStudyTitleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gitImg">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/myStudyTitle"
@@ -54,6 +26,51 @@
             android:textColor="@color/GS_900"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/myStudyCnt"
+            style="@style/B1_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/GS_500"
+            app:layout_constraintStart_toEndOf="@+id/myStudyTitle"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageButton
+            android:id="@+id/makeNewStudyBtn"
+            style="@style/B7_1"
+            android:layout_width="98dp"
+            android:layout_height="36dp"
+            android:layout_marginTop="3dp"
+            android:background="@drawable/box_non_stroke_r6"
+            android:backgroundTint="@color/GS_700"
+            android:padding="10dp"
+            android:scaleType="fitCenter"
+            android:src="@drawable/ic_btn_make_study"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <CheckBox
+            android:id="@+id/enableStudyCheckBtn"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/selector_ic_check_sq_checked"
+            android:button="@null"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/myStudyTitle" />
+
+        <TextView
+            style="@style/B6_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="19dp"
+            android:text="활동 중인 스터디만 보기"
+            android:textColor="@color/GS_800"
+            app:layout_constraintStart_toEndOf="@+id/enableStudyCheckBtn"
+            app:layout_constraintTop_toBottomOf="@id/myStudyTitle" />
 
         <LinearLayout
             android:id="@+id/sortBtn"

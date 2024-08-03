@@ -12,10 +12,8 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyInfo
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.FeedRVAdapter
-import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentFeedHomeBinding
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -44,26 +42,14 @@ class FeedHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        with(binding) {
-            makeNewStudyBtn.setOnClickListener {
-                startActivity(Intent(activity, MakeStudyActivity::class.java))
-            }
-
-//            // 스크롤 끝나면 다음 리스트 불러오기 기능 구현(무한스크롤)
-//            viewModel.cursorIdxRes.observe(viewLifecycleOwner) {
-//                viewModel.getFeedList(it, 5, "createdDateTime")
-//            }
-
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.getFeedList(null, 10, "createdDateTime")
-                viewModel.uiState.collectLatest {
-                    if (!it.isFeedEmpty) {
-                        binding.isNoStudyLayout.visibility = View.GONE
-                        setFeedList(it.studyInfoList)
-                    } else {
-                        binding.isNoStudyLayout.visibility = View.VISIBLE
-                    }
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getFeedList(null, 10, "createdDateTime")
+            viewModel.uiState.collectLatest {
+                if (!it.isFeedEmpty) {
+                    binding.isNoStudyLayout.visibility = View.GONE
+                    setFeedList(it.studyInfoList)
+                } else {
+                    binding.isNoStudyLayout.visibility = View.VISIBLE
                 }
             }
         }
