@@ -30,11 +30,9 @@ class SplashActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.checkAvailableToken()
+            val fcmToken = MyFirebaseMessagingService.getFirebaseToken().toString()
+            Log.d("SplashActivity", "access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\nrefresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}\nfcm token: $fcmToken")
         }
-
-        MyFirebaseMessagingService().getFirebaseToken()
-
-        Log.d("SplashActivity", "access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\nrefresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}")
 
         viewModel.availableTokenCheck.observe(this@SplashActivity) {
             setMainHome(it)

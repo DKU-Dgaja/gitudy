@@ -69,7 +69,7 @@ class MakeStudy3Fragment : Fragment() {
                     R.string.study_lock
                 )
             maxMemberText.text = studyInfo.maximumMember.toString()
-            githubRepoLink.text = studyInfo.repositoryInfo.toString()
+            githubRepoLink.text = studyInfo.repositoryName
             commitRule.text =
                 if (studyInfo.periodType == StudyPeriodStatus.STUDY_PERIOD_WEEK) getString(R.string.feed_rule_week) else if (studyInfo.periodType == StudyPeriodStatus.STUDY_PERIOD_EVERYDAY) getString(
                     R.string.feed_rule_everyday

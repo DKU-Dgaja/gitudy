@@ -46,7 +46,8 @@ class MainHomeViewModel : ViewModel() {
                     name = userInfo.name,
                     score = userInfo.score,
                     githubId = userInfo.githubId,
-                    profileImgUrl = userInfo.profileImageUrl
+                    profileImgUrl = userInfo.profileImageUrl,
+                    rank = userInfo.rank
                 )
             }
             getProgressInfo(uiState)
@@ -139,7 +140,8 @@ class MainHomeViewModel : ViewModel() {
 
                     if (todo != null) {
                         if (todo.id != -1) {
-                            val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount
+                        //    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: 0
+                            val todoCheckNum = 0
                             val todoCheck =
                                 if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
                             MyStudyWithTodo(
@@ -187,6 +189,7 @@ class MainHomeViewModel : ViewModel() {
         }
     }
 
+    // TODO: getFirstTodoInfo api 관련 수정하기 -> 마감일 임박 투두 불러오기
     private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
         val todoInfoResponse = gitudyStudyRepository.getTodoList(
             studyInfoId,
@@ -224,13 +227,14 @@ class MainHomeViewModel : ViewModel() {
         return null
     }
 
+    // TODO: getTodoProgress api 관련 수정
     private suspend fun getTodoProgress(studyInfoId: Int): TodoProgressResponse? {
         val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
             studyInfoId
         )
 
         if (todoProgressResponse.isSuccessful) {
-            return todoProgressResponse.body()!!
+            return todoProgressResponse.body()
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -246,7 +250,7 @@ data class MainHomeUserInfoUiState(
     var score: Int = 0,
     var githubId: String = "",
     var profileImgUrl: String = "",
-//    var rank: Int,
+    var rank: Int = 0,
     var progressScore: Int = 0,
     var progressMax: Int = 15,
     var characterImgSrc: Int = R.drawable.character_bebe_to_15

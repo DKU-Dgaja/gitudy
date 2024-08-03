@@ -13,6 +13,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import com.takseha.presentation.ui.auth.SocialLoginCompleteActivity
+import kotlinx.coroutines.tasks.await
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
@@ -21,20 +22,15 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // 서버로 새 token 보내는 api 호출
     }
 
-    fun getFirebaseToken() {
-        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
-            if (!task.isSuccessful) {
-                Log.w("MyFirebaseMessagingService", "FCM registration token 발급 실패", task.exception)
-                return@OnCompleteListener
+    companion object {
+        suspend fun getFirebaseToken(): String? {
+            return try {
+                FirebaseMessaging.getInstance().token.await()
+            } catch (e: Exception) {
+                Log.w("MyFirebaseMessagingService", "FCM registration token 발급 실패", e)
+                null
             }
-
-            // Get new FCM registration token
-            val token = task.result
-
-            // Log and toast
-            val msg = "FCM token: $token"
-            Log.d("MyFirebaseMessagingService", msg)
-        })
+        }
     }
 
     // 포그라운드 메시지 수신

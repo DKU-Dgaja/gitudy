@@ -2,6 +2,8 @@ package com.example.backend.study.api.controller.info;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
+import com.example.backend.auth.api.service.rank.RankingService;
+import com.example.backend.auth.api.service.rank.response.StudyRankingResponse;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.info.request.RepoNameCheckRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
@@ -31,6 +33,7 @@ public class StudyInfoController {
     private final StudyInfoService studyInfoService;
     private final AuthService authService;
     private final StudyMemberService studyMemberService;
+    private final RankingService rankingService;
 
     @ApiResponse(responseCode = "200", description = "스터디 등록 성공")
     @PostMapping("/")
@@ -119,5 +122,18 @@ public class StudyInfoController {
                                                                     @RequestParam(name = "myStudy", defaultValue = "false") boolean myStudy) {
         UserInfoResponse findUser = authService.findUserInfo(user);
         return ResponseEntity.ok().body(studyInfoService.getStudyInfoCount(findUser.getUserId(), myStudy));
+    }
+
+    @ApiResponse(responseCode = "200", description = "특정스터디 랭킹 요청 성공", content = @Content(schema = @Schema(implementation =
+            StudyRankingResponse.class)))
+    @GetMapping("/rank/{studyInfoId}")
+    public ResponseEntity<StudyRankingResponse> studyRanking(@AuthenticationPrincipal User user,
+                                                             @PathVariable(name = "studyInfoId") Long studyInfoId) {
+
+        authService.findUserInfo(user);
+        // rankingService 단에서 스터디 조회하니 순환 의존성 문제가 발생하여 컨트롤러에서 주입
+        StudyRankingResponse response = rankingService.getStudyRankings(studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId));
+
+        return ResponseEntity.ok().body(response);
     }
 }

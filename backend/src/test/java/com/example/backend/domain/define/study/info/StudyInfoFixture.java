@@ -340,6 +340,24 @@ public class StudyInfoFixture {
         return studyInfos;
     }
 
+
+    // 스코어와 저장 테스트
+    public static StudyInfo createPublicStudyInfoScore(Long userId, int score) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("토픽")
+                .status(STUDY_PUBLIC)
+                .currentMember(1)
+                .maximumMember(10)
+                .score(score)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("user")
+                        .name("name")
+                        .branchName("main")
+                        .build())
+                .build();
+    }
+
     public static StudyInfo createStudyInfoByRepositoryInfo(Long userId, RepositoryInfo repositoryInfo) {
         return StudyInfo.builder()
                 .userId(userId)

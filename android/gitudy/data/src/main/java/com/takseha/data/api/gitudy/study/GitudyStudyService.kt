@@ -4,8 +4,9 @@ import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyListResponse
 import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
-import com.takseha.data.dto.mystudy.MyStudyInfoResponse
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.SetConventionRequest
+import com.takseha.data.dto.mystudy.StudyCommentListResponse
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
@@ -13,6 +14,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
@@ -70,9 +72,9 @@ interface GitudyStudyService {
     ): Response<TodoProgressResponse>
 
     @GET("/study/{studyInfoId}")
-    suspend fun getMyStudyInfo(
+    suspend fun getStudyInfo(
         @Path("studyInfoId") studyInfoId: Int
-    ): Response<MyStudyInfoResponse>
+    ): Response<StudyInfoResponse>
 
     @POST("/study/{studyInfoId}/convention")
     suspend fun setConvention(
@@ -86,4 +88,31 @@ interface GitudyStudyService {
         @Query("cursorIdx") cursorIdx: Int?,
         @Query("limit") limit: Int
     ): Response<ConventionResponse>
+
+
+    @GET("/study/{studyInfoId}/comments")
+    suspend fun getStudyComments(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Query("cursorIdx") cursorIdx: Long?,
+        @Query("limit") limit: Long
+    ): Response<StudyCommentListResponse>
+
+    @POST("/study/{studyInfoId}/comment")
+    suspend fun makeStudyComment(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Body content: String
+    ): Response<Void>
+
+    @PATCH("/study/{studyInfoId}/comment/{studyCommentId}")
+    suspend fun updateStudyComment(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Path("studyCommentId") studyCommentId: Int,
+        @Body content: String
+    ): Response<Void>
+
+    @DELETE("/study/{studyInfoId}/comment/{studyCommentId}")
+    suspend fun deleteStudyComment(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Path("studyCommentId") studyCommentId: Int
+    ): Response<Void>
 }

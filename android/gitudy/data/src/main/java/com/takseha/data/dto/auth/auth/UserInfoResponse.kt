@@ -21,5 +21,7 @@ data class UserInfoResponse(
     @SerializedName("score")
     val score: Int,
     @SerializedName("user_id")
-    val userId: Int
+    val userId: Int,
+    @SerializedName("rank")
+    val rank: Int
 )

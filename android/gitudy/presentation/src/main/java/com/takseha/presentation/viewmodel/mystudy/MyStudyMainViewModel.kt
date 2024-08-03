@@ -3,8 +3,9 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.mystudy.MyStudyInfoResponse
+import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.repository.member.GitudyMemberRepository
@@ -14,24 +15,26 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MyStudyMainViewModel: ViewModel() {
+class MyStudyMainViewModel : ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
     private var gitudyMemberRepository = GitudyMemberRepository()
 
-    private val _uiState = MutableStateFlow(MyStudyMainInfoState())
-    val uiState = _uiState.asStateFlow()
+    private val _myStudyState = MutableStateFlow(MyStudyMainInfoState())
+    val myStudyState = _myStudyState.asStateFlow()
+
+    private val _commentState = MutableStateFlow<List<StudyComment>>(emptyList())
+    val commentState = _commentState.asStateFlow()
 
     fun getMyStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
+        val myStudyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
 
         if (myStudyInfoResponse.isSuccessful) {
             val myStudyInfo = myStudyInfoResponse.body()!!
-
             val todo = getFirstTodoInfo(studyInfoId)
             val convention = getConvention(studyInfoId)
             val studyMemberList = getStudyMemberList(studyInfoId)
 
-            _uiState.update {
+            _myStudyState.update {
                 it.copy(
                     myStudyInfo = myStudyInfo,
                     todoInfo = todo,
@@ -40,11 +43,25 @@ class MyStudyMainViewModel: ViewModel() {
                 )
             }
 
-            Log.d("MyStudyMainViewModel", "_uiState: ${_uiState.value}")
+            Log.d("MyStudyMainViewModel", "_myStudyState: ${_myStudyState.value}")
         } else {
             Log.e(
                 "MyStudyMainViewModel",
                 "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.message()}"
+            )
+        }
+    }
+
+    fun getStudyComments(studyInfoId: Int, limit: Long) = viewModelScope.launch {
+        val studyCommentListResponse =
+            gitudyStudyRepository.getStudyComments(studyInfoId, null, limit)
+
+        if (studyCommentListResponse.isSuccessful) {
+            _commentState.value = studyCommentListResponse.body()?.studyCommentList ?: emptyList()
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "studyCommentListResponse status: ${studyCommentListResponse.code()}\nstudyCommentListResponse message: ${studyCommentListResponse.message()}"
             )
         }
     }
@@ -118,7 +135,7 @@ class MyStudyMainViewModel: ViewModel() {
             gitudyMemberRepository.getStudyMemberList(studyInfoId, true)
 
         if (studyMemberListResponse.isSuccessful) {
-            studyMemberListResponse.body()!!
+            return studyMemberListResponse.body()!!
         } else {
             Log.e(
                 "MyStudyMainViewModel",
@@ -126,16 +143,67 @@ class MyStudyMainViewModel: ViewModel() {
             )
             return listOf()
         }
-        Log.e(
-            "MyStudyMainViewModel", "통신 에러")
-        return listOf()
+    }
+
+    fun makeStudyComment(studyInfoId: Int, content: String, limit: Long) = viewModelScope.launch {
+        val newStudyCommentResponse =
+            gitudyStudyRepository.makeStudyComment(studyInfoId, content)
+
+        if (newStudyCommentResponse.isSuccessful) {
+            // commentList 상태 업데이트
+            getStudyComments(studyInfoId, limit)
+            Log.d("MyStudyMainViewModel", newStudyCommentResponse.code().toString())
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "newStudyCommentResponse status: ${newStudyCommentResponse.code()}\nnewStudyCommentResponse message: ${newStudyCommentResponse.message()}"
+            )
+        }
+    }
+
+    fun updateStudyComment(
+        studyInfoId: Int, studyCommentId: Int, content: String, limit: Long
+    ) = viewModelScope.launch {
+        val updateStudyCommentResponse = gitudyStudyRepository.updateStudyComment(
+            studyInfoId,
+            studyCommentId,
+            content
+        )
+        if (updateStudyCommentResponse.isSuccessful) {
+            getStudyComments(studyInfoId, limit)
+            Log.d("MyStudyMainViewModel", "updateStudyCommentResponse: ${updateStudyCommentResponse.code()}")
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "updateStudyCommentResponse status: ${updateStudyCommentResponse.code()}\nupdateStudyCommentResponse message: ${
+                    updateStudyCommentResponse.errorBody()?.string()
+                }"
+            )
+        }
+    }
+
+    fun deleteStudyComment(studyInfoId: Int, studyCommentId: Int, limit: Long) = viewModelScope.launch {
+        val deleteStudyCommentResponse = gitudyStudyRepository.deleteStudyComment(
+            studyInfoId,
+            studyCommentId
+        )
+        if (deleteStudyCommentResponse.isSuccessful) {
+            getStudyComments(studyInfoId, limit)
+            Log.d("deleteStudyCommentResponse", "deleteStudyCommentResponse: ${deleteStudyCommentResponse.code()}")
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "deleteStudyCommentResponse status: ${deleteStudyCommentResponse.code()}\ndeleteStudyCommentResponse message: ${
+                    deleteStudyCommentResponse.errorBody()?.string()
+                }"
+            )
+        }
     }
 }
 
 data class MyStudyMainInfoState(
-    var myStudyInfo: MyStudyInfoResponse = MyStudyInfoResponse(),
+    var myStudyInfo: StudyInfoResponse = StudyInfoResponse(),
     var todoInfo: Todo? = null,
     var conventionInfo: StudyConvention? = null,
-    var studyMemberListInfo: List<StudyMember> = listOf()
-    // TODO: comment 추가
+    var studyMemberListInfo: List<StudyMember> = listOf(),
 )

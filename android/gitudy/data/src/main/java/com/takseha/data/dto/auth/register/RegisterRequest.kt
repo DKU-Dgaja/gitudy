@@ -7,6 +7,8 @@ data class RegisterRequest(
     val name: String = "",
     @SerializedName("github_id")
     val githubId: String = "",
+    @SerializedName("fcm_token")
+    val fcmToken: String = "",
     @SerializedName("push_alarm_yn")
     val pushAlarmYn: Boolean = true
 )
