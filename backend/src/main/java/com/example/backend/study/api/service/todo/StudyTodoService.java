@@ -238,23 +238,18 @@ public class StudyTodoService {
         int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
 
         // 오늘이거나 오늘 이후의 To-do 중 가장 마감일이 빠른 To-do
-        Optional<StudyTodo> todo = studyTodoRepository.findStudyTodoByStudyInfoIdWithEarliestDueDate(studyInfoId);
+        return studyTodoRepository.findStudyTodoByStudyInfoIdWithEarliestDueDate(studyInfoId)
+                .map(todo -> {
+                    // 투두 완료 멤버 인원 수
+                    int completeMemberCount = studyTodoMappingRepository.findCompleteTodoMappingCountByTodoId(todo.getId());
 
-        // To-do가 없을 경우 null 반환
-        if (todo.isEmpty()) {
-            return null;
-        }
-
-        StudyTodo findTodo = todo.get();
-
-        // 투두 완료 멤버 인원 수
-        int completeMemberCount = studyTodoMappingRepository.findCompleteTodoMappingCountByTodoId(findTodo.getId());
-
-        return StudyTodoProgressResponse.builder()
-                .todoId(findTodo.getId())
-                .totalMemberCount(memberCount)
-                .completeMemberCount(completeMemberCount)
-                .build();
+                    return StudyTodoProgressResponse.builder()
+                            .todo(StudyTodoResponse.of(todo))
+                            .totalMemberCount(memberCount)
+                            .completeMemberCount(completeMemberCount)
+                            .build();
+                })
+                .orElseGet(StudyTodoProgressResponse::empty);
     }
 
     public List<CommitInfoResponse> selectTodoCommits(Long todoId) {

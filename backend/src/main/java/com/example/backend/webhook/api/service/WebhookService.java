@@ -126,8 +126,7 @@ public class WebhookService {
                 .commitSHA(payload.commitId())
                 .message(payload.message())
                 .commitDate(payload.commitDate())
-                .status(CommitStatus.COMMIT_APPROVAL)
+                .status(CommitStatus.COMMIT_WAITING)
                 .build());
     }
-
 }

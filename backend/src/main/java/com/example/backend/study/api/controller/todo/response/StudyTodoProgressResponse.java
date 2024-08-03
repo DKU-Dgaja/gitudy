@@ -10,9 +10,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class StudyTodoProgressResponse {
-    private Long todoId;                // 마감일이 가장 가까운 To-do 아이디
+    private StudyTodoResponse todo;     // 마감일이 가장 가까운 To-do 정보
 
     private int totalMemberCount;       // 총 스터디원 수
 
     private int completeMemberCount;    // 완료한 스터디원 수
+
+    public static StudyTodoProgressResponse empty() {
+        return StudyTodoProgressResponse.builder()
+                .todo(null)
+                .totalMemberCount(0)
+                .completeMemberCount(0)
+                .build();
+    }
 }
