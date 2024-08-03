@@ -74,8 +74,8 @@ public class StudyCommentController {
                                               @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
                                               @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "5") Long limit) {
 
-        studyMemberService.isValidateStudyMember(user, studyInfoId);
-        StudyCommentListAndCursorIdxResponse response = studyCommentService.selectStudyCommentList(studyInfoId, cursorIdx, limit);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
+        StudyCommentListAndCursorIdxResponse response = studyCommentService.selectStudyCommentList(studyInfoId, cursorIdx, limit, userInfo.getUserId());
 
         return ResponseEntity.ok().body(response);
     }

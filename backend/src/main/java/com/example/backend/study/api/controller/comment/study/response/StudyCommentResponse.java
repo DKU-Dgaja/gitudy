@@ -14,13 +14,15 @@ public class StudyCommentResponse {
     private Long userId;
     private UserInfoResponse userInfoResponse;
     private String content;
+    private boolean isMyComment;
 
     @Builder
-    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, String content, UserInfoResponse userInfoResponse) {
+    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, String content, UserInfoResponse userInfoResponse, boolean isMyComment) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.userId = userId;
         this.content = content;
         this.userInfoResponse = userInfoResponse;
+        this.isMyComment = isMyComment;
     }
 }

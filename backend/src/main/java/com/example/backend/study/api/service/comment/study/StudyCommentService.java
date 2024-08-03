@@ -71,12 +71,12 @@ public class StudyCommentService {
         studyCommentRepository.deleteById(studyCommentId);
     }
 
-    public StudyCommentListAndCursorIdxResponse selectStudyCommentList(Long studyInfoId, Long cursorIdx, Long limit) {
+    public StudyCommentListAndCursorIdxResponse selectStudyCommentList(Long studyInfoId, Long cursorIdx, Long limit, Long currentUserId) {
         // 스터디 조회 예외처리
         studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<StudyCommentResponse> studyCommentResponseList =
-                studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(studyInfoId, cursorIdx, limit);
+                studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(studyInfoId, cursorIdx, limit, currentUserId);
         StudyCommentListAndCursorIdxResponse response = (StudyCommentListAndCursorIdxResponse.builder()
                 .studyCommentList(studyCommentResponseList)
                 .build());

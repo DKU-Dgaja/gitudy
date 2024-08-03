@@ -20,7 +20,7 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<StudyCommentResponse> findStudyCommentListByStudyInfoIdJoinUser(Long studyId, Long cursorIdx, Long limit) {
+    public List<StudyCommentResponse> findStudyCommentListByStudyInfoIdJoinUser(Long studyId, Long cursorIdx, Long limit, Long currentUserId) {
         JPAQuery<StudyCommentResponse> query = jpaQueryFactory
                 .select(Projections.constructor(
                         StudyCommentResponse.class,
@@ -39,7 +39,8 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom 
                                 user.profilePublicYn,
                                 user.score,
                                 user.point
-                        )
+                        ),
+                        studyComment.userId.eq(currentUserId).as("isMyComment")
                 ))
                 .from(studyComment)
                 .join(user).on(user.id.eq(studyComment.userId))
