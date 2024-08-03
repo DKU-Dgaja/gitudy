@@ -100,7 +100,7 @@ public class StudyTodoFixture {
     }
 
     // 테스트용 날짜 to do 설정
-    public static StudyTodo createDateStudyTodo(Long studyInfoId, LocalDate todoDate) {
+    public static StudyTodo createStudyTodoByTodoDate(Long studyInfoId, LocalDate todoDate) {
         return StudyTodo.builder()
                 .studyInfoId(studyInfoId)
                 .title(expectedTitle)
