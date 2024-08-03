@@ -50,6 +50,7 @@ public class GithubAdapter implements OAuthAdapter {
                     .platformType(GITHUB)
                     .name(profile.getLogin())
                     .profileImageUrl(profile.getAvatar_url())
+                    .githubApiToken(accessToken)
                     .build();
         } catch (RuntimeException e) {
             log.error(">>>> [ Github Oauth 인증 에러 발생: {} ] <<<<", ExceptionMessage.OAUTH_INVALID_ACCESS_TOKEN.getText());

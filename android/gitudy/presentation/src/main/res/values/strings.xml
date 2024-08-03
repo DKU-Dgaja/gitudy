@@ -32,7 +32,7 @@
     <!-- Strings related to study -->
     <string name="study_my_cnt">마이스터디</string>
     <string name="study_name">단국알고깃터디</string>
-    <string name="study_no_my_study">가입 중인 스터디가 없습니다</string>
+    <string name="study_no_my_study">가입 중인 스터디가 없어요</string>
     <string name="study_commit_rule">주 1회 커밋 필수</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
@@ -47,32 +47,36 @@
     <string name="to_do_deadline">마감일 </string>
     <string name="to_do_deadline_date">%d.%d.%d</string>
     <string name="to_do_add">새로운 TO-DO를\n추가하시겠습니까?</string>
-    <string name="no_to_do_alarm">등록한 TO-DO가 없습니다</string>
+    <string name="to_do_update">수정된 TO-DO를\n저장하시겠습니까?</string>
+    <string name="to_do_delete">현재 TO-DO를\n삭제하시겠습니까?</string>
+    <string name="no_to_do_alarm">등록된 TO-DO가 없어요</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
     <string name="commit_github_url_basic">https://github.com/DKU-Dgaja/gitudy-study-jusung/commit/%s</string>
-    <string name="no_commit_convention">커밋 컨벤션을 등록해 주세요!</string>
-    <string name="commit_convention">ex) [문제 플랫폼]#문제번호:사용언어</string>
-    <string name="commit_convention_content">ex) ^\\[[A-Z]+\\]#\\d+\\:[\\w+]+</string>
-    <string name="commit_convention_description">ex) [BOJ]#1234:Kotlin, [PRO]#1234:C++</string>
-    <string name="commit_convention_add">컨벤션 추가하기</string>
+    <string name="commit_convention">ToDoCode 메세지</string>
+    <string name="commit_convention_description">커밋할 때, 해당 To-Do의\nToDoCode를 커밋 메세지 맨 앞에 넣어주세요.\n띄어쓰기 한 칸은 필수!</string>
+    <string name="commit_convention_ex">3Dck8A [BOJ]#1234:JAVA\n45jB9r [PROG]Lv2_34번:c++</string>
     <string name="message_select_noti">%님에게 전달할\n메시지를 선택해주세요</string>
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
     <string name="quit_study">탈퇴하기</string>
+    <string name="study_comment_title">응원 한마디</string>
+    <string name="study_comment_description">멤버들에게 응원의 한마디를 남겨보세요!</string>
+    <string name="study_comment_update">해당 글을\n수정하시겠습니까?</string>
+    <string name="study_comment_delete">해당 글을\n삭제하시겠습니까?</string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
     <string name="study_to_do_check">/%d</string>
     <string name="study_member_rv">/%d명</string>
     <string name="study_total_day_cnt">D+%d</string>
-    <string name="study_to_do_empty">마감 예정인 To-Do가 없습니다!</string>
+    <string name="study_to_do_empty">마감 예정인 To-Do가 없어요!</string>
     <string name="study_to_do_commit_info">%s • %s •</string>
 
 
     <!-- Strings related to feed -->
     <string name="feed_cnt">전체스터디</string>
     <string name="feed_explanation">"야금야금, 하지만 확실하게"\n이 스터디는 코딩 테스트를 준비하시는 분들이 각자 알고리즘 문제를 풀고, 서로 학습한 내용을 공유하며 동기부여 형성을 하도록 하는 스터디입니다.</string>
-    <string name="study_no_study">운영 중인 스터디가 없습니다</string>
+    <string name="study_no_study">운영 중인 스터디가 없어요</string>
     <string name="feed_rule_week">주 1일 커밋 필수</string>
     <string name="feed_rule_everyday">매일 커밋 필수 </string>
     <string name="feed_rule_free">자율 커밋</string>
@@ -82,7 +86,7 @@
     <string name="feed_make_study_2">주 %d일 커밋/%s 마감/%d명</string>
     <string name="feed_apply_study">해당 스터디에\n가입하시겠습니까?</string>
     <string name="feed_apply_study_cancel">해당 스터디 가입을\n취소하시겠습니까?</string>
-    <string name="feed_make_study_github_repo">연동할 깃허브 레포지토리 링크를 입력해주세요\n* main branch 커밋 내용이 현재 스터디와 연동됩니다</string>
+    <string name="feed_make_study_github_repo">생성할 깃허브 레포지토리 이름을 입력해주세요\n* 입력한 이름으로 회원님의 깃허브 계정에 레포지토리가 생성돼요</string>
 
 
     <!-- Strings related to login -->
@@ -98,8 +102,8 @@
     <string name="profile_github_link">www.github.com</string>
     <string name="profile_blog_link">www.naver.com</string>
     <string name="profile_linkedin_link">www.linkedin.com</string>
-    <string name="profile_no_commit_list">커밋 기록이 없습니다</string>
-    <string name="profile_no_saved_study">저장한 스터디가 없습니다</string>
+    <string name="profile_no_commit_list">커밋 기록이 없어요</string>
+    <string name="profile_no_saved_study">저장한 스터디가 없어요</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 

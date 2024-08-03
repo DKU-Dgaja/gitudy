@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.comment.commit;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -58,22 +57,19 @@ class CommitCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
         when(commitCommentService.getCommitCommentsList(any(Long.class))).thenReturn(List.of(CommitCommentInfoResponse.builder().studyCommitId(commitId).build()));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("studyInfoId", "1"))
 
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$").isArray()) 
                 .andDo(print());
 
     }
@@ -86,20 +82,18 @@ class CommitCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
         when(commitCommentService.getCommitCommentsList(any(Long.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("studyInfoId", "1"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.AUTH_NOT_FOUND.getText()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.AUTH_NOT_FOUND.getText()))
                 .andDo(print());
 
     }
@@ -108,12 +102,10 @@ class CommitCommentControllerTest extends MockTestConfig {
     void 커밋_댓글_등록_요청_성공_테스트() throws Exception {
         // given
         User user = generateAuthUser();
-        Long studyInfoId = 1L;
         Long commitId = 1L;
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
         doNothing().when(commitCommentService).addCommitComment(any(Long.class), any(Long.class), any(AddCommitCommentRequest.class));
@@ -121,13 +113,11 @@ class CommitCommentControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
                 .andDo(print());
 
     }
@@ -143,18 +133,16 @@ class CommitCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content(inValidContent).build())))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(expectedError))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(expectedError))
                 .andDo(print());
     }
 
@@ -166,20 +154,18 @@ class CommitCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenThrow(new MemberException(ExceptionMessage.STUDY_NOT_MEMBER));
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.STUDY_NOT_MEMBER.getText()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.STUDY_NOT_MEMBER.getText()))
                 .andDo(print());
 
     }

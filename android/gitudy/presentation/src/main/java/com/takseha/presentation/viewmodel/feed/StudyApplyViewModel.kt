@@ -4,7 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MessageRequest
-import com.takseha.data.dto.mystudy.MyStudyInfo
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.repository.member.GitudyMemberRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,28 +20,22 @@ class StudyApplyViewModel: ViewModel() {
     val uiState = _uiState.asStateFlow()
 
     fun getStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val myStudyInfoResponse = gitudyStudyRepository.getMyStudyInfo(studyInfoId)
+        val studyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
 
-        if (myStudyInfoResponse.isSuccessful) {
-            val resCode = myStudyInfoResponse.body()!!.resCode
-            val resMsg = myStudyInfoResponse.body()!!.resMsg
-            val myStudyInfo = myStudyInfoResponse.body()!!.myStudyInfo
+        if (studyInfoResponse.isSuccessful) {
+            val studyInfo = studyInfoResponse.body()!!
 
-            if (resCode == 200 && resMsg == "OK") {
-                _uiState.update {
-                    it.copy(
-                        studyInfo = myStudyInfo,
-                    )
-                }
-
-                Log.d("StudyApplyViewModel", "_uiState: ${_uiState.value}")
-            } else {
-                Log.e("StudyApplyViewModel", "https status error: $resCode, $resMsg")
+            _uiState.update {
+                it.copy(
+                    studyInfo = studyInfo
+                )
             }
+
+            Log.d("StudyApplyViewModel", "_uiState: ${_uiState.value}")
         } else {
             Log.e(
                 "StudyApplyViewModel",
-                "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.message()}"
+                "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.message()}"
             )
         }
     }
@@ -53,15 +47,7 @@ class StudyApplyViewModel: ViewModel() {
         val applyStudyResponse = gitudyMemberRepository.applyStudy(studyInfoId, joinCode, request)
 
         if (applyStudyResponse.isSuccessful) {
-            val resCode = applyStudyResponse.body()!!.resCode
-            val resMsg = applyStudyResponse.body()!!.resMsg
-            val resObj = applyStudyResponse.body()!!.resObj
-
-            if (resCode == 200 && resMsg == "OK") {
-                Log.d("StudyApplyViewModel", resObj)
-            } else {
-                Log.e("StudyApplyViewModel", "https status error: $resCode, $resMsg")
-            }
+            Log.d("StudyApplyViewModel", applyStudyResponse.code().toString())
         } else {
             Log.e("StudyApplyViewModel", "applyStudyResponse status: ${applyStudyResponse.code()}\napplyStudyResponse message: ${applyStudyResponse.message()}")
         }
@@ -69,5 +55,5 @@ class StudyApplyViewModel: ViewModel() {
 }
 
 data class StudyMainInfoState(
-    var studyInfo: MyStudyInfo = MyStudyInfo()
+    var studyInfo: StudyInfoResponse = StudyInfoResponse()
 )

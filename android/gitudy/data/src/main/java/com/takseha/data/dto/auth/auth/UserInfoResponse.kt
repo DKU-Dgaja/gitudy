@@ -1,17 +1,9 @@
 package com.takseha.data.dto.auth.auth
 
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.auth.login.RoleStatus
 
 data class UserInfoResponse(
-    @SerializedName("res_code")
-    val resCode: Int,
-    @SerializedName("res_msg")
-    val resMsg: String,
-    @SerializedName("res_obj")
-    val userInfo: UserInfo
-)
-
-data class UserInfo(
     @SerializedName("github_id")
     val githubId: String,
     @SerializedName("name")
@@ -25,9 +17,11 @@ data class UserInfo(
     @SerializedName("push_alarm_yn")
     val pushAlarmYn: Boolean,
     @SerializedName("role")
-    val role: String,
+    val role: RoleStatus,
     @SerializedName("score")
     val score: Int,
     @SerializedName("user_id")
-    val userId: Int
+    val userId: Int,
+    @SerializedName("rank")
+    val rank: Int
 )

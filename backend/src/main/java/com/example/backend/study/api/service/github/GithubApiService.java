@@ -1,101 +1,246 @@
 package com.example.backend.study.api.service.github;
 
+import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
-import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
-import com.example.backend.study.api.service.github.response.GithubCommitResponse;
+import com.example.backend.external.clients.github.GithubApiTokenClient;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.kohsuke.github.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class GithubApiService {
-    @Value("${github.api.token}")
-    private String token;
 
-    private final StudyCommitRepository studyCommitRepository;
+    private static final String AUTHORIZATION_HEADER_PREFIX = "Basic ";
+    private static final String API_VERSION = "2022-11-28";
+    private static final String ACCEPT_HEADER = "application/vnd.github+json";
 
-    // 깃허브 api 통신 연결
-    public GitHub connectGithubApi() {
-        return connectGithub(token);
-    }
+    @Value("${github.api.webhookURL}")
+    private String webhookUrl;
+
+    @Value("${oauth2.client.github.client-id}")
+    private String clientId;
+
+    @Value("${oauth2.client.github.client-secret}")
+    private String clientSecret;
+
+    private final GithubApiTokenService githubApiTokenService;
+
+    private final AuthService authService;
+    private final GithubApiTokenClient githubApiTokenClient;
+    private final ObjectMapper objectMapper;
 
     // 깃허브 통신을 위한 커넥션 생성
-    public GitHub connectGithub(String token) {
+    public GitHub connectGithub(String githubApiToken, String githubId) {
         try {
-            GitHub github = new GitHubBuilder().withOAuthToken(token).build();
-            github.checkApiUrlValidity();
-            log.info(">>>> [ 깃허브 api 연결에 성공하였습니다. ] <<<<");
-
-            return github;
+            return tryConnectGithub(githubApiToken);
 
         } catch (IOException e) {
-            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_CONNECTION_ERROR.getText(), e.getMessage());
-            throw new GithubApiException(ExceptionMessage.GITHUB_API_CONNECTION_ERROR);
-        }
-    }
+            if (isTokenExpired(e)) {
 
-    // 레포지토리 정보 가져오기
-    public GHRepository getRepository(RepositoryInfo studyInfo) {
-        try {
-            GitHub gitHub = connectGithub(token);
-            return gitHub.getRepository(studyInfo.getOwner() + "/" + studyInfo.getName());
-        } catch (IOException e) {
-            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_REPOSITORY_ERROR.getText(), e.getMessage());
-            throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_REPOSITORY_ERROR);
-        }
-    }
+                log.warn(">>>> 유효하지 않은 토큰입니다. 재발급을 시도합니다...");
 
-    // 지정한 레포지토리의 커밋 리스트를 불러오기
-    public List<GithubCommitResponse> fetchCommits(RepositoryInfo repo, int pageSize, String todoCode) {
-        GHRepository getRepo = getRepository(repo);
-        List<GithubCommitResponse> filteredCommits = new ArrayList<>();
-        PagedIterator<GHCommit> commitsIterator = getRepo.listCommits().withPageSize(pageSize).iterator();
+                // 재발급을 위한 유저 조회
+                Long userId = authService.findUserIdByGithubIdOrElseThrowException(githubId);
 
-        // 특정 투두의 이미 저장된 커밋 SHA 목록 조회
-        Set<String> existingCommitSHAs = studyCommitRepository.findStudyCommitShaListByStudyTodoCode(todoCode);
+                // 토큰 재발급
+                String newToken = resetGithubToken(githubApiToken, userId);
 
-        int pageNumber = 1;
-        while (commitsIterator.hasNext()) {
-            List<GHCommit> currentPageCommits = commitsIterator.nextPage();
-            log.info(">>>> [ '{}'의 {} 페이지 커밋 리스트를 성공적으로 불러왔습니다. ] <<<<", repo.getName(), pageNumber);
-
-            // 필터링된 커밋을 리스트로 저장
-            for (GHCommit commit : currentPageCommits) {
+                // 깃허브 api 연결 재시도
                 try {
-                    // 투두에 해당하는 커밋인지 투두 코드로 확인
-                    if (commit.getCommitShortInfo().getMessage().startsWith(todoCode)) {
+                    return tryConnectGithub(newToken);
+                } catch (IOException re) {
 
-                        // 커밋 SHA를 확인하여 이미 저장된 커밋인지 확인
-                        if (existingCommitSHAs.contains(commit.getSHA1())) {
+                    // 재시도 후에도 실패한 경우는 토큰을 아예 삭제
+                    githubApiTokenService.deleteToken(userId);
 
-                            log.info(">>>> [ 이미 저장된 커밋 발견: {} ] <<<<", commit.getSHA1());
-                            return filteredCommits; // 이미 저장된 커밋 발견 시 조회 중단
-                        }
-
-                        filteredCommits.add(GithubCommitResponse.of(commit));
-                    }
-                } catch (IOException e) {
-                    log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR, e.getMessage());
-                    throw new GithubApiException(ExceptionMessage.GITHUB_API_GET_COMMIT_ERROR);
+                    log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_RESET_TOKEN_RETRY_FAIL.getText(), re.getMessage());
+                    throw new GithubApiException(ExceptionMessage.GITHUB_API_RESET_TOKEN_RETRY_FAIL);
                 }
+            } else {
+                // 다른 원인의 에러일 경우
+                log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_CONNECTION_ERROR.getText(), e.getMessage());
+                throw new GithubApiException(ExceptionMessage.GITHUB_API_CONNECTION_ERROR);
             }
+        }
+    }
 
-            pageNumber++;
+    @Transactional
+    public String resetGithubToken(String oldToken, Long userId) {
+        String authorizationHeader = AUTHORIZATION_HEADER_PREFIX + Base64.getEncoder().encodeToString((clientId + ":" + clientSecret).getBytes());
+        String requestBody = "{\"access_token\":\"" + oldToken + "\"}";
+
+        try {
+            String response = githubApiTokenClient.resetGithubApiToken(
+                    clientId,
+                    authorizationHeader,
+                    API_VERSION,
+                    MediaType.APPLICATION_JSON_VALUE,
+                    ACCEPT_HEADER,
+                    requestBody
+            );
+
+            String newToken = parseTokenFromResponse(response);
+
+            // 재발급 받은 토큰으로 업데이트
+             githubApiTokenService.saveToken(newToken, userId);
+
+            return newToken;
+        } catch (RuntimeException e) {
+            log.error(">>>> [ {} ] <<<<", ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL);
+        }
+    }
+
+    public String parseTokenFromResponse(String jsonResponse) {
+        // JSON 파싱 필요 - "token" 항목 추출
+        try {
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            JsonNode tokenNode = rootNode.path("token");
+            if (tokenNode.isMissingNode()) {
+                throw new GithubApiException(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL);
+            }
+            return tokenNode.asText();
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL);
+        }
+    }
+
+    @NonNull
+    private static GitHub tryConnectGithub(String githubApiToken) throws IOException {
+        GitHub github = new GitHubBuilder().withOAuthToken(githubApiToken).build();
+
+        github.checkApiUrlValidity();
+        log.info(">>>> [ 깃허브 api 연결에 성공하였습니다. ] <<<<");
+
+        return github;
+    }
+
+    private boolean isTokenExpired(IOException e) {
+        Throwable cause = e.getCause();
+
+        // 깃허브 api 라이브러리의 HttpException 예외인지 확인
+        if (cause instanceof HttpException httpException) {
+
+            // 401 권한없음 에러인지 확인 -> 토큰 만료 or 권한 없는 경우 발생
+            return httpException.getResponseCode() == 401;
         }
 
-        return filteredCommits;
+        return false;
+    }
+
+    // 깃허브 레포지토리 생성 메서드
+    @Transactional
+    public GHRepository createRepository(String githubApiToken, RepositoryInfo repoInfo, String description) {
+        GitHub gitHub = connectGithub(githubApiToken, repoInfo.getOwner());
+
+        try {
+            GHCreateRepositoryBuilder repoBuilder = gitHub.createRepository(repoInfo.getName())
+                    .description(description)
+                    .private_(false)
+                    .autoInit(true);
+            GHRepository repository = repoBuilder.create();
+
+            addWebHook(repository, webhookUrl);
+
+            log.info(">>>> [ {} 레포지토리가 생성되었습니다. ] <<<<", repoInfo.getName());
+
+            return repository;
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_CREATE_REPOSITORY_ERROR.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_CREATE_REPOSITORY_ERROR);
+        }
+    }
+
+
+    // 레포지토리에 Collaborator 추가
+    @Transactional
+    public void addCollaborator(String githubApiToken, RepositoryInfo repo, String githubId) {
+        GitHub gitHub = connectGithub(githubApiToken, repo.getOwner());
+
+        try {
+            GHRepository repository = gitHub.getRepository(repo.getOwner() + "/" + repo.getName());
+            GHUser user = gitHub.getUser(githubId);
+            repository.addCollaborators(GHOrganization.Permission.PUSH, user);
+            log.info(">>>> [ {} 사용자를 {} 레포지토리의 Collaborator로 추가했습니다. ] <<<<", githubId, repo.getName());
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_ADD_COLLABORATOR_ERROR.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_ADD_COLLABORATOR_ERROR);
+        }
+    }
+
+    @Transactional
+    public void acceptInvitation(String githubApiToken, String githubId) {
+        GitHub gitHub = connectGithub(githubApiToken, githubId);
+
+        try {
+            List<GHInvitation> invitations = new ArrayList<>(gitHub.getMyInvitations());
+
+            if (invitations.isEmpty()) {
+                log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_NO_INVITATIONS_FOUND.getText(), "No invitations found");
+                throw new GithubApiException(ExceptionMessage.GITHUB_API_NO_INVITATIONS_FOUND);
+            } else {
+                // 가장 최근 초대를 찾기 위해 invitations 리스트를 날짜 기준으로 정렬
+                sortInvitations(invitations);
+                GHInvitation latestInvitation = invitations.get(0);
+                log.info(">>>> [ Latest Invitation ID: {} ] <<<<", latestInvitation.getId());
+                latestInvitation.accept();
+                log.info(">>>> [ Invitation accepted. ] <<<<");
+            }
+        } catch (IOException e) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_ACCEPT_INVITATION_ERROR.getText(), e.getMessage());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_ACCEPT_INVITATION_ERROR);
+        }
+    }
+
+    private static void sortInvitations(List<GHInvitation> invitations) {
+        invitations.sort(Comparator.comparing(GithubApiService::getCreatedAtSafe).reversed());
+    }
+
+    private static Date getCreatedAtSafe(GHInvitation invitation) {
+        try {
+            return invitation.getCreatedAt();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void addWebHook(GHRepository repository, String webhookUrl) throws IOException {
+        // 웹훅 추가
+        repository.createHook(
+                "web",
+                Map.of(
+                        "url", webhookUrl,
+                        "content_type", "application/json"
+                ),
+                Collections.emptyList(),
+                true
+        );
+    }
+
+    public boolean repositoryExists(String token, String owner, String repoName) {
+        GitHub gitHub = connectGithub(token, owner);
+
+        try {
+            GHRepository repository = gitHub.getRepository(owner + "/" + repoName);
+            return repository != null;
+        } catch (IOException e) {
+            return false;  // 레포지토리를 찾을 수 없는 경우 예외가 발생하며, 이 경우 레포지토리가 존재하지 않음을 의미
+        }
     }
 }

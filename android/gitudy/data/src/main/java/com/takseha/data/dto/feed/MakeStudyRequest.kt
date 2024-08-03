@@ -2,6 +2,7 @@ package com.takseha.data.dto.feed
 
 
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.mystudy.RepositoryInfo
 
 data class MakeStudyRequest(
     @SerializedName("categories_id")
@@ -11,11 +12,11 @@ data class MakeStudyRequest(
     @SerializedName("maximum_member")
     val maximumMember: Int = 10,
     @SerializedName("period_type")
-    val periodType: StudyPeriod = StudyPeriod.STUDY_PERIOD_WEEK,
+    val periodType: StudyPeriodStatus = StudyPeriodStatus.STUDY_PERIOD_WEEK,
     @SerializedName("profile_image_url")
     val profileImageUrl: String = "",
-    @SerializedName("branch_name")
-    val branchName: String = "",
+    @SerializedName("repository_name")
+    val repositoryName: String = "",
     @SerializedName("status")
     val status: StudyStatus = StudyStatus.STUDY_PUBLIC,
     @SerializedName("topic")

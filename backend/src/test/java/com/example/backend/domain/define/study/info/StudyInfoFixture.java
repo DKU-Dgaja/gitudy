@@ -6,7 +6,10 @@ import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
-import com.example.backend.study.api.controller.info.response.*;
+import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.info.response.StudyInfoListWithMemberResponse;
+import com.example.backend.study.api.controller.info.response.UpdateStudyInfoPageResponse;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 
 import java.time.LocalDate;
@@ -25,6 +28,11 @@ public class StudyInfoFixture {
                 .status(STUDY_PUBLIC)
                 .currentMember(1)
                 .maximumMember(10)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("user")
+                        .name("name")
+                        .branchName("main")
+                        .build())
                 .build();
     }
 
@@ -67,6 +75,26 @@ public class StudyInfoFixture {
                 .build();
     }
 
+    // StudyInfo 생성 해주는 메소드
+    public static StudyInfo generateDeletedStudyInfo(Long userId) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("Sample Study")
+                .score(100)
+                .endDate(LocalDate.now().plusMonths(3))
+                .info("This is a sample study.")
+                .status(StudyStatus.STUDY_DELETED)
+                .joinCode("ABC123")
+                .maximumMember(5)
+                .currentMember(3)
+                .lastCommitDay(LocalDate.now())
+                .profileImageUrl("https://example.com/profile.jpg")
+                .notice("Important notice for the study.")
+                .repositoryInfo(new RepositoryInfo("구영민", "aaa333", "BRANCH_NAME"))
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
+
     // StudyInfoDetailResponse를 생성해주는 함수
     public static StudyInfoDetailResponse generateStudyInfoDetailResponse(StudyInfo studyInfo){
         return StudyInfoDetailResponse.builder()
@@ -95,11 +123,7 @@ public class StudyInfoFixture {
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner("소유자이름")
-                        .name("레포 이름")
-                        .branchName("main")
-                        .build())
+                .repositoryName("Repository Name")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -115,11 +139,7 @@ public class StudyInfoFixture {
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(11)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner("소유자이름")
-                        .name("레포 이름")
-                        .branchName("main")
-                        .build())
+                .repositoryName("Repository Name")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -135,11 +155,7 @@ public class StudyInfoFixture {
                 .status(STUDY_PUBLIC)
                 .maximumMember(-1)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner("소유자이름")
-                        .name("레포 이름")
-                        .branchName("main")
-                        .build())
+                .repositoryName("Repository Name")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -155,11 +171,7 @@ public class StudyInfoFixture {
                 .status(StudyStatus.STUDY_PUBLIC)
                 .maximumMember(5)
                 .profileImageUrl("https://example.com/profile.jpg")
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner("소유자이름")
-                        .name("레포 이름")
-                        .branchName("main")
-                        .build())
+                .repositoryName("Repository Name")
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .categoriesId(categoriesId)
                 .build();
@@ -326,5 +338,23 @@ public class StudyInfoFixture {
             studyInfos.add(createDefaultStudyInfoRandomScoreAndLastCommitDay(userId));
         }
         return studyInfos;
+    }
+
+
+    // 스코어와 저장 테스트
+    public static StudyInfo createPublicStudyInfoScore(Long userId, int score) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("토픽")
+                .status(STUDY_PUBLIC)
+                .currentMember(1)
+                .maximumMember(10)
+                .score(score)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("user")
+                        .name("name")
+                        .branchName("main")
+                        .build())
+                .build();
     }
 }

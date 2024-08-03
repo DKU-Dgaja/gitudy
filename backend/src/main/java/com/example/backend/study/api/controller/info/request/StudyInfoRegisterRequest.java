@@ -2,7 +2,6 @@ package com.example.backend.study.api.controller.info.request;
 
 
 import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import jakarta.validation.constraints.Max;
@@ -32,7 +31,7 @@ public class StudyInfoRegisterRequest {
 
     private String profileImageUrl;                 // 스터디 프로필 사진
 
-    private RepositoryInfo repositoryInfo;          // 레포지토리 정보
+    private String repositoryName;                  // 생성할 레포지토리 이름
 
     private StudyPeriodType periodType;             // 스터디 커밋 규칙(주기)
 
@@ -45,7 +44,7 @@ public class StudyInfoRegisterRequest {
                 .status(request.getStatus())
                 .maximumMember(request.getMaximumMember())
                 .profileImageUrl(request.getProfileImageUrl())
-                .repositoryInfo(request.getRepositoryInfo())
+                .repositoryName(request.getRepositoryInfo().getName())
                 .build();
     }
 }

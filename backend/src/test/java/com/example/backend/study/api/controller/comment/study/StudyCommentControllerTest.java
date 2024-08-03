@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.comment.study;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -81,7 +80,6 @@ class StudyCommentControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(savedUser.getId()));
 
@@ -96,14 +94,12 @@ class StudyCommentControllerTest extends MockTestConfig {
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/comment")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentRegisterRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyComment register Success"))
                 .andDo(print());
     }
+
     @Test
     public void Study_Comment_Update_테스트() throws Exception {
         //given
@@ -111,7 +107,6 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
         StudyComment studyComment =
@@ -125,14 +120,12 @@ class StudyCommentControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(patch("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentUpdateRequest)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyComment update Success"))
                 .andDo(print());
     }
+
     @Test
     public void Study_Comment_삭제_테스트() throws Exception {
         //given
@@ -140,7 +133,6 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
         StudyComment studyComment =
@@ -153,11 +145,8 @@ class StudyCommentControllerTest extends MockTestConfig {
         //then
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("StudyComment deleted successfully"))
                 .andDo(print());
     }
 
@@ -169,7 +158,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
+
         StudyCommentListAndCursorIdxResponse response
                 = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
 
@@ -178,17 +167,15 @@ class StudyCommentControllerTest extends MockTestConfig {
                 .thenReturn(response);
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$.study_comment_list").isNotEmpty())
                 .andDo(print());
     }
 
@@ -200,28 +187,24 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
+
         StudyCommentListAndCursorIdxResponse response
                 = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
 
         when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommentService.selectStudyCommentList(any(Long.class), any(Long.class), any(Long.class)))
+        when(studyCommentService.selectStudyCommentList(any(Long.class), any(), any(Long.class)))
                 .thenReturn(response);
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("cursorIdx", "")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "5"))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isEmpty())
+                .andExpect(jsonPath("$.study_comment_list").isNotEmpty())
                 .andDo(print());
-
     }
 
     @Test
@@ -232,23 +215,21 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
                 .when(studyMemberService)
                 .isValidateStudyMember(any(User.class), any(Long.class));
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "5"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
     }
 
@@ -260,19 +241,17 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
-        mockMvc.perform(get("/study/"+studyInfo.getId()+"/comments")
+        mockMvc.perform(get("/study/" + studyInfo.getId() + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "-1"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
 }

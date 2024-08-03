@@ -4,8 +4,9 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MakeStudyRequest
-import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
+import com.takseha.data.dto.mystudy.RepositoryInfo
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,9 +22,9 @@ class MakeStudyViewModel: ViewModel() {
     val newStudyInfoState = _newStudyInfoState.asStateFlow()
 
     fun setStudyIntro(title: String, detail: String, githubRepo: String) {
-        _newStudyInfoState.update { it.copy(topic = title, info = detail, branchName = githubRepo) }
+        _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryName = githubRepo) }
     }
-    fun setStudyRule(commitTimes: StudyPeriod, isPublic: StudyStatus, maxMember: Int) {
+    fun setStudyRule(commitTimes: StudyPeriodStatus, isPublic: StudyStatus, maxMember: Int) {
         _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = backgroundColorList[randIdx]) }
     }
     fun makeNewStudy() = viewModelScope.launch {
@@ -35,17 +36,9 @@ class MakeStudyViewModel: ViewModel() {
         val newStudyResponse = gitudyStudyRepository.makeNewStudy(request)
 
         if (newStudyResponse.isSuccessful) {
-            val resCode = newStudyResponse.body()!!.resCode
-            val resMsg = newStudyResponse.body()!!.resMsg
-            val resObj = newStudyResponse.body()!!.resObj
-
-            if (resCode == 200 && resMsg == "OK") {
-                Log.d("MakeStudyViewModel", resObj)
-            } else {
-                Log.e("MakeStudyViewModel", "https status error: $resCode, $resMsg")
-            }
+            Log.d("MakeStudyViewModel", newStudyResponse.code().toString())
         } else {
-            Log.e("MakeStudyViewModel", "newStudyResponse status: ${newStudyResponse.code()}\nnewStudyResponse message: ${newStudyResponse.message()}")
+            Log.e("MakeStudyViewModel", "newStudyResponse status: ${newStudyResponse.code()}\nnewStudyResponse message: ${newStudyResponse.errorBody()?.string()}")
         }
     }
 }

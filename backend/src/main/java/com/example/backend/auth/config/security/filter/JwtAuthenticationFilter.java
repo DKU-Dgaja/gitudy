@@ -1,14 +1,12 @@
 package com.example.backend.auth.config.security.filter;
 
 import com.example.backend.auth.api.service.jwt.JwtService;
-import com.example.backend.auth.api.service.token.RefreshTokenService;
+import com.example.backend.common.exception.ErrorResponse;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.jwt.JwtException;
-import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
-import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -21,7 +19,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -34,6 +31,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.springframework.http.HttpStatus.UNAUTHORIZED;
+
 
 /*
     Jwt 토큰 인증 필터
@@ -43,9 +42,6 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
-    private final RefreshTokenRepository refreshTokenRepository;
-    private final RefreshTokenService refreshTokenService;
     private final static int ACCESS_TOKEN_INDEX = 1;
     private final static String[] EXCLUDE_PATH = {"/auth/reissue"};
     private final JwtService jwtService;
@@ -75,8 +71,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             // Token 구성: "Bearer {Access_Token} {Refresh_Token}"
             List<String> tokens = Arrays.asList(jwtToken.split(" "));
-            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"와 "{Refresh_Token}"
-            if (tokens.size() == 3) {
+            // 공백(" ")으로 나눈 tokens: "Bearer"와 "{Access_Token}"
+            if (tokens.size() == 2) {
                 // Access Token 추출
                 String accessToken = tokens.get(ACCESS_TOKEN_INDEX);
                 subject = jwtService.extractSubject(accessToken);
@@ -164,10 +160,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private void jwtExceptionHandler(HttpServletResponse response, ExceptionMessage message) throws IOException {
         log.error(">>>> [ JWT 토큰 인증 중 Error 발생 : {} ] <<<<", message.getText());
 
-        response.setStatus(HttpStatus.OK.value());
+        response.setStatus(UNAUTHORIZED.value());
         response.setCharacterEncoding("utf-8");
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        response.getWriter().write(objectMapper.writeValueAsString(JsonResult.failOf(message.getText())));
+        response.getWriter().write(objectMapper.writeValueAsString(
+                ErrorResponse.from(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), message.getText())));
     }
 
 }

@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -10,13 +11,17 @@ import com.example.backend.domain.define.study.category.mapping.StudyCategoryMap
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.*;
+import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,7 +33,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import static com.example.backend.domain.define.study.member.constant.StudyMemberRole.STUDY_LEADER;
 import static com.example.backend.domain.define.study.member.constant.StudyMemberStatus.STUDY_ACTIVE;
@@ -40,6 +44,7 @@ import static com.example.backend.domain.define.study.member.constant.StudyMembe
 public class StudyInfoService {
     private final static String DEFAULT_NAME = "default convention";
     private final static String DEFAULT_CONTENT = "^[a-zA-Z0-9]{6} .*";
+    private final static String DEFAULT_BRANCH = "main";
 
     private final StudyInfoRepository studyInfoRepository;
     private final StudyMemberRepository memberRepository;
@@ -48,6 +53,8 @@ public class StudyInfoService {
     private final StudyCategoryRepository studyCategoryRepository;
     private final UserRepository userRepository;
     private final StudyConventionRepository studyConventionRepository;
+    private final GithubApiService githubApiService;
+    private final GithubApiTokenService githubApiTokenService;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
@@ -66,6 +73,10 @@ public class StudyInfoService {
 
         // 기본 컨벤션 생성
         registerDefaultConvention(studyInfo.getId());
+
+        // github에 스터디 레포지토리 생성
+        GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
+        githubApiService.createRepository(token.githubApiToken(), studyInfo.getRepositoryInfo(), "README.md를 작성해주세요.");
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
     }
@@ -106,9 +117,7 @@ public class StudyInfoService {
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
 
-        UpdateStudyInfoPageResponse response = getUpdateStudyInfoPageResponse(studyInfo, categoryNames);
-
-        return response;
+        return getUpdateStudyInfoPageResponse(studyInfo, categoryNames);
     }
 
     // 정렬된 스터디 조회
@@ -188,7 +197,7 @@ public class StudyInfoService {
     }
 
     private static UpdateStudyInfoPageResponse getUpdateStudyInfoPageResponse(StudyInfo studyInfo, List<String> categoryNames) {
-        UpdateStudyInfoPageResponse response = UpdateStudyInfoPageResponse.builder()
+        return UpdateStudyInfoPageResponse.builder()
                 .userId(studyInfo.getUserId())
                 .topic(studyInfo.getTopic())
                 .endDate(studyInfo.getEndDate())
@@ -201,7 +210,6 @@ public class StudyInfoService {
                 .periodType(studyInfo.getPeriodType())
                 .categoryNames(categoryNames)
                 .build();
-        return response;
     }
 
     private void updateWithdrawalStudyMember(Long studyInfoId) {
@@ -249,7 +257,11 @@ public class StudyInfoService {
                 .lastCommitDay(null)
                 .profileImageUrl(request.getProfileImageUrl())
                 .notice(null)
-                .repositoryInfo(request.getRepositoryInfo())
+                .repositoryInfo(RepositoryInfo.builder()
+                        .name(request.getRepositoryName())
+                        .owner(userInfo.getGithubId())
+                        .branchName(DEFAULT_BRANCH)
+                        .build())
                 .periodType(request.getPeriodType())
                 .build();
         return studyInfoRepository.save(studyInfo);
@@ -284,5 +296,17 @@ public class StudyInfoService {
                     return StudyInfoListWithMemberResponse.from(studyInfo, userInfo);
                 })
                 .collect(Collectors.toList());
+    }
+
+    public void checkDuplicateRepoName(UserInfoResponse userInfo, String repoName) {
+
+        // 사용자의 깃허브 토큰 조회
+        GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
+
+        // 레포지토리 이름 중복 확인
+        if (githubApiService.repositoryExists(token.githubApiToken(), userInfo.getGithubId(), repoName)) {
+            log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), repoName);
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS);
+        }
     }
 }

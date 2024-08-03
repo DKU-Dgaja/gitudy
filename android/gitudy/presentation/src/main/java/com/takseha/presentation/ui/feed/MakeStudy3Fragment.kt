@@ -1,17 +1,15 @@
 package com.takseha.presentation.ui.feed
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.takseha.data.dto.feed.MakeStudyRequest
-import com.takseha.data.dto.feed.StudyPeriod
+import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentMakeStudy3Binding
@@ -71,9 +69,9 @@ class MakeStudy3Fragment : Fragment() {
                     R.string.study_lock
                 )
             maxMemberText.text = studyInfo.maximumMember.toString()
-            githubRepoLink.text = studyInfo.branchName
+            githubRepoLink.text = studyInfo.repositoryName
             commitRule.text =
-                if (studyInfo.periodType == StudyPeriod.STUDY_PERIOD_WEEK) getString(R.string.feed_rule_week) else if (studyInfo.periodType == StudyPeriod.STUDY_PERIOD_EVERYDAY) getString(
+                if (studyInfo.periodType == StudyPeriodStatus.STUDY_PERIOD_WEEK) getString(R.string.feed_rule_week) else if (studyInfo.periodType == StudyPeriodStatus.STUDY_PERIOD_EVERYDAY) getString(
                     R.string.feed_rule_everyday
                 ) else getString(R.string.feed_rule_free)
         }

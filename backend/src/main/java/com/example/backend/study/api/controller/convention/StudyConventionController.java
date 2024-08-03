@@ -1,6 +1,5 @@
 package com.example.backend.study.api.controller.convention;
 
-import com.example.backend.common.response.JsonResult;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.convention.request.StudyConventionRequest;
 import com.example.backend.study.api.controller.convention.request.StudyConventionUpdateRequest;
@@ -15,6 +14,7 @@ import jakarta.validation.Valid;
 import jakarta.validation.constraints.Min;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
@@ -30,67 +30,67 @@ public class StudyConventionController {
 
     @ApiResponse(responseCode = "200", description = "컨벤션 등록 성공")
     @PostMapping("/{studyInfoId}/convention")
-    public JsonResult<?> registerStudyConvention(@AuthenticationPrincipal User user,
-                                                 @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                                 @Valid @RequestBody StudyConventionRequest studyConventionRequest) {
+    public ResponseEntity<Void> registerStudyConvention(@AuthenticationPrincipal User user,
+                                                        @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                        @Valid @RequestBody StudyConventionRequest studyConventionRequest) {
 
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
         studyConventionService.registerStudyConvention(studyConventionRequest, studyInfoId);
 
-        return JsonResult.successOf("StudyConvention register Success");
+        return ResponseEntity.ok().build();
     }
 
 
     @ApiResponse(responseCode = "200", description = "컨벤션 수정 성공")
     @PutMapping("/{studyInfoId}/convention/{conventionId}")
-    public JsonResult<?> updateStudyConvention(@AuthenticationPrincipal User user,
-                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                               @PathVariable(name = "conventionId") Long conventionId,
-                                               @Valid @RequestBody StudyConventionUpdateRequest studyConventionUpdateRequest) {
+    public ResponseEntity<Void> updateStudyConvention(@AuthenticationPrincipal User user,
+                                                      @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                      @PathVariable(name = "conventionId") Long conventionId,
+                                                      @Valid @RequestBody StudyConventionUpdateRequest studyConventionUpdateRequest) {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
         studyConventionService.updateStudyConvention(studyConventionUpdateRequest, conventionId);
 
-        return JsonResult.successOf("StudyConvention update Success");
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponse(responseCode = "200", description = "컨벤션 삭제 성공")
     @DeleteMapping("/{studyInfoId}/convention/{conventionId}")
-    public JsonResult<?> deleteStudyConvention(@AuthenticationPrincipal User user,
-                                               @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                               @PathVariable(name = "conventionId") Long conventionId) {
+    public ResponseEntity<Void> deleteStudyConvention(@AuthenticationPrincipal User user,
+                                                      @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                      @PathVariable(name = "conventionId") Long conventionId) {
 
         studyMemberService.isValidateStudyLeader(user, studyInfoId);
 
         studyConventionService.deleteStudyConvention(conventionId);
 
-        return JsonResult.successOf("StudyConvention delete Success");
+        return ResponseEntity.ok().build();
     }
 
     @ApiResponse(responseCode = "200", description = "컨벤션 조회 성공", content = @Content(schema = @Schema(implementation = StudyConventionResponse.class)))
     @GetMapping("/{studyInfoId}/convention/{conventionId}")
-    public JsonResult<?> readStudyConvention(@AuthenticationPrincipal User user,
-                                             @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                             @PathVariable(name = "conventionId") Long conventionId) {
+    public ResponseEntity<StudyConventionResponse> readStudyConvention(@AuthenticationPrincipal User user,
+                                                                       @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                                       @PathVariable(name = "conventionId") Long conventionId) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        return JsonResult.successOf(studyConventionService.readStudyConvention(conventionId));
+        return ResponseEntity.ok().body(studyConventionService.readStudyConvention(conventionId));
     }
 
     @ApiResponse(responseCode = "200", description = "컨벤션 전체조회 성공", content = @Content(schema = @Schema(implementation = StudyConventionListAndCursorIdxResponse.class)))
     @GetMapping("/{studyInfoId}/convention")
-    public JsonResult<?> readStudyConventionList(@AuthenticationPrincipal User user,
-                                                 @PathVariable(name = "studyInfoId") Long studyInfoId,
-                                                 @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
-                                                 @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "4") Long limit) {
+    public ResponseEntity<StudyConventionListAndCursorIdxResponse> readStudyConventionList(@AuthenticationPrincipal User user,
+                                                                                           @PathVariable(name = "studyInfoId") Long studyInfoId,
+                                                                                           @Min(value = 0, message = "Cursor index cannot be negative") @RequestParam(name = "cursorIdx", required = false) Long cursorIdx,
+                                                                                           @Min(value = 1, message = "Limit cannot be less than 1") @RequestParam(name = "limit", defaultValue = "4") Long limit) {
 
         studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        return JsonResult.successOf(studyConventionService.readStudyConventionList(studyInfoId, cursorIdx, limit));
+        return ResponseEntity.ok().body(studyConventionService.readStudyConventionList(studyInfoId, cursorIdx, limit));
     }
 
 }

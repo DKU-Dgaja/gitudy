@@ -15,7 +15,8 @@ import java.util.Random;
 import java.util.Set;
 
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyCommitRepositoryTest extends TestConfig {

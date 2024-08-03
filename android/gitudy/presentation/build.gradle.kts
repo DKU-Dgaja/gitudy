@@ -4,7 +4,6 @@ plugins {
     id("com.android.library")
     id("org.jetbrains.kotlin.android")
     id("androidx.navigation.safeargs.kotlin")
-
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
@@ -37,11 +36,9 @@ android {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-    viewBinding {
-        enable = true
-    }
-    dataBinding {
-        enable = true
+    buildFeatures {
+        dataBinding = true
+        viewBinding = true
     }
 }
 
@@ -59,6 +56,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
     implementation("com.google.firebase:firebase-messaging-ktx:23.4.1")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
+    implementation("androidx.core:core:1.13.1")
+    implementation("androidx.activity:activity:1.9.1")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

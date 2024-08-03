@@ -1,15 +1,15 @@
 package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
-import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.controller.auth.response.UserInfoAndRankingResponse;
 import com.example.backend.auth.api.service.auth.request.AuthServiceRegisterRequest;
 import com.example.backend.auth.api.service.auth.request.UserUpdateServiceRequest;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
+import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
@@ -19,6 +19,10 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.domain.define.refreshToken.RefreshToken;
+import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -26,8 +30,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
-import static com.example.backend.auth.config.fixture.UserFixture.generateOauthResponse;
+import java.util.HashMap;
+import java.util.Optional;
+
+import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
@@ -50,9 +56,20 @@ class AuthServiceTest extends MockTestConfig {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private RefreshTokenService refreshTokenService;
+
+    @Autowired
+    private RefreshTokenRepository refreshTokenRepository;
+
+    @Autowired
+    private GithubApiTokenRepository githubApiTokenRepository;
+
     @AfterEach
     void tearDown() {
+        githubApiTokenRepository.deleteAll();
         userRepository.deleteAllInBatch();
+        githubApiTokenRepository.deleteAll();
     }
 
     @Test
@@ -61,6 +78,7 @@ class AuthServiceTest extends MockTestConfig {
         // given
         String code = "code";
         String state = "state";
+        String token = "githubApiToken";
 
         OAuthResponse oAuthResponse = generateOauthResponse();
         UserPlatformType platformType = oAuthResponse.getPlatformType();
@@ -73,10 +91,14 @@ class AuthServiceTest extends MockTestConfig {
         authService.login(GITHUB, code, state);
 
         User user = userRepository.findByPlatformIdAndPlatformType(platformId, platformType).get();
+        GithubApiToken githubApiToken = githubApiTokenRepository.findByUserId(user.getId()).get();
 
         // then
         assertThat(user).isNotNull();
         assertThat(user.getRole().name()).isEqualTo(UserRole.UNAUTH.name());
+
+        // githubApiToken 생성 검증
+        assertThat(githubApiToken.githubApiToken()).isEqualTo(token);
     }
 
     @Test
@@ -130,7 +152,6 @@ class AuthServiceTest extends MockTestConfig {
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 성공 테스트")
     public void registerUnauthUserSuccessTest() {
-        UserPlatformType platformType = KAKAO;
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
@@ -140,7 +161,7 @@ class AuthServiceTest extends MockTestConfig {
         User unauthUser = userRepository.save(User.builder()
                 .role(UserRole.UNAUTH)
                 .platformId(platformId)
-                .platformType(platformType)
+                .platformType(KAKAO)
                 .name(name)
                 .profileImageUrl(profileImageUrl)
                 .build());
@@ -150,6 +171,7 @@ class AuthServiceTest extends MockTestConfig {
                 .githubId(githubId)
                 .name(name)
                 .pushAlarmYn(true)
+                .fcmToken("token")
                 .build();
 
         // when
@@ -167,7 +189,6 @@ class AuthServiceTest extends MockTestConfig {
     @Test
     @DisplayName("UNAUTH 미가입자 회원가입 실패 테스트")
     public void registerUnauthUserFailTest() {
-        UserPlatformType platformType = KAKAO;
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
@@ -175,7 +196,7 @@ class AuthServiceTest extends MockTestConfig {
 
         User user = User.builder()
                 .platformId(platformId)
-                .platformType(platformType)
+                .platformType(KAKAO)
                 .role(USER)
                 .name(name)
                 .profileImageUrl(profileImageUrl)
@@ -238,7 +259,7 @@ class AuthServiceTest extends MockTestConfig {
         System.out.println("savedUser = " + savedUser.getPlatformType());
 
         // when
-        UserInfoResponse expectedUser = authService.getUserByInfo(savedUser.getPlatformId(), savedUser.getPlatformType());
+        UserInfoAndRankingResponse expectedUser = authService.getUserByInfo(savedUser.getPlatformId(), savedUser.getPlatformType());
 
         // then
         assertThat(expectedUser).isNotNull();
@@ -315,7 +336,6 @@ class AuthServiceTest extends MockTestConfig {
         boolean updateProfilePublicYn = false;
         SocialInfo updateSocialInfo = SocialInfo.builder().blogLink("test@naver.com").build();
 
-//        User user = userRepository.save(generateAuthUser());
         UserUpdateServiceRequest request = UserUpdateServiceRequest.builder()
                 .userId(1L)
                 .name(updateName)
@@ -378,6 +398,33 @@ class AuthServiceTest extends MockTestConfig {
 
         // then
         assertDoesNotThrow(() -> authService.nickNameDuplicationCheck(request));
+    }
+
+    @Test
+    void 로그아웃_토큰_삭제_테스트() {
+        //given
+        User savedUser = userRepository.save(generateGoogleUser());
+
+        HashMap<String, String> map = new HashMap<>();
+        map.put("role", savedUser.getRole().name());
+        map.put("platformId", savedUser.getPlatformId());
+        map.put("platformType", String.valueOf(savedUser.getPlatformType()));
+
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
+
+        RefreshToken refreshTokenEntity = RefreshToken.builder()
+                .refreshToken(refreshToken)
+                .subject(savedUser.getUsername())
+                .build();
+        refreshTokenService.saveRefreshToken(refreshTokenEntity);
+
+        // when
+        authService.logout(accessToken);
+
+        // then
+        Optional<RefreshToken> deletedRefreshToken = refreshTokenRepository.findBySubject(savedUser.getUsername());
+        assertFalse(deletedRefreshToken.isPresent());
     }
 
 }

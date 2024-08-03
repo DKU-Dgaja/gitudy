@@ -18,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +25,8 @@ import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUs
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -62,24 +61,20 @@ class NoticeControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
-
-        List<UserNoticeList> userNoticeList = new ArrayList<>(); // 빈 리스트
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        when(noticeService.ReadNoticeList(any(UserInfoResponse.class), any(LocalDateTime.class), anyLong())).thenReturn(userNoticeList);
+        when(noticeService.ReadNoticeList(any(UserInfoResponse.class), any(LocalDateTime.class), anyLong())).thenReturn(List.of(UserNoticeList.builder().build()));
 
         // when
         mockMvc.perform(get("/notice")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorTime", "2020-01-01T00:00:00")
                         .param("limit", "5"))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -89,7 +84,6 @@ class NoticeControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
@@ -97,13 +91,10 @@ class NoticeControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(delete("/notice/" + "stringId")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("Notice delete Success"))
                 .andDo(print());
     }
 
@@ -113,20 +104,16 @@ class NoticeControllerTest extends MockTestConfig {
         User savedUser = userRepository.save(generateAuthUser());
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
-        String refreshToken = jwtService.generateRefreshToken(map, savedUser);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
 
         // when
         mockMvc.perform(delete("/notice")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("All Notice delete Success"))
                 .andDo(print());
     }
 }

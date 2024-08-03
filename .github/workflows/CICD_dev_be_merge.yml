@@ -3,6 +3,10 @@ name: Spring Boot & Gradle CICD Jobs (With. dev branches push)
 on:
   push:
     branches: [ dev ]
+    paths:
+      - '.github/workflows/**'
+      - 'backend/**'
+      - 'webhooks/**'
 
 jobs:
   build:
@@ -27,16 +31,21 @@ jobs:
         echo "${{ secrets.APPLICATION_DEV }}" > ./backend/src/main/resources/application-dev.yml
         echo "${{ secrets.APPLICATION_DB }}" > ./backend/src/main/resources/database.yml
         echo "${{ secrets.FCM_SERVICE_ACCOUNT_KEY }}" > ./backend/src/main/resources/serviceAccountKey.json
+        echo "${{ secrets.WEBHOOKS_YML }}" > ./webhooks/src/main/resources/application.yml
 
     # gradlew를 실행시키기 위해 권한 부여
     - name: Gradlew에게 실행권한 부여
-      run: chmod +x ./backend/gradlew
+      run: |
+        chmod +x ./backend/gradlew
+        chmod +x ./webhooks/gradlew
 
     # 멀티모듈 빌드하기
     - name: 멀티모듈 전체 빌드
       run: |
-        cd ./backend
+        cd backend
         ./gradlew clean build -x test
+        cd ../webhooks
+        ./gradlew clean build
 
   deployment:
     name: docker deployment
@@ -52,4 +61,5 @@ jobs:
           cd ./backend
           docker-compose down
           docker rmi `docker images | grep gitudy | awk '{print $3}'`
+          docker rmi `docker images | grep webhooks | awk '{print $3}'`
           docker-compose up -d

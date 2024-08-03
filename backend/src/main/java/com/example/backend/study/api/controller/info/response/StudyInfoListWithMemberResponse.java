@@ -1,6 +1,7 @@
 package com.example.backend.study.api.controller.info.response;
 
 import com.example.backend.domain.define.study.info.constant.StudyPeriodType;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -26,6 +27,8 @@ public class StudyInfoListWithMemberResponse {
 
     private String info;                            // 스터디 소개
 
+    private StudyStatus status;                     // 스터디 상태
+
     private int maximumMember;                      // 스터디 제한 인원
 
     private int currentMember;                      // 스터디 현재 인원
@@ -49,6 +52,7 @@ public class StudyInfoListWithMemberResponse {
                 .topic(response.getTopic())
                 .score(response.getScore())
                 .info(response.getInfo())
+                .status(response.getStatus())
                 .maximumMember(response.getMaximumMember())
                 .currentMember(response.getCurrentMember())
                 .lastCommitDay(response.getLastCommitDay())

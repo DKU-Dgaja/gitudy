@@ -3,6 +3,7 @@ package com.example.backend.domain.define.study.comment.study.repository;
 import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.comment.StudyCommentFixture;
 import com.example.backend.domain.define.study.comment.study.StudyComment;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -12,11 +13,11 @@ import com.example.backend.study.api.controller.comment.study.response.StudyComm
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.backend.domain.define.account.user.repository.UserRepository;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SuppressWarnings("NonAsciiCharacters")
 class StudyCommentRepositoryTest extends TestConfig {
@@ -55,7 +56,7 @@ class StudyCommentRepositoryTest extends TestConfig {
         // then
         for (StudyCommentResponse b : StudyCommentListResponse) {
             assertTrue(b.getId() < cursorIdx);
-            assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
+            assertEquals(user.getId(), b.getUserInfoResponse().getId());
             assertEquals(study.getId(), b.getStudyInfoId());
         }
     }
@@ -76,7 +77,7 @@ class StudyCommentRepositoryTest extends TestConfig {
         // then
         assertEquals(LIMIT, StudyCommentListResponse.size());
         for (StudyCommentResponse b : StudyCommentListResponse) {
-            assertEquals(user.getId(), b.getUserInfoResponse().getUserId());
+            assertEquals(user.getId(), b.getUserInfoResponse().getId());
             assertEquals(study.getId(), b.getStudyInfoId());
         }
     }

@@ -17,6 +17,19 @@ public class UserFixture {
                 .name("이름")
                 .githubId("깃허브아이디")
                 .profileImageUrl("프로필이미지")
+                .score(10)
+                .build();
+    }
+
+    public static User generateAdminUser() {
+        return User.builder()
+                .platformId("111")
+                .platformType(GITHUB)
+                .role(ADMIN)
+                .name("관리자")
+                .githubId("관리자")
+                .profileImageUrl("관리자")
+                .score(100)
                 .build();
     }
 
@@ -57,10 +70,11 @@ public class UserFixture {
         return User.builder()
                 .platformId("1")
                 .platformType(GOOGLE)
-                .role(UNAUTH)
+                .role(USER)
                 .name("이름")
                 .githubId("깃허브아이디")
                 .profileImageUrl("프로필이미지")
+                .score(30)
                 .build();
     }
 
@@ -68,10 +82,11 @@ public class UserFixture {
         return User.builder()
                 .platformId("1")
                 .platformType(KAKAO)
-                .role(UNAUTH)
+                .role(USER)
                 .name("이름")
                 .githubId("카카오아이디")
                 .profileImageUrl("프로필이미지")
+                .score(50)
                 .build();
     }
 
@@ -81,6 +96,7 @@ public class UserFixture {
                 .platformType(GITHUB)
                 .name("이름")
                 .profileImageUrl("프로필이미지")
+                .githubApiToken("githubApiToken")
                 .build();
     }
 
@@ -166,6 +182,18 @@ public class UserFixture {
                 .name("이름")
                 .githubId("깃허브아이디")
                 .profileImageUrl("프로필이미지")
+                .pushAlarmYn(false)
+                .build();
+    }
+
+    public static User generateAuthJusung() {
+        return User.builder()
+                .platformId("platformId")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이주성")
+                .githubId("jusung-c")
+                .profileImageUrl("www.naver.com")
                 .pushAlarmYn(false)
                 .build();
     }

@@ -1,6 +1,7 @@
 package com.example.backend.domain.define.study.todo.mapping.repository;
 
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 
 import java.util.List;
 
@@ -11,4 +12,8 @@ public interface StudyTodoMappingRepositoryCustom {
 
     // todoId로 해당 To-do를 완료한 인원수를 조회한다.
     int findCompleteTodoMappingCountByTodoId(Long todoId);
+
+    // userId와 todoId로 StudyTodoMapping 상태를 업데이트한다.
+    boolean updateByUserIdAndTodoId(Long userId, Long todoId, StudyTodoStatus updateStatus);
+
 }

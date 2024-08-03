@@ -1,5 +1,7 @@
 package com.example.backend.domain.define.study.info.repository;
 
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.example.backend.domain.define.study.info.QStudyInfo.studyInfo;
 import static com.example.backend.domain.define.study.info.constant.StudyStatus.STUDY_PRIVATE;
@@ -50,6 +53,7 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                         studyInfo.topic,
                         studyInfo.score,
                         studyInfo.info,
+                        studyInfo.status,
                         studyInfo.maximumMember,
                         studyInfo.currentMember,
                         studyInfo.lastCommitDay,
@@ -62,7 +66,8 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
                                 .otherwise(false)
                                 .as("isLeader")
                 ))
-                .from(studyInfo);
+                .from(studyInfo)
+                .where(studyInfo.status.ne(StudyStatus.STUDY_DELETED));
         // myStudy에 따라서 동적으로 추가 또는 제거
         if (myStudy) {
             query.innerJoin(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
@@ -119,6 +124,14 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
         }
 
         return query.fetchOne().intValue(); // 결과를 int로 변환하여 리턴
+    }
+
+    @Override
+    public Optional<StudyInfo> findByRepositoryFullName(String owner, String repositoryName) {
+        return Optional.ofNullable(queryFactory.selectFrom(studyInfo)
+                .where(studyInfo.repositoryInfo.owner.eq(owner)
+                        .and(studyInfo.repositoryInfo.name.eq(repositoryName)))
+                .fetchOne());
     }
 
 }

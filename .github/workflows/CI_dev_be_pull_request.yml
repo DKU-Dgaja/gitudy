@@ -3,6 +3,8 @@ name: Spring Boot & Gradle CI Jobs (With. dev branches pull_request)
 on:
   pull_request:
     branches: [ dev ]
+    paths:
+      - 'backend/**'
 
 jobs:
   build:

@@ -47,10 +47,10 @@ class SecurityConfigTest extends MockTestConfig {
     }
 
     @Test
-    @DisplayName("모든 사용자는 인증 없이 \"/auth/**\" URI에 접근 가능하다.")
+    @DisplayName("모든 사용자는 인증 없이 \"/auth/loginPage\" URI에 접근 가능하다.")
     void authUriPermitAllTest() throws Exception {
         // given
-        String uri = "/auth/test";
+        String uri = "/auth/loginPage";
 
         // when
         mockMvc.perform(
@@ -64,12 +64,13 @@ class SecurityConfigTest extends MockTestConfig {
     @DisplayName("인증 받은 사용자(USER, ADMIN)은 모든 엔드포인트에 접근할 수 있다.")
     void authUserTest() throws Exception {
         // given
-        String uri = "/test";
+        String uri = "/auth/info";
 
         // USER 권한 사용자 저장
         User user = User.builder()
                 .name("김민수")
                 .role(UserRole.USER)
+                .platformId("github123")
                 .platformType(UserPlatformType.GITHUB)
                 .profileImageUrl("https://google.com")
                 .build();
@@ -78,16 +79,16 @@ class SecurityConfigTest extends MockTestConfig {
         // JWT의 Claims로 넣어줄 map 생성
         HashMap<String, String> claimsMap = new HashMap<>();
         claimsMap.put("role", savedUser.getRole().name());
-        claimsMap.put("name", savedUser.getName());
-        claimsMap.put("profileImageUrl", savedUser.getProfileImageUrl());
+        claimsMap.put("platformId", savedUser.getPlatformId());
+        claimsMap.put("platformType", savedUser.getPlatformType().name());
 
         // JWT Access Token 생성
-        String atk = jwtService.generateAccessToken(claimsMap, savedUser);
+        String accessToken = jwtService.generateAccessToken(claimsMap, savedUser);
 
         // when
         mockMvc.perform(
                         get(uri)
-                                .header("Authorization", "Bearer " + atk)
+                                .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                 )
                 .andExpect(status().isOk());
     }

@@ -1,41 +1,54 @@
 package com.example.backend.study.api.service.github;
 
 import com.example.backend.TestConfig;
+import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
-import com.example.backend.domain.define.study.convention.StudyConvention;
-import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
-import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.domain.define.study.todo.StudyTodoFixture;
-import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
-import com.example.backend.study.api.service.github.response.GithubCommitResponse;
+import com.example.backend.external.clients.github.GithubApiTokenClient;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+import org.kohsuke.github.GHHook;
 import org.kohsuke.github.GHRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
-import java.time.LocalDate;
+import java.io.IOException;
 import java.util.List;
 
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SuppressWarnings("NonAsciiCharacters")
 class GithubApiServiceTest extends TestConfig {
     private final String REPOSITORY_OWNER = "jusung-c";
+
+    private final String REPOSITORY_COLLABORATOR = "rndudals";
+
     private final String REPOSITORY_NAME = "Github-Api-Test";
+    private static final String NEW_TOKEN = "new_token";
+
+    private final String REPOSITORY_DESCRIBE = "[gitudy] Github API test repository description";
+
+    private final String BRANCH_NAME = "main";
+
+    @Value("${github.api.webhookURL}")
+    private String webhookUrl;
+
+    @Value("${github.api.token}")
+    private String githubApiToken;
+
+    @Value("${github.api.token-collaborator}")
+    private String githubApiTokenCollaborator;
 
     @Autowired
     private GithubApiService githubApiService;
@@ -56,10 +69,16 @@ class GithubApiServiceTest extends TestConfig {
     private StudyTodoMappingRepository studyTodoMappingRepository;
 
     @Autowired
-    private StudyConventionRepository studyConventionRepository;
+    private StudyMemberRepository studyMemberRepository;
 
     @Autowired
-    private StudyMemberRepository studyMemberRepository;
+    private GithubApiTokenService githubApiTokenService;
+
+    @Autowired
+    private ObjectMapper objectMapper;
+
+    @Autowired
+    private AuthService authService;
 
     @AfterEach
     void tearDown() {
@@ -72,379 +91,196 @@ class GithubApiServiceTest extends TestConfig {
         studyTodoMappingRepository.deleteAllInBatch();
     }
 
-    @Test
-    void 깃허브_레포지토리_조회_테스트() {
+    // 웹에서 테스트 해야 합니다.
+    // @Test
+    void 깃허브_레포지토리_생성_테스트() throws IOException {
         // given
-        RepositoryInfo repo = RepositoryInfo.builder()
+        RepositoryInfo repoInfo = RepositoryInfo.builder()
                 .owner(REPOSITORY_OWNER)
                 .name(REPOSITORY_NAME)
-                .branchName("main")
+                .branchName(BRANCH_NAME)
                 .build();
 
         // when
-        GHRepository repository = githubApiService.getRepository(repo);
+        GHRepository createdRepository = githubApiService.createRepository(githubApiToken, repoInfo, REPOSITORY_DESCRIBE);
 
         // then
-        assertAll(
-                () -> assertEquals(repository.getOwnerName(), REPOSITORY_OWNER),
-                () -> assertEquals(repository.getName(), REPOSITORY_NAME)
-        );
+        assertNotNull(createdRepository);
+        assertEquals(REPOSITORY_NAME, createdRepository.getName());
+        assertEquals(REPOSITORY_DESCRIBE, createdRepository.getDescription());
+        assertFalse(createdRepository.isPrivate());
+
+        // 웹훅 확인
+        boolean webhookRegistered = isWebhookRegistered(createdRepository, webhookUrl);
+        assertTrue(webhookRegistered, "웹훅이 등록되지 않았습니다.");
+    }
+
+    // 웹에서 테스트 해야 합니다.
+    // @Test
+    void 깃허브_레포지토리_생성_중복_예외_테스트() {
+        // given
+        RepositoryInfo repoInfo = RepositoryInfo.builder()
+                .owner(REPOSITORY_OWNER)
+                .name(REPOSITORY_NAME)
+                .branchName(BRANCH_NAME)
+                .build();
+
+        // 먼저 동일한 이름의 레포지토리를 생성하여 중복 상태를 만듭니다.
+        githubApiService.createRepository(githubApiToken, repoInfo, REPOSITORY_DESCRIBE);
+
+        // when, then
+        GithubApiException exception = assertThrows(GithubApiException.class, () -> {
+            githubApiService.createRepository(githubApiToken, repoInfo, REPOSITORY_DESCRIBE);
+        });
+
+        assertEquals(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), exception.getMessage());
+    }
+
+    // 웹에서 테스트 해야 합니다.
+    // @Test
+    public void Collaborator_초대요청_및_수락_성공_테스트() throws Exception {
+        // 실제로 존재하는 GitHub 레포지토리와 사용자 정보로 변경
+        RepositoryInfo repoInfo = new RepositoryInfo(REPOSITORY_OWNER, REPOSITORY_NAME, BRANCH_NAME);
+
+        // 실제 GitHub API를 사용하여 Collaborator 추가
+        githubApiService.addCollaborator(githubApiToken, repoInfo, REPOSITORY_COLLABORATOR);
+
+
+        // 실제 GitHub API를 사용하여 초대 수락
+        githubApiService.acceptInvitation(githubApiTokenCollaborator, REPOSITORY_COLLABORATOR);
+
+        // 결과 확인은 GitHub 웹사이트에서 직접 확인
+    }
+
+    // 웹에서 테스트 해야 합니다.
+    // @Test
+    void 초대_목록_없음_예외_테스트() {
+        GithubApiException exception = assertThrows(GithubApiException.class, () -> {
+            githubApiService.acceptInvitation(githubApiToken, REPOSITORY_COLLABORATOR);
+        });
+
+        assertEquals(ExceptionMessage.GITHUB_API_NO_INVITATIONS_FOUND.getText(), exception.getMessage());
+    }
+    private boolean isWebhookRegistered(GHRepository repository, String webhookUrl) throws IOException {
+        List<GHHook> hooks = repository.getHooks();
+        return hooks.stream()
+                .anyMatch(hook -> webhookUrl.equals(hook.getConfig().get("url")));
     }
 
     @Test
-    void 깃허브_레포지토리의_커밋_리스트_조회_테스트() {
+    void 해당_레포지토리가_이미_존재하는_경우_true를_반환한다() {
         // given
-        int pageSize = 5;
-        String todoCode = "6PHP1b";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner("DKU-Dgaja")
-                .name("gitudy-study-jusung")
-                .branchName("main")
-                .build();
-
-        int expectedSize = 1;
+        String owner = "jusung-c";
+        String repo = "Algo";
 
         // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
+        assertTrue(githubApiService.repositoryExists(githubApiToken, owner, repo));
+    }
 
-        System.out.println("commits.size() = " + commits.size());
-        for (var c : commits) {
-            System.out.println("c.getAuthorName() = " + c.getAuthorName());
-            System.out.println("c.getMessage() = " + c.getMessage());
-            System.out.println("c.getSha() = " + c.getSha());
+    @Test
+    void 해당_레포지토리가_존재하지_않는_경우_false를_반환한다() {
+        // given
+        String owner = "jusung-c";
+        String repo = "non-exist-repo";
+
+        // when
+        assertFalse(githubApiService.repositoryExists(githubApiToken, owner, repo));
+    }
+
+    @Test
+    void 깃허브_토큰_재발급_성공_테스트_Mock() {
+        // given
+        String oldToken = "old_token";
+        String expectedNewToken = "new_token";
+
+        User user = userRepository.save(UserFixture.generateAuthJusung());
+        githubApiTokenService.saveToken(oldToken, user.getId());
+
+        MockGithubApiTokenClients mockGithubApiTokenClients = new MockGithubApiTokenClients(expectedNewToken);
+        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, authService, mockGithubApiTokenClients, objectMapper);
+
+        // when
+        String newToken = githubApiService.resetGithubToken(oldToken, user.getId());
+        GithubApiToken savedToken = githubApiTokenService.getToken(user.getId());
+
+        assertEquals(expectedNewToken, newToken);
+        assertEquals(expectedNewToken, savedToken.githubApiToken());
+    }
+
+    @Test
+    void 잘못된_깃허브_토큰으로_재발급을_시도하면_실패한다_Mock() {
+        // given
+        String invalid = "invalid";
+        String expectedNewToken = "new_token";
+
+        User user = userRepository.save(UserFixture.generateAuthJusung());
+        githubApiTokenService.saveToken(invalid, user.getId());
+
+        MockGithubApiTokenClients mockGithubApiTokenClients = new MockGithubApiTokenClients(expectedNewToken);
+        mockGithubApiTokenClients.setException(true);
+        GithubApiService githubApiService = new GithubApiService(githubApiTokenService, authService, mockGithubApiTokenClients, objectMapper);
+
+        // when
+        GithubApiException exception = assertThrows(GithubApiException.class, () -> githubApiService.resetGithubToken(invalid, user.getId()));
+
+        // then
+        assertEquals(ExceptionMessage.GITHUB_API_RESET_TOKEN_FAIL.getText(), exception.getMessage());
+    }
+
+    @Test
+    void 깃허브_토큰_재발급_응답_추출_테스트() {
+        // given
+        String response = "{\n" +
+                "  \"id\": 1,\n" +
+                "  \"url\": \"https://HOSTNAME/authorizations/1\",\n" +
+                "  \"scopes\": [\n" +
+                "    \"public_repo\"\n" +
+                "  ],\n" +
+                "  \"token\": \"test\",\n" +
+                "  \"token_last_eight\": \"test\",\n" +
+                "  \"hashed_token\": \"test\",\n" +
+                "  \"app\": {\n" +
+                "    \"url\": \"http://my-github-app.com\",\n" +
+                "    \"name\": \"my github app\",\n" +
+                "    \"client_id\": \"test\"\n" +
+                "  },\n" +
+                "  \"note\": \"optional note\",\n" +
+                "  \"note_url\": \"http://optional/note/url\",\n" +
+                "  \"updated_at\": \"2011-09-06T20:39:23Z\",\n" +
+                "  \"created_at\": \"2011-09-06T17:26:27Z\",\n" +
+                "  \"expires_at\": \"2011-10-06T17:26:27Z\",\n" +
+                "  \"fingerprint\": \"test\"\n" +
+                "}";
+
+        String expectedToken = "test";
+
+        // when
+        String token = githubApiService.parseTokenFromResponse(response);
+
+        // then
+        assertEquals(expectedToken, token);
+    }
+
+
+    static class MockGithubApiTokenClients implements GithubApiTokenClient {
+        String newToken;
+        private boolean exception;
+
+        public MockGithubApiTokenClients(String newToken) {
+            this.newToken = newToken;
         }
 
-        // then
-        assertEquals(expectedSize, commits.size());
-        for (var c : commits) {
-            assertTrue(c.getMessage().startsWith(todoCode));
+        public void setException(boolean exception) {
+            this.exception = exception;
+        }
+
+        @Override
+        public String resetGithubApiToken(String clientId, String authorizationHeader, String apiVersion, String contentType, String accept, String requestBody) {
+            if (exception) {
+                throw new RuntimeException("Token reset failed");
+            }
+
+            return "{\"token\":\"" + newToken + "\"}";
         }
     }
-
-    @Test
-    void 깃허브_레포지토리의_커밋_리스트_조회_테스트A() {
-        // given
-        int pageSize = 5;
-        String todoCode = "qwe321";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        int expectedSize = 4;
-
-        // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
-
-//        System.out.println("commits.size() = " + commits.size());
-//        for (var c : commits) {
-//            System.out.println("c.getAuthorName() = " + c.getAuthorName());
-//            System.out.println("c.getMessage() = " + c.getMessage());
-//            System.out.println("c.getSha() = " + c.getSha());
-//        }
-
-        // then
-        assertEquals(expectedSize, commits.size());
-        for (var c : commits) {
-            assertTrue(c.getMessage().startsWith(todoCode));
-        }
-    }
-
-    @Test
-    void 깃허브_레포지토리의_커밋_리스트_조회_테스트B() {
-        // given
-        int pageSize = 10;
-        String todoCode = "qwe321";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        int expectedSize = 4;
-
-        // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
-
-//        System.out.println("commits.size() = " + commits.size());
-//        for (var c : commits) {
-//            System.out.println("c.getAuthorName() = " + c.getAuthorName());
-//            System.out.println("c.getMessage() = " + c.getMessage());
-//            System.out.println("c.getSha() = " + c.getSha());
-//        }
-
-        // then
-        assertEquals(expectedSize, commits.size());
-        for (var c : commits) {
-            assertTrue(c.getMessage().startsWith(todoCode));
-        }
-    }
-
-    @Test
-    void 깃허브_레포지토리의_커밋_리스트_조회_테스트C() {
-        // given
-        int pageSize = 1;
-        String todoCode = "aBc123";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        int expectedSize = 5;
-
-        // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
-
-//        System.out.println("commits.size() = " + commits.size());
-//        for (var c : commits) {
-//            System.out.println("c.getAuthorName() = " + c.getAuthorName());
-//            System.out.println("c.getMessage() = " + c.getMessage());
-//            System.out.println("c.getSha() = " + c.getSha());
-//        }
-
-        // then
-        assertEquals(expectedSize, commits.size());
-        for (var c : commits) {
-            assertTrue(c.getMessage().startsWith(todoCode));
-        }
-    }
-
-    @Test
-    void 저장된_커밋_발견_시_중단() {
-        // given
-        int pageSize = 3;
-        String todoCode = "qwe321";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        User userA = userRepository.save(User.builder()
-                .platformId("1")
-                .platformType(GITHUB)
-                .role(USER)
-                .name("이름")
-                .githubId(REPOSITORY_OWNER)
-                .profileImageUrl("프로필이미지")
-                .build());
-
-        StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
-                .userId(userA.getId())
-                .topic("topic")
-                .status(StudyStatus.STUDY_PUBLIC)
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner(REPOSITORY_OWNER)
-                        .name(REPOSITORY_NAME)
-                        .branchName("main")
-                        .build())
-                .build());
-
-        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), study.getId()));
-
-        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
-        todo.updateTodoCode(todoCode);
-        studyTodoRepository.save(todo);
-
-        // 이미 저장된 커밋 저장
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("42d69944ae127c14b3fb6d0c2184a58ad7dd534b")
-                .message("qwe321 [jusung-c] 백준: 컨벤션 지키기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("1f3c6d6f96f8b31b1a1d46333f0b52ee84209125")
-                .message("qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
-
-        // then
-        assertEquals(1, commits.size());
-        assertEquals("qwe321 [jjjjssssuuunngg] 프로그래머스: 컨벤션 지키기", commits.get(0).getMessage());
-    }
-
-    @Test
-    void 페이지_크기가_작은_경우() {
-        // given
-        int pageSize = 1;
-        String todoCode = "qwe321";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        User userA = userRepository.save(User.builder()
-                .platformId("1")
-                .platformType(GITHUB)
-                .role(USER)
-                .name("이름")
-                .githubId(REPOSITORY_OWNER)
-                .profileImageUrl("프로필이미지")
-                .build());
-
-        StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
-                .userId(userA.getId())
-                .topic("topic")
-                .status(StudyStatus.STUDY_PUBLIC)
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner(REPOSITORY_OWNER)
-                        .name(REPOSITORY_NAME)
-                        .branchName("main")
-                        .build())
-                .build());
-
-        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), study.getId()));
-
-        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
-        todo.updateTodoCode(todoCode);
-        studyTodoRepository.save(todo);
-
-        // 이미 저장된 커밋 저장
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("42d69944ae127c14b3fb6d0c2184a58ad7dd534b")
-                .message("qwe321 [jusung-c] 백준: 컨벤션 지키기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("1f3c6d6f96f8b31b1a1d46333f0b52ee84209125")
-                .message("qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
-
-        // then
-        assertEquals(1, commits.size());
-        assertEquals("qwe321 [jjjjssssuuunngg] 프로그래머스: 컨벤션 지키기", commits.get(0).getMessage());
-    }
-
-    @Test
-    void 모든_커밋이_이미_저장된_경우() {
-        // given
-        int pageSize = 10;
-        String todoCode = "qwe321";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        User userA = userRepository.save(User.builder()
-                .platformId("1")
-                .platformType(GITHUB)
-                .role(USER)
-                .name("이름")
-                .githubId(REPOSITORY_OWNER)
-                .profileImageUrl("프로필이미지")
-                .build());
-
-        StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
-                .userId(userA.getId())
-                .topic("topic")
-                .status(StudyStatus.STUDY_PUBLIC)
-                .repositoryInfo(RepositoryInfo.builder()
-                        .owner(REPOSITORY_OWNER)
-                        .name(REPOSITORY_NAME)
-                        .branchName("main")
-                        .build())
-                .build());
-
-        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), study.getId()));
-
-        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
-        todo.updateTodoCode(todoCode);
-        studyTodoRepository.save(todo);
-
-        // 이미 저장된 커밋 저장
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("42d69944ae127c14b3fb6d0c2184a58ad7dd534b")
-                .message("qwe321 [jusung-c] 백준: 컨벤션 지키기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("1f3c6d6f96f8b31b1a1d46333f0b52ee84209125")
-                .message("qwe321 [jusung-c] 프로그래머스: 컨벤션 지키기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("4c24b59917bf45877ef15bc0307fe25fbd480b28")
-                .message("qwe321 컨벤션 무시하기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        studyCommitRepository.save(StudyCommit.builder()
-                .studyTodoId(todo.getId())
-                .studyInfoId(study.getId())
-                .userId(userA.getId())
-                .commitSHA("f3231cd5b60fbcd8271f0e56feabbf93b530b2b4")
-                .message("qwe321 [jjjjssssuuunngg] 프로그래머스: 컨벤션 지키기")
-                .commitDate(LocalDate.now().minusDays(1))
-                .build());
-
-        // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
-
-        // then
-        assertEquals(0, commits.size());
-    }
-
-    @Test
-    void 특정_투두_코드에_해당하는_커밋이_없는_경우() {
-        // given
-        int pageSize = 3;
-        String todoCode = "nonexistentCode";
-
-        RepositoryInfo repo = RepositoryInfo.builder()
-                .owner(REPOSITORY_OWNER)
-                .name(REPOSITORY_NAME)
-                .branchName("main")
-                .build();
-
-        // when
-        List<GithubCommitResponse> commits = githubApiService.fetchCommits(repo, pageSize, todoCode);
-
-        // then
-        assertEquals(0, commits.size());
-
-    }
-
 }

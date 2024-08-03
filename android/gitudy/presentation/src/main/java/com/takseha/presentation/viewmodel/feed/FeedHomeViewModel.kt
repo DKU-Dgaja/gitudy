@@ -32,17 +32,22 @@ class FeedHomeViewModel : ViewModel() {
         )
 
         if (feedListResponse.isSuccessful) {
-            val resCode = feedListResponse.body()!!.resCode
-            val resMsg = feedListResponse.body()!!.resMsg
-            val feedStudyListInfo = feedListResponse.body()!!.studyListInfo
+            val feedStudyListInfo = feedListResponse.body()!!
 
-            if (resCode == 200 && resMsg == "OK") {
-                _cursorIdxRes.value = feedStudyListInfo.cursorIdx
-                _uiState.update { it.copy(studyInfoList = feedStudyListInfo.studyInfoList) }
+            _cursorIdxRes.value = feedStudyListInfo.cursorIdx
+            Log.d("FeedHomeViewModel", _cursorIdxRes.value.toString())
 
-                Log.d("FeedHomeViewModel", _cursorIdxRes.value.toString())
+            if (feedStudyListInfo.studyInfoList.isEmpty()) {
+                _uiState.update {
+                    it.copy(
+                        isFeedEmpty = true
+                    )
+                }
             } else {
-                Log.e("FeedHomeViewModel", "https status error: $resCode, $resMsg")
+                _uiState.update { it.copy(
+                    studyInfoList = feedStudyListInfo.studyInfoList,
+                    isFeedEmpty = false
+                ) }
             }
         } else {
             Log.e(
@@ -54,5 +59,6 @@ class FeedHomeViewModel : ViewModel() {
 }
 
 data class FeedHomeUiState(
-    var studyInfoList: List<StudyInfo> = listOf()
+    var studyInfoList: List<StudyInfo> = listOf(),
+    var isFeedEmpty: Boolean = false
 )

@@ -6,15 +6,16 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.TokenManager
+import com.takseha.data.dto.auth.login.RoleStatus
+import com.takseha.data.token.TokenManager
 import kotlinx.coroutines.launch
 
 // viewModel에서 context 참조 필요한 경우 AndroidViewModel(application) 상속!
 class LoginWebViewViewModel(application: Application) : AndroidViewModel(application) {
     private lateinit var tokenManager: TokenManager
 
-    private var _role = MutableLiveData<String>()
-    val role : LiveData<String>
+    private var _role = MutableLiveData<RoleStatus>()
+    val role : LiveData<RoleStatus>
         get() = _role
 
     fun saveAllTokens(platformType: String, code: String, state: String) = viewModelScope.launch {
@@ -24,9 +25,9 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
 
         if (tokenResponse != null) {
             _role.value = tokenResponse.role
-            Log.d("LoginWebViewViewModel", "Bearer ${tokenResponse.accessToken} ${tokenResponse.refreshToken}")
+            Log.d("LoginWebViewViewModel", "access token: ${tokenResponse.accessToken}\nrefresh token: ${tokenResponse.refreshToken}\nrole: ${role.value}")
         } else {
-            Log.e("LoginWebViewViewModel", "token 생성 실패")
+            Log.e("LoginWebViewViewModel", "login token 생성 실패")
         }
     }
 }

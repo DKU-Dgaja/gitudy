@@ -24,13 +24,19 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeHttpRequest ->
                         authorizeHttpRequest
                                 // Swagger 추가
-                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                                .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/auth/v3/**", "/auth/swagger-ui/**").permitAll()
+                                // Webhook Area
+                                .requestMatchers("/webhook/**").hasAnyAuthority("ADMIN")
                                 // register
                                 .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH")
+                                // reissue
+                                .requestMatchers("/auth/reissue").permitAll()
                                 // update
                                 .requestMatchers("/auth/update").hasAnyAuthority("USER", "ADMIN")
                                 // UnAuth Area
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/auth/loginPage").permitAll()
+                                .requestMatchers("/auth/*/login").permitAll()
+                                .requestMatchers("/auth/check-nickname").permitAll()
                                 // Others
                                 .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )

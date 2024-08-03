@@ -1,7 +1,6 @@
 package com.example.backend.study.api.event.service;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;

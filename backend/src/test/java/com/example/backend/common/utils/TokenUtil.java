@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
 
 public class TokenUtil {
     public static Map<String, String> createTokenMap(User user) {

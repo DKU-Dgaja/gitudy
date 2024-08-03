@@ -33,16 +33,15 @@ public enum ExceptionMessage {
   
     // AuthException
     UNAUTHORIZED_AUTHORITY("현재 요청한 작업을 수행할 권한이 없습니다."),
-
-    // UserException
-    USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
-    USER_NAME_DUPLICATION("중복된 이름입니다."),
-
-    // AuthException
     AUTH_INVALID_REGISTER("잘못된 회원가입 요청입니다."),
     AUTH_DUPLICATE_UNAUTH_REGISTER("중복된 회원가입 요청입니다."),
     AUTH_NOT_FOUND("계정 정보를 찾을 수 없습니다."),
     AUTH_DELETE_FAIL("계정 삭제에 실패했습니다."),
+
+    // UserException
+    USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
+    USER_NAME_DUPLICATION("중복된 이름입니다."),
+    USER_NOT_FOUND_WITH_GITHUB_ID("깃허브 계정에 해당하는 사용자를 찾을 수 없습니다."),
 
     // CommitException
     COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),
@@ -69,6 +68,7 @@ public enum ExceptionMessage {
     STUDY_WAITING_NOT_MEMBER("해당 스터디에 가입 대기중인 유저가 아닙니다."),
     STUDY_JOIN_CODE_FAIL("스터디 참여 코드가 맞지 않습니다."),
     STUDY_NOT_APPLY_LIST("해당 스터디에 가입신청이 없습니다"),
+    STUDY_NOT_ACTIVE_MEMBER("해당 스터디의 활동중인 스터디원이 아닙니다."),
 
     // StudyCommentException
     STUDY_COMMENT_NOT_FOUND("해당 스터디 댓글을 찾을 수 없습니다."),
@@ -76,12 +76,23 @@ public enum ExceptionMessage {
 
     // StudyConventionException
     CONVENTION_NOT_FOUND("해당 스터디 컨벤션을 찾을 수 없습니다."),
+    CONVENTION_NOT_MATCHED("컨벤션을 만족하지 않습니다."),
 
     // GithubApiException
     GITHUB_API_CONNECTION_ERROR("Github Api 통신에 실패했습니다."),
     GITHUB_API_GET_REPOSITORY_ERROR("Repository 정보를 불러오는 데에 실패했습니다."),
     GITHUB_API_GET_COMMITS_ERROR("커밋 리스트를 불러오는데 실패했습니다."),
     GITHUB_API_GET_COMMIT_ERROR("커밋을 불러오는데 실패했습니다."),
+    GITHUB_API_CREATE_REPOSITORY_ERROR ("GitHub 레포지토리 생성 중 오류가 발생했습니다."),
+    GITHUB_API_REPOSITORY_ALREADY_EXISTS("해당 이름의 레포지토리가 이미 존재합니다."),
+    GITHUB_API_ADD_COLLABORATOR_ERROR("GitHub Collaborator 추가가 실패했습니다."),
+    GITHUB_API_ACCEPT_INVITATION_ERROR("초대 수락 중 오류가 발생하였습니다."),
+    GITHUB_API_NO_INVITATIONS_FOUND("초대를 찾을 수 없습니다."),
+
+    // GithubApiTokenException,
+    GITHUB_API_TOKEN_NOT_EXIST("사용자 id에 해당하는 GithubApiToken이 존재하지 않습니다."),
+    GITHUB_API_RESET_TOKEN_FAIL("깃허브 토큰 재발급에 실패했습니다."),
+    GITHUB_API_RESET_TOKEN_RETRY_FAIL("깃허브 토큰 재발급 후 재시도해봤으나 실패했습니다."),
 
     // CategoryException
     CATEGORY_NOT_FOUND("해당 카테고리를 찾을 수 없습니다."),
@@ -90,7 +101,14 @@ public enum ExceptionMessage {
     FCM_DEVICE_NOT_FOUND("해당 유저의 기기를 찾을 수 없습니다."),
 
     // Notice Exception
-    NOTICE_NOT_FOUND("해당 알림을 찾을 수 없습니다.")
+    NOTICE_NOT_FOUND("해당 알림을 찾을 수 없습니다."),
+
+    // Repository Name Convention
+    STUDY_REPOSITORY_NAME_EMPTY("레포지토리 이름은 공백일 수 없습니다."),
+    STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS("레포지토리 이름은 연속된 특수 문자를 포함할 수 없습니다."),
+    STUDY_REPOSITORY_NAME_INVALID_CHARS("레포지토리 이름은 영문자, 숫자, '-', '_', '.'만 포함할 수 있습니다."),
+    STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR("레포지토리 이름은 '-', '_', '.'으로 끝날 수 없습니다."),
+
     ;
     private final String text;
 }

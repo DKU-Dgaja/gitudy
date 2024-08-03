@@ -1,12 +1,11 @@
 package com.example.backend.auth.api.service.oauth;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginPageResponse;
 import com.example.backend.auth.api.service.oauth.adapter.github.GithubAdapter;
+import com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapter;
 import com.example.backend.auth.api.service.oauth.adapter.kakao.KakaoAdapter;
 import com.example.backend.auth.api.service.oauth.builder.github.GithubURLBuilder;
-import com.example.backend.auth.api.service.oauth.adapter.google.GoogleAdapter;
 import com.example.backend.auth.api.service.oauth.builder.google.GoogleURLBuilder;
 import com.example.backend.auth.api.service.oauth.builder.kakao.KakaoURLBuilder;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
@@ -18,10 +17,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.List;
 
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GOOGLE;
-import static com.example.backend.domain.define.account.user.constant.UserPlatformType.KAKAO;
-import static com.example.backend.auth.config.fixture.UserFixture.*;
+import static com.example.backend.auth.config.fixture.UserFixture.generateOauthResponse;
+import static com.example.backend.domain.define.account.user.constant.UserPlatformType.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;

@@ -1,13 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.app.DatePickerDialog
-import android.app.Dialog
-import android.content.Intent
-import android.graphics.Color
-import android.graphics.drawable.ColorDrawable
 import android.icu.util.Calendar
 import android.os.Build
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,10 +11,10 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityAddTodoBinding
-import com.takseha.presentation.databinding.LayoutDialogBinding
 import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
 import java.time.LocalDate
@@ -127,7 +122,7 @@ class AddTodoActivity : AppCompatActivity() {
             applyBtn.setOnClickListener {
                 todoDate = closeTimeText.text.toString()
                 Log.d("AddTodoActivity", todoDate)
-                showAddTodoDialog(studyInfoId, title, detail, todoLink, todoDate)
+                showAddTodoDialog(studyInfoId, title, todoLink, detail, todoDate)
             }
         }
     }
@@ -151,6 +146,7 @@ class AddTodoActivity : AppCompatActivity() {
             },
             year, month, day
         )
+        datePickerDialog.datePicker.minDate = calendar.timeInMillis
         datePickerDialog.show()
     }
 
@@ -158,7 +154,7 @@ class AddTodoActivity : AppCompatActivity() {
         val customDialog = CustomDialog(this)
         customDialog.setAlertText(getString(R.string.to_do_add))
         customDialog.setOnConfirmClickListener {
-            viewModel.makeNewTodo(studyInfoId, title, detail, todoLink, todoDate)
+            viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
             finish()
         }
         customDialog.show()

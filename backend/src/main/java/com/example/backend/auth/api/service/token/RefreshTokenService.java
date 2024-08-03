@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -37,7 +38,7 @@ public class RefreshTokenService {
 
         refreshTokenRepository.findById(refreshToken).orElseThrow(() -> {
             log.warn(">>>> Token Not Exist : {}", ExceptionMessage.JWT_NOT_EXIST_RTK.getText());
-            throw new JwtException(ExceptionMessage.JWT_NOT_EXIST_RTK);
+            return new JwtException(ExceptionMessage.JWT_NOT_EXIST_RTK);
         });
 
         String role = claims.get("role", String.class);
@@ -69,23 +70,27 @@ public class RefreshTokenService {
 
 
     // Logout 시 Redis에 저장된 RefreshToken 삭제
-    public void logout(String refreshToken) {
+    public void logout(String accessToken) {
 
-        String sub = jwtService.extractAllClaims(refreshToken).getSubject();
+        String sub = jwtService.extractAllClaims(accessToken).getSubject();
 
-        RefreshToken rtk = refreshTokenRepository.findById(refreshToken).orElseThrow(() -> {
-            log.warn(">>>> Token Not Exist : {}", ExceptionMessage.REFRESHTOKEN_NOT_EXIST.getText());
-            throw new JwtException(ExceptionMessage.REFRESHTOKEN_NOT_EXIST);
-        });
+        Optional<RefreshToken> rtk = refreshTokenRepository.findBySubject(sub);
 
-        // refreshToken 유효성 검사
-        if (!jwtService.isTokenValid(refreshToken, rtk.getRefreshToken())) {
-            log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.REFRESHTOKEN_INVALID.getText());
-            throw new JwtException(ExceptionMessage.REFRESHTOKEN_INVALID);
-        }
+        rtk.ifPresentOrElse(
+                refreshToken -> {
 
-        refreshTokenRepository.delete(rtk);
-        log.info(">>>> {}'s RefreshToken id deleted.", sub);
+                    // refreshToken 유효성 검사
+                    if (!jwtService.isTokenValid(refreshToken.getRefreshToken(), refreshToken.getSubject())) {
+                        log.warn(">>>> Token Validation Fail : {}", ExceptionMessage.REFRESHTOKEN_INVALID.getText());
+                        throw new JwtException(ExceptionMessage.REFRESHTOKEN_INVALID);
+                    }
+
+                    refreshTokenRepository.delete(refreshToken);
+                    log.info(">>>> {} 님의 RefreshToken이 삭제되었습니다.", sub);
+                },
+                () -> log.warn(">>>> Token Not Exist : {}", ExceptionMessage.REFRESHTOKEN_NOT_EXIST.getText())
+        );
+
     }
 
 }

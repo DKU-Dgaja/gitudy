@@ -145,4 +145,15 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                 .fetch();
 
     }
+
+    @Override
+    public boolean existsStudyMemberByGithubIdAndStudyInfoId(String githubId, Long studyInfoId) {
+        return queryFactory.selectOne()
+                .from(studyMember)
+                .join(user).on(user.id.eq(studyMember.userId))
+                .where(user.githubId.eq(githubId)
+                        .and(studyMember.studyInfoId.eq(studyInfoId))
+                        .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)))
+                .fetchFirst() != null;
+    }
 }

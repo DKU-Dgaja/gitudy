@@ -1,7 +1,6 @@
 package com.example.backend.study.api.service.member;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
@@ -13,8 +12,11 @@ import com.example.backend.domain.define.event.FcmFixture;
 import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.listener.*;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.GithubApiTokenFixture;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -34,13 +36,14 @@ import com.example.backend.domain.define.study.todo.repository.StudyTodoReposito
 import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -48,8 +51,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 public class StudyMemberServiceTest extends MockTestConfig {
 
@@ -96,6 +98,11 @@ public class StudyMemberServiceTest extends MockTestConfig {
     @MockBean
     private NotifyLeaderListener notifyLeaderListener;
 
+    @MockBean
+    private GithubApiService githubApiService;
+
+    @MockBean
+    private GithubApiTokenService githubApiTokenService;
 
     public final static Long CursorIdx = null;
     public final static Long Limit = 3L;
@@ -668,6 +675,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
         User leader = UserFixture.generateAuthUser();
         User user1 = UserFixture.generateGoogleUser();
 
+        GithubApiToken githubApiToken = GithubApiTokenFixture.createToken("token", user1.getId());
+
         int beforeUser1Score = user1.getScore();
 
         userRepository.saveAll(List.of(leader, user1));
@@ -679,6 +688,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
         studyMemberRepository.save(waitingMember);
+
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(githubApiToken);
 
         // when
         studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
@@ -693,6 +704,13 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
         // 스터디 가입 시 현재인원 증가
         assertEquals(beforeCurrentMember + 1, studyInfoRepository.findById(studyInfo.getId()).get().getCurrentMember());
+
+        // github api가 작동했는지 확인
+        verify(githubApiService, times(1)).addCollaborator(any(String.class), any(RepositoryInfo.class), any(String.class));
+        verify(githubApiService, times(1)).acceptInvitation(any(String.class), any(String.class));
+
+        // github api가 작동했는지 확인
+        verify(githubApiTokenService, times(2)).getToken((any(Long.class)));
     }
 
     @Test
@@ -705,6 +723,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         User leader = UserFixture.generateAuthUser();
         User user1 = UserFixture.generateAuthUserPushAlarmY();
 
+        GithubApiToken githubApiToken = GithubApiTokenFixture.createToken("token", user1.getId());
 
         userRepository.saveAll(List.of(leader, user1));
 
@@ -714,11 +733,19 @@ public class StudyMemberServiceTest extends MockTestConfig {
         StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user1.getId(), studyInfo.getId());  // 승인 대기중 멤버 생성
         studyMemberRepository.save(waitingMember);
 
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(githubApiToken);
+
         // when
         studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
 
         // then
         verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+        // github api가 작동했는지 확인
+        verify(githubApiService, times(1)).addCollaborator(any(String.class), any(RepositoryInfo.class), any(String.class));
+        verify(githubApiService, times(1)).acceptInvitation(any(String.class), any(String.class));
+
+        // github api가 작동했는지 확인
+        verify(githubApiTokenService, times(2)).getToken((any(Long.class)));
     }
 
     @Test

@@ -1,7 +1,6 @@
 package com.example.backend.study.api.controller.commit;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
@@ -61,7 +60,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
@@ -70,15 +68,13 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "20"))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
     }
 
@@ -89,7 +85,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
@@ -98,15 +93,12 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
-                        .param("cursorIdx", "")
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("limit", "20"))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").isNotEmpty())
+                .andExpect(jsonPath("$").isNotEmpty())
                 .andDo(print());
 
     }
@@ -118,7 +110,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
@@ -126,14 +117,13 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "1")
                         .param("limit", "20"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
                 .andDo(print());
 
     }
@@ -145,7 +135,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(authService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
@@ -153,14 +142,13 @@ class StudyCommitControllerTest extends MockTestConfig {
         // when
         mockMvc.perform(get("/commits")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .param("cursorIdx", "-1")
                         .param("limit", "0"))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value("400 BAD_REQUEST \"Validation failure\""))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
     }
 
@@ -173,7 +161,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
@@ -183,13 +170,11 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj.commit_sha").value(commitSha))
+                .andExpect(jsonPath("$.commit_sha").value(commitSha))
                 .andDo(print());
     }
 
@@ -201,7 +186,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
@@ -211,12 +195,11 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/" + commitId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.COMMIT_NOT_FOUND.getText()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.COMMIT_NOT_FOUND.getText()))
                 .andDo(print());
     }
 
@@ -228,7 +211,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
@@ -238,13 +220,10 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/" + commitId + "/approve")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("커밋 승인이 완료되었습니다."))
                 .andDo(print());
     }
 
@@ -260,7 +239,6 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
@@ -271,13 +249,10 @@ class StudyCommitControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
                         .content(objectMapper.writeValueAsString(request))
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj").value("커밋 거절이 완료되었습니다."))
                 .andDo(print());
     }
 
@@ -295,19 +270,17 @@ class StudyCommitControllerTest extends MockTestConfig {
 
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/reject")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
                         .content(objectMapper.writeValueAsString(request))
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(errorMsg))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(errorMsg))
                 .andDo(print());
     }
 
@@ -318,7 +291,6 @@ class StudyCommitControllerTest extends MockTestConfig {
         String commitSha = "abc";
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
@@ -328,13 +300,11 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/waiting")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(200))
-                .andExpect(jsonPath("$.res_msg").value("OK"))
-                .andExpect(jsonPath("$.res_obj[0].commit_sha").value(commitSha))
+                .andExpect(jsonPath("$[0].commit_sha").value(commitSha))
                 .andDo(print());
     }
 
@@ -342,10 +312,8 @@ class StudyCommitControllerTest extends MockTestConfig {
     void 대기중인_커밋_리스트_조회_실패() throws Exception {
         // given
         User user = generateAuthUser();
-        String commitSha = "abc";
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
-        String refreshToken = jwtService.generateRefreshToken(map, user);
 
         when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenThrow(new MemberException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER));
@@ -354,12 +322,11 @@ class StudyCommitControllerTest extends MockTestConfig {
         mockMvc.perform(get("/commits/waiting")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken, refreshToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.res_code").value(400))
-                .andExpect(jsonPath("$.res_msg").value(ExceptionMessage.STUDY_MEMBER_NOT_LEADER.getText()))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.STUDY_MEMBER_NOT_LEADER.getText()))
                 .andDo(print());
     }
 }

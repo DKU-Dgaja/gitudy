@@ -1,14 +1,15 @@
 package com.takseha.presentation.viewmodel.home
 
-import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
-import com.takseha.data.dto.mystudy.TodoProgress
+import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.data.repository.auth.GitudyAuthRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
@@ -20,7 +21,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-class MainHomeViewModel(application: Application) : AndroidViewModel(application) {
+class MainHomeViewModel : ViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
     private var gitudyStudyRepository = GitudyStudyRepository()
 
@@ -39,23 +40,17 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         val userInfoResponse = gitudyAuthRepository.getUserInfo()
 
         if (userInfoResponse.isSuccessful) {
-            val resCode = userInfoResponse.body()!!.resCode
-            val resMsg = userInfoResponse.body()!!.resMsg
-            val userInfo = userInfoResponse.body()!!.userInfo
-
-            if (resCode == 200 && resMsg == "OK") {
-                _uiState.update {
-                    it.copy(
-                        name = userInfo.name,
-                        score = userInfo.score,
-                        githubId = userInfo.githubId,
-                        profileImgUrl = userInfo.profileImageUrl
-                    )
-                }
-                getProgressInfo(uiState)
-            } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+            val userInfo = userInfoResponse.body()!!
+            _uiState.update {
+                it.copy(
+                    name = userInfo.name,
+                    score = userInfo.score,
+                    githubId = userInfo.githubId,
+                    profileImgUrl = userInfo.profileImageUrl,
+                    rank = userInfo.rank
+                )
             }
+            getProgressInfo(uiState)
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -127,52 +122,65 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         )
 
         if (myStudyListResponse.isSuccessful) {
-            val resCode = myStudyListResponse.body()!!.resCode
-            val resMsg = myStudyListResponse.body()!!.resMsg
-            val myStudyListInfo = myStudyListResponse.body()!!.studyListInfo
+            val myStudyListInfo = myStudyListResponse.body()!!
 
+            _cursorIdxRes.value = myStudyListInfo.cursorIdx
+            Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
 
-            if (resCode == 200 && resMsg == "OK") {
-                _cursorIdxRes.value = myStudyListInfo.cursorIdx
-
-                val studies = myStudyListInfo.studyInfoList
+            val studies = myStudyListInfo.studyInfoList
+            if (studies.isEmpty()) {
+                _myStudyState.update {
+                    it.copy(
+                        isMyStudiesEmpty = true
+                    )
+                }
+            } else {
                 val studiesWithTodo = studies.map { study ->
                     val todo = getFirstTodoInfo(study.id)
 
                     if (todo != null) {
-                        val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: -1
-                        val todoCheck =
-                            if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else if (todoCheckNum == -1) TodoStatus.TODO_EMPTY else TodoStatus.TODO_INCOMPLETE
-                        MyStudyWithTodo(
-                            backgroundColorList[study.id % 4],
-                            study,
-                            todo.title,
-                            todo.todoDate,
-                            todoCheck,
-                            todoCheckNum
-                        )
+                        if (todo.id != -1) {
+                        //    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: 0
+                            val todoCheckNum = 0
+                            val todoCheck =
+                                if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
+                            MyStudyWithTodo(
+                                backgroundColorList[study.id % 4],
+                                study,
+                                todo.title,
+                                todo.todoDate,
+                                todoCheck,
+                                todoCheckNum
+                            )
+                        } else {
+                            MyStudyWithTodo(
+                                backgroundColorList[study.id % 4],
+                                study,
+                                null,
+                                null,
+                                TodoStatus.TODO_EMPTY,
+                                null
+                            )
+                        }
                     } else {
                         MyStudyWithTodo(
                             backgroundColorList[study.id % 4],
                             study,
                             null,
                             null,
-                            TodoStatus.TODO_EMPTY,
+                            TodoStatus.TODO_INCOMPLETE,
                             null
                         )
                     }
                 }
                 _myStudyState.update {
                     it.copy(
-                        myStudiesWithTodo = studiesWithTodo
+                        myStudiesWithTodo = studiesWithTodo,
+                        isMyStudiesEmpty = false
                     )
                 }
-
-                Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
-                Log.d("MainHomeViewModel", "_uiState: ${_uiState.value}")
-            } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
             }
+            Log.d("MainHomeViewModel", myStudyState.value.toString())
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -181,6 +189,7 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    // TODO: getFirstTodoInfo api 관련 수정하기 -> 마감일 임박 투두 불러오기
     private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
         val todoInfoResponse = gitudyStudyRepository.getTodoList(
             studyInfoId,
@@ -189,23 +198,23 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         )
 
         if (todoInfoResponse.isSuccessful) {
-            val resCode = todoInfoResponse.body()!!.resCode
-            val resMsg = todoInfoResponse.body()!!.resMsg
-            val todoBody = todoInfoResponse.body()!!.todoBody
-            Log.d("MainHomeViewModel", "todo body: $todoBody")
+            val todoBody = todoInfoResponse.body()!!
 
-            if (resCode == 200 && resMsg == "OK") {
-                if (todoBody.todoList.isNotEmpty()) {
-                    val todo = todoBody.todoList.first()
-                    Log.d("MainHomeViewModel", "todo first: $todo")
-
-                    return todo
-                } else {
-                    Log.d("MainHomeViewModel", "No To-Do")
-                    return null
-                }
+            if (todoBody.todoList.isNotEmpty()) {
+                val todo = todoBody.todoList.first()
+                return todo
             } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
+                Log.d("MainHomeViewModel", "No To-Do")
+                return Todo(
+                    detail = "No To-Do",
+                    id = -1,
+                    studyInfoId = studyInfoId,
+                    title = "No To-Do",
+                    todoDate = "",
+                    todoCode = "",
+                    todoLink = "",
+                    commitList = listOf()
+                )
             }
         } else {
             Log.e(
@@ -218,21 +227,14 @@ class MainHomeViewModel(application: Application) : AndroidViewModel(application
         return null
     }
 
-    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgress? {
+    // TODO: getTodoProgress api 관련 수정
+    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgressResponse? {
         val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
             studyInfoId
         )
 
         if (todoProgressResponse.isSuccessful) {
-            val resCode = todoProgressResponse.body()!!.resCode
-            val resMsg = todoProgressResponse.body()!!.resMsg
-            val todoProgress = todoProgressResponse.body()!!.todoProgress
-
-            if (resCode == 200 && resMsg == "OK") {
-                return todoProgress
-            } else {
-                Log.e("MainHomeViewModel", "https status error: $resCode, $resMsg")
-            }
+            return todoProgressResponse.body()
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -248,12 +250,13 @@ data class MainHomeUserInfoUiState(
     var score: Int = 0,
     var githubId: String = "",
     var profileImgUrl: String = "",
-//    var rank: Int,
+    var rank: Int = 0,
     var progressScore: Int = 0,
     var progressMax: Int = 15,
-    var characterImgSrc: Int = R.drawable.character_bebe_to_15,
+    var characterImgSrc: Int = R.drawable.character_bebe_to_15
 ) : Serializable
 
 data class MainHomeMyStudyUiState(
-    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf()
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf(),
+    var isMyStudiesEmpty: Boolean = false
 )

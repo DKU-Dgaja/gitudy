@@ -41,20 +41,25 @@ class MyStudyHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
-                if (it.myStudiesWithTodo.isNotEmpty()) {
+                if (!it.isMyStudiesEmpty) {
+                    binding.isNoStudyLayout.visibility = View.GONE
                     setMyStudyList(it.myStudiesWithTodo)
+                } else {
+                    binding.isNoStudyLayout.visibility = View.VISIBLE
                 }
             }
         }
     }
 
+    // 원래 페이지로 돌아왔을 때 state 업데이트
+    override fun onResume() {
+        super.onResume()
+        viewModel.getMyStudyList(null, 7)
+    }
+
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
         with(binding) {
             val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
-
-            if (myStudyRVAdapter.itemCount == 0) {
-                isNoStudyLayout.visibility = View.VISIBLE
-            }
 
             myStudyList.adapter = myStudyRVAdapter
             myStudyList.layoutManager = LinearLayoutManager(requireContext())

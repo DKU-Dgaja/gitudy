@@ -1,8 +1,10 @@
 package com.example.backend.study.api.service.info;
 
-import com.example.backend.TestConfig;
+import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.common.exception.ExceptionMessage;
+import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
@@ -13,7 +15,9 @@ import com.example.backend.domain.define.study.category.mapping.StudyCategoryMap
 import com.example.backend.domain.define.study.category.mapping.repository.StudyCategoryMappingRepository;
 import com.example.backend.domain.define.study.convention.StudyConvention;
 import com.example.backend.domain.define.study.convention.repository.StudyConventionRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -23,10 +27,12 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.study.api.controller.info.request.StudyInfoRegisterRequest;
 import com.example.backend.study.api.controller.info.request.StudyInfoUpdateRequest;
 import com.example.backend.study.api.controller.info.response.*;
-import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -39,11 +45,11 @@ import static com.example.backend.domain.define.study.info.StudyInfo.JOIN_CODE_L
 import static com.example.backend.domain.define.study.info.StudyInfoFixture.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
-class StudyInfoServiceTest extends TestConfig {
-    private final static int DATA_SIZE = 10;
+class StudyInfoServiceTest extends MockTestConfig {
     private final static Long LIMIT = 10L;
     private final static String SORTBY = "score";
     @Autowired
@@ -60,6 +66,10 @@ class StudyInfoServiceTest extends TestConfig {
     private StudyCategoryRepository studyCategoryRepository;
     @Autowired
     private StudyConventionRepository studyConventionRepository;
+    @MockBean
+    private GithubApiTokenService githubApiTokenService;
+    @MockBean
+    private GithubApiService githubApiService;
 
     @AfterEach
     void tearDown() {
@@ -82,6 +92,10 @@ class StudyInfoServiceTest extends TestConfig {
         List<StudyCategory> studyCategories = studyCategoryRepository.saveAll(createDefaultPublicStudyCategories(CATEGORY_SIZE));
 
         StudyInfoRegisterRequest studyInfoRegisterRequest = generateStudyInfoRegisterRequestWithCategory(studyCategories);
+
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(new GithubApiToken("token", user.getId()));
+        when(githubApiService.createRepository(any(String.class), any(RepositoryInfo.class), any(String.class)))
+                .thenReturn(any());
 
         // when
         StudyInfoRegisterResponse registeredStudy = studyInfoService.registerStudy(studyInfoRegisterRequest, UserInfoResponse.of(user));
@@ -107,9 +121,7 @@ class StudyInfoServiceTest extends TestConfig {
                 () -> assertEquals(studyInfoRegisterRequest.getStatus(), registeredStudy.getStatus()),
                 () -> assertEquals(studyInfoRegisterRequest.getMaximumMember(), registeredStudy.getMaximumMember()),
                 () -> assertEquals(studyInfoRegisterRequest.getProfileImageUrl(), registeredStudy.getProfileImageUrl()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getOwner(), registeredStudy.getRepositoryInfo().getOwner()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getName(), registeredStudy.getRepositoryInfo().getName()),
-                () -> assertEquals(studyInfoRegisterRequest.getRepositoryInfo().getBranchName(), registeredStudy.getRepositoryInfo().getBranchName()),
+                () -> assertEquals(studyInfoRegisterRequest.getRepositoryName(), registeredStudy.getRepositoryInfo().getName()),
                 () -> assertEquals(studyInfoRegisterRequest.getPeriodType(), registeredStudy.getPeriodType()),
                 () -> assertIterableEquals(studyInfoRegisterRequest.getCategoriesId(), registeredStudy.getCategoriesId())
         );
@@ -123,6 +135,9 @@ class StudyInfoServiceTest extends TestConfig {
         // 기본 컨벤션이 잘 생성되었는지 검증
         assertEquals(1, convention.size());
         assertEquals(expectedConvention, convention.get(0).getContent());
+
+        // github api가 작동했는지 확인
+        verify(githubApiService, times(1)).createRepository(any(String.class), any(RepositoryInfo.class), any(String.class));
     }
 
 
@@ -304,6 +319,7 @@ class StudyInfoServiceTest extends TestConfig {
                             () -> assertEquals(expected.getTopic(), actual.getTopic()),
                             () -> assertEquals(expected.getScore(), actual.getScore()),
                             () -> assertEquals(expected.getInfo(), actual.getInfo()),
+                            () -> assertEquals(expected.getStatus(), actual.getStatus()),
                             () -> assertEquals(expected.getMaximumMember(), actual.getMaximumMember()),
                             () -> assertEquals(expected.getCurrentMember(), actual.getCurrentMember()),
                             () -> assertEquals(expected.getLastCommitDay(), actual.getLastCommitDay()),
@@ -608,6 +624,7 @@ class StudyInfoServiceTest extends TestConfig {
                             () -> assertEquals(expected.getTopic(), actual.getTopic()),
                             () -> assertEquals(expected.getScore(), actual.getScore()),
                             () -> assertEquals(expected.getInfo(), actual.getInfo()),
+                            () -> assertEquals(expected.getStatus(), actual.getStatus()),
                             () -> assertEquals(expected.getMaximumMember(), actual.getMaximumMember()),
                             () -> assertEquals(expected.getCurrentMember(), actual.getCurrentMember()),
                             () -> assertEquals(expected.getLastCommitDay(), actual.getLastCommitDay()),
@@ -617,6 +634,23 @@ class StudyInfoServiceTest extends TestConfig {
                 });
     }
 
+    @Test
+    public void 전체_스터디_조회시_삭제된_스터디_예외처리_테스트() {
+        // given
+        int expectedResponseSize = 0;
+
+        // 유저 생성
+        User user = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+
+        // 삭제된 스터디 생성
+        StudyInfo studyInfos = studyInfoRepository.save(generateDeletedStudyInfo(user.getId()));
+
+        studyMemberRepository.save(StudyMemberFixture.createStudyMemberLeader(user.getId(), studyInfos.getId()));
+        // when
+        StudyInfoListAndCursorIdxResponse response = studyInfoService.selectStudyInfoList(user.getId(), null, LIMIT, SORTBY, false);
+
+        assertEquals(expectedResponseSize, response.getStudyInfoList().size());
+    }
     @Test
     public void 전체_스터디_조회_테스트_스터디_카테고리_name_반환_테스트() {
         // given
@@ -824,5 +858,37 @@ class StudyInfoServiceTest extends TestConfig {
 
         // then
         assertEquals(expectedMyStudySize, response.getCount());
+    }
+
+    @Test
+    void 레포지토리가_이미_존재할_경우_예외발생() {
+        // given
+        User user = userRepository.save(UserFixture.generateKaKaoUser());
+
+        String existName = "exist";
+
+        // when
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(new GithubApiToken("token", user.getId()));
+        when(githubApiService.repositoryExists(any(String.class), any(String.class), any(String.class)))
+                .thenReturn(true);
+
+        var e = assertThrows(GithubApiException.class, () -> studyInfoService.checkDuplicateRepoName(UserInfoResponse.of(user), existName));
+
+        assertEquals(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), e.getMessage());
+    }
+
+    @Test
+    void 레포지토리가_존재하지_않는_경우_성공() {
+        // given
+        User user = userRepository.save(UserFixture.generateKaKaoUser());
+
+        String newName = "new";
+
+        // when
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(new GithubApiToken("token", user.getId()));
+        when(githubApiService.repositoryExists(any(String.class), any(String.class), any(String.class)))
+                .thenReturn(false);
+
+        studyInfoService.checkDuplicateRepoName(UserInfoResponse.of(user), newName);
     }
 }

@@ -1,21 +1,25 @@
 package com.takseha.presentation.viewmodel.auth
 
+import android.app.Application
 import android.util.Log
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.repository.auth.GithubRepository
 import com.takseha.data.repository.auth.GitudyAuthRepository
+import com.takseha.data.token.TokenManager
+import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class RegisterViewModel: ViewModel() {
+class RegisterViewModel(application: Application) : AndroidViewModel(application) {
     private lateinit var gitudyAuthRepository: GitudyAuthRepository
     private lateinit var githubRepository: GithubRepository
+    private lateinit var tokenManager: TokenManager
 
     private val _registerInfoState = MutableStateFlow(RegisterRequest())
     val registerInfoState = _registerInfoState.asStateFlow()
@@ -45,18 +49,11 @@ class RegisterViewModel: ViewModel() {
         gitudyAuthRepository = GitudyAuthRepository()
 
         val correctNameResponse = gitudyAuthRepository.checkCorrectNickname(name)
-        val resCode = correctNameResponse.body()!!.resCode
-        val resMsg = correctNameResponse.body()!!.resMsg
-        val resObj = correctNameResponse.body()!!.resObj
 
         if (correctNameResponse.isSuccessful) {
-            if (resCode == 200 && resMsg == "OK") {
-                _isCorrectName.value = true
-                Log.d("RegisterViewModel", resObj)
-            } else {
-                _isCorrectName.value = false
-            }
+            _isCorrectName.value = true
         } else {
+            _isCorrectName.value = false
             Log.e("RegisterViewModel", "correctNameResponse status: ${correctNameResponse.code()}\ncorrectNameResponse message: ${correctNameResponse.message()}")
         }
     }
@@ -71,27 +68,22 @@ class RegisterViewModel: ViewModel() {
     fun setGithubId(githubId: String) {
         _registerInfoState.update { it.copy(githubId = githubId) }
     }
+    fun setFCMToken(fcmToken: String) {
+        _registerInfoState.update { it.copy(fcmToken = fcmToken) }
+    }
 
     fun getRegisterTokens() = viewModelScope.launch {
-        gitudyAuthRepository = GitudyAuthRepository()
+        tokenManager = TokenManager(getApplication())
 
         val request = registerInfoState.value
 
-        val registerResponse = gitudyAuthRepository.register(request)
+        val registerResponse = tokenManager.getRegisterTokens(request)
 
-        if (registerResponse.isSuccessful) {
-            val resCode = registerResponse.body()!!.resCode
-            val resMsg = registerResponse.body()!!.resMsg
-            val allTokens = registerResponse.body()!!.tokenInfo
-
-            if (resCode == 200 && resMsg == "OK") {
-                // role이 회원으로 바뀜!
-                Log.d("RegisterViewModel", allTokens.toString())
-            } else {    // 추후에 status 에러 코드에 맞춰서 에러 상황 다르게 처리! 일단은 다 id 입력 오류라고 생각하고 처리
-                Log.e("RegisterViewModel", "https status error: $resCode, $resMsg")
-            }
+        if (registerResponse != null) {
+            val role = registerResponse.role
+            Log.d("RegisterViewModel", "role changed: $role")
         } else {
-            Log.e("RegisterViewModel", "registerResponse status: ${registerResponse.code()}\nregisterResponse message: ${registerResponse.message()}")
+            Log.e("RegisterViewModel", "register token 생성 실패")
         }
     }
 }

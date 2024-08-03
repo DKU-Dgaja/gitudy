@@ -60,7 +60,8 @@ class InputNicknameFragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     var nicknameLength = inputNicknameEditText.length()
                     val nicknameLengthText = getString(R.string.text_length)
-                    val snackBarText = getString(R.string.alert_text_length)
+
+                    confirmBtn.isEnabled = false    // 확인 버튼 초기화
 
                     if (nicknameLength > 0) {
                         isNameOkBtn.isEnabled = true
@@ -74,7 +75,7 @@ class InputNicknameFragment : Fragment() {
                                     R.color.BASIC_RED
                                 )
                             )
-                            makeSnackBar(String.format(snackBarText, maxLength)).apply {
+                            makeSnackBar(getString(R.string.alert_text_length, maxLength)).apply {
                                 anchorView = confirmBtn
                             }.show()
                         } else {
@@ -86,6 +87,19 @@ class InputNicknameFragment : Fragment() {
                                 )
                             )
                         }
+                        if (!isValidNickname(s.toString())) {
+                            isNameOkBtn.isEnabled = false
+                            nicknameLengthWithMax.setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_RED
+                                )
+                            )
+                            makeSnackBar(getString(R.string.alert_text_emoji)).apply {
+                                anchorView = confirmBtn
+                            }.show()
+                        }
+
                     } else {
                         isNameOkBtn.isEnabled = false
                         nicknameLengthWithMax.text =
@@ -134,6 +148,12 @@ class InputNicknameFragment : Fragment() {
                     .navigate(R.id.action_inputNicknameFragment_to_inputIdFragment)
             }
         }
+    }
+    private fun isValidNickname(text: String): Boolean {
+        val regex = "^[a-zA-Z0-9ㄱ-ㅎ가가-힣]*$"
+        val emojiRegex = "[\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+"
+
+        return regex.toRegex().matches(text) && !emojiRegex.toRegex().containsMatchIn(text)
     }
 
     private fun makeSnackBar(message: String): Snackbar {

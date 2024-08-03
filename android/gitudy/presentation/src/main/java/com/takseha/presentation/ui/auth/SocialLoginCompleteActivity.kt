@@ -5,7 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import androidx.core.content.ContextCompat
-import com.takseha.data.dto.auth.login.Role
+import com.takseha.data.dto.auth.login.RoleStatus
 import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivitySocialLoginCompleteBinding
@@ -19,8 +19,6 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_social_login_complete)
         window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
-
-        MyFirebaseMessagingService().getFirebaseToken()
 
         binding.confirmBtn.setOnClickListener {
             val role = intent.getStringExtra("role").toString()
@@ -36,10 +34,19 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
     }
 
     private fun controlRegisterView(role: String) {
-        if (Role.valueOf(role) == Role.UNAUTH || Role.valueOf(role) == Role.WITHDRAW) {
+        try {
+            when (RoleStatus.valueOf(role)) {
+                RoleStatus.UNAUTH, RoleStatus.WITHDRAW -> {
+                    startActivity(Intent(this, PopupAgreementActivity::class.java))
+                }
+                else -> {
+                    startActivity(Intent(this, MainHomeActivity::class.java))
+                }
+            }
+        } catch (e: IllegalArgumentException) {
+            // role == null일 때
+            Log.e("SocialLoginCompleteActivity", e.message.toString())
             startActivity(Intent(this, PopupAgreementActivity::class.java))
-        } else {
-            startActivity(Intent(this, MainHomeActivity::class.java))
         }
     }
 }

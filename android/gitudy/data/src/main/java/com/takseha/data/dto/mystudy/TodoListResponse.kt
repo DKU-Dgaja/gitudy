@@ -2,39 +2,31 @@ package com.takseha.data.dto.mystudy
 
 
 import com.google.gson.annotations.SerializedName
-import com.takseha.data.dto.feed.StudyListInfo
 
 data class TodoListResponse(
-    @SerializedName("res_code")
-    val resCode: Int,
-    @SerializedName("res_msg")
-    val resMsg: String,
-    @SerializedName("res_obj")
-    val todoBody: TodoBody
-)
-
-data class TodoBody(
-    @SerializedName("cursor_idx")
-    val cursorIdx: Int,
     @SerializedName("todo_list")
-    val todoList: List<Todo>
+    val todoList: List<Todo>,
+    @SerializedName("cursor_idx")
+    val cursorIdx: Int
 )
 
 data class Todo(
     @SerializedName("detail")
-    val detail: String,
+    val detail: String = "",
     @SerializedName("id")
-    val id: Int,
+    val id: Int = 0,
     @SerializedName("study_info_id")
-    val studyInfoId: Int,
+    val studyInfoId: Int = 0,
     @SerializedName("title")
-    val title: String,
+    val title: String = "",
     @SerializedName("todo_date")
-    val todoDate: String,
+    val todoDate: String = "",
     @SerializedName("todo_code")
-    val todoCode: String,
+    val todoCode: String = "",
     @SerializedName("todo_link")
-    val todoLink: String,
+    val todoLink: String = "",
+    @SerializedName("created_date_time")
+    val todoSetDate: String = "",
     @SerializedName("commits")
-    val commitList: List<Commit>
+    val commitList: List<Commit> = listOf()
 )

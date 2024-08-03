@@ -6,6 +6,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
@@ -21,6 +22,8 @@ import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyResponse;
 import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -43,7 +46,8 @@ public class StudyMemberService {
     private final StudyInfoService studyInfoService;
     private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
-
+    private final GithubApiService githubApiService;
+    private final GithubApiTokenService githubApiTokenService;
     private final static int JOIN_CODE_LENGTH = 10;
     private final static Long MAX_LIMIT = 10L;
 
@@ -268,6 +272,16 @@ public class StudyMemberService {
 
             // 스터디 가입 시 User +5점
             findUser.addUserScore(5);
+
+            // 스터디장 레포지토리에 가입 성공 스터디원 Collaborator 추가
+            RepositoryInfo repoInfo = studyInfo.getRepositoryInfo();
+
+            // 스터디 레포지토리에 초대
+            githubApiService.addCollaborator(githubApiTokenService.getToken(studyInfo.getUserId()).githubApiToken(),
+                    repoInfo, findUser.getGithubId());
+
+            // 스터디원의 초대 수락
+            githubApiService.acceptInvitation(githubApiTokenService.getToken(findUser.getId()).githubApiToken(), findUser.getGithubId());
 
         } else {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_REFUSED);

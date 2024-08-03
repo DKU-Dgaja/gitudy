@@ -1,21 +1,23 @@
 package com.example.backend.domain.define.study.todo.repository;
 
 import com.example.backend.TestConfig;
+import com.example.backend.auth.config.fixture.UserFixture;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
-import com.example.backend.study.api.controller.todo.response.StudyTodoResponse;
-import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
-import java.util.List;
 import java.util.stream.IntStream;
 
-import static com.example.backend.study.api.service.todo.StudyTodoServiceTest.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SuppressWarnings("NonAsciiCharacters")
@@ -25,6 +27,12 @@ public class StudyTodoRepositoryTest extends TestConfig {
 
     @Autowired
     private StudyCommitRepository studyCommitRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private StudyInfoRepository studyInfoRepository;
 
 
     private final String expectedTitle = "Title";
@@ -36,19 +44,24 @@ public class StudyTodoRepositoryTest extends TestConfig {
     void tearDown() {
         studyTodoRepository.deleteAllInBatch();
         studyCommitRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
+        studyInfoRepository.deleteAllInBatch();
     }
 
     @Test
     void 커서가_null일_경우_전체_페이지_조회_테스트() {
         // given
         Long cursorIdx = null;
-        Long studyInfoId = 1L;
         Long limit = 3L;
+
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
 
         // To do 10개 저장
         IntStream.rangeClosed(1, 10).forEach(td -> {
-            StudyTodo studyTodo = studyTodoRepository.save(StudyTodoFixture.createStudyTodoList(
-                    studyInfoId,
+            StudyTodo studyTodo = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(
+                    study.getId(),
                     expectedTitle + td,
                     expectedDetail + td,
                     expectedTodoLink + td,
@@ -58,7 +71,7 @@ public class StudyTodoRepositoryTest extends TestConfig {
             IntStream.rangeClosed(1, 2).forEach(ci -> {
                 studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(
                         1L,
-                        studyInfoId,
+                        study.getId(),
                         studyTodo.getId(),
                         "CommitSHA" + td + ci
                 ));
@@ -66,7 +79,7 @@ public class StudyTodoRepositoryTest extends TestConfig {
         });
 
         // when
-        var response = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+        var response = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(study.getId(), cursorIdx, limit);
 
         // then
         response.forEach(r -> {
@@ -80,42 +93,18 @@ public class StudyTodoRepositoryTest extends TestConfig {
 
     @Test
     void 커서가_null이_아닌경우_전체_페이지_조회_테스트() {
-
         // given
-        Long cursorIdx = 5L;
-        Long studyInfoId = 1L;
         Long limit = 3L;
+        Long cursorIdx = Long.MAX_VALUE;
+
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
 
         // To do 10개 저장
-        IntStream.rangeClosed(1, 10).forEach(td -> {
-            StudyTodo studyTodo = studyTodoRepository.save(StudyTodoFixture.createStudyTodoList(
-                    studyInfoId,
-                    expectedTitle + td,
-                    expectedDetail + td,
-                    expectedTodoLink + td,
-                    expectedTodoDate.plusDays(td)
-            ));
-            // 각 To do에 Commit 2개씩 저장
-            IntStream.rangeClosed(1, 2).forEach(ci -> {
-                studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(
-                        1L,
-                        studyInfoId,
-                        studyTodo.getId(),
-                        "CommitSHA" + td + ci
-                ));
-            });
-        });
+        studyTodoRepository.saveAll(StudyTodoFixture.createStudyTodoList(study.getId(), 5));
 
-        // when
-        var response = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+        var response = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(study.getId(), cursorIdx, limit);
 
-        // then
         assertEquals(limit, response.size());
-        assertEquals(expectedTitle + "4", response.get(0).getTitle());
-        assertEquals(2, response.get(0).getCommits().size()); // 첫 번째 To do의 Commit 개수 확인
-        assertEquals(expectedTitle + "3", response.get(1).getTitle());
-        assertEquals(2, response.get(1).getCommits().size()); // 두 번째 To do의 Commit 개수 확인
-        assertEquals(expectedTitle + "2", response.get(2).getTitle());
-        assertEquals(2, response.get(2).getCommits().size()); // 세 번째 To do의 Commit 개수 확인
     }
 }
