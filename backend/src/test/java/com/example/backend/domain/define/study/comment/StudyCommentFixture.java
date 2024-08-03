@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.comment;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.domain.define.study.comment.study.StudyComment;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentRegisterRequest;
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
@@ -57,11 +58,15 @@ public class StudyCommentFixture {
                 .cursorIdx(cursorIdx)
                 .build();
     }
-    public static UserNameAndProfileImageResponse createDefaultUserInfoResponse(Long userId) {
-        return UserNameAndProfileImageResponse.builder()
-                .id(userId)
+    public static UserInfoResponse createDefaultUserInfoResponse(Long userId) {
+        return UserInfoResponse.builder()
+                .userId(userId)
                 .name("user")
                 .profileImageUrl("profileImageUrl")
+                .pushAlarmYn(false)
+                .profilePublicYn(true)
+                .score(0)
+                .point(0)
                 .build();
     }
 }
