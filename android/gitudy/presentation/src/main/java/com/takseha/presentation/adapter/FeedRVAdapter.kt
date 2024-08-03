@@ -16,8 +16,6 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
-    private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
-
     interface ItemClick {
         fun onClick(view: View, position: Int)
     }
@@ -42,13 +40,7 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        if (studyInfoList[position].profileImageUrl.isEmpty()) {
-            holder.backgroundColor.setBackgroundColor(Color.parseColor(backgroundColorList[position % 6]))
-        } else if (studyInfoList[position].profileImageUrl != "string") {
-            holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].profileImageUrl))
-        } else {
-            holder.backgroundColor.setBackgroundColor(Color.parseColor(backgroundColorList[position % 6]))
-        }
+        holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].profileImageUrl))
         holder.studyName.text = studyInfoList[position].topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].periodType)
         holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].id - 15, if (studyInfoList[position].lastCommitDay == null ) "없음" else studyInfoList[position].lastCommitDay)

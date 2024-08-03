@@ -112,8 +112,6 @@ class MainHomeViewModel : ViewModel() {
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
-        val backgroundColorList = listOf("#f8a7a7", "#f8dea6", "#d3f3be", "#85b0e9")
-
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             cursorIdx,
             limit,
@@ -145,7 +143,6 @@ class MainHomeViewModel : ViewModel() {
                             val todoCheck =
                                 if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
                             MyStudyWithTodo(
-                                backgroundColorList[study.id % 4],
                                 study,
                                 todo.title,
                                 todo.todoDate,
@@ -154,7 +151,6 @@ class MainHomeViewModel : ViewModel() {
                             )
                         } else {
                             MyStudyWithTodo(
-                                backgroundColorList[study.id % 4],
                                 study,
                                 null,
                                 null,
@@ -164,7 +160,6 @@ class MainHomeViewModel : ViewModel() {
                         }
                     } else {
                         MyStudyWithTodo(
-                            backgroundColorList[study.id % 4],
                             study,
                             null,
                             null,
