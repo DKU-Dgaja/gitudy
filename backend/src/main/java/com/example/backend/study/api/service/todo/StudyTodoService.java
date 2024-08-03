@@ -5,6 +5,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -74,18 +75,17 @@ public class StudyTodoService {
         // 한 번의 쿼리로 모든 매핑 저장
         studyTodoMappingRepository.saveAll(todoMappings);
 
-//        // 투두에 해당하는 폴더를 스터디 레포지토리에 생성
-//        githubApiTokenService.getToken()
-//        githubApiService.createTodoFolder();
-
         // 활동중인 멤버들의 userId 추출
         List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
 
         // FCM 알림을 받을 수 있는 사용자의 ID 추출
         List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
 
-
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+        // 투두에 해당하는 폴더를 스터디 레포지토리에 생성
+        GithubApiToken token = githubApiTokenService.getToken(studyInfo.getUserId());
+        githubApiService.createTodoFolder(token.githubApiToken(), studyTodo, studyInfo.getRepositoryInfo());
 
         // 알림 비동기처리
         eventPublisher.publishEvent(TodoRegisterMemberEvent.builder()

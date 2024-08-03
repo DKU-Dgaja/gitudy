@@ -9,8 +9,11 @@ import com.example.backend.domain.define.fcm.listener.TodoRegisterMemberListener
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
@@ -26,6 +29,8 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.*;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import org.junit.jupiter.api.AfterEach;
@@ -43,7 +48,8 @@ import static com.example.backend.domain.define.study.todo.mapping.constant.Stud
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.*;
 
 public class StudyTodoServiceTest extends MockTestConfig {
 
@@ -73,6 +79,12 @@ public class StudyTodoServiceTest extends MockTestConfig {
 
     @MockBean
     private TodoRegisterMemberListener todoRegisterMemberListener;
+
+    @MockBean
+    private GithubApiTokenService githubApiTokenService;
+
+    @MockBean
+    private GithubApiService githubApiService;
 
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
@@ -110,6 +122,9 @@ public class StudyTodoServiceTest extends MockTestConfig {
         ));
 
         StudyTodoRequest request = StudyTodoFixture.generateStudyTodoRequest();
+
+        when(githubApiTokenService.getToken(anyLong())).thenReturn(new GithubApiToken("test", leader.getId()));
+        doNothing().when(githubApiService).createTodoFolder(any(String.class), any(StudyTodo.class), any(RepositoryInfo.class));
 
         //when
         studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());
@@ -152,6 +167,9 @@ public class StudyTodoServiceTest extends MockTestConfig {
                 StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()),
                 StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyInfo.getId())
         ));
+
+        when(githubApiTokenService.getToken(anyLong())).thenReturn(new GithubApiToken("test", leader.getId()));
+        doNothing().when(githubApiService).createTodoFolder(any(String.class), any(StudyTodo.class), any(RepositoryInfo.class));
 
         //when
         studyMemberService.isValidateStudyLeader(leader, studyInfo.getId());

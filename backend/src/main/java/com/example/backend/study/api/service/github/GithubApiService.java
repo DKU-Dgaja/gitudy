@@ -261,7 +261,7 @@ public class GithubApiService {
 
     }
 
-    public void createTodoInfo(StudyTodo todo, GHRepository repository) throws IOException {
+    private void createTodoInfo(StudyTodo todo, GHRepository repository) throws IOException {
         // 파일 내용 정의
         String filePath = todo.getTodoFolderName() + "/" + todo.getTitle() + ".md";
         String commitMessage = "Create todo folder " + todo.getTodoFolderName();
