@@ -51,7 +51,7 @@ class StudyCommentRepositoryTest extends TestConfig {
         studyCommentRepository.saveAll(StudyCommentList);
 
         // when
-        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(study.getId(), cursorIdx, LIMIT);
+        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(study.getId(), cursorIdx, LIMIT, user.getId());
 
         // then
         for (StudyCommentResponse b : StudyCommentListResponse) {
@@ -72,7 +72,7 @@ class StudyCommentRepositoryTest extends TestConfig {
         studyCommentRepository.saveAll(StudyCommentList);
 
         // when
-        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(study.getId(), null, LIMIT);
+        List<StudyCommentResponse> StudyCommentListResponse = studyCommentRepository.findStudyCommentListByStudyInfoIdJoinUser(study.getId(), null, LIMIT, user.getId());
 
         // then
         assertEquals(LIMIT, StudyCommentListResponse.size());
