@@ -20,6 +20,7 @@ import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
+// TODO: 정렬 버튼 선택 시 정렬 기준 변경, 활동 중인 스터디만 보기 기능 구현(studyStatus 보고 종료된 스터디 제외시키기)
 class MyStudyHomeFragment : Fragment() {
     private var _binding: FragmentMyStudyHomeBinding? = null
     private val binding get() = _binding!!
@@ -48,6 +49,7 @@ class MyStudyHomeFragment : Fragment() {
         }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
+                binding.myStudyCnt.text = it.studyCnt.toString()
                 if (!it.isMyStudiesEmpty) {
                     binding.isNoStudyLayout.visibility = View.GONE
                     setMyStudyList(it.myStudiesWithTodo)
@@ -81,7 +83,6 @@ class MyStudyHomeFragment : Fragment() {
                 val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
                 intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
-                Log.d("MyStudyHomeFragment", intent.extras.toString())
                 startActivity(intent)
             }
         }

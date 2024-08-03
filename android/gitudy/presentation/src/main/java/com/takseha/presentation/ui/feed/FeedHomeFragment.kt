@@ -45,6 +45,7 @@ class FeedHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getFeedList(null, 10, "createdDateTime")
             viewModel.uiState.collectLatest {
+                binding.feedCnt.text = it.studyCnt.toString()
                 if (!it.isFeedEmpty) {
                     binding.isNoStudyLayout.visibility = View.GONE
                     setFeedList(it.studyInfoList)
@@ -78,7 +79,6 @@ class FeedHomeFragment : Fragment() {
                 val intent = Intent(requireContext(), StudyApplyActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].id)
                 intent.putExtra("studyImgColor", studyList[position].profileImageUrl)
-                Log.d("FeedHomeFragment", intent.extras.toString())
                 startActivity(intent)
             }
         }

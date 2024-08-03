@@ -1,6 +1,7 @@
 package com.takseha.data.api.gitudy.study
 
 import com.takseha.data.dto.feed.MakeStudyRequest
+import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyListResponse
 import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
@@ -28,6 +29,11 @@ interface GitudyStudyService {
         @Query("sortBy") sortBy: String,
         @Query("myStudy") myStudy: Boolean
     ): Response<StudyListResponse>
+
+    @GET("/study/count")
+    suspend fun getStudyCount(
+        @Query("myStudy") myStudy: Boolean
+    ): Response<StudyCountResponse>
 
     @POST("/study/")
     suspend fun makeNewStudy(

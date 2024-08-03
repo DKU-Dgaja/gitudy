@@ -17,6 +17,10 @@ class GitudyStudyRepository {
         myStudy: Boolean
     ) = client.getStudyList(cursorIdx, limit, sortBy, myStudy)
 
+    suspend fun getStudyCount(
+        myStudy: Boolean
+    ) = client.getStudyCount(myStudy)
+
     suspend fun makeNewStudy(
         request: MakeStudyRequest
     ) = client.makeNewStudy(request)
