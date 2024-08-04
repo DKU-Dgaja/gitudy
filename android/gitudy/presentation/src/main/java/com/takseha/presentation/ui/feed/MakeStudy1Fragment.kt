@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -68,8 +69,6 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     title = studyNameEditText.text.toString()
-                    nextBtn.isEnabled =
-                        title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
                 }
             })
             studyDetailEditText.addTextChangedListener(object : TextWatcher {
@@ -85,8 +84,6 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     detail = studyDetailEditText.text.toString()
-                    nextBtn.isEnabled =
-                        title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
                 }
             })
             studyGithubLinkEditText.addTextChangedListener(object : TextWatcher {
@@ -98,14 +95,48 @@ class MakeStudy1Fragment : Fragment() {
                 ) {
                 }
 
-                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+                override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                    val repoNameLength = studyGithubLinkEditText.length()
+                    nextBtn.isEnabled = false    // 확인 버튼 초기화
+
+                    isValidNameBtn.isEnabled = repoNameLength > 0
+                }
 
                 override fun afterTextChanged(s: Editable?) {
                     githubRepo = studyGithubLinkEditText.text.toString()
-                    nextBtn.isEnabled =
-                        title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
                 }
             })
+
+            isValidNameBtn.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.checkValidRepoName(githubRepo)
+
+                    val isValidName = viewModel.isValidRepoName.value
+                    Log.e("MakeStudy1Fragment", isValidName.toString())
+                    if (isValidName == true) {
+                        repoDesc.apply {
+                            text = "생성 가능한 레포지토리 이름이에요."
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_BLUE
+                                ))
+                        }
+                        nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
+                    } else {
+                        repoDesc.apply {
+                            text = "동일한 레포지토리 이름이 존재해요."
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_RED
+                                ))
+                        }
+                        nextBtn.isEnabled = false
+                    }
+                }
+            }
+
             // TODO : edittext 키보드 위로 올라가도록 하는 기능 구현
             // TODO : 카테고리 status도 state에 저장하는 기능 구현
             nextBtn.setOnClickListener {

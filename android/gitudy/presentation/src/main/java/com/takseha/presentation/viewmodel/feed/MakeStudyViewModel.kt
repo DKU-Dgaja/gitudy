@@ -23,6 +23,9 @@ class MakeStudyViewModel: ViewModel() {
     private val _categoryState = MutableStateFlow<List<Category>>(emptyList())
     val categoryState = _categoryState.asStateFlow()
 
+    private val _isValidRepoName = MutableStateFlow<Boolean?>(null)
+    val isValidRepoName = _isValidRepoName.asStateFlow()
+
     private val _newStudyInfoState = MutableStateFlow(MakeStudyRequest())
     val newStudyInfoState = _newStudyInfoState.asStateFlow()
 
@@ -32,6 +35,20 @@ class MakeStudyViewModel: ViewModel() {
     fun setStudyRule(commitTimes: StudyPeriodStatus, isPublic: StudyStatus, maxMember: Int) {
         _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = backgroundColorList[randIdx]) }
     }
+
+    fun checkValidRepoName(name: String) = viewModelScope.launch {
+        gitudyStudyRepository = GitudyStudyRepository()
+
+        val isValidRepoNameResponse = gitudyStudyRepository.checkValidRepoName(name)
+
+        if (isValidRepoNameResponse.isSuccessful) {
+            _isValidRepoName.value = true
+        } else {
+            _isValidRepoName.value = false
+            Log.e("MakeStudyViewModel", "isValidRepoNameResponse status: ${isValidRepoNameResponse.code()}\nisValidRepoNameResponse message: ${isValidRepoNameResponse.errorBody()?.string()}")
+        }
+    }
+
     fun getAllCategory() = viewModelScope.launch {
         gitudyCategoryRepository = GitudyCategoryRepository()
         val categoryListResponse = gitudyCategoryRepository.getAllCategory()
