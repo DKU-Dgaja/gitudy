@@ -149,16 +149,16 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(4, responses.size());
 
         assertEquals(99, responses.get(0).getScore());
-        assertEquals("이주성", responses.get(0).getName());
+        assertEquals("이주성", responses.get(0).getUserInfo().getName());
 
         assertEquals(88, responses.get(1).getScore());
-        assertEquals("탁세하", responses.get(1).getName());
+        assertEquals("탁세하", responses.get(1).getUserInfo().getName());
 
         assertEquals(77, responses.get(2).getScore());
-        assertEquals("이정우", responses.get(2).getName());
+        assertEquals("이정우", responses.get(2).getUserInfo().getName());
 
         assertEquals(77, responses.get(3).getScore());
-        assertEquals("구영민", responses.get(3).getName());  // 점수 동일시 userId 낮은순
+        assertEquals("구영민", responses.get(3).getUserInfo().getName());  // 점수 동일시 userId 낮은순
 
     }
 
@@ -192,16 +192,16 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(4, responses.size());
 
         assertEquals(77, responses.get(0).getScore());
-        assertEquals("이정우", responses.get(0).getName());
+        assertEquals("이정우", responses.get(0).getUserInfo().getName());
 
         assertEquals(77, responses.get(1).getScore());
-        assertEquals("구영민", responses.get(1).getName());
+        assertEquals("구영민", responses.get(1).getUserInfo().getName());
 
         assertEquals(99, responses.get(2).getScore());
-        assertEquals("이주성", responses.get(2).getName());
+        assertEquals("이주성", responses.get(2).getUserInfo().getName());
 
         assertEquals(88, responses.get(3).getScore());
-        assertEquals("탁세하", responses.get(3).getName());
+        assertEquals("탁세하", responses.get(3).getUserInfo().getName());
 
     }
 
@@ -237,10 +237,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(2, responses.size());
 
         assertEquals(99, responses.get(0).getScore());
-        assertEquals("이주성", responses.get(0).getName());
+        assertEquals("이주성", responses.get(0).getUserInfo().getName());
 
         assertEquals(77, responses.get(1).getScore());
-        assertEquals("이정우", responses.get(1).getName());
+        assertEquals("이정우", responses.get(1).getUserInfo().getName());
 
     }
 
