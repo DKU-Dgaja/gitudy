@@ -40,6 +40,11 @@ interface GitudyStudyService {
         @Body request: MakeStudyRequest
     ): Response<Void>
 
+    @POST("/study/check-name")
+    suspend fun checkValidRepoName(
+        @Body name: String
+    ): Response<Void>
+
     @GET("/study/{studyInfoId}/todo")
     suspend fun getTodoList(
         @Path("studyInfoId") studyInfoId: Int,

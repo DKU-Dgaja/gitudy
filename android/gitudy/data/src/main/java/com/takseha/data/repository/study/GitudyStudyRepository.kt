@@ -25,6 +25,10 @@ class GitudyStudyRepository {
         request: MakeStudyRequest
     ) = client.makeNewStudy(request)
 
+    suspend fun checkValidRepoName(
+        request: String
+    ) = client.checkValidRepoName(request)
+
     suspend fun getTodoList(
         studyInfoId: Int,
         cursorIdx: Long?,
