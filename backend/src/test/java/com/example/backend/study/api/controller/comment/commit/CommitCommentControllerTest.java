@@ -74,8 +74,7 @@ class CommitCommentControllerTest extends MockTestConfig {
     }
 
 
-    // @Test
-    // getCommitCommentsList(any(Long.class)) -> getCommitCommentsList(any(Long.class), any(Long.class)) 변경 시 테스트 오류! 해결 못해서 일단 주석처리했습니다.
+    @Test
     void 커밋_댓글_리스트_조회_실패_테스트() throws Exception {
         // given
         User user = generateAuthUser();
@@ -85,7 +84,7 @@ class CommitCommentControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
-        when(commitCommentService.getCommitCommentsList(any(Long.class), any(Long.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
+        when(commitCommentService.getCommitCommentsList(any(Long.class), any())).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
