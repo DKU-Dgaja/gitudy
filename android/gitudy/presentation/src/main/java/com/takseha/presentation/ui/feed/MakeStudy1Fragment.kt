@@ -107,6 +107,7 @@ class MakeStudy1Fragment : Fragment() {
                 }
             })
             // TODO : edittext 키보드 위로 올라가도록 하는 기능 구현
+            // TODO : 카테고리 status도 state에 저장하는 기능 구현
             nextBtn.setOnClickListener {
                 val categoryIdList = (categoryListRecyclerView.adapter as? AllCategoryRVAdapter)?.getSelectedItems() ?: emptyList()
                 viewModel.setStudyIntro(title, detail, githubRepo, categoryIdList)
