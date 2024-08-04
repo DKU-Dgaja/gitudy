@@ -7,9 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyInfo
+import com.takseha.data.dto.feed.StudyPeriodStatus
+import com.takseha.data.dto.feed.UserInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
@@ -28,6 +30,7 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         val teamInfo = binding.teamRankAndRecentInfo
         val teamScore = binding.teamScore
         val totalDayCnt = binding.totalDayCnt
+        val memberList: RecyclerView = binding.memberList
         val currentMember = binding.currentCnt
         val totalMember = binding.totalCnt
     }
@@ -49,16 +52,15 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         holder.currentMember.text = studyInfoList[position].currentMember.toString()
         holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].maximumMember)
 
+        // holder.memberList 구현
+        setMemberList(holder, position)
+
         // 클릭 이벤트 처리
         if (itemClick != null) {
             holder?.itemView?.setOnClickListener { v ->
                 itemClick!!.onClick(v, position)
             }
         }
-    }
-
-    override fun getItemCount(): Int {
-        return studyInfoList.size
     }
 
     private fun setCommitRule(periodType: StudyPeriodStatus): String {
@@ -76,5 +78,22 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         val nowDate = LocalDateTime.now()
 
         return ChronoUnit.DAYS.between(createdDateLocalDate, nowDate)
+    }
+
+    private fun setMemberList(holder: ViewHolder, position: Int) {
+        val memberList: MutableList<UserInfo> = studyInfoList[position].userInfo.toMutableList()
+        val emptyCnt = studyInfoList[position].maximumMember - studyInfoList[position].userInfo.size
+
+        // 빈 프로필 추가
+        for (i in 0 until emptyCnt) {
+            memberList.add(UserInfo(-1, "empty", ""))
+        }
+
+        holder.memberList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        holder.memberList.adapter = MemberListRVAdapter(context, memberList)
+    }
+
+    override fun getItemCount(): Int {
+        return studyInfoList.size
     }
 }
