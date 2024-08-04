@@ -322,7 +322,9 @@
                         android:id="@+id/todoDetailBody"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_marginLeft="5dp"
                         android:layout_marginTop="15dp"
+                        android:layout_marginEnd="5dp"
                         android:visibility="visible"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -548,13 +550,13 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginRight="6dp"
+                    android:layout_weight="1"
                     android:background="@drawable/box_non_stroke_r8"
                     android:backgroundTint="#F3F5F7"
                     android:gravity="center_horizontal"
                     android:paddingLeft="16dp"
                     android:paddingTop="10dp"
                     android:paddingRight="16dp"
-                    android:layout_weight="1"
                     app:layout_constraintBottom_toBottomOf="parent">
 
                     <ScrollView
