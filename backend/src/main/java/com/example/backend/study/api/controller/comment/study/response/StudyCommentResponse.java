@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
+
 @Getter
 @ToString
 public class StudyCommentResponse {
@@ -15,14 +17,16 @@ public class StudyCommentResponse {
     private UserInfoResponse userInfoResponse;
     private String content;
     private boolean isMyComment;
+    private LocalDateTime createdDateTime;
 
     @Builder
-    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, String content, UserInfoResponse userInfoResponse, boolean isMyComment) {
+    public StudyCommentResponse(Long id, Long studyInfoId, Long userId, String content, UserInfoResponse userInfoResponse, boolean isMyComment, LocalDateTime createdDateTime) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.userId = userId;
         this.content = content;
         this.userInfoResponse = userInfoResponse;
         this.isMyComment = isMyComment;
+        this.createdDateTime = createdDateTime;
     }
 }

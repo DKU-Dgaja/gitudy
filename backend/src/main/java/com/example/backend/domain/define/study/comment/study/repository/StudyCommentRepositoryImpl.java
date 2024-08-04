@@ -40,7 +40,8 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom 
                                 user.score,
                                 user.point
                         ),
-                        studyComment.userId.eq(currentUserId).as("isMyComment")
+                        studyComment.userId.eq(currentUserId).as("isMyComment"),
+                        studyComment.createdDateTime
                 ))
                 .from(studyComment)
                 .join(user).on(user.id.eq(studyComment.userId))
