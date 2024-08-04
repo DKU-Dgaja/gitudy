@@ -10,11 +10,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.takseha.presentation.databinding.ItemCategoryBinding
 
 class FeedCategoryRVAdapter(val context : Context, val categoryList: List<String>) : RecyclerView.Adapter<FeedCategoryRVAdapter.ViewHolder>() {
-    interface ItemClick {
-        fun onClick(view: View, position: Int)
-    }
-    var itemClick: ItemClick? = null
-
     class ViewHolder(val binding: ItemCategoryBinding) : RecyclerView.ViewHolder(binding.root) {
         val categoryName = binding.categoryName
     }
@@ -28,13 +23,6 @@ class FeedCategoryRVAdapter(val context : Context, val categoryList: List<String
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.categoryName.text = categoryList[position]
-
-        // 클릭 이벤트 처리
-        if (itemClick != null) {
-            holder?.itemView?.setOnClickListener { v ->
-                itemClick!!.onClick(v, position)
-            }
-        }
     }
 
     override fun getItemCount(): Int {
