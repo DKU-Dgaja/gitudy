@@ -18,7 +18,7 @@ public class CommitCommentRepositoryImpl implements CommitCommentRepositoryCusto
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<CommitCommentInfoResponse> findCommitCommentListByCommitIdJoinUser(Long commitId) {
+    public List<CommitCommentInfoResponse> findCommitCommentListByCommitIdJoinUser(Long commitId, Long currentUserId) {
 
         return jpaQueryFactory.select(Projections.constructor(CommitCommentInfoResponse.class,
                         commitComment.id,
@@ -37,7 +37,8 @@ public class CommitCommentRepositoryImpl implements CommitCommentRepositoryCusto
                                 user.profilePublicYn,
                                 user.score,
                                 user.point
-                        )
+                        ),
+                    commitComment.userId.eq(currentUserId).as("isMyComment")
                 ))
                 .from(commitComment)
                 .join(user).on(user.id.eq(commitComment.userId))

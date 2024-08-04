@@ -34,9 +34,9 @@ public class CommitCommentController {
                                                                              @RequestParam(name = "studyInfoId") Long studyInfoId,
                                                                              @PathVariable(name = "commitId") Long commitId) {
 
-        studyMemberService.isValidateStudyMember(user, studyInfoId);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        return ResponseEntity.ok().body(commitCommentService.getCommitCommentsList(commitId));
+        return ResponseEntity.ok().body(commitCommentService.getCommitCommentsList(commitId, userInfo.getUserId()));
 
     }
 
