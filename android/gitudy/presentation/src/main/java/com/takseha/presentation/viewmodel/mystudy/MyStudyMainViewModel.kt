@@ -8,6 +8,7 @@ import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
+import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.repository.member.GitudyMemberRepository
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,19 +31,31 @@ class MyStudyMainViewModel : ViewModel() {
 
         if (myStudyInfoResponse.isSuccessful) {
             val myStudyInfo = myStudyInfoResponse.body()!!
-            val todo = getFirstTodoInfo(studyInfoId)
+            val urgentTodo = getUrgentTodo(studyInfoId)
             val convention = getConvention(studyInfoId)
             val studyMemberList = getStudyMemberList(studyInfoId)
 
-            _myStudyState.update {
-                it.copy(
-                    myStudyInfo = myStudyInfo,
-                    todoInfo = todo,
-                    conventionInfo = convention,
-                    studyMemberListInfo = studyMemberList
-                )
+            if (urgentTodo == null) {
+                _myStudyState.update {
+                    it.copy(
+                        myStudyInfo = myStudyInfo,
+                        todoInfo = urgentTodo,
+                        conventionInfo = convention,
+                        studyMemberListInfo = studyMemberList,
+                        isUrgentTodo = false
+                    )
+                }
+            } else {
+                _myStudyState.update {
+                    it.copy(
+                        myStudyInfo = myStudyInfo,
+                        todoInfo = urgentTodo,
+                        conventionInfo = convention,
+                        studyMemberListInfo = studyMemberList,
+                        isUrgentTodo = true
+                    )
+                }
             }
-
             Log.d("MyStudyMainViewModel", "_myStudyState: ${_myStudyState.value}")
         } else {
             Log.e(
@@ -66,41 +79,19 @@ class MyStudyMainViewModel : ViewModel() {
         }
     }
 
-    private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
-        val todoInfoResponse = gitudyStudyRepository.getTodoList(
-            studyInfoId,
-            cursorIdx = null,
-            limit = 1
+    private suspend fun getUrgentTodo(studyInfoId: Int): Todo? {
+        val urgentTodoResponse = gitudyStudyRepository.getTodoProgress(
+            studyInfoId
         )
 
-        if (todoInfoResponse.isSuccessful) {
-            val todoBody = todoInfoResponse.body()!!
-
-            if (todoBody.todoList.isNotEmpty()) {
-                val todo = todoBody.todoList.first()
-
-                return todo
-            } else {
-                Log.d("MainHomeViewModel", "No To-Do")
-                return Todo(
-                    detail = "No To-Do",
-                    id = -1,
-                    studyInfoId = studyInfoId,
-                    title = "No To-Do",
-                    todoDate = "",
-                    todoCode = "",
-                    todoLink = "",
-                    commitList = listOf()
-                )
-            }
+        if (urgentTodoResponse.isSuccessful) {
+            return urgentTodoResponse.body()?.todo
         } else {
             Log.e(
-                "MyStudyMainViewModel",
-                "todoInfoResponse status: ${todoInfoResponse.code()}\ntodoInfoResponse message: ${todoInfoResponse.message()}"
+                "MainHomeViewModel",
+                "urgentTodoResponse status: ${urgentTodoResponse.code()}\nurgentTodoResponse message: ${urgentTodoResponse.message()}"
             )
         }
-        // 에러 발생 시 null return
-        Log.d("MyStudyMainViewModel", "Error")
         return null
     }
 
@@ -206,4 +197,5 @@ data class MyStudyMainInfoState(
     var todoInfo: Todo? = null,
     var conventionInfo: StudyConvention? = null,
     var studyMemberListInfo: List<StudyMember> = listOf(),
+    var isUrgentTodo: Boolean = true
 )
