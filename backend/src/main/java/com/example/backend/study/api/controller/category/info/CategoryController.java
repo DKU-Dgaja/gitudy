@@ -5,7 +5,6 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.category.info.request.CategoryRegisterRequest;
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
 import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
-import com.example.backend.study.api.controller.member.response.StudyMembersResponse;
 import com.example.backend.study.api.service.category.info.CategoryService;
 import com.example.backend.study.api.service.category.info.response.CategoryResponse;
 import io.swagger.v3.oas.annotations.media.ArraySchema;

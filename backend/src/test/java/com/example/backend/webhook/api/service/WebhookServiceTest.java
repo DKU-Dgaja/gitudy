@@ -3,7 +3,6 @@ package com.example.backend.webhook.api.service;
 import com.example.backend.TestConfig;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;

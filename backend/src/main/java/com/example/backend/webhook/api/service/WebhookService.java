@@ -1,7 +1,6 @@
 package com.example.backend.webhook.api.service;
 
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
@@ -23,8 +22,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.regex.Pattern;
 
 @Slf4j
 @Service
