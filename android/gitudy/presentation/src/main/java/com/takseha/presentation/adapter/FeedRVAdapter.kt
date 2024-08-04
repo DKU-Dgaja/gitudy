@@ -17,7 +17,7 @@ import com.takseha.presentation.databinding.ItemFeedBinding
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
+class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, val studyCategoryMappingMap: Map<Int, List<String>>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
     interface ItemClick {
         fun onClick(view: View, position: Int)
     }
@@ -30,6 +30,7 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         val teamInfo = binding.teamRankAndRecentInfo
         val teamScore = binding.teamScore
         val totalDayCnt = binding.totalDayCnt
+        val categoryList: RecyclerView = binding.categoryList
         val memberList: RecyclerView = binding.memberList
         val currentMember = binding.currentCnt
         val totalMember = binding.totalCnt
@@ -52,6 +53,8 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         holder.currentMember.text = studyInfoList[position].currentMember.toString()
         holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].maximumMember)
 
+        // holder.categoryList 구현
+        setCategoryList(holder, position)
         // holder.memberList 구현
         setMemberList(holder, position)
 
@@ -78,6 +81,21 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>) 
         val nowDate = LocalDateTime.now()
 
         return ChronoUnit.DAYS.between(createdDateLocalDate, nowDate)
+    }
+
+    private fun setCategoryList(holder: ViewHolder, position: Int) {
+        var categoryList = listOf<String>()
+        for (study in studyCategoryMappingMap) {
+            if (study.key == studyInfoList[position].id) {
+                categoryList = study.value
+                break
+            } else {
+                categoryList = listOf()
+            }
+        }
+
+        holder.categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        holder.categoryList.adapter = FeedCategoryRVAdapter(context, categoryList)
     }
 
     private fun setMemberList(holder: ViewHolder, position: Int) {
