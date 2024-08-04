@@ -15,12 +15,14 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.Category
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.AllCategoryRVAdapter
 import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.FragmentMakeStudy1Binding
+import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -97,8 +99,15 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val repoNameLength = studyGithubLinkEditText.length()
+                    repoDesc.apply {
+                        text = getString(R.string.feed_make_study_github_repo_desc)
+                        setTextColor(
+                            ContextCompat.getColor(
+                                requireContext(),
+                                R.color.GS_400
+                            ))
+                    }
                     nextBtn.isEnabled = false    // 확인 버튼 초기화
-
                     isValidNameBtn.isEnabled = repoNameLength > 0
                 }
 
@@ -108,31 +117,61 @@ class MakeStudy1Fragment : Fragment() {
             })
 
             isValidNameBtn.setOnClickListener {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.checkValidRepoName(githubRepo)
-
-                    val isValidName = viewModel.isValidRepoName.value
-                    Log.e("MakeStudy1Fragment", isValidName.toString())
-                    if (isValidName == true) {
-                        repoDesc.apply {
-                            text = "생성 가능한 레포지토리 이름이에요."
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.BASIC_BLUE
-                                ))
-                        }
-                        nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
-                    } else {
-                        repoDesc.apply {
-                            text = "동일한 레포지토리 이름이 존재해요."
+                if (isValidNickname(githubRepo) != 4) {
+                    nextBtn.isEnabled = false
+                    when (isValidNickname(githubRepo)) {
+                        1 -> repoDesc.apply {
+                            text = "연속된 특수문자(., -, _)가 존재해요"
                             setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
                                 ))
                         }
-                        nextBtn.isEnabled = false
+                        2 -> repoDesc.apply {
+                            text = "영문, 숫자, ., -, _ 외의 다른 문자가 존재해요"
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_RED
+                                ))
+                        }
+                        3 -> repoDesc.apply {
+                            text = "., -, _ 로 끝나지 않는 이름을 입력해주세요"
+                            setTextColor(
+                                ContextCompat.getColor(
+                                    requireContext(),
+                                    R.color.BASIC_RED
+                                ))
+                        }
+                    }
+                } else {
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.checkValidRepoName(githubRepo)
+                        viewModel.isValidRepoName.collectLatest {
+                            Log.e("MakeStudy1Fragment", it.toString())
+                            if (it == true) {
+                                repoDesc.apply {
+                                    text = "생성 가능한 레포지토리 이름이에요"
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.BASIC_BLUE
+                                        ))
+                                }
+                                nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
+                            } else {
+                                repoDesc.apply {
+                                    text = "동일한 레포지토리 이름이 존재해요"
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.BASIC_RED
+                                        ))
+                                }
+                                nextBtn.isEnabled = false
+                            }
+                        }
                     }
                 }
             }
@@ -168,6 +207,29 @@ class MakeStudy1Fragment : Fragment() {
             override fun onClick(view: View, position: Int) {
             }
         }
+    }
+
+    private fun isValidNickname(text: String): Int {
+        // 조건 1: 연속된 특수 문자가 존재할 때
+        val specialCharSequenceRegex = "[_.-]{2,}"
+        if (specialCharSequenceRegex.toRegex().containsMatchIn(text)) {
+            return 1
+        }
+
+        // 조건 2: 유효한 문자(영문자, 숫자, ., _, -) 외에 다른 문자가 포함될 때
+        val validCharRegex = "^[a-zA-Z0-9._-]*$"
+        if (!validCharRegex.toRegex().matches(text)) {
+            return 2
+        }
+
+        // 조건 3: 닉네임이 _, ., -로 끝날 때
+        val endsWithInvalidCharRegex = "[_.-]$"
+        if (endsWithInvalidCharRegex.toRegex().containsMatchIn(text)) {
+            return 3
+        }
+
+        // 모든 조건을 만족
+        return 4
     }
 
     override fun onDestroyView() {

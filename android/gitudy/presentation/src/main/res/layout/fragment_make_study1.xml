@@ -119,10 +119,12 @@
                     android:textColorHint="@color/GS_500" />
                 <TextView
                     android:id="@+id/isValidNameBtn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="35dp"
+                    android:layout_height="25dp"
                     android:enabled="false"
+                    android:gravity="center"
                     style="@style/B7_1"
+                    android:background="@drawable/selector_btn_r12_enable"
                     android:layout_marginLeft="10dp"
                     android:textColor="@drawable/selector_text_color_enable"
                     android:text="확인"/>

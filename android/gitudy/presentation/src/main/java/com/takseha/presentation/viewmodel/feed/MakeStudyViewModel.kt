@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.Category
+import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
@@ -39,7 +40,8 @@ class MakeStudyViewModel: ViewModel() {
     fun checkValidRepoName(name: String) = viewModelScope.launch {
         gitudyStudyRepository = GitudyStudyRepository()
 
-        val isValidRepoNameResponse = gitudyStudyRepository.checkValidRepoName(name)
+        val request = CheckRepoNameRequest(name)
+        val isValidRepoNameResponse = gitudyStudyRepository.checkValidRepoName(request)
 
         if (isValidRepoNameResponse.isSuccessful) {
             _isValidRepoName.value = true
