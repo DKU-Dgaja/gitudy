@@ -78,14 +78,15 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
+        String todoFolderName = todo.getTodoFolderName();
 
         // 마감일 지킨 커밋
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
 
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
+        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, todoFolderName, commitDate);
 
         // when
         webhookService.handleCommit(payload);
@@ -110,14 +111,15 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
+        String todoFolderName = todo.getTodoFolderName();
 
         // 지각한 커밋
         LocalDate commitDate = todo.getTodoDate().plusDays(1);
 
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
+        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, todoFolderName, commitDate);
 
         // when
         webhookService.handleCommit(payload);
@@ -144,12 +146,13 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createCompleteStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
+        String todoFolderName = todo.getTodoFolderName();
         LocalDate commitDate = todo.getTodoDate().plusDays(1);
 
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
+        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, todoFolderName, commitDate);
 
         // when
         webhookService.handleCommit(payload);
@@ -165,30 +168,6 @@ class WebhookServiceTest extends TestConfig {
     }
 
     @Test
-    void 커밋_메세지가_컨벤션을_지키지_않으면_커밋_처리_실패() {
-        // given
-        User user = userRepository.save(UserFixture.generateAuthUser());
-        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
-        StudyMember member = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
-        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
-        StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
-
-        String commitId = "123";
-        String username = user.getGithubId();
-        String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
-        LocalDate commitDate = todo.getTodoDate().minusDays(1);
-
-        // 컨벤션을 지키지 않은 커밋 메세지
-        String message = "Invalid-message";
-
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
-
-        // when
-        ConventionException e = assertThrows(ConventionException.class, () -> webhookService.handleCommit(payload));
-        assertEquals(ExceptionMessage.CONVENTION_NOT_MATCHED.getText(), e.getMessage());
-    }
-
-    @Test
     void 페이로드에_해당하는_유저가_없으면_커밋_처리_실패() {
         // given
         User user = userRepository.save(UserFixture.generateAuthUser());
@@ -198,14 +177,15 @@ class WebhookServiceTest extends TestConfig {
         StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        String todoFolderName = todo.getTodoFolderName();
 
         // 존재하지 않는 유저(깃허브계정)
         String username = "invalid";
 
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
+        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, todoFolderName, commitDate);
 
         // when
         UserException e = assertThrows(UserException.class, () -> webhookService.handleCommit(payload));
@@ -223,13 +203,14 @@ class WebhookServiceTest extends TestConfig {
 
         String commitId = "123";
         String username = user.getGithubId();
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        String todoFolderName = todo.getTodoFolderName();
 
         // 존재하지 않는 스터디
         String repositoryFullName = "test/test";
 
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
+        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, todoFolderName, commitDate);
 
         // when
         StudyInfoException e = assertThrows(StudyInfoException.class, () -> webhookService.handleCommit(payload));
@@ -248,12 +229,13 @@ class WebhookServiceTest extends TestConfig {
         String commitId = "123";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
+        String message = "test commit";
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
 
-        // 존재하지 않는 투두
-        String message = "NONONO test commit";
+        // 존재하지 않는 투두폴더
+        String todoFolderName = "invalid-folder-name";
 
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
+        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, todoFolderName, commitDate);
 
         // when
         TodoException e = assertThrows(TodoException.class, () -> webhookService.handleCommit(payload));
@@ -272,14 +254,15 @@ class WebhookServiceTest extends TestConfig {
         StudyMember member = studyMemberRepository.save(StudyMemberFixture.createStudyMemberResigned(user.getId(), study.getId()));
 
         String commitId = "123";
-        String message = todo.getTodoCode() + " test commit";
+        String message = "commit message";
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
+        String todoFolderName = todo.getTodoFolderName();
 
         // 마감일 지킨 커밋
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
 
-        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, commitDate);
+        WebhookPayload payload = new WebhookPayload(commitId, message, username, repositoryFullName, todoFolderName, commitDate);
 
         // when
         MemberException e = assertThrows(MemberException.class, () -> webhookService.handleCommit(payload));

@@ -4,6 +4,7 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.external.clients.github.GithubApiTokenClient;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -243,4 +244,44 @@ public class GithubApiService {
             return false;  // 레포지토리를 찾을 수 없는 경우 예외가 발생하며, 이 경우 레포지토리가 존재하지 않음을 의미
         }
     }
+
+    public void createTodoFolder(String githubApiToken, StudyTodo todo, RepositoryInfo repo) {
+        GitHub gitHub = connectGithub(githubApiToken, repo.getOwner());
+
+        try {
+            GHRepository repository = gitHub.getRepository(repo.getOwner() + "/" + repo.getName());
+
+            createTodoInfo(todo, repository);
+            log.info(">>>> [ Todo 폴더 생성이 완료되었습니다. : {} ] <<<<", todo.getTodoFolderName());
+
+        } catch (IOException e) {
+            log.warn(">>>> [ {} ] <<<<", ExceptionMessage.GITHUB_API_CREATE_TODO_FOLDER_FAIL.getText());
+            throw new GithubApiException(ExceptionMessage.GITHUB_API_CREATE_TODO_FOLDER_FAIL);
+        }
+
+    }
+
+    private void createTodoInfo(StudyTodo todo, GHRepository repository) throws IOException {
+        // 파일 내용 정의
+        String filePath = todo.getTodoFolderName() + "/" + todo.getTitle() + ".md";
+        String commitMessage = "Create todo folder " + todo.getTodoFolderName();
+        String fileContent = generateFileContent(todo);
+
+        // 폴더 및 파일 생성
+        repository.createContent()
+                .path(filePath)
+                .message(commitMessage)
+                .content(fileContent)
+                .commit();
+    }
+
+    private String generateFileContent(StudyTodo todo) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("# ").append(todo.getTitle()).append("\n\n");
+        sb.append("**").append(todo.getDetail()).append("**").append("\n\n");
+        sb.append("**문제 링크:** [").append(todo.getTodoLink()).append("](").append(todo.getTodoLink()).append(")\n\n");
+        sb.append("**마감일:** ").append(todo.getTodoDate().toString()).append("\n");
+        return sb.toString();
+    }
+
 }

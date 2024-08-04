@@ -5,6 +5,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMember;
@@ -20,6 +21,8 @@ import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
 import com.example.backend.study.api.controller.todo.response.*;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.github.GithubApiService;
+import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
@@ -46,9 +49,10 @@ public class StudyTodoService {
     private final UserService userService;
     private final ApplicationEventPublisher eventPublisher;
     private final StudyCommitRepository studyCommitRepository;
+    private final GithubApiService githubApiService;
+    private final GithubApiTokenService githubApiTokenService;
 
     private final static Long MAX_LIMIT = 10L;
-    private final static int PAGE_SIZE = 10;
 
     // Todo 등록
     @Transactional
@@ -77,8 +81,11 @@ public class StudyTodoService {
         // FCM 알림을 받을 수 있는 사용자의 ID 추출
         List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
 
-
         StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
+        // 투두에 해당하는 폴더를 스터디 레포지토리에 생성
+        GithubApiToken token = githubApiTokenService.getToken(studyInfo.getUserId());
+        githubApiService.createTodoFolder(token.githubApiToken(), studyTodo, studyInfo.getRepositoryInfo());
 
         // 알림 비동기처리
         eventPublisher.publishEvent(TodoRegisterMemberEvent.builder()
@@ -178,7 +185,7 @@ public class StudyTodoService {
         // To do 조회
         StudyTodo todo = findByIdOrThrowStudyTodoException(todoId);
 
-        StudyInfo studyInfo = studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
+        studyInfoRepository.findById(studyInfoId).orElseThrow(() -> {
             log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_INFO_NOT_FOUND.getText());
             return new StudyInfoException(ExceptionMessage.STUDY_INFO_NOT_FOUND);
         });
