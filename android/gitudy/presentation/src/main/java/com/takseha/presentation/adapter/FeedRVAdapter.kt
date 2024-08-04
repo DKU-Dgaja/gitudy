@@ -84,15 +84,7 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, 
     }
 
     private fun setCategoryList(holder: ViewHolder, position: Int) {
-        var categoryList = listOf<String>()
-        for (study in studyCategoryMappingMap) {
-            if (study.key == studyInfoList[position].id) {
-                categoryList = study.value
-                break
-            } else {
-                categoryList = listOf()
-            }
-        }
+        var categoryList = studyCategoryMappingMap[studyInfoList[position].id] ?: listOf()
 
         holder.categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         holder.categoryList.adapter = FeedCategoryRVAdapter(context, categoryList)
