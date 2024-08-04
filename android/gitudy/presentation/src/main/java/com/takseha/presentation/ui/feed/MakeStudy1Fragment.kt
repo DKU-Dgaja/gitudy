@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui.feed
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,10 +10,19 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.feed.Category
+import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.AllCategoryRVAdapter
+import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.FragmentMakeStudy1Binding
 import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MakeStudy1Fragment : Fragment() {
     private var _binding: FragmentMakeStudy1Binding? = null
@@ -32,6 +42,13 @@ class MakeStudy1Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.getAllCategory()
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.categoryState.collectLatest {
+                setCategoryList(it)
+            }
+        }
 
         with(binding) {
             var title = studyNameEditText.text.toString()
@@ -91,13 +108,32 @@ class MakeStudy1Fragment : Fragment() {
             })
             // TODO : edittext 키보드 위로 올라가도록 하는 기능 구현
             nextBtn.setOnClickListener {
-                viewModel.setStudyIntro(title, detail, githubRepo)
+                val categoryIdList = (categoryListRecyclerView.adapter as? AllCategoryRVAdapter)?.getSelectedItems() ?: emptyList()
+                viewModel.setStudyIntro(title, detail, githubRepo, categoryIdList)
                 Log.d("MakeStudy1Fragment", viewModel.newStudyInfoState.value.toString())
                 it.findNavController()
                     .navigate(R.id.action_makeStudy1Fragment_to_makeStudy2Fragment)
             }
             exitBtn.setOnClickListener {
                 requireActivity().finish()
+            }
+        }
+    }
+
+    private fun setCategoryList(categoryList: List<Category>) {
+        with(binding) {
+            val allCategoryRVAdapter = AllCategoryRVAdapter(requireContext(), categoryList)
+
+            categoryListRecyclerView.adapter = allCategoryRVAdapter
+            categoryListRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+
+            clickCategoryItem(allCategoryRVAdapter, categoryList)
+        }
+    }
+
+    private fun clickCategoryItem(allCategoryRVAdapter: AllCategoryRVAdapter, categoryList: List<Category>) {
+        allCategoryRVAdapter.itemClick = object : AllCategoryRVAdapter.ItemClick {
+            override fun onClick(view: View, position: Int) {
             }
         }
     }

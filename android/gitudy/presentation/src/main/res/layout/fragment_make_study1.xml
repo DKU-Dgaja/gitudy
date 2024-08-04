@@ -142,16 +142,16 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textColorHint="@color/GS_500"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="35dp"
                 android:text="@string/feed_make_study_category_desc"/>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/categoryList"
-                android:layout_width="wrap_content"
+                android:id="@+id/categoryListRecyclerView"
+                android:layout_width="330dp"
+                android:layout_gravity="center_horizontal"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:orientation="horizontal"
-                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/studyGithubLinkEditText" />
 
@@ -167,7 +167,8 @@
             android:paddingTop="18dp"
             android:paddingBottom="18dp"
             android:text="@string/next"
+            android:layout_marginTop="30dp"
             android:textColor="@drawable/selector_text_color_enable"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

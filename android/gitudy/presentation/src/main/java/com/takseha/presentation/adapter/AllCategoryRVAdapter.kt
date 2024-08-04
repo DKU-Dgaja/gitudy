@@ -40,7 +40,7 @@ class AllCategoryRVAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.categoryName.text = categoryList[position].name
 
-        if (selectedItemIds.contains(position)) {
+        if (selectedItemIds.contains(categoryList[position].id)) {
             holder.categoryName.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(context, R.color.BASIC_GREEN))
             holder.categoryName.setTextColor(ContextCompat.getColor(context, R.color.BLACK))
         } else {
@@ -51,7 +51,7 @@ class AllCategoryRVAdapter(
         // 클릭 이벤트 처리
         holder.itemView.setOnClickListener { v ->
             itemClick?.onClick(v, position)
-            toggleItemSelected(position)
+            toggleItemSelected(categoryList[position].id)
             notifyItemChanged(position)
         }
     }
