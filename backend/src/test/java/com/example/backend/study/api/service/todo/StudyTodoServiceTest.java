@@ -479,7 +479,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
     }
 
     @Test
-    void 가장_빠른_마감일을_가진_Todo_진행률_조회_테스트() {
+    void 가장_빠른_마감일을_가진_Todo_진행률_조회_테스트A() {
         // given
         int expectedTotalMemberCnt = 3;
         int expectedCompleteMemberCnt = 2;
@@ -491,28 +491,51 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-        // 스터디장 To do 생성
-        StudyTodo studyTodo = StudyTodoFixture.createStudyTodo(studyInfo.getId());
-        studyTodoRepository.save(studyTodo);
-
         StudyMember A = StudyMemberFixture.createStudyMemberLeader(member1.getId(), studyInfo.getId());
         StudyMember koo = StudyMemberFixture.createDefaultStudyMember(member1.getId(), studyInfo.getId());
         StudyMember Lee = StudyMemberFixture.createDefaultStudyMember(member2.getId(), studyInfo.getId());
         studyMemberRepository.saveAll(List.of(A, koo, Lee));
 
-        StudyTodoMapping studyTodoMapping1 = StudyTodoFixture.createStudyTodoMapping(studyTodo.getId(), koo.getUserId());
-        StudyTodoMapping studyTodoMapping2 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodo.getId(), Lee.getUserId());
-        StudyTodoMapping studyTodoMapping3 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodo.getId(), A.getUserId());
+        // 스터디장 To do 생성
+        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(2));
+        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        studyTodoRepository.save(studyTodoA);
+        studyTodoRepository.save(studyTodoB);
+
+        StudyTodoMapping studyTodoMapping1 = StudyTodoFixture.createStudyTodoMapping(studyTodoA.getId(), koo.getUserId());
+        StudyTodoMapping studyTodoMapping2 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodoA.getId(), Lee.getUserId());
+        StudyTodoMapping studyTodoMapping3 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodoA.getId(), A.getUserId());
         studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2, studyTodoMapping3));
+
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(studyTodoB.getId(), koo.getUserId()));
 
         // when
         StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(studyInfo.getId());
 
-
         // then
-        assertEquals(response.getTodoId(), studyTodo.getId());
+        assertEquals(response.getTodo().getId(), studyTodoA.getId());
+        assertEquals(response.getTodo().getTitle(), studyTodoA.getTitle());
         assertEquals(response.getTotalMemberCount(), expectedTotalMemberCnt);
         assertEquals(response.getCompleteMemberCount(), expectedCompleteMemberCnt);
+
+    }
+
+    @Test
+    void 가장_빠른_마감일을_가진_투두_진행률_조회_시_투두가_없을_경우_빈_객체_반환_테스트() {
+        // given
+        User leader = userRepository.save(generateAuthUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        // 스터디장 To do 생성
+        // when
+        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(studyInfo.getId());
+
+        // then
+        assertNull(response.getTodo());
+        assertEquals(response.getTotalMemberCount(), 0);
+        assertEquals(response.getCompleteMemberCount(), 0);
 
     }
 

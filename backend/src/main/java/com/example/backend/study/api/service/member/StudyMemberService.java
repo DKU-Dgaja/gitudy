@@ -206,10 +206,6 @@ public class StudyMemberService {
                     .userId(user.getUserId())
                     .signGreeting(messageRequest.getMessage())
                     .build());
-
-            // 가입 승인 로직 에러로 임시로 멤버 수 증가시키는 코드 넣어두었습니다.
-            studyInfo.updateCurrentMember(1);
-
         }
 
         User leader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
