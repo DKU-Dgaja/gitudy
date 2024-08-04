@@ -22,7 +22,7 @@
         <TextView
             android:id="@+id/contentText"
             style="B6_1"
-            android:layout_width="250dp"
+            android:layout_width="230dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="14dp"
             android:layout_marginTop="20dp"
@@ -42,7 +42,8 @@
             android:text="2024.07.29"
             android:textColor="@color/GS_400"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
         <LinearLayout
             android:id="@+id/divider1"
