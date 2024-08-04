@@ -1,16 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fillViewport="true"
     android:clipToPadding="false"
-    android:paddingBottom="48dp"
+    android:nestedScrollingEnabled="true"
     tools:context=".ui.feed.MakeStudy1Fragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="48dp"
         android:paddingLeft="22dp"
         android:paddingRight="22dp">
 
@@ -48,7 +50,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="38dp"
-            android:text="스터디 소개"
+            android:text="기본 정보"
             android:textColor="@color/BLACK"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle" />
@@ -56,7 +58,7 @@
         <LinearLayout
             android:id="@+id/linearLayout"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="98dp"
             android:orientation="vertical"
             app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle">
@@ -70,7 +72,7 @@
                 android:backgroundTint="#F4F5F5"
                 android:hint="스터디 이름을 입력해주세요"
                 android:padding="20dp"
-                android:textColorHint="@color/GS_400" />
+                android:textColorHint="@color/GS_500" />
 
             <LinearLayout
                 android:id="@+id/studyDetailLayout"
@@ -94,31 +96,64 @@
                         android:gravity="start"
                         android:hint="간단한 스터디 소개를 적어주세요\nex) 어떤 스터디인가요? 어떤 팀원을 찾고 있나오? 이 스터디만의 특별한 점이 무엇인가요?"
                         android:textColor="@color/BLACK"
-                        android:textColorHint="@color/GS_400" />
+                        android:textColorHint="@color/GS_500" />
                 </ScrollView>
             </LinearLayout>
 
-            <EditText
-                android:id="@+id/studyGithubLinkEditText"
-                style="@style/B6_1"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="horizontal"
                 android:layout_marginTop="24dp"
-                android:background="@drawable/box_non_stroke_r12"
-                android:backgroundTint="#F4F5F5"
-                android:hint="@string/feed_make_study_github_repo"
-                android:padding="20dp"
-                android:textColorHint="@color/GS_400" />
+                android:gravity="center_vertical">
+                <EditText
+                    android:id="@+id/studyGithubLinkEditText"
+                    style="@style/B6_1"
+                    android:layout_width="wrap_content"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/box_non_stroke_r12"
+                    android:backgroundTint="#F4F5F5"
+                    android:hint="@string/feed_make_study_github_repo"
+                    android:padding="20dp"
+                    android:textColorHint="@color/GS_500" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:enabled="false"
+                    style="@style/B7_1"
+                    android:layout_marginLeft="10dp"
+                    android:textColor="@drawable/selector_text_color_enable"
+                    android:text="확인"/>
+            </LinearLayout>
 
-            <!-- TO DO : 추후에 tag list 구현-->
-            <!--    <androidx.recyclerview.widget.RecyclerView-->
-            <!--        android:layout_width="wrap_content"-->
-            <!--        android:layout_height="wrap_content"-->
-            <!--        android:layout_marginTop="31dp"-->
-            <!--        android:orientation="horizontal"-->
-            <!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
-            <!--        app:layout_constraintStart_toStartOf="parent"-->
-            <!--        app:layout_constraintTop_toBottomOf="@+id/studyGithubLinkEditText" />-->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/B7_1"
+                android:textColor="@color/GS_400"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="15dp"
+                android:text="@string/feed_make_study_github_repo_desc"/>
+
+            <TextView
+                android:id="@+id/categorySelectText"
+                style="@style/B6_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColorHint="@color/GS_500"
+                android:layout_marginTop="30dp"
+                android:text="@string/feed_make_study_category_desc"/>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/categoryList"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/studyGithubLinkEditText" />
 
         </LinearLayout>
 
@@ -127,7 +162,7 @@
             style="@style/B5_1"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@drawable/selector_btn_r8_enable"
+            android:background="@drawable/box_non_stroke_r8"
             android:enabled="false"
             android:paddingTop="18dp"
             android:paddingBottom="18dp"
@@ -135,4 +170,4 @@
             android:textColor="@drawable/selector_text_color_enable"
             app:layout_constraintBottom_toBottomOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

@@ -16,8 +16,7 @@
         <activity
             android:name=".ui.feed.MakeStudyActivity"
             android:exported="false"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".ui.auth.SocialLoginCompleteActivity"
             android:exported="false" />
