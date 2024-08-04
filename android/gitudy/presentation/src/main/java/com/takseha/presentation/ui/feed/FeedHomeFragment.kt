@@ -48,7 +48,7 @@ class FeedHomeFragment : Fragment() {
                 binding.feedCnt.text = it.studyCnt.toString()
                 if (!it.isFeedEmpty) {
                     binding.isNoStudyLayout.visibility = View.GONE
-                    setFeedList(it.studyInfoList)
+                    setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
                 } else {
                     binding.isNoStudyLayout.visibility = View.VISIBLE
                 }
@@ -62,9 +62,9 @@ class FeedHomeFragment : Fragment() {
         viewModel.getFeedList(null, 10, "createdDateTime")
     }
 
-    private fun setFeedList(studyList: List<StudyInfo>) {
+    private fun setFeedList(studyList: List<StudyInfo>, studyCategoryMappingMap: Map<Int, List<String>>) {
         with(binding) {
-            val feedRVAdapter = FeedRVAdapter(requireContext(), studyList)
+            val feedRVAdapter = FeedRVAdapter(requireContext(), studyList, studyCategoryMappingMap)
 
             feedList.adapter = feedRVAdapter
             feedList.layoutManager = LinearLayoutManager(requireContext())

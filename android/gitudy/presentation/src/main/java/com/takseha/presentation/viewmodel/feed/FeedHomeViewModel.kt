@@ -49,6 +49,7 @@ class FeedHomeViewModel : ViewModel() {
             } else {
                 _uiState.update { it.copy(
                     studyInfoList = feedStudyListInfo.studyInfoList,
+                    studyCategoryMappingMap = feedStudyListInfo.studyCategoryMappingMap,
                     studyCnt = studyCnt,
                     isFeedEmpty = false
                 ) }
@@ -78,6 +79,7 @@ class FeedHomeViewModel : ViewModel() {
 
 data class FeedHomeUiState(
     var studyInfoList: List<StudyInfo> = listOf(),
+    var studyCategoryMappingMap: Map<Int, List<String>> = mapOf(),
     var studyCnt: Int = 0,
     var isFeedEmpty: Boolean = false
 )
