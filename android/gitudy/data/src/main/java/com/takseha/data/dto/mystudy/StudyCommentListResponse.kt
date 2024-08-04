@@ -21,5 +21,5 @@ data class StudyComment(
     @SerializedName("user_id")
     val userId: Int,
     @SerializedName("user_info_response")
-    val userInfo: UserInfo
+    val userInfo: DetailUserInfo
 )

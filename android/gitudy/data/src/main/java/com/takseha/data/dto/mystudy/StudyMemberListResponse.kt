@@ -7,10 +7,6 @@ import com.takseha.data.dto.auth.login.RoleStatus
 class StudyMemberListResponse: ArrayList<StudyMember>()
 
 data class StudyMember(
-    @SerializedName("name")
-    val name: String,
-    @SerializedName("profile_image_url")
-    val profileImageUrl: String,
     @SerializedName("role")
     val role: RoleStatus,
     @SerializedName("score")
@@ -18,5 +14,7 @@ data class StudyMember(
     @SerializedName("status")
     val status: StudyApplyStatus,
     @SerializedName("user_id")
-    val userId: Int
+    val userId: Int,
+    @SerializedName("user_info")
+    val userInfo: DetailUserInfo
 )
