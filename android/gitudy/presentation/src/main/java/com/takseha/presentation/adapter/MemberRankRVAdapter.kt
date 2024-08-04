@@ -46,10 +46,10 @@ class MemberRankRVAdapter(val context : Context, val studyMemberList : List<Stud
     private fun setStudyMemberInfo(holder: ViewHolder, position: Int) {
         with(holder) {
             memberRank.text = (position + 1).toString()
-            memberName.text = studyMemberList[position].name
+            memberName.text = studyMemberList[position].userInfo.name
             memberScore.text = context.getString(R.string.study_member_score, (50 - (position + 1) * 2))
             Glide.with(context)
-                .load(studyMemberList[position].profileImageUrl)
+                .load(studyMemberList[position].userInfo.profileImageUrl)
                 .error(R.drawable.logo_profile_default)
                 .into(profileImg)
         }
