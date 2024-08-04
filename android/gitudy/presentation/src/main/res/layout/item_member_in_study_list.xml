@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <ImageView
+        android:id="@+id/profileImg"
+        android:layout_width="28dp"
+        android:layout_height="28dp"
+        android:layout_marginEnd="-7dp"
+        android:background="@drawable/circle_non_stroke"
+        android:clipToOutline="true"
+        android:elevation="2dp" />
+</layout>

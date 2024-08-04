@@ -6,6 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
@@ -112,14 +113,13 @@ class MainHomeViewModel : ViewModel() {
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
-        val backgroundColorList = listOf("#f8a7a7", "#f8dea6", "#d3f3be", "#85b0e9")
-
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             cursorIdx,
             limit,
             sortBy = "createdDateTime",
             myStudy = true
         )
+        val studyCnt = getStudyCount()?.count ?: -1
 
         if (myStudyListResponse.isSuccessful) {
             val myStudyListInfo = myStudyListResponse.body()!!
@@ -131,7 +131,8 @@ class MainHomeViewModel : ViewModel() {
             if (studies.isEmpty()) {
                 _myStudyState.update {
                     it.copy(
-                        isMyStudiesEmpty = true
+                        isMyStudiesEmpty = true,
+                        studyCnt = studyCnt
                     )
                 }
             } else {
@@ -145,7 +146,6 @@ class MainHomeViewModel : ViewModel() {
                             val todoCheck =
                                 if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
                             MyStudyWithTodo(
-                                backgroundColorList[study.id % 4],
                                 study,
                                 todo.title,
                                 todo.todoDate,
@@ -154,7 +154,6 @@ class MainHomeViewModel : ViewModel() {
                             )
                         } else {
                             MyStudyWithTodo(
-                                backgroundColorList[study.id % 4],
                                 study,
                                 null,
                                 null,
@@ -164,7 +163,6 @@ class MainHomeViewModel : ViewModel() {
                         }
                     } else {
                         MyStudyWithTodo(
-                            backgroundColorList[study.id % 4],
                             study,
                             null,
                             null,
@@ -176,6 +174,7 @@ class MainHomeViewModel : ViewModel() {
                 _myStudyState.update {
                     it.copy(
                         myStudiesWithTodo = studiesWithTodo,
+                        studyCnt = studyCnt,
                         isMyStudiesEmpty = false
                     )
                 }
@@ -243,6 +242,20 @@ class MainHomeViewModel : ViewModel() {
         }
         return null
     }
+
+    private suspend fun getStudyCount(): StudyCountResponse? {
+        val studyCntResponse = gitudyStudyRepository.getStudyCount(true)
+
+        if (studyCntResponse.isSuccessful) {
+            return studyCntResponse.body()
+        } else {
+            Log.e(
+                "MainHomeViewModel",
+                "studyCntResponse status: ${studyCntResponse.code()}\nstudyCntResponse message: ${studyCntResponse.message()}"
+            )
+        }
+        return null
+    }
 }
 
 data class MainHomeUserInfoUiState(
@@ -258,5 +271,6 @@ data class MainHomeUserInfoUiState(
 
 data class MainHomeMyStudyUiState(
     var myStudiesWithTodo: List<MyStudyWithTodo> = listOf(),
+    var studyCnt: Int = 0,
     var isMyStudiesEmpty: Boolean = false
 )

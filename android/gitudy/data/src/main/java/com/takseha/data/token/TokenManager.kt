@@ -99,13 +99,14 @@ class TokenManager(context: Context) {
             try {
                 val token = "Bearer $refreshToken"
                 val response = loginApi.reissueTokens(token)
+                Log.d("TokenManager", token)
 
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
                     refreshToken = response.body()!!.refreshToken
                     response.body()
                 } else {
-                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message:${response.errorBody()!!.string()}")
+                    Log.e("TokenManager", "reissue response status: ${response.code()}\nreissue response message:${response.errorBody()!!.string()}")
                     null
                 }
             } catch (e: Exception) {

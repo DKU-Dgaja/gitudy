@@ -24,18 +24,7 @@ class CommitListRVAdapter(val context : Context, val commitList : List<Commit>, 
             binding.root.setOnClickListener {
                 val position = bindingAdapterPosition
                 if (position != RecyclerView.NO_POSITION) {
-                    val commit = Commit(
-                        "2024-06-11",
-                        "5a20e4d470a60fe858e4c1b896f22c59b3981ba2",
-                        1,
-                        LikeCount(0),
-                        "6PHP1b #7576:C++",
-                        "탁세하",
-                        CommitStatus.COMMIT_WAITING,
-                        17,
-                        13,
-                        11
-                    )
+                    val commit = commitList[position]
                     onClickListener.onCommitClick(commit)
                 }
             }
