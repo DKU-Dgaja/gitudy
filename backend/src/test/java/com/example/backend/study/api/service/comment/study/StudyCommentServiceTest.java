@@ -210,7 +210,7 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT, user.getId());
 
         for (StudyCommentResponse comment : studyCommentListResponse.getStudyCommentList()) {
             assertTrue(comment.getId() < cursorIdx);
@@ -229,7 +229,7 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), cursorIdx, LIMIT, user.getId());
 
         for (StudyCommentResponse comment : studyCommentListResponse.getStudyCommentList()) {
             assertTrue(comment.getId() < cursorIdx);
@@ -246,7 +246,7 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.saveAll(studyCommentList);
 
         // when
-        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), null, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentListResponse = studyCommentService.selectStudyCommentList(study.getId(), null, LIMIT, user.getId());
 
         assertEquals(LIMIT, studyCommentListResponse.getStudyCommentList().size());
     }
@@ -255,6 +255,7 @@ class StudyCommentServiceTest extends TestConfig {
     void 스터디에_여러_사용자_댓글을_단_후_동작_테스트() {
         // given
         int expectedSize = 3;
+        Long userId = 1L;
 
         User userA = userRepository.save(UserFixture.generateAuthUserByPlatformId("A"));
         User userB = userRepository.save(UserFixture.generateAuthUserByPlatformId("B"));
@@ -266,7 +267,7 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study.getId()));
 
         // when
-        StudyCommentListAndCursorIdxResponse studyCommentResponse = studyCommentService.selectStudyCommentList(study.getId(),  null, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentResponse = studyCommentService.selectStudyCommentList(study.getId(),  null, LIMIT, userId);
 
         // then
         assertEquals(expectedSize, studyCommentResponse.getStudyCommentList().size());
@@ -277,6 +278,8 @@ class StudyCommentServiceTest extends TestConfig {
         // given
         int expectedStudy1CommentSize = 4;
         int expectedStudy2CommentSize = 3;
+        int expectedUserACommentsCount = 1;
+        int expectedNotUserACommentsCount = 3;
 
         User userA = userRepository.save(UserFixture.generateAuthUserByPlatformId("A"));
         User userB = userRepository.save(UserFixture.generateAuthUserByPlatformId("B"));
@@ -294,11 +297,21 @@ class StudyCommentServiceTest extends TestConfig {
         studyCommentRepository.save(StudyCommentFixture.createDefaultStudyComment(userC.getId(), study2.getId()));
 
         // when
-        StudyCommentListAndCursorIdxResponse studyCommentResponse1 = studyCommentService.selectStudyCommentList(study1.getId(),  null, LIMIT);
-        StudyCommentListAndCursorIdxResponse studyCommentResponse2 = studyCommentService.selectStudyCommentList(study2.getId(),  null, LIMIT);
+        StudyCommentListAndCursorIdxResponse studyCommentResponse1 = studyCommentService.selectStudyCommentList(study1.getId(),  null, LIMIT, userA.getId());
+        StudyCommentListAndCursorIdxResponse studyCommentResponse2 = studyCommentService.selectStudyCommentList(study2.getId(),  null, LIMIT, userA.getId());
 
         // then
         assertEquals(expectedStudy1CommentSize, studyCommentResponse1.getStudyCommentList().size());
         assertEquals(expectedStudy2CommentSize, studyCommentResponse2.getStudyCommentList().size());
+
+        // isMyComment 검증
+        long userACommentsCount = studyCommentResponse1.getStudyCommentList().stream()
+                .filter(StudyCommentResponse::isMyComment)
+                .count();
+
+        long notUserACommentsCount = studyCommentResponse1.getStudyCommentList().size() - userACommentsCount;
+
+        assertEquals(expectedUserACommentsCount, userACommentsCount);
+        assertEquals(expectedNotUserACommentsCount, notUserACommentsCount);
     }
 }

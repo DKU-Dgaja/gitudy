@@ -1,6 +1,7 @@
 package com.example.backend.auth.config.fixture;
 
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
@@ -195,6 +196,18 @@ public class UserFixture {
                 .githubId("jusung-c")
                 .profileImageUrl("www.naver.com")
                 .pushAlarmYn(false)
+                .build();
+    }
+
+    public static UserInfoResponse createDefaultUserInfoResponse(Long userId) {
+        return UserInfoResponse.builder()
+                .userId(userId)
+                .name("user")
+                .profileImageUrl("profileImageUrl")
+                .pushAlarmYn(false)
+                .profilePublicYn(true)
+                .score(0)
+                .point(0)
                 .build();
     }
 }

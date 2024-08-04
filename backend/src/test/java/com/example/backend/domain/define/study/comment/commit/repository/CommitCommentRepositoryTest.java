@@ -34,6 +34,8 @@ class CommitCommentRepositoryTest extends TestConfig {
         // given
         Long commitId = 1L;
         Long otherCommitId = 2L;
+        int expectedUserACommentsCount = 5;
+        int expectedNotUserACommentsCount = 5;
 
         User userA = userRepository.save(User.builder().platformId("A").profileImageUrl("testA").build());
         User userB = userRepository.save(User.builder().platformId("B").profileImageUrl("testB").build());
@@ -45,7 +47,7 @@ class CommitCommentRepositoryTest extends TestConfig {
         commitCommentRepository.saveAll(CommitCommentFixture.createDefaultCommitCommentList(5, userC.getId(), otherCommitId));
 
         // when
-        List<CommitCommentInfoResponse> response = commitCommentRepository.findCommitCommentListByCommitIdJoinUser(commitId);
+        List<CommitCommentInfoResponse> response = commitCommentRepository.findCommitCommentListByCommitIdJoinUser(commitId, userA.getId());
 
         // then
         for (CommitCommentInfoResponse c : response) {
@@ -55,15 +57,27 @@ class CommitCommentRepositoryTest extends TestConfig {
             assertEquals(commitId, c.getStudyCommitId());
             assertNotNull(c.getUserInfoResponse().getUserId());
         }
+
+        // isMyComment 필드 검증
+        Long userACommentsCount = response.stream()
+                .filter(CommitCommentInfoResponse::isMyComment)
+                .count();
+
+        Long notUserACommentsCount = response.size() - userACommentsCount;
+
+        assertEquals(expectedUserACommentsCount, userACommentsCount);
+        assertEquals(expectedNotUserACommentsCount, notUserACommentsCount);
     }
 
     @Test
     void 댓글이_없는_커밋_테스트() {
         // given
         Long commitId = 1L;
+        Long userId = 1L;
+
         userRepository.save(User.builder().platformId("A").profileImageUrl("testA").build());
 
-        List<CommitCommentInfoResponse> response = commitCommentRepository.findCommitCommentListByCommitIdJoinUser(commitId);
+        List<CommitCommentInfoResponse> response = commitCommentRepository.findCommitCommentListByCommitIdJoinUser(commitId, userId);
 
         assertNotNull(response);
         assertThat(response).isEmpty();

@@ -4,6 +4,7 @@ import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
+import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.common.utils.TokenUtil;
@@ -161,9 +162,8 @@ class StudyCommentControllerTest extends MockTestConfig {
 
         StudyCommentListAndCursorIdxResponse response
                 = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
-
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommentService.selectStudyCommentList(any(Long.class), any(Long.class), any(Long.class)))
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserFixture.createDefaultUserInfoResponse(user.getId()));
+        when(studyCommentService.selectStudyCommentList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(response);
 
         // when
@@ -191,8 +191,8 @@ class StudyCommentControllerTest extends MockTestConfig {
         StudyCommentListAndCursorIdxResponse response
                 = StudyCommentFixture.generateStudyCommentListAndCursorIdxResponse(user.getId(), studyInfo.getId());
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommentService.selectStudyCommentList(any(Long.class), any(), any(Long.class)))
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserFixture.createDefaultUserInfoResponse(user.getId()));
+        when(studyCommentService.selectStudyCommentList(any(Long.class), any(), any(Long.class), any(Long.class)))
                 .thenReturn(response);
 
         // when

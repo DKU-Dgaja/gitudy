@@ -22,12 +22,12 @@ public class CommitCommentService {
     private final CommitCommentRepository commitCommentRepository;
     private final StudyCommitService studyCommitService;
 
-    public List<CommitCommentInfoResponse> getCommitCommentsList(Long commitId) {
+    public List<CommitCommentInfoResponse> getCommitCommentsList(Long commitId, Long currentUserId) {
         // 커밋 조회 예외처리
         studyCommitService.findStudyCommitByIdOrThrowException(commitId);
 
         // 커밋 Id로 댓글리스트 가져오기 + 유저 조인
-        return commitCommentRepository.findCommitCommentListByCommitIdJoinUser(commitId);
+        return commitCommentRepository.findCommitCommentListByCommitIdJoinUser(commitId, currentUserId);
     }
 
     @Transactional

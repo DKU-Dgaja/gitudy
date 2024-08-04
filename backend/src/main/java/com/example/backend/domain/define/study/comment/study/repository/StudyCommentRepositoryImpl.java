@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.comment.study.repository;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import com.querydsl.core.types.Projections;
@@ -19,7 +20,7 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom 
     private final JPAQueryFactory jpaQueryFactory;
 
     @Override
-    public List<StudyCommentResponse> findStudyCommentListByStudyInfoIdJoinUser(Long studyId, Long cursorIdx, Long limit) {
+    public List<StudyCommentResponse> findStudyCommentListByStudyInfoIdJoinUser(Long studyId, Long cursorIdx, Long limit, Long currentUserId) {
         JPAQuery<StudyCommentResponse> query = jpaQueryFactory
                 .select(Projections.constructor(
                         StudyCommentResponse.class,
@@ -28,11 +29,19 @@ public class StudyCommentRepositoryImpl implements StudyCommentRepositoryCustom 
                         studyComment.userId,
                         studyComment.content,
                         Projections.constructor(
-                                UserNameAndProfileImageResponse.class,
+                                UserInfoResponse.class,
                                 user.id,
+                                user.role,
+                                user.githubId,
                                 user.name,
-                                user.profileImageUrl
-                        )
+                                user.profileImageUrl,
+                                user.pushAlarmYn,
+                                user.profilePublicYn,
+                                user.score,
+                                user.point
+                        ),
+                        studyComment.userId.eq(currentUserId).as("isMyComment"),
+                        studyComment.createdDateTime
                 ))
                 .from(studyComment)
                 .join(user).on(user.id.eq(studyComment.userId))
