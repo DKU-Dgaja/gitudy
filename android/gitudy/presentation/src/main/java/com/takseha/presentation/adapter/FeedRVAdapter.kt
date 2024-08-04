@@ -48,7 +48,7 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, 
         holder.studyName.text = studyInfoList[position].topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].periodType)
         holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].id - 15, if (studyInfoList[position].lastCommitDay == null ) "없음" else studyInfoList[position].lastCommitDay)
-        holder.teamScore.text = (300 - studyInfoList[position].id * 10).toString()
+        holder.teamScore.text = studyInfoList[position].score.toString()
         holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].createdDateTime))
         holder.currentMember.text = studyInfoList[position].currentMember.toString()
         holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].maximumMember)
