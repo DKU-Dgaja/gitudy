@@ -32,7 +32,6 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
         var todoTitle = binding.todoDetailTitle
         var todoSetDate = binding.todoSetDate
         var todoDetail = binding.todoDetailText
-        var todoCode = binding.todoCode
         var todoLinkBtn = binding.todoLinkBtn
         var moreBtn = binding.moreBtn
         var commitList: RecyclerView = binding.commitList
@@ -50,7 +49,6 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
         holder.todoTitle.text = todoList[position].title
         holder.todoDate.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
-        holder.todoCode.text = todoList[position].todoCode
 //        setCommitList(holder.commitList, todoList[position].commitList)
         setCommitList(holder, position)
 

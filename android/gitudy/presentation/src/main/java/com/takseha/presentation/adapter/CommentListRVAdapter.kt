@@ -1,23 +1,28 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCommentBinding
+import java.time.LocalDateTime
 
-class CommentListRVAdapter(val context: Context, val commentList: List<StudyComment>) : RecyclerView.Adapter<CommentListRVAdapter.ViewHolder>()  {
+class CommentListRVAdapter(val context: Context, val commentList: List<StudyComment>) :
+    RecyclerView.Adapter<CommentListRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onUpdateClick(view: View, position: Int)
         fun onConfirmClick(view: View, position: Int)
         fun onDeleteClick(view: View, position: Int)
     }
+
     var onClickListener: OnClickListener? = null
 
     class ViewHolder(val binding: ItemCommentBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -36,6 +41,7 @@ class CommentListRVAdapter(val context: Context, val commentList: List<StudyComm
         return ViewHolder(binding)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         Glide.with(context)
             .load(commentList[position].userInfo.profileImageUrl)
@@ -44,12 +50,16 @@ class CommentListRVAdapter(val context: Context, val commentList: List<StudyComm
 
         holder.editContent.visibility = GONE
         holder.content.text = commentList[position].content
-        // holder.date.text = commentList[position].date
-        holder.date.text = "2024-07-29"
+        holder.date.text =
+            LocalDateTime.parse(commentList[position].commentSetDate).toLocalDate().toString()
 
-        // TODO: 내 댓글인지 확인하고 수정 삭제 버튼 visibility 결정하는 로직 추가하기
-        holder.updateBtn.visibility = VISIBLE
-        holder.deleteBtn.visibility = VISIBLE
+        if (commentList[position].isMyComment) {
+            holder.updateBtn.visibility = VISIBLE
+            holder.deleteBtn.visibility = VISIBLE
+        } else {
+            holder.updateBtn.visibility = GONE
+            holder.deleteBtn.visibility = GONE
+        }
 
         holder.updateBtn.setOnClickListener { v ->
             holder.content.visibility = GONE

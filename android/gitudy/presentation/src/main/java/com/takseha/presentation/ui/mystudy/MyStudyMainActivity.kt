@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -118,7 +120,20 @@ class MyStudyMainActivity : AppCompatActivity() {
             viewModel.myStudyState.collectLatest {
                 window.statusBarColor = Color.parseColor(it.myStudyInfo.profileImageUrl)
                 setMyStudyInfo(it.myStudyInfo.id, it.myStudyInfo.profileImageUrl, it.myStudyInfo)
-                setTodoInfo(it.todoInfo)
+                if (it.isUrgentTodo) {
+                    with(binding) {
+                        noTodoAlarm.visibility = GONE
+                        setUrgentTodoInfo(it.todoInfo)
+                        todoDetailLayout.visibility = VISIBLE
+                        todoDetailBody.visibility = VISIBLE
+                    }
+                } else {
+                    with(binding) {
+                        todoDetailLayout.visibility = GONE
+                        todoDetailBody.visibility = GONE
+                        noTodoAlarm.visibility = VISIBLE
+                    }
+                }
                 setConventionInfo(it.conventionInfo)
                 setMemberRank(it.studyMemberListInfo)
             }
@@ -148,42 +163,27 @@ class MyStudyMainActivity : AppCompatActivity() {
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
             studyRankText.text = String.format(
                 getString(R.string.study_team_rank),
-                300 - studyInfoId * 10, studyInfoId - 15
+                myStudyInfo.score, studyInfoId - 15
             )
             studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setTodoInfo(todoInfo: Todo?) {
+    private fun setUrgentTodoInfo(todoInfo: Todo?) {
         with(binding) {
-            if (todoInfo == null) {
-                todoDetailLayout.visibility = View.GONE
-                todoDetailBody.visibility = View.GONE
-                noTodoAlarm.visibility = View.GONE
-            } else {
-                if (todoInfo.id != -1) {
-                    todoDetailLayout.visibility = View.VISIBLE
-                    todoDetailBody.visibility = View.VISIBLE
-                    noTodoAlarm.visibility = View.GONE
-
-                    todoDetailTitle.text = todoInfo.title
-                    todoDetailText.text = todoInfo.detail
-                    todoTime.text = todoInfo.todoDate
-                    todoCode.text = todoInfo.todoCode
-                    if (todoInfo.todoDate == LocalDate.now().toString()) {
-                        todoTime.setTextColor(
-                            ContextCompat.getColor(
-                                this@MyStudyMainActivity,
-                                R.color.BASIC_RED
-                            ))
-                    }
-                    firstTodoLink = todoInfo.todoLink
-                } else {
-                    todoDetailLayout.visibility = View.GONE
-                    todoDetailBody.visibility = View.GONE
-                    noTodoAlarm.visibility = View.VISIBLE
+            if (todoInfo != null) {
+                todoDetailTitle.text = todoInfo.title
+                todoDetailText.text = todoInfo.detail
+                todoTime.text = todoInfo.todoDate
+                if (todoInfo.todoDate == LocalDate.now().toString()) {
+                    todoTime.setTextColor(
+                        ContextCompat.getColor(
+                            this@MyStudyMainActivity,
+                            R.color.BASIC_RED
+                        ))
                 }
+                firstTodoLink = todoInfo.todoLink
             }
         }
     }

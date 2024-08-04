@@ -7,8 +7,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.annotations.SerializedName
 import com.takseha.data.dto.feed.StudyCountResponse
+import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.mystudy.Commit
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.dto.mystudy.TodoStatus
@@ -137,39 +137,11 @@ class MainHomeViewModel : ViewModel() {
                 }
             } else {
                 val studiesWithTodo = studies.map { study ->
-                    val todo = getFirstTodoInfo(study.id)
-
-                    if (todo != null) {
-                        if (todo.id != -1) {
-                        //    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: 0
-                            val todoCheckNum = 0
-                            val todoCheck =
-                                if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
-                            MyStudyWithTodo(
-                                study,
-                                todo.title,
-                                todo.todoDate,
-                                todoCheck,
-                                todoCheckNum
-                            )
-                        } else {
-                            MyStudyWithTodo(
-                                study,
-                                null,
-                                null,
-                                TodoStatus.TODO_EMPTY,
-                                null
-                            )
-                        }
-                    } else {
-                        MyStudyWithTodo(
-                            study,
-                            null,
-                            null,
-                            TodoStatus.TODO_INCOMPLETE,
-                            null
-                        )
-                    }
+                    val urgentTodo = getUrgentTodoProgress(study.id)
+                    MyStudyWithTodo(
+                        study,
+                        urgentTodo
+                    )
                 }
                 _myStudyState.update {
                     it.copy(
@@ -188,56 +160,17 @@ class MainHomeViewModel : ViewModel() {
         }
     }
 
-    // TODO: getFirstTodoInfo api 관련 수정하기 -> 마감일 임박 투두 불러오기
-    private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
-        val todoInfoResponse = gitudyStudyRepository.getTodoList(
-            studyInfoId,
-            cursorIdx = null,
-            limit = 1
-        )
-
-        if (todoInfoResponse.isSuccessful) {
-            val todoBody = todoInfoResponse.body()!!
-
-            if (todoBody.todoList.isNotEmpty()) {
-                val todo = todoBody.todoList.first()
-                return todo
-            } else {
-                Log.d("MainHomeViewModel", "No To-Do")
-                return Todo(
-                    detail = "No To-Do",
-                    id = -1,
-                    studyInfoId = studyInfoId,
-                    title = "No To-Do",
-                    todoDate = "",
-                    todoCode = "",
-                    todoLink = "",
-                    commitList = listOf()
-                )
-            }
-        } else {
-            Log.e(
-                "MainHomeViewModel",
-                "todoInfoResponse status: ${todoInfoResponse.code()}\ntodoInfoResponse message: ${todoInfoResponse.message()}"
-            )
-        }
-        // 에러 발생 시 null return
-        Log.d("MainHomeViewModel", "Error")
-        return null
-    }
-
-    // TODO: getTodoProgress api 관련 수정
-    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgressResponse? {
-        val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
+    private suspend fun getUrgentTodoProgress(studyInfoId: Int): TodoProgressResponse? {
+        val urgentTodoResponse = gitudyStudyRepository.getTodoProgress(
             studyInfoId
         )
 
-        if (todoProgressResponse.isSuccessful) {
-            return todoProgressResponse.body()
+        if (urgentTodoResponse.isSuccessful) {
+            return urgentTodoResponse.body()
         } else {
             Log.e(
                 "MainHomeViewModel",
-                "todoProgressResponse status: ${todoProgressResponse.code()}\ntodoProgressResponse message: ${todoProgressResponse.message()}"
+                "urgentTodoResponse status: ${urgentTodoResponse.code()}\nurgentTodoResponse message: ${urgentTodoResponse.message()}"
             )
         }
         return null
@@ -257,6 +190,11 @@ class MainHomeViewModel : ViewModel() {
         return null
     }
 }
+
+data class MyStudyWithTodo(
+    val studyInfo: StudyInfo,
+    val urgentTodo: TodoProgressResponse?
+)
 
 data class MainHomeUserInfoUiState(
     var name: String = "",

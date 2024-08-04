@@ -11,16 +11,17 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemMystudyBinding
+import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import java.time.LocalDate
 
 class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWithTodo>) : RecyclerView.Adapter<MyStudyRVAdapter.ViewHolder>() {
     interface ItemClick {
         fun onClick(view: View, position: Int)
     }
+
     var itemClick: ItemClick? = null
 
     class ViewHolder(val binding: ItemMystudyBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -46,52 +47,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        setBasicStudyInfo(holder,position)
-
-        when (studyInfoList[position].todoCheck) {
-            TodoStatus.TODO_EMPTY -> {
-                holder.noTodoAlarm.visibility = VISIBLE
-                holder.todoTitle.visibility = GONE
-                holder.todoCheck.visibility = GONE
-                holder.todoTimeText.visibility = GONE
-                holder.todoTime.visibility = GONE
-                holder.todoCheckNum.text = "0/"
-                holder.totalNum.text = studyInfoList[position].studyInfo.currentMember.toString()
-            }
-            TodoStatus.TODO_INCOMPLETE -> {
-                holder.noTodoAlarm.visibility = GONE
-                holder.todoTitle.visibility = VISIBLE
-                holder.todoCheck.visibility = VISIBLE
-                holder.todoTimeText.visibility = VISIBLE
-                holder.todoTime.visibility = VISIBLE
-                holder.todoCheck.text = "미완료"
-                holder.todoTitle.text = studyInfoList[position].todoTitle
-                holder.todoTime.text = studyInfoList[position].todoTime
-                holder.todoCheckNum.text = "${ studyInfoList[position].todoCheckNum }/"
-                holder.totalNum.text = studyInfoList[position].studyInfo.currentMember.toString()
-
-                if (studyInfoList[position].todoTime == LocalDate.now().toString()) {
-                    holder.todoTime.setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.BASIC_RED
-                        )
-                    )
-                }
-            }
-            else -> {
-                holder.noTodoAlarm.visibility = GONE
-                holder.todoTitle.visibility = VISIBLE
-                holder.todoCheck.visibility = VISIBLE
-                holder.todoTimeText.visibility = VISIBLE
-                holder.todoTime.visibility = VISIBLE
-                holder.todoCheck.text = "완료"
-                holder.todoTitle.text = studyInfoList[position].todoTitle
-                holder.todoTime.text = studyInfoList[position].todoTime
-                holder.todoCheckNum.text = "${ studyInfoList[position].todoCheckNum }/"
-                holder.totalNum.text = studyInfoList[position].studyInfo.currentMember.toString()
-            }
-        }
+        setStudyInfo(holder, position)
 
         // 클릭 이벤트 처리
         if (itemClick != null) {
@@ -101,13 +57,48 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
         }
     }
 
-    private fun setBasicStudyInfo(holder: ViewHolder, position: Int) {
-        holder.studyImg.setCardBackgroundColor(Color.parseColor(studyInfoList[position].studyInfo.profileImageUrl))
-        holder.studyName.text = studyInfoList[position].studyInfo.topic
-        holder.leaderTag.visibility = if (studyInfoList[position].studyInfo.isLeader) VISIBLE else GONE
-        holder.teamScore.text = "${studyInfoList[position].studyInfo.score}점"
-        holder.progressBar.progress = studyInfoList[position].todoCheckNum ?: 0
-        holder.progressBar.max = studyInfoList[position].studyInfo.currentMember
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun setStudyInfo(holder: ViewHolder, position: Int) {
+        val studyInfo = studyInfoList[position].studyInfo
+        val urgentTodo = studyInfoList[position].urgentTodo
+
+        holder.studyImg.setCardBackgroundColor(Color.parseColor(studyInfo.profileImageUrl))
+        holder.studyName.text = studyInfo.topic
+        holder.leaderTag.visibility = if (studyInfo.isLeader) VISIBLE else GONE
+        holder.teamScore.text = "${studyInfo.score}점"
+        holder.todoCheckNum.text = "${urgentTodo?.completeMemberCount ?: 0}/"
+        holder.totalNum.text = studyInfo.currentMember.toString()
+        holder.progressBar.progress = urgentTodo?.completeMemberCount ?: 0
+        holder.progressBar.max = studyInfo.currentMember
+
+        if (urgentTodo == null) {
+            holder.noTodoAlarm.visibility = VISIBLE
+            holder.todoTitle.visibility = GONE
+            holder.todoCheck.visibility = GONE
+            holder.todoTimeText.visibility = GONE
+            holder.todoTime.visibility = GONE
+        } else {
+            holder.noTodoAlarm.visibility = GONE
+            holder.todoTitle.visibility = VISIBLE
+            holder.todoCheck.visibility = VISIBLE
+            holder.todoTimeText.visibility = VISIBLE
+            holder.todoTime.visibility = VISIBLE
+            holder.todoTitle.text = urgentTodo.todo.title
+            holder.todoTime.text = urgentTodo.todo.todoDate
+            if (urgentTodo.completeMemberCount == urgentTodo.totalMemberCount) {
+                holder.todoCheck.text = "완료"
+            } else {
+                holder.todoCheck.text = "미완료"
+                if (urgentTodo.todo.todoDate == LocalDate.now().toString()) {
+                    holder.todoTime.setTextColor(
+                        ContextCompat.getColor(
+                            context,
+                            R.color.BASIC_RED
+                        )
+                    )
+                }
+            }
+        }
     }
 
     override fun getItemCount(): Int {
