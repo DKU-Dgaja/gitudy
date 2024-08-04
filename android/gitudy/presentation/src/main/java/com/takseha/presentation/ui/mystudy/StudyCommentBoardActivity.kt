@@ -1,5 +1,7 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.animation.ObjectAnimator
+import android.animation.PropertyValuesHolder
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -14,16 +16,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CommentListRVAdapter
+import com.takseha.presentation.adapter.DetailCommentListRVAdapter
 import com.takseha.presentation.databinding.ActivityStudyCommentBoardBinding
 import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
+import com.takseha.presentation.viewmodel.mystudy.StudyCommentBoardViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 // TODO: Android Studio 업데이트 후 생성한 Activity: 기본 Activity 양식 변경됨 -> 추후 통일하기
 class StudyCommentBoardActivity : AppCompatActivity() {
     private lateinit var binding: ActivityStudyCommentBoardBinding
-    private val viewModel: MyStudyMainViewModel by viewModels()
+    private val viewModel: StudyCommentBoardViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -81,63 +85,30 @@ class StudyCommentBoardActivity : AppCompatActivity() {
 
     private fun setStudyComments(comments: List<StudyComment>) {
         with(binding) {
-            val commentListRVAdapter = CommentListRVAdapter(this@StudyCommentBoardActivity, comments)
-            commentList.adapter = commentListRVAdapter
+            val commentDetailListRVAdapter = DetailCommentListRVAdapter(this@StudyCommentBoardActivity, comments)
+            commentList.adapter = commentDetailListRVAdapter
             commentList.layoutManager = LinearLayoutManager(this@StudyCommentBoardActivity)
 
-            clickStudyCommentItem(commentListRVAdapter, comments)
+            clickStudyCommentItem(commentDetailListRVAdapter, comments)
         }
     }
 
     // TODO: 수정 시 메세지 입력 창 같이 떠오르는 현상 없애고, edittext가 자판 위로 오도록 처리
-    private fun clickStudyCommentItem(commentListRVAdapter: CommentListRVAdapter, commentList: List<StudyComment>) {
-        commentListRVAdapter.onClickListener = object : CommentListRVAdapter.OnClickListener {
-            override fun onUpdateClick(view: View, position: Int) {
-                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
-                var contentBody = commentViewHolder.binding.contentEditText
-                var confirmBtn = commentViewHolder.binding.confirmBtn
-                var content: String
-
-                contentBody.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-
-                    override fun afterTextChanged(s: Editable?) {
-                        content = contentBody.text.toString()
-                        confirmBtn.isEnabled = content.isNotEmpty()
-
-                        if (confirmBtn.isEnabled) confirmBtn.setTextColor(ContextCompat.getColor(this@StudyCommentBoardActivity, R.color.GS_700))
-                        else confirmBtn.setTextColor(ContextCompat.getColor(this@StudyCommentBoardActivity, R.color.GS_400))
-                    }
-                })
-            }
-
-            override fun onConfirmClick(view: View, position: Int) {
-                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
-                var content = commentViewHolder.binding.contentEditText.text.toString()
-
-                showUpdateCommentDialog(commentList[position].studyInfoId, commentList[position].id, content)
-            }
-
+    private fun clickStudyCommentItem(commentDetailListRVAdapter: DetailCommentListRVAdapter, commentList: List<StudyComment>) {
+        commentDetailListRVAdapter.onClickListener = object : DetailCommentListRVAdapter.OnClickListener {
             override fun onDeleteClick(view: View, position: Int) {
                 showDeleteCommentDialog(commentList[position].studyInfoId, commentList[position].id)
             }
+
+            override fun onLikeClick(view: View, position: Int) {
+                shakeBtn(view)
+            }
+
+            override fun onHeartClick(view: View, position: Int) {
+                shakeBtn(view)
+            }
         }
     }
-
-    private fun showUpdateCommentDialog(studyInfoId: Int, studyCommentId: Int, content: String) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.study_comment_update))
-        customDialog.setOnConfirmClickListener {
-            viewModel.updateStudyComment(studyInfoId, studyCommentId, content, 10)
-        }
-        customDialog.setOnCancelClickListener {
-            viewModel.getStudyComments(studyInfoId, 10)
-        }
-        customDialog.show()
-    }
-
     private fun showDeleteCommentDialog(studyInfoId: Int, studyCommentId: Int) {
         val customDialog = CustomDialog(this)
         customDialog.setAlertText(getString(R.string.study_comment_delete))
@@ -145,6 +116,13 @@ class StudyCommentBoardActivity : AppCompatActivity() {
             viewModel.deleteStudyComment(studyInfoId, studyCommentId, 10)
         }
         customDialog.show()
+    }
+
+    private fun shakeBtn(view: View) {
+        val translateX = PropertyValuesHolder.ofFloat(View.TRANSLATION_X, -10f, 10f, -8f, 8f, -6f, 6f, -4f, 4f, -2f, 2f, 0f)
+        val animator = ObjectAnimator.ofPropertyValuesHolder(view, translateX)
+        animator.duration = 500 // 애니메이션 지속 시간 (ms)
+        animator.start()
     }
 
     private fun setBinding() {

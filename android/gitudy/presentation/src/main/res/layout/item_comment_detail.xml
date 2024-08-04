@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="24dp">
+
+        <ImageView
+            android:id="@+id/profileImg"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:background="@drawable/circle_non_stroke"
+            android:clipToOutline="true"
+            android:src="@drawable/logo_profile_default"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/writerInfo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="1dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            app:layout_constraintStart_toEndOf="@+id/profileImg"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/writerName"
+                style="@style/B5_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="10dp"
+                android:textColor="@color/GS_600" />
+
+            <TextView
+                android:id="@+id/dateText"
+                style="@style/B7_3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/GS_400" />
+        </LinearLayout>
+
+        <ImageView
+            android:id="@+id/moreBtn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_more"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/contentText"
+            style="B6_1"
+            android:layout_width="250dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:textColor="@color/GS_600"
+            app:layout_constraintBottom_toTopOf="@+id/likeBtn"
+            app:layout_constraintStart_toEndOf="@+id/profileImg"
+            app:layout_constraintTop_toBottomOf="@+id/writerInfo" />
+
+        <ImageView
+            android:id="@+id/likeBtn"
+            android:layout_width="20dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="10dp"
+            android:paddingBottom="22dp"
+            android:src="@drawable/ic_thumbs_up"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/profileImg" />
+
+        <ImageView
+            android:id="@+id/heartBtn"
+            android:layout_width="18dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="8dp"
+            android:paddingBottom="22dp"
+            android:src="@drawable/ic_heart"
+            app:layout_constraintStart_toEndOf="@+id/likeBtn"
+            app:layout_constraintTop_toBottomOf="@+id/contentText" />
+
+        <LinearLayout
+            android:id="@+id/divider1"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="#F3F3F4"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

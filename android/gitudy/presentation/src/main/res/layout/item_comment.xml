@@ -20,45 +20,6 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/updateBtn"
-            style="@style/B7_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginRight="11dp"
-            android:text="수정"
-            android:textColor="@color/GS_400"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/confirmBtn"
-            style="@style/B7_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:layout_marginRight="11dp"
-            android:enabled="false"
-            android:text="확인"
-            android:textColor="@color/GS_400"
-            android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@+id/deleteBtn"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/deleteBtn"
-            style="@style/B7_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:text="삭제"
-            android:textColor="@color/GS_400"
-            android:visibility="gone"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
             android:id="@+id/contentText"
             style="B6_1"
             android:layout_width="250dp"
@@ -71,28 +32,13 @@
             app:layout_constraintStart_toEndOf="@+id/profileImg"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <EditText
-            android:id="@+id/contentEditText"
-            style="B6_1"
-            android:layout_width="250dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:background="@null"
-            android:textColor="@color/GS_600"
-            android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/profileImg"
-            app:layout_constraintTop_toTopOf="parent" />
-
         <TextView
             android:id="@+id/dateText"
             style="@style/B7_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingTop="50dp"
-            android:paddingBottom="10dp"
+            android:paddingTop="30dp"
+            android:paddingBottom="30dp"
             android:text="2024.07.29"
             android:textColor="@color/GS_400"
             app:layout_constraintBottom_toBottomOf="parent"

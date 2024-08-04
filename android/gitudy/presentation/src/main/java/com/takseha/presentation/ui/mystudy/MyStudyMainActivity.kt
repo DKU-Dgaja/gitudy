@@ -62,7 +62,6 @@ class MyStudyMainActivity : AppCompatActivity() {
 
         with(binding) {
             backBtn.setOnClickListener {
-                startActivity(Intent(this@MyStudyMainActivity, MainHomeActivity::class.java))
                 finish()
             }
             todoMoreBtn.setOnClickListener {
@@ -224,66 +223,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             val commentListRVAdapter = CommentListRVAdapter(this@MyStudyMainActivity, comments)
             commentList.adapter = commentListRVAdapter
             commentList.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
-
-            clickStudyCommentItem(commentListRVAdapter, comments)
         }
-    }
-
-    private fun clickStudyCommentItem(commentListRVAdapter: CommentListRVAdapter, commentList: List<StudyComment>) {
-        commentListRVAdapter.onClickListener = object : CommentListRVAdapter.OnClickListener {
-            override fun onUpdateClick(view: View, position: Int) {
-                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
-                var contentBody = commentViewHolder.binding.contentEditText
-                var confirmBtn = commentViewHolder.binding.confirmBtn
-                var content: String
-
-                contentBody.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-
-                    override fun afterTextChanged(s: Editable?) {
-                        content = contentBody.text.toString()
-                        confirmBtn.isEnabled = content.isNotEmpty()
-
-                        if (confirmBtn.isEnabled) confirmBtn.setTextColor(ContextCompat.getColor(this@MyStudyMainActivity, R.color.GS_700))
-                        else confirmBtn.setTextColor(ContextCompat.getColor(this@MyStudyMainActivity, R.color.GS_400))
-                    }
-                })
-            }
-
-            override fun onConfirmClick(view: View, position: Int) {
-                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
-                var content = commentViewHolder.binding.contentEditText.text.toString()
-
-                showUpdateCommentDialog(commentList[position].studyInfoId, commentList[position].id, content)
-            }
-
-            override fun onDeleteClick(view: View, position: Int) {
-                showDeleteCommentDialog(commentList[position].studyInfoId, commentList[position].id)
-            }
-        }
-    }
-
-    private fun showUpdateCommentDialog(studyInfoId: Int, studyCommentId: Int, content: String) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.study_comment_update))
-        customDialog.setOnConfirmClickListener {
-            viewModel.updateStudyComment(studyInfoId, studyCommentId, content, 3)
-        }
-        customDialog.setOnCancelClickListener {
-            viewModel.getStudyComments(studyInfoId, 3)
-        }
-        customDialog.show()
-    }
-
-    private fun showDeleteCommentDialog(studyInfoId: Int, studyCommentId: Int) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.study_comment_delete))
-        customDialog.setOnConfirmClickListener {
-            viewModel.deleteStudyComment(studyInfoId, studyCommentId, 3)
-        }
-        customDialog.show()
     }
 
     private fun setBinding() {
