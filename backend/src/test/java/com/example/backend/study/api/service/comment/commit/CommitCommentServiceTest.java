@@ -65,7 +65,7 @@ class CommitCommentServiceTest extends TestConfig {
         commitCommentRepository.saveAll(CommitCommentFixture.createDefaultCommitCommentList(5, userC.getId(), commitB.getId()));
 
         // when
-        List<CommitCommentInfoResponse> response = commitCommentService.getCommitCommentsList(commitA.getId());
+        List<CommitCommentInfoResponse> response = commitCommentService.getCommitCommentsList(commitA.getId(), userA.getId());
 
         // then
         for (CommitCommentInfoResponse c : response) {
@@ -82,10 +82,11 @@ class CommitCommentServiceTest extends TestConfig {
     void 커밋_댓글_리스트_조회_실패_테스트() {
         // given
         Long commitID = 1L;
+        Long userId = 1L;
 
         // when & then
         assertThrows(CommitException.class, () -> {
-            commitCommentService.getCommitCommentsList(commitID);
+            commitCommentService.getCommitCommentsList(commitID, userId);
         });
     }
 
