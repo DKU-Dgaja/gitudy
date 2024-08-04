@@ -35,7 +35,7 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
         var todoCode = binding.todoCode
         var todoLinkBtn = binding.todoLinkBtn
         var moreBtn = binding.moreBtn
-        var commitList = binding.commitList
+        var commitList: RecyclerView = binding.commitList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -51,7 +51,8 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
         holder.todoDate.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
         holder.todoCode.text = todoList[position].todoCode
-        setCommitList(holder.commitList, todoList[position].commitList)
+//        setCommitList(holder.commitList, todoList[position].commitList)
+        setCommitList(holder, position)
 
         if (todoList[position].todoDate == LocalDate.now().toString()) {
             holder.todoDate.setTextColor(
@@ -72,11 +73,16 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
         }
     }
 
-    private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
-        val commitListRVAdapter = CommitListRVAdapter(context, commitList, this.onClickListener!!)
+//    private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
+//        val commitListRVAdapter = CommitListRVAdapter(context, commitList, this.onClickListener!!)
+//
+//        commitListView.adapter = commitListRVAdapter
+//        commitListView.layoutManager = LinearLayoutManager(context)
+//    }
 
-        commitListView.adapter = commitListRVAdapter
-        commitListView.layoutManager = LinearLayoutManager(context)
+    private fun setCommitList(holder: ViewHolder, position: Int) {
+        holder.commitList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        holder.commitList.adapter = CommitListRVAdapter(context, todoList[position].commitList, onClickListener!!)
     }
 
     private fun showPopupMenu(view: View, position: Int) {

@@ -78,7 +78,10 @@ class ToDoFragment : Fragment() {
     private fun clickToDoItem(todoListRVAdapter: ToDoListRVAdapter, todoList: List<Todo>) {
         todoListRVAdapter.onClickListener = object : ToDoListRVAdapter.OnClickListener {
             override fun onCommitClick(commit: Commit) {
-                TODO("Not yet implemented")
+                val bundle = Bundle().apply {
+                    putInt("commitId", commit.id)
+                }
+                view?.findNavController()?.navigate(R.id.action_toDoFragment_to_myCommitFragment, bundle)
             }
 
             override fun onUpdateClick(view: View, position: Int) {
