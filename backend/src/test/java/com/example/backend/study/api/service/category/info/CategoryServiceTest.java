@@ -197,4 +197,33 @@ class CategoryServiceTest extends TestConfig {
 
         assertEquals(LIMIT, categoryListAndCursorIdxResponse.getCategoryResponseList().size());
     }
+
+    @Test
+    void 카테고리_전체_목록_조회_테스트() {
+        // given
+        var java = CategoryRegisterRequest.builder()
+                .name("java")
+                .build();
+
+        // when
+        categoryService.registerCategory(java);
+
+        List<CategoryResponse> response = categoryService.selectCategoryList();
+
+        // then
+        assertFalse(response.isEmpty());
+        assertEquals(1, response.size());
+        assertEquals(java.getName(), response.get(0).getName());
+    }
+
+    @Test
+    void 카테고리_전체_목록이_비어있을_때_조회_테스트() {
+        // given
+
+        // when
+        List<CategoryResponse> response = categoryService.selectCategoryList();
+
+        // then
+        assertTrue(response.isEmpty());
+    }
 }

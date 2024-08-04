@@ -69,4 +69,11 @@ public class CategoryService {
             return new CategoryException(ExceptionMessage.CATEGORY_NOT_FOUND);
         });
     }
+
+    public List<CategoryResponse> selectCategoryList() {
+
+        return studyCategoryRepository.findAll().stream()  // Stream<Category>
+                .map(CategoryResponse::of) // Stream<CategoryResponse>
+                .toList();  // List<CategoryList>
+    }
 }

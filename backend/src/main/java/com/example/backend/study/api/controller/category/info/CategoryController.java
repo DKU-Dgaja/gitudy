@@ -6,6 +6,8 @@ import com.example.backend.study.api.controller.category.info.request.CategoryRe
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
 import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
 import com.example.backend.study.api.service.category.info.CategoryService;
+import com.example.backend.study.api.service.category.info.response.CategoryResponse;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -16,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -65,5 +69,12 @@ public class CategoryController {
         CategoryListAndCursorIdxResponse response = categoryService.selectCategoryList(studyInfoId, cursorIdx, limit);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @ApiResponse(responseCode = "200", description = "카테고리 목록 전체 조회 성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CategoryResponse.class))))
+    @GetMapping("/")
+    public ResponseEntity<List<CategoryResponse>> selectCategoryList(@AuthenticationPrincipal User user) {
+
+        return ResponseEntity.ok().body(categoryService.selectCategoryList());
     }
 }
