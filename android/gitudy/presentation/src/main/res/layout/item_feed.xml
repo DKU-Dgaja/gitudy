@@ -72,7 +72,8 @@
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="14dp">
+                    android:layout_marginTop="14dp"
+                    android:gravity="center_vertical">
                     <TextView
                         android:id="@+id/teamScore"
                         style="@style/B7_1"
@@ -95,6 +96,14 @@
                         android:gravity="center"
                         android:text="@string/study_total_day_cnt"
                         android:textColor="@color/WHITE" />
+
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/categoryList"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginLeft="8dp"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
                 </LinearLayout>
 
             </LinearLayout>

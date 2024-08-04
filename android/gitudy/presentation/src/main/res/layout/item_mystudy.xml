@@ -53,11 +53,11 @@
                 android:background="@drawable/box_non_stroke_r24"
                 android:backgroundTint="@color/BASIC_BLUE"
                 android:gravity="center"
-                android:paddingLeft="7dp"
-                android:paddingRight="7dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
                 android:text="팀장"
                 android:textColor="@color/WHITE"
-                android:visibility="gone"
+                android:visibility="visible"
                 app:layout_constraintStart_toEndOf="@+id/studyName"
                 app:layout_constraintTop_toTopOf="parent" />
 
