@@ -151,45 +151,6 @@ class MyStudyMainViewModel : ViewModel() {
             )
         }
     }
-
-    fun updateStudyComment(
-        studyInfoId: Int, studyCommentId: Int, content: String, limit: Long
-    ) = viewModelScope.launch {
-        val updateStudyCommentResponse = gitudyStudyRepository.updateStudyComment(
-            studyInfoId,
-            studyCommentId,
-            content
-        )
-        if (updateStudyCommentResponse.isSuccessful) {
-            getStudyComments(studyInfoId, limit)
-            Log.d("MyStudyMainViewModel", "updateStudyCommentResponse: ${updateStudyCommentResponse.code()}")
-        } else {
-            Log.e(
-                "MyStudyMainViewModel",
-                "updateStudyCommentResponse status: ${updateStudyCommentResponse.code()}\nupdateStudyCommentResponse message: ${
-                    updateStudyCommentResponse.errorBody()?.string()
-                }"
-            )
-        }
-    }
-
-    fun deleteStudyComment(studyInfoId: Int, studyCommentId: Int, limit: Long) = viewModelScope.launch {
-        val deleteStudyCommentResponse = gitudyStudyRepository.deleteStudyComment(
-            studyInfoId,
-            studyCommentId
-        )
-        if (deleteStudyCommentResponse.isSuccessful) {
-            getStudyComments(studyInfoId, limit)
-            Log.d("deleteStudyCommentResponse", "deleteStudyCommentResponse: ${deleteStudyCommentResponse.code()}")
-        } else {
-            Log.e(
-                "MyStudyMainViewModel",
-                "deleteStudyCommentResponse status: ${deleteStudyCommentResponse.code()}\ndeleteStudyCommentResponse message: ${
-                    deleteStudyCommentResponse.errorBody()?.string()
-                }"
-            )
-        }
-    }
 }
 
 data class MyStudyMainInfoState(

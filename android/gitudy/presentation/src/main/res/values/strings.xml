@@ -22,6 +22,7 @@
     <string name="alert_id_not_ok">존재하지 않는 아이디입니다</string>
     <string name="alert_name_ok">사용 가능한 닉네임입니다</string>
     <string name="alert_name_not_ok">이미 존재하는 닉네임입니다</string>
+    <string name="alert_repo_name_not_ok">깃허브 레포지토리 이름 형식을 지켜주세요</string>
 
 
     <!-- Strings related to home -->
@@ -86,7 +87,9 @@
     <string name="feed_make_study_2">주 %d일 커밋/%s 마감/%d명</string>
     <string name="feed_apply_study">해당 스터디에\n가입하시겠습니까?</string>
     <string name="feed_apply_study_cancel">해당 스터디 가입을\n취소하시겠습니까?</string>
-    <string name="feed_make_study_github_repo">생성할 깃허브 레포지토리 이름을 입력해주세요\n* 입력한 이름으로 회원님의 깃허브 계정에 레포지토리가 생성돼요</string>
+    <string name="feed_make_study_github_repo">생성할 깃허브 레포지토리 이름을 입력해주세요</string>
+    <string name="feed_make_study_github_repo_desc">* 입력한 이름으로 회원님의 깃허브 계정에 레포지토리가 생성돼요</string>
+    <string name="feed_make_study_category_desc">스터디와 관련된 태그를 선택해주세요</string>
 
 
     <!-- Strings related to login -->
