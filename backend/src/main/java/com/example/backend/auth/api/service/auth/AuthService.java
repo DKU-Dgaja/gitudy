@@ -27,7 +27,6 @@ import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
-import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.study.api.service.github.GithubApiTokenService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -85,9 +84,7 @@ public class AuthService {
                 });
 
         // 깃허브 api 토큰 저장
-        GithubApiToken githubApiToken = githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), findUser.getId());
-        System.out.println("githubApiToken.userId() = " + githubApiToken.userId());
-        System.out.println("githubApiToken.githubApiToken() = " + githubApiToken.githubApiToken());
+        githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), findUser.getId());
 
         // JWT 토큰 생성
         JwtToken jwtToken = generateJwtToken(findUser);

@@ -36,14 +36,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("NonAsciiCharacters")
 class GithubApiServiceTest extends TestConfig {
     private final String REPOSITORY_OWNER = "jusung-c";
-
     private final String REPOSITORY_COLLABORATOR = "rndudals";
-
     private final String REPOSITORY_NAME = "Github-Api-Test";
-    private static final String NEW_TOKEN = "new_token";
-
     private final String REPOSITORY_DESCRIBE = "[gitudy] Github API test repository description";
-
     private final String BRANCH_NAME = "main";
 
     @Value("${github.api.webhookURL}")

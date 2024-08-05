@@ -89,8 +89,6 @@ public class OAuthService {
         // Access Token 획득
         String accessToken = adapter.getToken(tokenUrl);
 
-        System.out.println("accessToken = " + accessToken);
-
         // 사용자 프로필 조회
         OAuthResponse userInfo = adapter.getProfile(accessToken);
         log.info(">>>> [ {} Login Success ] <<<<", platformType);
