@@ -80,19 +80,13 @@ public class AuthService {
 
                     log.info(">>>> [ UNAUTH 권한으로 사용자를 DB에 등록합니다. 이후 회원가입이 필요합니다 ] <<<<");
 
-                    User user = userRepository.save(saveUser);
-
-                    // 깃허브 api 토큰 저장
-                    githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), user.getId());
-
-                    return user;
+                    return userRepository.save(saveUser);
                 });
 
-        /*
-            DB에 저장된 사용자 정보를 기반으로 JWT 토큰을 발급
-            * JWT 토큰을 요청시에 담아 보내면 JWT 토큰 인증 필터에서 Security Context에 인증된 사용자로 등록
-            TODO : JWT 재발급을 위한 Refresh 토큰은 Redis에서 관리할 예정입니다.
-         */
+        // 깃허브 api 토큰 저장
+        githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), findUser.getId());
+
+        // JWT 토큰 생성
         JwtToken jwtToken = generateJwtToken(findUser);
 
         // JWT 토큰과 권한 정보를 담아 반환

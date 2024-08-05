@@ -6,7 +6,6 @@ import com.example.backend.study.api.controller.comment.study.request.StudyComme
 import com.example.backend.study.api.controller.comment.study.request.StudyCommentUpdateRequest;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.comment.study.response.StudyCommentResponse;
-import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 
 import java.util.ArrayList;
 import java.util.List;
