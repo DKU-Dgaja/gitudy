@@ -37,7 +37,7 @@ public class StudyInfo extends BaseEntity {
     private String topic;                           // 스터디 이름
 
     @Column(name = "SCORE")
-    private int score = 0;                          // 스터디 활동점수
+    private int score = 1;                          // 스터디 활동점수
 
     @Temporal(TemporalType.DATE)
     @Column(name = "END_DATE")
@@ -127,5 +127,10 @@ public class StudyInfo extends BaseEntity {
 
     public boolean isMaximumMember() {
         return this.currentMember < this.maximumMember;
+    }
+
+    // Score 업데이트 메서드
+    public void addStudyScore(int score) {
+        this.score = Math.max(0, this.score + score);
     }
 }
