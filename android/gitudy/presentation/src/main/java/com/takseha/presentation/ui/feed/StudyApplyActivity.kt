@@ -6,10 +6,12 @@ import android.os.Bundle
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.databinding.ActivityStudyApplyBinding
 import com.takseha.presentation.ui.common.CustomDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
@@ -77,6 +79,7 @@ class StudyApplyActivity : AppCompatActivity() {
                 myStudyInfo.currentMember,
                 myStudyInfo.maximumMember
             )
+            setCategoryList(myStudyInfo.categoryNames)
         }
     }
 
@@ -93,6 +96,14 @@ class StudyApplyActivity : AppCompatActivity() {
             StudyStatus.STUDY_PRIVATE -> return baseContext.getString(R.string.study_lock)
             StudyStatus.STUDY_PUBLIC -> return baseContext.getString(R.string.study_unlock)
             StudyStatus.STUDY_DELETED -> return baseContext.getString(R.string.study_deleted)
+        }
+    }
+
+    private fun setCategoryList(categoryList: List<String>) {
+        with(binding) {
+            val categoryInStudyRVAdapter = CategoryInStudyRVAdapter(this@StudyApplyActivity, categoryList)
+            tagList.adapter = categoryInStudyRVAdapter
+            tagList.layoutManager = LinearLayoutManager(this@StudyApplyActivity, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 

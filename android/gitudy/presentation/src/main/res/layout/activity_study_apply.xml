@@ -89,7 +89,6 @@
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/tagList"
-            android:visibility="gone"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
@@ -242,33 +241,13 @@
         style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="22dp"
-        android:layout_marginRight="22dp"
-        android:layout_marginBottom="18dp"
         android:background="@drawable/box_non_stroke_r12_green"
         android:paddingTop="18dp"
         android:paddingBottom="18dp"
+        android:layout_marginRight="22dp"
+        android:layout_marginLeft="22dp"
         android:text="스터디 신청하기"
         android:textColor="@color/BLACK"
-        app:layout_constraintBottom_toTopOf="@+id/studyLinkCopyBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <Button
-        android:id="@+id/studyLinkCopyBtn"
-        style="@style/B5_1"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="22dp"
-        android:layout_marginRight="22dp"
-        android:background="@drawable/box_non_stroke_r12"
-        android:paddingTop="18dp"
-        android:paddingBottom="18dp"
-        android:text="스터디 공유하기"
-        android:textColor="@color/BLACK"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

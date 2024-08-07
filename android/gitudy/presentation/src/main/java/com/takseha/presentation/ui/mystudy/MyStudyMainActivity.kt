@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.feed.Category
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.StudyComment
@@ -26,6 +27,7 @@ import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
@@ -166,6 +168,7 @@ class MyStudyMainActivity : AppCompatActivity() {
                 myStudyInfo.score, studyInfoId - 15
             )
             studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
+            setCategoryList(myStudyInfo.categoryNames)
         }
     }
 
@@ -192,6 +195,14 @@ class MyStudyMainActivity : AppCompatActivity() {
         with(binding) {
             commitConventionText.visibility = View.VISIBLE
             commitConvention.text = conventionInfo?.name
+        }
+    }
+
+    private fun setCategoryList(categoryList: List<String>) {
+        with(binding) {
+            val categoryInStudyRVAdapter = CategoryInStudyRVAdapter(this@MyStudyMainActivity, categoryList)
+            tagList.adapter = categoryInStudyRVAdapter
+            tagList.layoutManager = LinearLayoutManager(this@MyStudyMainActivity, LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
