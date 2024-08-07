@@ -1,6 +1,8 @@
 package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.service.rank.event.StudyScoreSaveEvent;
+import com.example.backend.auth.api.service.rank.event.UserScoreUpdateEvent;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.github.GithubApiException;
 import com.example.backend.common.exception.study.StudyInfoException;
@@ -25,6 +27,7 @@ import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.info.response.UserNameAndProfileImageResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +58,7 @@ public class StudyInfoService {
     private final StudyConventionRepository studyConventionRepository;
     private final GithubApiService githubApiService;
     private final GithubApiTokenService githubApiTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
@@ -70,6 +74,17 @@ public class StudyInfoService {
         // 스터디 가입 시 User score +5
         Optional<User> user = userRepository.findById(userInfo.getUserId());
         user.get().addUserScore(5);
+
+        // 유저 점수추가 이벤트
+        eventPublisher.publishEvent(UserScoreUpdateEvent.builder()
+                .userid(userInfo.getUserId())
+                .score(5)
+                .build());
+        // 스터디 초기 점수추가 이벤트
+        eventPublisher.publishEvent(StudyScoreSaveEvent.builder()
+                .studyInfoId(studyInfo.getId())
+                .score(1)
+                .build());
 
         // 기본 컨벤션 생성
         registerDefaultConvention(studyInfo.getId());

@@ -26,7 +26,7 @@ public class RankingService {
     private final RedisTemplate<String, Object> redisTemplate;
     private final UserRepository userRepository;
     private final StudyInfoRepository studyInfoRepository;
-    public static final String USER_RANKING_KEY = "user_ranking";
+    private static final String USER_RANKING_KEY = "user_ranking";
     private static final String STUDY_RANKING_KEY = "study_ranking";
 
     @PostConstruct
@@ -36,14 +36,14 @@ public class RankingService {
     }
 
 
-    // 사용자 점수를 Redis Sorted Set에 저장
-    public void saveUserScore(Long userId, int score) {
+    // 사용자 점수를 처음으로 Redis Sorted Set에 저장
+    public void saveUserScore(Long userId, double score) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
         zSetOps.add(USER_RANKING_KEY, userId, score);
     }
 
-    // 사용자 점수 업데이트
-    public void updateUserScore(Long userId, int score) {
+    // 사용자 점수 증/감 업데이트
+    public void updateUserScore(Long userId, double score) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
         zSetOps.incrementScore(USER_RANKING_KEY, userId, score);
     }
@@ -81,14 +81,14 @@ public class RankingService {
         }
     }
 
-    // 스터디 점수 업데이트
-    public void updateStudyScore(Long studyInfoId, int score) {
+    // 스터디 점수 증/감 업데이트
+    public void updateStudyScore(Long studyInfoId, double score) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
         zSetOps.incrementScore(STUDY_RANKING_KEY, studyInfoId, score);
     }
 
-    // 스터디 점수를 Redis Sorted Set에 저장
-    public void saveStudyScore(Long studyInfoId, int score) {
+    // 스터디 점수를 처음으로 Redis Sorted Set에 저장
+    public void saveStudyScore(Long studyInfoId, double score) {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
         zSetOps.add(STUDY_RANKING_KEY, studyInfoId, score);
     }

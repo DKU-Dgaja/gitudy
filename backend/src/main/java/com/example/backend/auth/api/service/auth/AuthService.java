@@ -13,6 +13,7 @@ import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.auth.api.service.rank.RankingService;
+import com.example.backend.auth.api.service.rank.event.UserScoreSaveEvent;
 import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -31,6 +32,7 @@ import com.example.backend.study.api.service.github.GithubApiTokenService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,7 @@ public class AuthService {
     private final RankingService rankingService;
     private final FcmTokenRepository fcmTokenRepository;
     private final GithubApiTokenService githubApiTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
@@ -190,6 +193,12 @@ public class AuthService {
 
         // JWT Access Token, Refresh Token 재발급
         JwtToken tokens = generateJwtToken(findUser);
+
+        // 유저점수 이벤트 발생
+        eventPublisher.publishEvent(UserScoreSaveEvent.builder()
+                .userid(findUser.getId())
+                .score(10)
+                .build());
 
         return AuthLoginResponse.builder()
                 .accessToken(tokens.getAccessToken())
