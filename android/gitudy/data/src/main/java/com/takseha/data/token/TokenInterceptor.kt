@@ -21,6 +21,7 @@ class TokenInterceptor(
 
         if (response.code() == 401) {
             synchronized(this) {
+                response.close()    // 이전 response 종료
                 val newToken = runBlocking { tokenManager.reissueTokens() }
                 Log.d("TokenInterceptor", newToken.toString())
                 if (newToken != null) {
@@ -31,7 +32,6 @@ class TokenInterceptor(
                 }
             }
         }
-
         return response
     }
 

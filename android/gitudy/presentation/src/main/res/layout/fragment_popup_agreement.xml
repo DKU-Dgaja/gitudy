@@ -12,6 +12,7 @@
         android:layout_height="590dp"
         android:layout_gravity="bottom"
         android:layout_marginBottom="-20dp"
+        android:clipToPadding="false"
         android:elevation="50dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent">

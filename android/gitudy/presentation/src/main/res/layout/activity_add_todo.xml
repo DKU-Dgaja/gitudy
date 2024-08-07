@@ -8,13 +8,13 @@
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/BACKGROUND">
 
         <LinearLayout
             android:id="@+id/addTodoLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/BACKGROUND"
             android:orientation="vertical"
             android:paddingLeft="22dp"
             android:paddingRight="22dp"
@@ -27,7 +27,7 @@
                 android:id="@+id/addTodoTitle"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="20dp"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <ImageView

@@ -37,10 +37,6 @@
             android:name=".ui.mystudy.CaptainStudySettingActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.mystudy.CommentActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".ui.mystudy.ToDoActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

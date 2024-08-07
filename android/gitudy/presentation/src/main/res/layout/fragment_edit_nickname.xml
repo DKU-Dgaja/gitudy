@@ -18,7 +18,7 @@
         <ImageView
             android:layout_width="32dp"
             android:layout_height="32dp"
-            android:layout_marginTop="31dp"
+            android:layout_marginTop="32dp"
             android:layout_marginRight="22dp"
             android:src="@drawable/ic_exit"
             app:layout_constraintEnd_toEndOf="parent"

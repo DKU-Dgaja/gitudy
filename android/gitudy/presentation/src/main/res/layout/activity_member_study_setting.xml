@@ -12,7 +12,7 @@
         android:id="@+id/memberSettingTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="75dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
