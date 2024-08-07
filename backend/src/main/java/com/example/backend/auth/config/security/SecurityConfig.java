@@ -2,6 +2,7 @@ package com.example.backend.auth.config.security;
 
 import com.example.backend.auth.config.security.filter.JwtAuthenticationFilter;
 import lombok.RequiredArgsConstructor;
+import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -25,6 +26,8 @@ public class SecurityConfig {
                         authorizeHttpRequest
                                 // Swagger 추가
                                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/auth/v3/**", "/auth/swagger-ui/**").permitAll()
+                                // Actuator
+                                .requestMatchers(EndpointRequest.toAnyEndpoint()).permitAll()
                                 // Webhook Area
                                 .requestMatchers("/webhook/**").hasAnyAuthority("ADMIN")
                                 // register
