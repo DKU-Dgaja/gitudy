@@ -51,9 +51,9 @@ class StudyApplyActivity : AppCompatActivity() {
             studyEnterBtn.setOnClickListener {
                 showApplyStudyDialog(studyInfoId, "", "가입해서 열심히 활동할게요~")
             }
-            studyLinkCopyBtn.setOnClickListener {
-                // 추후 구현 예정
-            }
+            // TODO: 스터디 공유 기능 추후 구현
+//            studyLinkCopyBtn.setOnClickListener {
+//            }
         }
     }
 

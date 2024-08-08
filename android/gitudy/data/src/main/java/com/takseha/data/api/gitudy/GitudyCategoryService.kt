@@ -1,13 +1,9 @@
-package com.takseha.data.api.gitudy.category
+package com.takseha.data.api.gitudy
 
 import com.takseha.data.dto.feed.CategoryListResponse
-import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.dto.mystudy.StudyCategoryResponse
-import com.takseha.data.dto.mystudy.StudyMemberListResponse
 import retrofit2.Response
-import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
 

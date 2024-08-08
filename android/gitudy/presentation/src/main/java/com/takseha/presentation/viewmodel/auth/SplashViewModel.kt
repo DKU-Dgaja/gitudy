@@ -5,7 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.takseha.data.dto.auth.login.RoleStatus
-import com.takseha.data.repository.auth.GitudyAuthRepository
+import com.takseha.data.repository.gitudy.GitudyAuthRepository
 
 class SplashViewModel: ViewModel() {
     private var gitudyAuthRepository: GitudyAuthRepository = GitudyAuthRepository()

@@ -1,7 +1,7 @@
-package com.takseha.data.repository.category
+package com.takseha.data.repository.gitudy
 
 import com.takseha.data.api.gitudy.RetrofitInstance
-import com.takseha.data.api.gitudy.category.GitudyCategoryService
+import com.takseha.data.api.gitudy.GitudyCategoryService
 
 class GitudyCategoryRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyCategoryService::class.java)

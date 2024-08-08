@@ -3,7 +3,7 @@ package com.takseha.data.token
 import android.content.Context
 import android.util.Log
 import com.takseha.data.BuildConfig
-import com.takseha.data.api.gitudy.auth.GitudyAuthService
+import com.takseha.data.api.gitudy.GitudyAuthService
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.TokenResponse
 import com.takseha.data.dto.auth.login.ReissueTokenResponse

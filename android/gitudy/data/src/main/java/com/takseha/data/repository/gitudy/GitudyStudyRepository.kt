@@ -1,12 +1,11 @@
-package com.takseha.data.repository.study
+package com.takseha.data.repository.gitudy
 
 import com.takseha.data.api.gitudy.RetrofitInstance
-import com.takseha.data.api.gitudy.study.GitudyStudyService
+import com.takseha.data.api.gitudy.GitudyStudyService
 import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.SetConventionRequest
-import retrofit2.http.Body
 
 class GitudyStudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyStudyService::class.java)

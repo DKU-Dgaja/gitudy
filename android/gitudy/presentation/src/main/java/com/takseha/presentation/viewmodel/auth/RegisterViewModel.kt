@@ -7,10 +7,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.auth.register.RegisterRequest
-import com.takseha.data.repository.auth.GithubRepository
-import com.takseha.data.repository.auth.GitudyAuthRepository
+import com.takseha.data.repository.github.GithubRepository
+import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.data.token.TokenManager
-import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

@@ -1,7 +1,7 @@
-package com.takseha.data.repository.auth
+package com.takseha.data.repository.gitudy
 
 import com.takseha.data.api.gitudy.RetrofitInstance
-import com.takseha.data.api.gitudy.auth.GitudyAuthService
+import com.takseha.data.api.gitudy.GitudyAuthService
 
 class GitudyAuthRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyAuthService::class.java)
