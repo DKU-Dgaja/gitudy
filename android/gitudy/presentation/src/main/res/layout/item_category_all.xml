@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/categoryName"
+        style="@style/B6_2"
+        android:layout_width="90dp"
+        android:layout_height="36dp"
+        android:background="@drawable/box_non_stroke_r8"
+        android:backgroundTint="#F4F5F5"
+        android:gravity="center"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/GS_400" />
+</layout>

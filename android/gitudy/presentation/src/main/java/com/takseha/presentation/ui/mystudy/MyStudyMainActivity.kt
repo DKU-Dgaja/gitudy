@@ -7,7 +7,10 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
@@ -60,7 +63,6 @@ class MyStudyMainActivity : AppCompatActivity() {
 
         with(binding) {
             backBtn.setOnClickListener {
-                startActivity(Intent(this@MyStudyMainActivity, MainHomeActivity::class.java))
                 finish()
             }
             todoMoreBtn.setOnClickListener {
@@ -118,7 +120,20 @@ class MyStudyMainActivity : AppCompatActivity() {
             viewModel.myStudyState.collectLatest {
                 window.statusBarColor = Color.parseColor(it.myStudyInfo.profileImageUrl)
                 setMyStudyInfo(it.myStudyInfo.id, it.myStudyInfo.profileImageUrl, it.myStudyInfo)
-                setTodoInfo(it.todoInfo)
+                if (it.isUrgentTodo) {
+                    with(binding) {
+                        noTodoAlarm.visibility = GONE
+                        setUrgentTodoInfo(it.todoInfo)
+                        todoDetailLayout.visibility = VISIBLE
+                        todoDetailBody.visibility = VISIBLE
+                    }
+                } else {
+                    with(binding) {
+                        todoDetailLayout.visibility = GONE
+                        todoDetailBody.visibility = GONE
+                        noTodoAlarm.visibility = VISIBLE
+                    }
+                }
                 setConventionInfo(it.conventionInfo)
                 setMemberRank(it.studyMemberListInfo)
             }
@@ -148,42 +163,27 @@ class MyStudyMainActivity : AppCompatActivity() {
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
             studyRankText.text = String.format(
                 getString(R.string.study_team_rank),
-                300 - studyInfoId * 10, studyInfoId - 15
+                myStudyInfo.score, studyInfoId - 15
             )
             studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
         }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun setTodoInfo(todoInfo: Todo?) {
+    private fun setUrgentTodoInfo(todoInfo: Todo?) {
         with(binding) {
-            if (todoInfo == null) {
-                todoDetailLayout.visibility = View.GONE
-                todoDetailBody.visibility = View.GONE
-                noTodoAlarm.visibility = View.GONE
-            } else {
-                if (todoInfo.id != -1) {
-                    todoDetailLayout.visibility = View.VISIBLE
-                    todoDetailBody.visibility = View.VISIBLE
-                    noTodoAlarm.visibility = View.GONE
-
-                    todoDetailTitle.text = todoInfo.title
-                    todoDetailText.text = todoInfo.detail
-                    todoTime.text = todoInfo.todoDate
-                    todoCode.text = todoInfo.todoCode
-                    if (todoInfo.todoDate == LocalDate.now().toString()) {
-                        todoTime.setTextColor(
-                            ContextCompat.getColor(
-                                this@MyStudyMainActivity,
-                                R.color.BASIC_RED
-                            ))
-                    }
-                    firstTodoLink = todoInfo.todoLink
-                } else {
-                    todoDetailLayout.visibility = View.GONE
-                    todoDetailBody.visibility = View.GONE
-                    noTodoAlarm.visibility = View.VISIBLE
+            if (todoInfo != null) {
+                todoDetailTitle.text = todoInfo.title
+                todoDetailText.text = todoInfo.detail
+                todoTime.text = todoInfo.todoDate
+                if (todoInfo.todoDate == LocalDate.now().toString()) {
+                    todoTime.setTextColor(
+                        ContextCompat.getColor(
+                            this@MyStudyMainActivity,
+                            R.color.BASIC_RED
+                        ))
                 }
+                firstTodoLink = todoInfo.todoLink
             }
         }
     }
@@ -224,66 +224,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             val commentListRVAdapter = CommentListRVAdapter(this@MyStudyMainActivity, comments)
             commentList.adapter = commentListRVAdapter
             commentList.layoutManager = LinearLayoutManager(this@MyStudyMainActivity)
-
-            clickStudyCommentItem(commentListRVAdapter, comments)
         }
-    }
-
-    private fun clickStudyCommentItem(commentListRVAdapter: CommentListRVAdapter, commentList: List<StudyComment>) {
-        commentListRVAdapter.onClickListener = object : CommentListRVAdapter.OnClickListener {
-            override fun onUpdateClick(view: View, position: Int) {
-                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
-                var contentBody = commentViewHolder.binding.contentEditText
-                var confirmBtn = commentViewHolder.binding.confirmBtn
-                var content: String
-
-                contentBody.addTextChangedListener(object : TextWatcher {
-                    override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) { }
-
-                    override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) { }
-
-                    override fun afterTextChanged(s: Editable?) {
-                        content = contentBody.text.toString()
-                        confirmBtn.isEnabled = content.isNotEmpty()
-
-                        if (confirmBtn.isEnabled) confirmBtn.setTextColor(ContextCompat.getColor(this@MyStudyMainActivity, R.color.GS_700))
-                        else confirmBtn.setTextColor(ContextCompat.getColor(this@MyStudyMainActivity, R.color.GS_400))
-                    }
-                })
-            }
-
-            override fun onConfirmClick(view: View, position: Int) {
-                val commentViewHolder = binding.commentList.findViewHolderForAdapterPosition(position) as CommentListRVAdapter.ViewHolder
-                var content = commentViewHolder.binding.contentEditText.text.toString()
-
-                showUpdateCommentDialog(commentList[position].studyInfoId, commentList[position].id, content)
-            }
-
-            override fun onDeleteClick(view: View, position: Int) {
-                showDeleteCommentDialog(commentList[position].studyInfoId, commentList[position].id)
-            }
-        }
-    }
-
-    private fun showUpdateCommentDialog(studyInfoId: Int, studyCommentId: Int, content: String) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.study_comment_update))
-        customDialog.setOnConfirmClickListener {
-            viewModel.updateStudyComment(studyInfoId, studyCommentId, content, 3)
-        }
-        customDialog.setOnCancelClickListener {
-            viewModel.getStudyComments(studyInfoId, 3)
-        }
-        customDialog.show()
-    }
-
-    private fun showDeleteCommentDialog(studyInfoId: Int, studyCommentId: Int) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.study_comment_delete))
-        customDialog.setOnConfirmClickListener {
-            viewModel.deleteStudyComment(studyInfoId, studyCommentId, 3)
-        }
-        customDialog.show()
     }
 
     private fun setBinding() {

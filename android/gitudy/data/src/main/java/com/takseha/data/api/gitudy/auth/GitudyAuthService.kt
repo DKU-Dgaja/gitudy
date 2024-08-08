@@ -24,11 +24,6 @@ interface GitudyAuthService {
         @Query("state") state: String
     ): Response<TokenResponse>
 
-    @POST("/auth/check-nickname")
-    suspend fun checkCorrectNickname(
-        @Body request: String
-    ): Response<Void>
-
     @POST("/auth/register")
     suspend fun getRegisterTokens(
         @Header("Authorization") token: String,
@@ -39,6 +34,16 @@ interface GitudyAuthService {
     suspend fun reissueTokens(
         @Header("Authorization") token: String
     ): Response<ReissueTokenResponse>
+
+    @POST("/auth/logout")
+    suspend fun logout(
+        @Header("Authorization") token: String
+    ): Response<Void>
+
+    @POST("/auth/check-nickname")
+    suspend fun checkCorrectNickname(
+        @Body request: String
+    ): Response<Void>
 
     @GET("/auth/info")
     suspend fun getUserInfo(

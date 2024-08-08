@@ -78,4 +78,9 @@ public class StudyMember extends BaseEntity {
     public void updateSignGreeting(String signGreeting) {
         this.signGreeting = signGreeting;
     }
+
+    // Score 업데이트 메서드
+    public void addMemberScore(int score) {
+        this.score = Math.max(0, this.score + score);
+    }
 }

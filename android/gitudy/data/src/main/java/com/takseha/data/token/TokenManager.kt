@@ -99,13 +99,35 @@ class TokenManager(context: Context) {
             try {
                 val token = "Bearer $refreshToken"
                 val response = loginApi.reissueTokens(token)
+                Log.d("TokenManager", token)
 
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
                     refreshToken = response.body()!!.refreshToken
                     response.body()
                 } else {
-                    Log.e("TokenManager", "response status: ${response.code()}\nresponse message:${response.errorBody()!!.string()}")
+                    Log.e("TokenManager", "reissue response status: ${response.code()}\nreissue response message:${response.errorBody()!!.string()}")
+                    null
+                }
+            } catch (e: Exception) {
+                Log.e("TokenManager", e.message.toString())
+                null
+            }
+        }
+    }
+
+    suspend fun logout() {
+        return withContext(Dispatchers.IO) {
+            try {
+                val token = "Bearer $accessToken"
+                val response = loginApi.logout(token)
+
+                if (response.isSuccessful) {
+                    accessToken = ""
+                    refreshToken = ""
+                    Log.d("TokenManager", "logout response status: ${response.code()}")
+                } else {
+                    Log.e("TokenManager", "logout response status: ${response.code()}\nlogout response message:${response.errorBody()!!.string()}")
                     null
                 }
             } catch (e: Exception) {

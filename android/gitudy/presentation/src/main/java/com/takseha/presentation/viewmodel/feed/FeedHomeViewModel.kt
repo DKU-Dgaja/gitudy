@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.repository.study.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,6 +31,7 @@ class FeedHomeViewModel : ViewModel() {
             sortby,
             myStudy = false
         )
+        val studyCnt = getStudyCount()?.count ?: -1
 
         if (feedListResponse.isSuccessful) {
             val feedStudyListInfo = feedListResponse.body()!!
@@ -40,12 +42,15 @@ class FeedHomeViewModel : ViewModel() {
             if (feedStudyListInfo.studyInfoList.isEmpty()) {
                 _uiState.update {
                     it.copy(
-                        isFeedEmpty = true
+                        isFeedEmpty = true,
+                        studyCnt = studyCnt
                     )
                 }
             } else {
                 _uiState.update { it.copy(
                     studyInfoList = feedStudyListInfo.studyInfoList,
+                    studyCategoryMappingMap = feedStudyListInfo.studyCategoryMappingMap,
+                    studyCnt = studyCnt,
                     isFeedEmpty = false
                 ) }
             }
@@ -56,9 +61,25 @@ class FeedHomeViewModel : ViewModel() {
             )
         }
     }
+
+    private suspend fun getStudyCount(): StudyCountResponse? {
+        val studyCntResponse = gitudyStudyRepository.getStudyCount(false)
+
+        if (studyCntResponse.isSuccessful) {
+            return studyCntResponse.body()
+        } else {
+            Log.e(
+                "MainHomeViewModel",
+                "studyCntResponse status: ${studyCntResponse.code()}\nstudyCntResponse message: ${studyCntResponse.message()}"
+            )
+        }
+        return null
+    }
 }
 
 data class FeedHomeUiState(
     var studyInfoList: List<StudyInfo> = listOf(),
+    var studyCategoryMappingMap: Map<Int, List<String>> = mapOf(),
+    var studyCnt: Int = 0,
     var isFeedEmpty: Boolean = false
 )

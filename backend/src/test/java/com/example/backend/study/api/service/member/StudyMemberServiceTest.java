@@ -149,16 +149,16 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(4, responses.size());
 
         assertEquals(99, responses.get(0).getScore());
-        assertEquals("이주성", responses.get(0).getName());
+        assertEquals("이주성", responses.get(0).getUserInfo().getName());
 
         assertEquals(88, responses.get(1).getScore());
-        assertEquals("탁세하", responses.get(1).getName());
+        assertEquals("탁세하", responses.get(1).getUserInfo().getName());
 
         assertEquals(77, responses.get(2).getScore());
-        assertEquals("이정우", responses.get(2).getName());
+        assertEquals("이정우", responses.get(2).getUserInfo().getName());
 
         assertEquals(77, responses.get(3).getScore());
-        assertEquals("구영민", responses.get(3).getName());  // 점수 동일시 userId 낮은순
+        assertEquals("구영민", responses.get(3).getUserInfo().getName());  // 점수 동일시 userId 낮은순
 
     }
 
@@ -192,16 +192,16 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(4, responses.size());
 
         assertEquals(77, responses.get(0).getScore());
-        assertEquals("이정우", responses.get(0).getName());
+        assertEquals("이정우", responses.get(0).getUserInfo().getName());
 
         assertEquals(77, responses.get(1).getScore());
-        assertEquals("구영민", responses.get(1).getName());
+        assertEquals("구영민", responses.get(1).getUserInfo().getName());
 
         assertEquals(99, responses.get(2).getScore());
-        assertEquals("이주성", responses.get(2).getName());
+        assertEquals("이주성", responses.get(2).getUserInfo().getName());
 
         assertEquals(88, responses.get(3).getScore());
-        assertEquals("탁세하", responses.get(3).getName());
+        assertEquals("탁세하", responses.get(3).getUserInfo().getName());
 
     }
 
@@ -237,10 +237,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         assertEquals(2, responses.size());
 
         assertEquals(99, responses.get(0).getScore());
-        assertEquals("이주성", responses.get(0).getName());
+        assertEquals("이주성", responses.get(0).getUserInfo().getName());
 
         assertEquals(77, responses.get(1).getScore());
-        assertEquals("이정우", responses.get(1).getName());
+        assertEquals("이정우", responses.get(1).getUserInfo().getName());
 
     }
 
@@ -325,10 +325,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember));
 
         // 현재 날짜 이후로 설정된 To do (마감기한 지나지 않은 To do)
-        StudyTodo futureTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(3));
-        StudyTodo futureTodo2 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(5));
+        StudyTodo futureTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        StudyTodo futureTodo2 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(5));
         // 현재 날짜 이전으로 설정된 To do (마감기한 지난 To do)
-        StudyTodo pastTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().minusDays(3));
+        StudyTodo pastTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().minusDays(3));
         studyTodoRepository.saveAll(List.of(futureTodo1, futureTodo2, pastTodo1));
 
         // activeMember에게 할당된 to do: 2개는 미래, 1개는 과거
@@ -377,10 +377,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember));
 
         // 현재 날짜 이후로 설정된 To do (마감기한 지나지 않은 To do)
-        StudyTodo futureTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(3));
-        StudyTodo futureTodo2 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().plusDays(5));
+        StudyTodo futureTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        StudyTodo futureTodo2 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(5));
         // 현재 날짜 이전으로 설정된 To do (마감기한 지난 To do)
-        StudyTodo pastTodo1 = StudyTodoFixture.createDateStudyTodo(studyInfo.getId(), LocalDate.now().minusDays(3));
+        StudyTodo pastTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().minusDays(3));
         studyTodoRepository.saveAll(List.of(futureTodo1, futureTodo2, pastTodo1));
 
         // activeMember에게 할당된 to do: 2개는 미래, 1개는 과거
@@ -439,7 +439,6 @@ public class StudyMemberServiceTest extends MockTestConfig {
         // then
         assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
         assertEquals(request.getMessage(), waitMember.get().getSignGreeting()); // 스터디장에게 한마디 저장 확인
-        assertEquals(saveStudy.getCurrentMember(), 2);
     }
 
     @Test

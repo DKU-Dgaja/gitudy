@@ -12,7 +12,11 @@ import com.example.backend.domain.define.study.comment.commit.repository.CommitC
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.comment.commit.request.AddCommitCommentRequest;
 import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -41,6 +45,9 @@ class CommitCommentServiceTest extends TestConfig {
     @Autowired
     private StudyCommitRepository studyCommitRepository;
 
+    @Autowired
+    private StudyMemberRepository studyMemberRepository;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
@@ -65,7 +72,7 @@ class CommitCommentServiceTest extends TestConfig {
         commitCommentRepository.saveAll(CommitCommentFixture.createDefaultCommitCommentList(5, userC.getId(), commitB.getId()));
 
         // when
-        List<CommitCommentInfoResponse> response = commitCommentService.getCommitCommentsList(commitA.getId());
+        List<CommitCommentInfoResponse> response = commitCommentService.getCommitCommentsList(commitA.getId(), userA.getId());
 
         // then
         for (CommitCommentInfoResponse c : response) {
@@ -82,10 +89,11 @@ class CommitCommentServiceTest extends TestConfig {
     void 커밋_댓글_리스트_조회_실패_테스트() {
         // given
         Long commitID = 1L;
+        Long userId = 1L;
 
         // when & then
         assertThrows(CommitException.class, () -> {
-            commitCommentService.getCommitCommentsList(commitID);
+            commitCommentService.getCommitCommentsList(commitID, userId);
         });
     }
 
@@ -94,10 +102,13 @@ class CommitCommentServiceTest extends TestConfig {
     void 커밋_댓글_저장_테스트() {
         // given
         User user = userRepository.save(UserFixture.generateAuthUser());
+
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), studyInfo.getId()));
         StudyCommit commit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), 1L, 1L, "SHA"));
         String content = "testtesttest";
 
-        AddCommitCommentRequest request = AddCommitCommentRequest.builder().content(content).build();
+        AddCommitCommentRequest request = AddCommitCommentRequest.builder().content(content).studyInfoId(studyInfo.getId()).build();
 
         // when
         commitCommentService.addCommitComment(user.getId(), commit.getId(), request);

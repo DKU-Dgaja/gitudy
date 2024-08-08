@@ -7,10 +7,8 @@ properties.load(FileInputStream("local.properties"))
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
-
-    kotlin("kapt")
-    id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    kotlin("kapt")
 }
 
 android {
@@ -70,10 +68,6 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
-
-    // hilt
-    implementation("com.google.dagger:hilt-android:2.50")
-    kapt("com.google.dagger:hilt-android-compiler:2.50")
 
     // retrofit
     implementation("com.squareup.retrofit2:retrofit:2.9.0")

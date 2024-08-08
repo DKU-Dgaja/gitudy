@@ -77,6 +77,10 @@ dependencies {
 
     // Mongo
     implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+
+    // Monitoring
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 // Querydsl 설정

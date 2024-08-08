@@ -20,6 +20,7 @@ import com.example.backend.study.api.controller.category.info.request.CategoryRe
 import com.example.backend.study.api.controller.category.info.request.CategoryUpdateRequest;
 import com.example.backend.study.api.controller.category.info.response.CategoryListAndCursorIdxResponse;
 import com.example.backend.study.api.service.category.info.CategoryService;
+import com.example.backend.study.api.service.category.info.response.CategoryResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.junit.jupiter.api.AfterEach;
@@ -29,6 +30,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
 import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
@@ -399,5 +401,30 @@ class CategoryControllerTest extends MockTestConfig {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
                 .andDo(print());
+    }
+
+    @Test
+    void 카테고리_전체_목록_조회_성공_테스트() throws Exception {
+        // given
+        Long categoryId = 1L;
+        String categoryName = "java";
+
+        User user = userRepository.save(generateAuthUser());
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        when(categoryService.selectCategoryList()).thenReturn(List.of(CategoryResponse.builder().id(categoryId).name(categoryName).build()));
+
+        // when
+        mockMvc.perform(get("/category/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(categoryId))
+                .andExpect(jsonPath("$[0].name").value(categoryName))
+                .andDo(print());
+
     }
 }

@@ -2,6 +2,7 @@ package com.example.backend.study.api.service.member;
 
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.service.rank.event.UserScoreUpdateEvent;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
@@ -206,10 +207,6 @@ public class StudyMemberService {
                     .userId(user.getUserId())
                     .signGreeting(messageRequest.getMessage())
                     .build());
-
-            // 가입 승인 로직 에러로 임시로 멤버 수 증가시키는 코드 넣어두었습니다.
-            studyInfo.updateCurrentMember(1);
-
         }
 
         User leader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
@@ -272,6 +269,11 @@ public class StudyMemberService {
 
             // 스터디 가입 시 User +5점
             findUser.addUserScore(5);
+            // 유저점수 이벤트 발생
+            eventPublisher.publishEvent(UserScoreUpdateEvent.builder()
+                    .userid(findUser.getId())
+                    .score(5)
+                    .build());
 
             // 스터디장 레포지토리에 가입 성공 스터디원 Collaborator 추가
             RepositoryInfo repoInfo = studyInfo.getRepositoryInfo();

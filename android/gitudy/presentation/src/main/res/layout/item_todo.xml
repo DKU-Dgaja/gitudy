@@ -100,33 +100,15 @@
                         android:layout_marginRight="4dp"
                         android:textColor="@color/BASIC_BLUE" />
                 </LinearLayout>
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content">
-
-                    <TextView
-                        style="@style/B7_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
-                        android:text="ToDoCode"
-                        android:textColor="@color/GS_500" />
-
-                    <TextView
-                        android:id="@+id/todoCode"
-                        style="@style/B7_2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
-                        android:textColor="@color/BLACK" />
-                </LinearLayout>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/todoDetailBody"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
+                android:layout_marginLeft="5dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginEnd="5dp"
                 android:visibility="visible"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -137,7 +119,6 @@
                     style="@style/B7_2"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="@string/study_to_do_body"
                     android:textColor="@color/GS_500" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -8,7 +8,7 @@ data class StudyListResponse(
     @SerializedName("cursor_idx")
     val cursorIdx: Long?,
     @SerializedName("study_category_mapping_map")
-    val studyCategoryMappingMap: StudyCategoryMappingMap
+    val studyCategoryMappingMap: Map<Int, List<String>>
 )
 
 data class StudyInfo(
@@ -49,13 +49,4 @@ data class UserInfo(
     val name: String,
     @SerializedName("profile_image_url")
     val profileImageUrl: String
-)
-
-data class StudyCategoryMappingMap(
-    @SerializedName("additionalProp1")
-    val additionalProp1: List<String>,
-    @SerializedName("additionalProp2")
-    val additionalProp2: List<String>,
-    @SerializedName("additionalProp3")
-    val additionalProp3: List<String>
 )

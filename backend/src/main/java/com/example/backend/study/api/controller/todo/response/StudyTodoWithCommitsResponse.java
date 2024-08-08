@@ -31,7 +31,7 @@ public class StudyTodoWithCommitsResponse {
 
     private LocalDate todoDate;  // To do 날짜
 
-    private String todoCode;     // To do를 식별할 6자리 코드
+    private String todoFolderName;   // To do에 해당하는 폴더명
 
     private LocalDateTime createdDateTime; // To do 생성 날짜
 
@@ -47,7 +47,7 @@ public class StudyTodoWithCommitsResponse {
                 .detail(studyTodo.getDetail())
                 .todoLink(studyTodo.getTodoLink())
                 .todoDate(studyTodo.getTodoDate())
-                .todoCode(studyTodo.getTodoCode())
+                .todoFolderName(studyTodo.getTodoFolderName())
                 .createdDateTime(studyTodo.getCreatedDateTime())
                 .commits(commits)
                 .build();

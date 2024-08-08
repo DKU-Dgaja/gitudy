@@ -14,6 +14,10 @@ data class StudyCommentListResponse(
 data class StudyComment(
     @SerializedName("content")
     val content: String,
+    @SerializedName("created_date_time")
+    val commentSetDate: String,
+    @SerializedName("my_comment")
+    val isMyComment: Boolean,
     @SerializedName("id")
     val id: Int,
     @SerializedName("study_info_id")
@@ -21,5 +25,5 @@ data class StudyComment(
     @SerializedName("user_id")
     val userId: Int,
     @SerializedName("user_info_response")
-    val userInfo: UserInfo
+    val userInfo: DetailUserInfo
 )

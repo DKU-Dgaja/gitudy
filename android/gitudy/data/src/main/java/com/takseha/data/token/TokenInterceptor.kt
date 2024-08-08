@@ -1,5 +1,6 @@
 package com.takseha.data.token
 
+import android.util.Log
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
@@ -20,9 +21,8 @@ class TokenInterceptor(
 
         if (response.code() == 401) {
             synchronized(this) {
-                response.close()  // 이전 응답 닫기
-
                 val newToken = runBlocking { tokenManager.reissueTokens() }
+                Log.d("TokenInterceptor", newToken.toString())
                 if (newToken != null) {
                     request = addTokenToRequest(request, newToken.accessToken)
                     return chain.proceed(request)

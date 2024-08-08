@@ -357,4 +357,19 @@ public class StudyInfoFixture {
                         .build())
                 .build();
     }
+
+    public static StudyInfo createStudyInfoByRepositoryInfo(Long userId, RepositoryInfo repositoryInfo) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("test")
+                .endDate(LocalDate.now().plusMonths(100))
+                .info("test")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .maximumMember(5)
+                .profileImageUrl("test")
+                .notice("test")
+                .repositoryInfo(repositoryInfo)
+                .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
+                .build();
+    }
 }

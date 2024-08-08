@@ -113,4 +113,27 @@ class StudyTodoMappingRepositoryTest extends TestConfig {
         assertFalse(result);
     }
 
+    @Test
+    void 완료한_투두_매핑의_수를_성공적으로_조회한다() {
+        // given
+        int expectedCount = 2;
+
+        User userA = userRepository.save(UserFixture.generateAuthJusung());
+        User userB = userRepository.save(UserFixture.generateKaKaoUser());
+        User userC = userRepository.save(UserFixture.generateAdminUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(userA.getId()));
+        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
+
+        // A, B는 완료, C는 미완료
+        todoMappingRepository.save(StudyTodoFixture.createCompleteStudyTodoMapping(todo.getId(), userA.getId()));
+        todoMappingRepository.save(StudyTodoFixture.createCompleteStudyTodoMapping(todo.getId(), userB.getId()));
+        todoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), userC.getId()));
+
+        // when
+        int cnt = todoMappingRepository.findCompleteTodoMappingCountByTodoId(todo.getId());
+
+        // then
+        assertEquals(expectedCount, cnt);
+    }
+
 }

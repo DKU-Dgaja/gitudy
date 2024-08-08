@@ -59,7 +59,7 @@ class CommitCommentControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
-        when(commitCommentService.getCommitCommentsList(any(Long.class))).thenReturn(List.of(CommitCommentInfoResponse.builder().studyCommitId(commitId).build()));
+        when(commitCommentService.getCommitCommentsList(any(Long.class), any(Long.class))).thenReturn(List.of(CommitCommentInfoResponse.builder().studyCommitId(commitId).build()));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
@@ -74,6 +74,7 @@ class CommitCommentControllerTest extends MockTestConfig {
 
     }
 
+
     @Test
     void 커밋_댓글_리스트_조회_실패_테스트() throws Exception {
         // given
@@ -84,7 +85,7 @@ class CommitCommentControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
-        when(commitCommentService.getCommitCommentsList(any(Long.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
+        when(commitCommentService.getCommitCommentsList(any(Long.class), any())).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)

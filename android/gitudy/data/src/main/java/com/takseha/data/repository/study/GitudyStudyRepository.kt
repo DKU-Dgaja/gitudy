@@ -2,6 +2,7 @@ package com.takseha.data.repository.study
 
 import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.api.gitudy.study.GitudyStudyService
+import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.SetConventionRequest
@@ -17,9 +18,17 @@ class GitudyStudyRepository {
         myStudy: Boolean
     ) = client.getStudyList(cursorIdx, limit, sortBy, myStudy)
 
+    suspend fun getStudyCount(
+        myStudy: Boolean
+    ) = client.getStudyCount(myStudy)
+
     suspend fun makeNewStudy(
         request: MakeStudyRequest
     ) = client.makeNewStudy(request)
+
+    suspend fun checkValidRepoName(
+        request: CheckRepoNameRequest
+    ) = client.checkValidRepoName(request)
 
     suspend fun getTodoList(
         studyInfoId: Int,

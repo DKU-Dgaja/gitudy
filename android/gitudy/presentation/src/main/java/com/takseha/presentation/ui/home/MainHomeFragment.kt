@@ -16,18 +16,19 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
 import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
+import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 
-// progress bar 끝 부분 둥글게 하는 건 추후 리팩토링 시 구현해보자..
+// TODO: progress bar 끝 부분 둥글게 하는 건 추후 리팩토링 시 구현해보자..
+// TODO: 홈 화면에 마이스터디 목록 말고 다른 걸 넣는 게 더 좋을 거 같다!! 생각해보기
 class MainHomeFragment : Fragment() {
     private var _binding: FragmentMainHomeBinding? = null
     private val binding get() = _binding!!
@@ -117,7 +118,7 @@ class MainHomeFragment : Fragment() {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
-                intent.putExtra("studyImgColor", studyList[position].studyImg)
+                intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
                 Log.d("MyStudyHomeFragment", intent.extras.toString())
                 startActivity(intent)
             }

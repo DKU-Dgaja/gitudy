@@ -1,6 +1,8 @@
 package com.takseha.data.api.gitudy.study
 
+import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
+import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyListResponse
 import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
@@ -29,9 +31,19 @@ interface GitudyStudyService {
         @Query("myStudy") myStudy: Boolean
     ): Response<StudyListResponse>
 
+    @GET("/study/count")
+    suspend fun getStudyCount(
+        @Query("myStudy") myStudy: Boolean
+    ): Response<StudyCountResponse>
+
     @POST("/study/")
     suspend fun makeNewStudy(
         @Body request: MakeStudyRequest
+    ): Response<Void>
+
+    @POST("/study/check-name")
+    suspend fun checkValidRepoName(
+        @Body request: CheckRepoNameRequest
     ): Response<Void>
 
     @GET("/study/{studyInfoId}/todo")

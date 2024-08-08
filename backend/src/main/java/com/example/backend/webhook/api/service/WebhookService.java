@@ -1,7 +1,6 @@
 package com.example.backend.webhook.api.service;
 
 import com.example.backend.common.exception.ExceptionMessage;
-import com.example.backend.common.exception.convention.ConventionException;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
@@ -24,17 +23,11 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.regex.Pattern;
-
 @Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class WebhookService {
-    private final static Pattern DEFAULT_CONVENTION_PATTERN = Pattern.compile("^[a-zA-Z0-9]{6} .*");
-    private final static int TODO_CODE_START_INDEX = 0;
-    private final static int TODO_CODE_END_INDEX = 6;
-
     private final StudyInfoRepository studyInfoRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoMappingRepository studyTodoMappingRepository;
@@ -45,17 +38,11 @@ public class WebhookService {
     @Transactional
     public void handleCommit(WebhookPayload payload) {
 
-        // 커밋 필터링
-        if (!checkConvention(payload.message())) {
-            log.warn(">>>> {} : {} <<<<", payload.message(), ExceptionMessage.CONVENTION_NOT_MATCHED.getText());
-            throw new ConventionException(ExceptionMessage.CONVENTION_NOT_MATCHED);
-        }
-
         // 스터디 특정
         StudyInfo study = getStudyByPayLoad(payload.repositoryFullName());
 
         // 투두 특정
-        StudyTodo todo = getTodoByPayLoad(payload.message());
+        StudyTodo todo = getTodoByPayLoad(payload.folderName());
 
         // 사용자 특정
         User user = getUserByPayLoad(payload.username());
@@ -77,13 +64,9 @@ public class WebhookService {
         });
     }
 
-    private StudyTodo getTodoByPayLoad(String message) {
-        // 투두 코드 추출
-        String todoCode = message.substring(TODO_CODE_START_INDEX, TODO_CODE_END_INDEX);
-
-        // 투두 특정
-        return studyTodoRepository.findByTodoCode(todoCode).orElseThrow(() -> {
-            log.warn(">>>> {} : {} <<<<", todoCode, ExceptionMessage.TODO_NOT_FOUND.getText());
+    private StudyTodo getTodoByPayLoad(String folderName) {
+        return studyTodoRepository.findByTodoFolderName(folderName).orElseThrow(() -> {
+            log.warn(">>>> {} : {} <<<<", folderName, ExceptionMessage.TODO_NOT_FOUND.getText());
             throw new TodoException(ExceptionMessage.TODO_NOT_FOUND);
         });
     }
@@ -101,11 +84,6 @@ public class WebhookService {
         });
     }
 
-    private boolean checkConvention(String commitMsg) {
-        // 커밋 메세지가 정규식과 일치하는지 반환
-        return DEFAULT_CONVENTION_PATTERN.matcher(commitMsg).matches();
-    }
-
     private void updateCommitAndTodoMappingStatus(Long userId, Long studyId, StudyTodo todo, WebhookPayload payload) {
 
         // 지각 여부 체크
@@ -114,7 +92,7 @@ public class WebhookService {
 
         // 투두 mapping 상태 업데이트
         if (!studyTodoMappingRepository.updateByUserIdAndTodoId(userId, todo.getId(), updateStatus)) {
-            log.warn(">>>> Todo Code: {} {} <<<<", todo.getTodoCode(), ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
+            log.warn(">>>> Todo Id: {} {} <<<<", todo.getId(), ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
             throw new TodoException(ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
         }
 
@@ -126,8 +104,7 @@ public class WebhookService {
                 .commitSHA(payload.commitId())
                 .message(payload.message())
                 .commitDate(payload.commitDate())
-                .status(CommitStatus.COMMIT_APPROVAL)
+                .status(CommitStatus.COMMIT_WAITING)
                 .build());
     }
-
 }

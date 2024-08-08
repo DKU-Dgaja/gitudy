@@ -10,8 +10,9 @@ public record WebhookPayload(
         String commitId,
         String message,
         String username,
-        @Pattern(regexp = "^.+/.+$", message = "Repository full name must be in the format 'username/repository'")
+        @Pattern(regexp = "^.+/.+$", message = "레포지토리명은 'username/repository' 형태이여야 합니다.")
         String repositoryFullName,
+        String folderName,
         LocalDate commitDate
 ) {}
 

@@ -13,6 +13,7 @@ import com.example.backend.auth.api.service.jwt.JwtToken;
 import com.example.backend.auth.api.service.oauth.OAuthService;
 import com.example.backend.auth.api.service.oauth.response.OAuthResponse;
 import com.example.backend.auth.api.service.rank.RankingService;
+import com.example.backend.auth.api.service.rank.event.UserScoreSaveEvent;
 import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.auth.api.service.token.RefreshTokenService;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -31,6 +32,7 @@ import com.example.backend.study.api.service.github.GithubApiTokenService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -53,6 +55,7 @@ public class AuthService {
     private final RankingService rankingService;
     private final FcmTokenRepository fcmTokenRepository;
     private final GithubApiTokenService githubApiTokenService;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public AuthLoginResponse login(UserPlatformType platformType, String code, String state) {
@@ -80,19 +83,13 @@ public class AuthService {
 
                     log.info(">>>> [ UNAUTH 권한으로 사용자를 DB에 등록합니다. 이후 회원가입이 필요합니다 ] <<<<");
 
-                    User user = userRepository.save(saveUser);
-
-                    // 깃허브 api 토큰 저장
-                    githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), user.getId());
-
-                    return user;
+                    return userRepository.save(saveUser);
                 });
 
-        /*
-            DB에 저장된 사용자 정보를 기반으로 JWT 토큰을 발급
-            * JWT 토큰을 요청시에 담아 보내면 JWT 토큰 인증 필터에서 Security Context에 인증된 사용자로 등록
-            TODO : JWT 재발급을 위한 Refresh 토큰은 Redis에서 관리할 예정입니다.
-         */
+        // 깃허브 api 토큰 저장
+        githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), findUser.getId());
+
+        // JWT 토큰 생성
         JwtToken jwtToken = generateJwtToken(findUser);
 
         // JWT 토큰과 권한 정보를 담아 반환
@@ -196,6 +193,12 @@ public class AuthService {
 
         // JWT Access Token, Refresh Token 재발급
         JwtToken tokens = generateJwtToken(findUser);
+
+        // 유저점수 이벤트 발생
+        eventPublisher.publishEvent(UserScoreSaveEvent.builder()
+                .userid(findUser.getId())
+                .score(10)
+                .build());
 
         return AuthLoginResponse.builder()
                 .accessToken(tokens.getAccessToken())

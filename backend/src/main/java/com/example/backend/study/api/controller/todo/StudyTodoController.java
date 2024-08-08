@@ -115,8 +115,8 @@ public class StudyTodoController {
         return ResponseEntity.ok().body(studyTodoService.readStudyTodoStatus(studyInfoId, todoId));
     }
 
-    // 가장 마감일이 빠른 Todo의 진행률 조회
-    @ApiResponse(responseCode = "200", description = "마감일이 가장 가까운 Todo의 진행률 조회", content = @Content(schema = @Schema(implementation = StudyTodoProgressResponse.class)))
+    // 가장 마감일이 빠른 Todo의 정보와 진행률 조회
+    @ApiResponse(responseCode = "200", description = "마감일이 가장 가까운 Todo의 정보와 진행률 조회", content = @Content(schema = @Schema(implementation = StudyTodoProgressResponse.class)))
     @GetMapping("/{studyInfoId}/todo/progress")
     public ResponseEntity<StudyTodoProgressResponse> readStudyTodoProgress(@AuthenticationPrincipal User user,
                                                                            @PathVariable(name = "studyInfoId") Long studyInfoId) {

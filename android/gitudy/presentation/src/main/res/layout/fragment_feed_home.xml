@@ -10,42 +10,14 @@
     android:paddingRight="22dp"
     tools:context=".ui.feed.FeedHomeFragment">
 
-    <ImageView
-        android:id="@+id/gitImg"
-        android:layout_width="45dp"
-        android:layout_height="45dp"
-        android:layout_marginTop="55dp"
-        android:src="@drawable/logo_git"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/searchBtn"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="56dp"
-        android:layout_marginRight="8dp"
-        android:src="@drawable/ic_search"
-        app:layout_constraintEnd_toStartOf="@+id/alarmBtn"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageView
-        android:id="@+id/alarmBtn"
-        android:layout_width="36dp"
-        android:layout_height="36dp"
-        android:layout_marginTop="56dp"
-        android:src="@drawable/ic_alarm"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/feedTitleLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="48dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/gitImg">
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
             android:id="@+id/feedTitle"
@@ -54,21 +26,17 @@
             android:layout_height="wrap_content"
             android:text="@string/feed_cnt"
             android:textColor="@color/GS_900"
-
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageButton
-            android:id="@+id/makeNewStudyBtn"
-            style="@style/B7_1"
-            android:layout_width="98dp"
-            android:layout_height="36dp"
-            android:background="@drawable/box_non_stroke_r6"
-            android:backgroundTint="@color/GS_700"
-            android:padding="10dp"
-            android:scaleType="fitCenter"
-            android:src="@drawable/ic_btn_make_study"
-            app:layout_constraintEnd_toEndOf="parent"
+        <TextView
+            android:id="@+id/feedCnt"
+            style="@style/B1_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:textColor="@color/GS_500"
+            app:layout_constraintStart_toEndOf="@+id/feedTitle"
             app:layout_constraintTop_toTopOf="parent" />
 
         <CheckBox
@@ -154,6 +122,7 @@
         android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/feedList"
             android:layout_width="match_parent"

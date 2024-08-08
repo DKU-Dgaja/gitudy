@@ -9,9 +9,13 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
+import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.external.clients.github.GithubApiTokenClient;
@@ -24,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -31,14 +36,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @SuppressWarnings("NonAsciiCharacters")
 class GithubApiServiceTest extends TestConfig {
     private final String REPOSITORY_OWNER = "jusung-c";
-
     private final String REPOSITORY_COLLABORATOR = "rndudals";
-
     private final String REPOSITORY_NAME = "Github-Api-Test";
-    private static final String NEW_TOKEN = "new_token";
-
     private final String REPOSITORY_DESCRIBE = "[gitudy] Github API test repository description";
-
     private final String BRANCH_NAME = "main";
 
     @Value("${github.api.webhookURL}")
@@ -75,6 +75,9 @@ class GithubApiServiceTest extends TestConfig {
     private GithubApiTokenService githubApiTokenService;
 
     @Autowired
+    private GithubApiTokenRepository githubApiTokenRepository;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     @Autowired
@@ -89,6 +92,7 @@ class GithubApiServiceTest extends TestConfig {
         studyInfoRepository.deleteAllInBatch();
         studyMemberRepository.deleteAllInBatch();
         studyTodoMappingRepository.deleteAllInBatch();
+        githubApiTokenRepository.deleteAll();
     }
 
     // 웹에서 테스트 해야 합니다.
@@ -161,6 +165,7 @@ class GithubApiServiceTest extends TestConfig {
 
         assertEquals(ExceptionMessage.GITHUB_API_NO_INVITATIONS_FOUND.getText(), exception.getMessage());
     }
+
     private boolean isWebhookRegistered(GHRepository repository, String webhookUrl) throws IOException {
         List<GHHook> hooks = repository.getHooks();
         return hooks.stream()
@@ -261,6 +266,34 @@ class GithubApiServiceTest extends TestConfig {
         assertEquals(expectedToken, token);
     }
 
+    //    @Test
+    void 투두_폴더_생성_실제_테스트() {
+        // given
+        String testTitle = "[백준] 2557번 Hello World";
+        String testDetail = "기본적인 입출력 문제입니다! 가볍게 풀어보세요.";
+        String testTodoLink = "https://www.acmicpc.net/problem/2557";
+        LocalDate testTodoDate = LocalDate.of(2024, 8, 20);
+        String testRepoName = "TTTEST";
+
+        RepositoryInfo repoInfo = RepositoryInfo.builder()
+                .owner(REPOSITORY_OWNER)
+                .name(testRepoName)
+                .branchName(BRANCH_NAME)
+                .build();
+
+        User user = userRepository.save(UserFixture.generateAuthJusung());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createStudyInfoByRepositoryInfo(user.getId(), repoInfo));
+        StudyTodo todo = studyTodoRepository.save(StudyTodo.builder()
+                .studyInfoId(study.getId())
+                .title(testTitle)
+                .detail(testDetail)
+                .todoLink(testTodoLink)
+                .todoDate(testTodoDate)
+                .build());
+
+        // when
+        githubApiService.createTodoFolder(githubApiToken, todo, repoInfo);
+    }
 
     static class MockGithubApiTokenClients implements GithubApiTokenClient {
         String newToken;

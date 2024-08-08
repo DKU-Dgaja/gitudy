@@ -6,8 +6,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.gson.annotations.SerializedName
+import com.takseha.data.dto.feed.StudyCountResponse
+import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.mystudy.Commit
-import com.takseha.data.dto.mystudy.MyStudyWithTodo
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.dto.mystudy.TodoStatus
@@ -112,14 +113,13 @@ class MainHomeViewModel : ViewModel() {
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
-        val backgroundColorList = listOf("#f8a7a7", "#f8dea6", "#d3f3be", "#85b0e9")
-
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             cursorIdx,
             limit,
             sortBy = "createdDateTime",
             myStudy = true
         )
+        val studyCnt = getStudyCount()?.count ?: -1
 
         if (myStudyListResponse.isSuccessful) {
             val myStudyListInfo = myStudyListResponse.body()!!
@@ -131,51 +131,22 @@ class MainHomeViewModel : ViewModel() {
             if (studies.isEmpty()) {
                 _myStudyState.update {
                     it.copy(
-                        isMyStudiesEmpty = true
+                        isMyStudiesEmpty = true,
+                        studyCnt = studyCnt
                     )
                 }
             } else {
                 val studiesWithTodo = studies.map { study ->
-                    val todo = getFirstTodoInfo(study.id)
-
-                    if (todo != null) {
-                        if (todo.id != -1) {
-                        //    val todoCheckNum = getTodoProgress(study.id)?.completeMemberCount ?: 0
-                            val todoCheckNum = 0
-                            val todoCheck =
-                                if (todoCheckNum == study.maximumMember) TodoStatus.TODO_COMPLETE else TodoStatus.TODO_INCOMPLETE
-                            MyStudyWithTodo(
-                                backgroundColorList[study.id % 4],
-                                study,
-                                todo.title,
-                                todo.todoDate,
-                                todoCheck,
-                                todoCheckNum
-                            )
-                        } else {
-                            MyStudyWithTodo(
-                                backgroundColorList[study.id % 4],
-                                study,
-                                null,
-                                null,
-                                TodoStatus.TODO_EMPTY,
-                                null
-                            )
-                        }
-                    } else {
-                        MyStudyWithTodo(
-                            backgroundColorList[study.id % 4],
-                            study,
-                            null,
-                            null,
-                            TodoStatus.TODO_INCOMPLETE,
-                            null
-                        )
-                    }
+                    val urgentTodo = getUrgentTodoProgress(study.id)
+                    MyStudyWithTodo(
+                        study,
+                        urgentTodo
+                    )
                 }
                 _myStudyState.update {
                     it.copy(
                         myStudiesWithTodo = studiesWithTodo,
+                        studyCnt = studyCnt,
                         isMyStudiesEmpty = false
                     )
                 }
@@ -189,61 +160,41 @@ class MainHomeViewModel : ViewModel() {
         }
     }
 
-    // TODO: getFirstTodoInfo api 관련 수정하기 -> 마감일 임박 투두 불러오기
-    private suspend fun getFirstTodoInfo(studyInfoId: Int): Todo? {
-        val todoInfoResponse = gitudyStudyRepository.getTodoList(
-            studyInfoId,
-            cursorIdx = null,
-            limit = 1
-        )
-
-        if (todoInfoResponse.isSuccessful) {
-            val todoBody = todoInfoResponse.body()!!
-
-            if (todoBody.todoList.isNotEmpty()) {
-                val todo = todoBody.todoList.first()
-                return todo
-            } else {
-                Log.d("MainHomeViewModel", "No To-Do")
-                return Todo(
-                    detail = "No To-Do",
-                    id = -1,
-                    studyInfoId = studyInfoId,
-                    title = "No To-Do",
-                    todoDate = "",
-                    todoCode = "",
-                    todoLink = "",
-                    commitList = listOf()
-                )
-            }
-        } else {
-            Log.e(
-                "MainHomeViewModel",
-                "todoInfoResponse status: ${todoInfoResponse.code()}\ntodoInfoResponse message: ${todoInfoResponse.message()}"
-            )
-        }
-        // 에러 발생 시 null return
-        Log.d("MainHomeViewModel", "Error")
-        return null
-    }
-
-    // TODO: getTodoProgress api 관련 수정
-    private suspend fun getTodoProgress(studyInfoId: Int): TodoProgressResponse? {
-        val todoProgressResponse = gitudyStudyRepository.getTodoProgress(
+    private suspend fun getUrgentTodoProgress(studyInfoId: Int): TodoProgressResponse? {
+        val urgentTodoResponse = gitudyStudyRepository.getTodoProgress(
             studyInfoId
         )
 
-        if (todoProgressResponse.isSuccessful) {
-            return todoProgressResponse.body()
+        if (urgentTodoResponse.isSuccessful) {
+            return urgentTodoResponse.body()
         } else {
             Log.e(
                 "MainHomeViewModel",
-                "todoProgressResponse status: ${todoProgressResponse.code()}\ntodoProgressResponse message: ${todoProgressResponse.message()}"
+                "urgentTodoResponse status: ${urgentTodoResponse.code()}\nurgentTodoResponse message: ${urgentTodoResponse.message()}"
+            )
+        }
+        return null
+    }
+
+    private suspend fun getStudyCount(): StudyCountResponse? {
+        val studyCntResponse = gitudyStudyRepository.getStudyCount(true)
+
+        if (studyCntResponse.isSuccessful) {
+            return studyCntResponse.body()
+        } else {
+            Log.e(
+                "MainHomeViewModel",
+                "studyCntResponse status: ${studyCntResponse.code()}\nstudyCntResponse message: ${studyCntResponse.message()}"
             )
         }
         return null
     }
 }
+
+data class MyStudyWithTodo(
+    val studyInfo: StudyInfo,
+    val urgentTodo: TodoProgressResponse?
+)
 
 data class MainHomeUserInfoUiState(
     var name: String = "",
@@ -258,5 +209,6 @@ data class MainHomeUserInfoUiState(
 
 data class MainHomeMyStudyUiState(
     var myStudiesWithTodo: List<MyStudyWithTodo> = listOf(),
+    var studyCnt: Int = 0,
     var isMyStudiesEmpty: Boolean = false
 )

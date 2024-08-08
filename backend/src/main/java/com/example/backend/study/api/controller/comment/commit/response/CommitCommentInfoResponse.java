@@ -17,9 +17,9 @@ public class CommitCommentInfoResponse {
     private LocalDateTime createdDateTime;
     private LocalDateTime modifiedDateTime;
     private UserInfoResponse userInfoResponse;
-
+    private boolean isMyComment;
     @Builder
-    public CommitCommentInfoResponse(Long id, Long studyCommitId, Long userId, String content, LocalDateTime createdDateTime, LocalDateTime modifiedDateTime, UserInfoResponse userInfoResponse) {
+    public CommitCommentInfoResponse(Long id, Long studyCommitId, Long userId, String content, LocalDateTime createdDateTime, LocalDateTime modifiedDateTime, UserInfoResponse userInfoResponse, boolean isMyComment) {
         this.id = id;
         this.studyCommitId = studyCommitId;
         this.userId = userId;
@@ -27,5 +27,6 @@ public class CommitCommentInfoResponse {
         this.createdDateTime = createdDateTime;
         this.modifiedDateTime = modifiedDateTime;
         this.userInfoResponse = userInfoResponse;
+        this.isMyComment = isMyComment;
     }
 }

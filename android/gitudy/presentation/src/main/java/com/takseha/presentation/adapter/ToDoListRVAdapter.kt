@@ -18,13 +18,15 @@ import com.takseha.presentation.databinding.ItemTodoBinding
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
+class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
+    RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onCommitClick(commit: Commit)
         fun onUpdateClick(view: View, position: Int)
         fun onDeleteClick(view: View, position: Int)
         fun onLinkClick(view: View, position: Int)
     }
+
     var onClickListener: OnClickListener? = null
 
     class ViewHolder(val binding: ItemTodoBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -32,10 +34,9 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
         var todoTitle = binding.todoDetailTitle
         var todoSetDate = binding.todoSetDate
         var todoDetail = binding.todoDetailText
-        var todoCode = binding.todoCode
         var todoLinkBtn = binding.todoLinkBtn
         var moreBtn = binding.moreBtn
-        var commitList = binding.commitList
+        var commitList: RecyclerView = binding.commitList
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -46,12 +47,13 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.todoSetDate.text = LocalDateTime.parse(todoList[position].todoSetDate).toLocalDate().toString()
+        holder.todoSetDate.text =
+            LocalDateTime.parse(todoList[position].todoSetDate).toLocalDate().toString()
         holder.todoTitle.text = todoList[position].title
         holder.todoDate.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
-        holder.todoCode.text = todoList[position].todoCode
-        setCommitList(holder.commitList, todoList[position].commitList)
+//        setCommitList(holder.commitList, todoList[position].commitList)
+        setCommitList(holder, position)
 
         if (todoList[position].todoDate == LocalDate.now().toString()) {
             holder.todoDate.setTextColor(
@@ -72,16 +74,23 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
         }
     }
 
-    private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
-        val commitListRVAdapter = CommitListRVAdapter(context, commitList, this.onClickListener!!)
+//    private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
+//        val commitListRVAdapter = CommitListRVAdapter(context, commitList, this.onClickListener!!)
+//
+//        commitListView.adapter = commitListRVAdapter
+//        commitListView.layoutManager = LinearLayoutManager(context)
+//    }
 
-        commitListView.adapter = commitListRVAdapter
-        commitListView.layoutManager = LinearLayoutManager(context)
+    private fun setCommitList(holder: ViewHolder, position: Int) {
+        holder.commitList.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+        holder.commitList.adapter =
+            CommitListRVAdapter(context, todoList[position].commitList, onClickListener!!)
     }
 
     private fun showPopupMenu(view: View, position: Int) {
         val popup = PopupMenu(context, view)
-        popup.inflate(R.menu.todo_item_menu)
+        popup.inflate(R.menu.update_delete_menu)
 
         popup.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
@@ -90,11 +99,13 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) : Recycl
                     this.onClickListener?.onUpdateClick(view, position)
                     true
                 }
+
                 R.id.menu_delete -> {
                     // 삭제 버튼 클릭 처리
                     this.onClickListener?.onDeleteClick(view, position)
                     true
                 }
+
                 else -> false
             }
         }

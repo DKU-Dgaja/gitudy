@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -106,5 +107,29 @@ public class StudyTodoRepositoryTest extends TestConfig {
         var response = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(study.getId(), cursorIdx, limit);
 
         assertEquals(limit, response.size());
+    }
+
+    @Test
+    void 마감일이_가장_빠른_투두를_성공적으로_조회한다() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        // To do 5개 저장
+        studyTodoRepository.saveAll(List.of(
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "A","A", "A", LocalDate.now().plusDays(1)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "B","B", "B", LocalDate.now().plusDays(2)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "C","C", "C", LocalDate.now().plusDays(3)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "D","D", "D", LocalDate.now().plusDays(4)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "E","E", "E", LocalDate.now().plusDays(5))
+        ));
+
+        // when
+        StudyTodo todo = studyTodoRepository.findStudyTodoByStudyInfoIdWithEarliestDueDate(study.getId()).orElse(null);
+
+        // then
+        assertEquals("A", todo.getTitle());
+        assertEquals("A", todo.getDetail());
+        assertEquals("A", todo.getTodoLink());
     }
 }

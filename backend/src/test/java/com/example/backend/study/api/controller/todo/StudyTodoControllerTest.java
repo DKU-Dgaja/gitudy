@@ -321,11 +321,10 @@ public class StudyTodoControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         var response = StudyTodoProgressResponse.builder()
-                .todoId(1L)
+                .todo(null)
                 .totalMemberCount(10)
                 .completeMemberCount(5)
                 .build();
-
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
