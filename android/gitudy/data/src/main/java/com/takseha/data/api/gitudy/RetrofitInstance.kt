@@ -4,7 +4,6 @@ import android.content.Context
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.takseha.data.BuildConfig
-import com.takseha.data.token.NavigationHandler
 import com.takseha.data.token.TokenInterceptor
 import com.takseha.data.token.TokenManager
 import okhttp3.OkHttpClient
@@ -13,16 +12,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 object RetrofitInstance {
     private lateinit var tokenManager: TokenManager
-    private lateinit var navigationHandler: NavigationHandler
 
-    fun init(context: Context, navigationHandler: NavigationHandler) {
+    fun init(context: Context) {
         tokenManager = TokenManager(context)
-        this.navigationHandler = navigationHandler
     }
 
     private val okHttpClient: OkHttpClient by lazy {
         OkHttpClient.Builder()
-            .addInterceptor(TokenInterceptor(tokenManager, navigationHandler))
+            .addInterceptor(TokenInterceptor(tokenManager))
             .build()
     }
 

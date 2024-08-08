@@ -94,7 +94,7 @@ class TokenManager(context: Context) {
         }
     }
 
-    suspend fun reissueTokens(): ReissueTokenResponse? {
+    suspend fun reissueTokens(): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val token = "Bearer $refreshToken"
@@ -104,14 +104,14 @@ class TokenManager(context: Context) {
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
                     refreshToken = response.body()!!.refreshToken
-                    response.body()
+                    true
                 } else {
                     Log.e("TokenManager", "reissue response status: ${response.code()}\nreissue response message:${response.errorBody()!!.string()}")
-                    null
+                    false
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                null
+                false
             }
         }
     }

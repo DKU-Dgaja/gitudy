@@ -5,30 +5,21 @@ import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
+import okhttp3.ResponseBody
 
 class TokenInterceptor(
-    private val tokenManager: TokenManager,
-    private val navigationHandler: NavigationHandler
+    private val tokenManager: TokenManager
 ) : Interceptor {
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
-
-        // 토큰을 헤더에 추가
         request = addTokenToRequest(request, tokenManager.accessToken)
-
-        // 원래 요청을 실행
         val response = chain.proceed(request)
-
         if (response.code() == 401) {
             synchronized(this) {
-                response.close()    // 이전 response 종료
-                val newToken = runBlocking { tokenManager.reissueTokens() }
-                Log.d("TokenInterceptor", newToken.toString())
-                if (newToken != null) {
-                    request = addTokenToRequest(request, newToken.accessToken)
+                val isReissueSucceed = runBlocking { tokenManager.reissueTokens() }
+                if (isReissueSucceed) {
+                    request = addTokenToRequest(request, tokenManager.accessToken)
                     return chain.proceed(request)
-                } else {
-                    // todo: 토큰 자동 재발급에 실패했을 때, 로그인 유효기간이 만료되어 로그인 화면으로 이동합니다. 같은 팝업창 띄우고, 해당 팝업창 종료 시 로그인 화면으로 이동하도록 하는 로직 구현
                 }
             }
         }
