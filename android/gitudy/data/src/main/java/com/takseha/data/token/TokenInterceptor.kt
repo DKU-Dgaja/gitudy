@@ -14,7 +14,7 @@ class TokenInterceptor(
         var request = chain.request()
         request = addTokenToRequest(request, tokenManager.accessToken)
         val response = chain.proceed(request)
-        if (response.code() == 401) {
+        if (response.code() == 401 || response.code() == 403) {
             synchronized(this) {
                 val isReissueSucceed = runBlocking { tokenManager.reissueTokens() }
                 if (isReissueSucceed) {
