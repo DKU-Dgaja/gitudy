@@ -29,4 +29,33 @@ class MainHomeAlertViewModel : ViewModel() {
             )
         }
     }
+
+    fun deleteAllNotice(cursorTime: String?, limit: Long) = viewModelScope.launch  {
+        val emptyListResponse = gitudyNoticeRepository.deleteAllNotice()
+
+        if (emptyListResponse.isSuccessful) {
+            getNoticeList(cursorTime, limit)
+        } else {
+            Log.e(
+                "MainHomeAlertViewModel",
+                "emptyListResponse status: ${emptyListResponse.code()}\nemptyListResponse message: ${emptyListResponse.message()}"
+            )
+        }
+    }
+
+    fun deleteNotice(id: String, cursorTime: String?, limit: Long) = viewModelScope.launch  {
+        val deleteNoticeListResponse = gitudyNoticeRepository.deleteNotice(id)
+
+        if (deleteNoticeListResponse.isSuccessful) {
+            getNoticeList(cursorTime, limit)
+            Log.d(
+                "MainHomeAlertViewModel",
+                "deleteNoticeListResponse status: ${deleteNoticeListResponse.code()}")
+        } else {
+            Log.e(
+                "MainHomeAlertViewModel",
+                "deleteNoticeListResponse status: ${deleteNoticeListResponse.code()}\ndeleteNoticeListResponse message: ${deleteNoticeListResponse.message()}"
+            )
+        }
+    }
 }

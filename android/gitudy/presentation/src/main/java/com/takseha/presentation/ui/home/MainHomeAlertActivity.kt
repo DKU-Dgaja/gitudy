@@ -9,10 +9,13 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.home.Notice
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.NoticeListRVAdapter
+import com.takseha.presentation.databinding.ActivityAddTodoBinding
 import com.takseha.presentation.databinding.ActivityMainHomeAlertBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
 import com.takseha.presentation.viewmodel.home.MainHomeAlertViewModel
@@ -26,13 +29,18 @@ class MainHomeAlertActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_home_alert)
-        window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
+        setBinding()
+        window.statusBarColor = ContextCompat.getColor(this, R.color.WHITE)
 
         viewModel.getNoticeList(null, 50)
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
-                setNoticeList(it)
+                if (it.isNotEmpty()) setNoticeList(it)
             }
+        }
+
+        binding.backBtn.setOnClickListener {
+            finish()
         }
     }
 
@@ -41,6 +49,26 @@ class MainHomeAlertActivity : AppCompatActivity() {
             val noticeListRVAdapter = NoticeListRVAdapter(this@MainHomeAlertActivity, noticeList)
             alertList.adapter = noticeListRVAdapter
             alertList.layoutManager = LinearLayoutManager(this@MainHomeAlertActivity)
+
+            // ItemTouchHelper 설정. 스와이프하여 알림 삭제
+            val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+                override fun onMove(
+                    recyclerView: RecyclerView,
+                    viewHolder: RecyclerView.ViewHolder,
+                    target: RecyclerView.ViewHolder
+                ): Boolean {
+                    return false
+                }
+
+                override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                    val position = viewHolder.getBindingAdapterPosition()
+                    val noticeId = noticeList[position].id
+                    viewModel.deleteNotice(noticeId, null, 50)
+                }
+            }
+
+            val itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+            itemTouchHelper.attachToRecyclerView(alertList)
 
             clickNoticeItem(noticeListRVAdapter, noticeList)
         }
@@ -64,5 +92,11 @@ class MainHomeAlertActivity : AppCompatActivity() {
                 startActivity(intent)
             }
         }
+    }
+
+    private fun setBinding() {
+        binding = ActivityMainHomeAlertBinding.inflate(layoutInflater)
+        val view = binding.root
+        setContentView(view)
     }
 }
