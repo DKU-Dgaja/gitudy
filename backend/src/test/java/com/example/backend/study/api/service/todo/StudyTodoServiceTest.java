@@ -288,10 +288,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
 
         assertNotNull(responses.getTodoList().get(0).getTodoFolderName());
         assertNotNull(responses.getTodoList().get(1).getTodoFolderName());
-
-//        System.out.println("responses.getTodoList().get(0).getTodoCode(); = " + responses.getTodoList().get(0).getTodoCode());
-//        System.out.println("responses.getTodoList().get(1).getTodoCode(); = " + responses.getTodoList().get(1).getTodoCode());
-
+        
         // 커밋 리스트 검증
         assertEquals(1, responses.getTodoList().get(0).getCommits().size());
         assertEquals(commit1.getCommitSHA(), responses.getTodoList().get(0).getCommits().get(0).getCommitSHA());
