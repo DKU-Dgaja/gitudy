@@ -12,7 +12,7 @@ class GitudyNoticeRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyNoticeService::class.java)
 
     suspend fun getNoticeList(
-        cursorTime: String,
+        cursorTime: String?,
         limit: Long
     ) = client.getNoticeList(cursorTime, limit)
 

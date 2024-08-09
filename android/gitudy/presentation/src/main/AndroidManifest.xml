@@ -6,9 +6,12 @@
 
     <application>
         <activity
+            android:name=".ui.home.MainHomeAlertActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.mystudy.StudyCommentBoardActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.mystudy.CommitConventionActivity"
             android:exported="false"
@@ -16,7 +19,7 @@
         <activity
             android:name=".ui.feed.MakeStudyActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize"/>
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.auth.SocialLoginCompleteActivity"
             android:exported="false" />

@@ -10,7 +10,7 @@ import retrofit2.http.Query
 interface GitudyNoticeService {
     @GET("/notice")
     suspend fun getNoticeList(
-        @Query("cursorTime") cursorTime: String,
+        @Query("cursorTime") cursorTime: String?,
         @Query("limit") limit: Long
     ): Response<NoticeResponse>
 
