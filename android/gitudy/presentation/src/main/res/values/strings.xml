@@ -28,6 +28,7 @@
     <!-- Strings related to home -->
     <string name="home_my_rank">활동점수 %d점  |  랭킹 %d위</string>
     <string name="home_recommend">새로운 스터디를\n시작해보세요</string>
+    <string name="notice_alert_info">%s • %s</string>
 
 
     <!-- Strings related to study -->

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingTop="16dp"
+            android:paddingBottom="16dp"
+            android:layout_weight="1">
+
+            <TextView
+                android:id="@+id/dateText"
+                style="@style/B7_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2024. 1. 29 13:00"
+                android:textColor="@color/GS_700" />
+            <TextView
+                android:id="@+id/alertTitle"
+                style="@style/B5_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="[단국알고깃터디] 스터디 가입 신청"
+                android:textColor="@color/BLACK"
+                android:layout_marginTop="8dp"/>
+            <TextView
+                android:id="@+id/alertContent"
+                style="@style/B6_2"
+                android:layout_marginTop="8dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="홍찬희님이 스터디를 신청했습니다\n프로필과 메시지를 확인 후, 수락해주세요!"
+                android:textColor="@color/GS_800" />
+        </LinearLayout>
+        <ImageView
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/ic_arrow"
+            android:layout_gravity="center_vertical"/>
+    </LinearLayout>
+</layout>
