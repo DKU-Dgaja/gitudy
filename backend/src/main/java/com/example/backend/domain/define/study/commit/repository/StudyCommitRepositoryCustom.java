@@ -4,7 +4,6 @@ import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 
 import java.util.List;
-import java.util.Set;
 
 public interface StudyCommitRepositoryCustom {
 
