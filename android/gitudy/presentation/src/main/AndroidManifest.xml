@@ -28,7 +28,8 @@
             android:exported="false" />
         <activity
             android:name=".ui.feed.StudyApplyActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.mystudy.AddTodoActivity"
             android:exported="false"
