@@ -75,11 +75,4 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
                 .toList();
     }
 
-    @Override
-    public Set<String> findStudyCommitShaListByStudyTodoCode(String todoCode) {
-        return new HashSet<>(queryFactory.select(studyCommit.commitSHA)
-                .from(studyCommit)
-                .where(studyCommit.message.startsWith(todoCode))
-                .fetch());
-    }
 }
