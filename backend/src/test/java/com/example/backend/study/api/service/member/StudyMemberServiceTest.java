@@ -87,10 +87,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
     private FcmTokenRepository fcmTokenRepository;
 
     @MockBean
-    private ApplyMemberListener applyMemberListener;
+    private StudyApplyListener applyMemberListener;
 
     @MockBean
-    private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
+    private StudyApplyApproveRefuseListener applyApproveRefuseMemberListener;
 
     @MockBean
     private NotifyMemberListener notifyMemberListener;
@@ -465,7 +465,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
 
         // then
-        verify(applyMemberListener).applyMemberListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
+        verify(applyMemberListener).studyApplyListener(any(ApplyMemberEvent.class)); // applyMemberListener 호출 검증
     }
 
     @Test
@@ -738,7 +738,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
 
         // then
-        verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+        verify(applyApproveRefuseMemberListener, times(1)).studyApplyApproveRefuseListener(any(ApplyApproveRefuseMemberEvent.class));
         // github api가 작동했는지 확인
         verify(githubApiService, times(1)).addCollaborator(any(String.class), any(RepositoryInfo.class), any(String.class));
         verify(githubApiService, times(1)).acceptInvitation(any(String.class), any(String.class));
@@ -796,7 +796,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         studyMemberService.leaderApproveRefuseMember(studyInfo.getId(), waitingMember.getUserId(), approve);
 
         // then
-        verify(applyApproveRefuseMemberListener, times(1)).applyApproveRefuseMemberListener(any(ApplyApproveRefuseMemberEvent.class));
+        verify(applyApproveRefuseMemberListener, times(1)).studyApplyApproveRefuseListener(any(ApplyApproveRefuseMemberEvent.class));
     }
 
     @Test

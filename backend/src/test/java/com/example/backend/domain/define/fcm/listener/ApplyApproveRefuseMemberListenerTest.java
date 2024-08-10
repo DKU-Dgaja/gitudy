@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class ApplyApproveRefuseMemberListenerTest extends TestConfig {
 
     @InjectMocks
-    private ApplyApproveRefuseMemberListener applyApproveRefuseMemberListener;
+    private StudyApplyApproveRefuseListener applyApproveRefuseMemberListener;
 
     @Mock
     private FcmService fcmService;
@@ -43,7 +43,7 @@ public class ApplyApproveRefuseMemberListenerTest extends TestConfig {
         doNothing().when(noticeService).ApplyApproveRefuseMemberNotice(any(ApplyApproveRefuseMemberEvent.class));
 
         // when
-        applyApproveRefuseMemberListener.applyApproveRefuseMemberListener(applyApproveRefuseMemberEvent);
+        applyApproveRefuseMemberListener.studyApplyApproveRefuseListener(applyApproveRefuseMemberEvent);
 
         // then
         verify(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증

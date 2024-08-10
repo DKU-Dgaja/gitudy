@@ -21,7 +21,7 @@ import static org.mockito.Mockito.*;
 
 class TodoUpdateMemberListenerTest extends TestConfig {
     @InjectMocks
-    private TodoUpdateMemberListener todoUpdateMemberListener;
+    private TodoUpdateListener todoUpdateMemberListener;
 
     @Mock
     private FcmService fcmService;
@@ -44,7 +44,7 @@ class TodoUpdateMemberListenerTest extends TestConfig {
         doNothing().when(noticeService).TodoUpdateMemberNotice(any(TodoUpdateMemberEvent.class));
 
         // when
-        todoUpdateMemberListener.todoUpdateMemberListener(todoUpdateMemberEvent);
+        todoUpdateMemberListener.todoUpdateListener(todoUpdateMemberEvent);
 
         // then
         verify(fcmService).sendMessageMultiDevice(any(FcmMultiTokenRequest.class)); // sendMessageMultiDevice 호출 검증

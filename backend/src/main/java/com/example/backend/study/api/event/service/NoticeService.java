@@ -6,6 +6,8 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.notice.NoticeException;
 import com.example.backend.domain.define.notice.Notice;
 import com.example.backend.domain.define.notice.repository.NoticeRepository;
+import com.example.backend.domain.define.study.commit.event.CommitApproveEvent;
+import com.example.backend.domain.define.study.commit.event.CommitRefuseEvent;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.event.NotifyLeaderEvent;
@@ -84,14 +86,14 @@ public class NoticeService {
         Notice notice = Notice.builder()
                 .userId(event.getStudyLeaderId())
                 .studyInfoId(event.getStudyInfoId())
-                .title("[" + event.getStudyTopic() + "] 스터디 신청")
-                .message(event.getName() + "님이 스터디를 신청했습니다.\n" + "프로필과 메시지를 확인 후, 수락해주세요!")
+                .title("[" + event.getStudyTopic() + "] 스터디 가입 신청")
+                .message("새로운 스터디 가입 신청자가 있습니다. 가입 목록 확인 후 , 수락해주세요!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
     }
 
-    // 강퇴 알림 생성 메서드
+    // 강퇴 알림 생성 메서드 *ver2*
     @Transactional
     public void ResignMemberNotice(ResignMemberEvent event) {
         Notice notice = Notice.builder()
@@ -103,7 +105,7 @@ public class NoticeService {
         noticeRepository.save(notice);
     }
 
-    // 탈퇴 알림 생성 메서드
+    // 탈퇴 알림 생성 메서드  *ver2*
     @Transactional
     public void WithdrawalMemberNotice(WithdrawalMemberEvent event) {
         Notice notice = Notice.builder()
@@ -123,12 +125,12 @@ public class NoticeService {
         String title;
         String message;
         if (event.isApprove()) { // 스터디장의 승인여부
-            title = "[ " + event.getStudyTopic() + " ] 스터디 신청";
-            message = String.format("축하합니다! '%s'님 가입이 승인되었습니다!", event.getName());
+            title = "[ " + event.getStudyTopic() + " ] 스터디 가입 완료";
+            message = "스터디 가입이 완료되었습니다. 바로 스터디 활동을 시작해보세요!";
 
         } else {
-            title = "[" + event.getStudyTopic() + "] 스터디 신청";
-            message = String.format("안타깝게도 '%s'님은 가입이 거절되었습니다.", event.getName());
+            title = "[" + event.getStudyTopic() + "] 스터디 가입 실패";
+            message = String.format("'%s'님은 가입이 거절되었습니다.", event.getName());
 
         }
         notice = Notice.builder()
@@ -148,8 +150,8 @@ public class NoticeService {
         for (Long memberId : event.getActivesMemberIds()) {
             Notice notice = Notice.builder()
                     .userId(memberId)
-                    .title("[" + event.getStudyTopic() + "] 새로운 Todo")
-                    .message("메세지 추후 변경 예정")
+                    .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
+                    .message("새로운 TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
                     .localDateTime(LocalDateTime.now())
                     .build();
             noticeRepository.save(notice);
@@ -164,15 +166,15 @@ public class NoticeService {
         for (Long memberId : event.getActivesMemberIds()) {
             Notice notice = Notice.builder()
                     .userId(memberId)
-                    .title("[" + event.getStudyTopic() + "] 스터디의 Todo [" + event.getTodoTitle() + "]가 변경 되었습니다.")
-                    .message("메세지 추후 변경 예정")
+                    .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
+                    .message("TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
                     .localDateTime(LocalDateTime.now())
                     .build();
             noticeRepository.save(notice);
         }
     }
 
-    // 팀장이 팀원에게 알림 생성 메서드
+    // 팀장이 팀원에게 알림 생성 메서드  *ver2*
     @Transactional
     public void NotifyMemberNotice(NotifyMemberEvent event) {
 
@@ -184,8 +186,8 @@ public class NoticeService {
                 .build();
         noticeRepository.save(notice);
     }
-  
-    // 팀원이 팀장에게 알림 생성 메서드
+
+    // 팀원이 팀장에게 알림 생성 메서드  *ver2*
     @Transactional
     public void NotifyLeaderNotice(NotifyLeaderEvent event) {
 
@@ -193,6 +195,33 @@ public class NoticeService {
                 .userId(event.getNotifyUserId())
                 .title("[" + event.getStudyTopic() + "] 스터디 에서 알림")
                 .message(event.getStudyMemberName() + "님의 알림" + event.getMessage())
+                .localDateTime(LocalDateTime.now())
+                .build();
+        noticeRepository.save(notice);
+    }
+
+    // 팀장의 커밋 승인 알림 생성 메서드
+    @Transactional
+    public void StudyCommitApproveNotice(CommitApproveEvent event) {
+
+        Notice notice = Notice.builder()
+                .userId(event.getUserId())
+                .studyInfoId(event.getStudyInfoId())
+                .title("[" + event.getStudyTopic() + "] 커밋 승인")
+                .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대한 커밋이 승인되었습니다.\n팀장의 커밋 리뷰를 확인해보세요!")
+                .localDateTime(LocalDateTime.now())
+                .build();
+        noticeRepository.save(notice);
+    }
+
+    @Transactional
+    public void StudyCommitRefuseNotice(CommitRefuseEvent event) {
+
+        Notice notice = Notice.builder()
+                .userId(event.getUserId())
+                .studyInfoId(event.getStudyInfoId())
+                .title("[" + event.getStudyTopic() + "] 커밋 반려")
+                .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대한 커밋이 반려되었습니다.\n팀장의 커밋 리뷰를 확인해보세요!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
@@ -215,5 +244,5 @@ public class NoticeService {
             throw new NoticeException(ExceptionMessage.NOTICE_NOT_FOUND);
         }
     }
-    
+
 }

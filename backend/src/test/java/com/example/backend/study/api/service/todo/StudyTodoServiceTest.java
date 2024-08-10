@@ -5,7 +5,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.fcm.listener.TodoRegisterMemberListener;
+import com.example.backend.domain.define.fcm.listener.TodoRegisterListener;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.StudyCommitFixture;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
@@ -77,7 +77,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
     private StudyCommitRepository studyCommitRepository;
 
     @MockBean
-    private TodoRegisterMemberListener todoRegisterMemberListener;
+    private TodoRegisterListener todoRegisterMemberListener;
 
     @MockBean
     private GithubApiTokenService githubApiTokenService;
@@ -175,7 +175,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyTodoService.registerStudyTodo(request, studyInfo.getId());
 
         //then
-        verify(todoRegisterMemberListener).todoRegisterMemberListener(any(TodoRegisterMemberEvent.class));
+        verify(todoRegisterMemberListener).todoRegisterListener(any(TodoRegisterMemberEvent.class));
     }
 
     @Test

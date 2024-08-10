@@ -7,12 +7,16 @@ import com.example.backend.common.exception.commit.CommitException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
+import com.example.backend.domain.define.study.commit.event.CommitApproveEvent;
+import com.example.backend.domain.define.study.commit.event.CommitRefuseEvent;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.member.StudyMemberService;
+import com.example.backend.study.api.service.todo.StudyTodoService;
 import com.example.backend.study.api.service.user.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,6 +39,7 @@ public class StudyCommitService {
     private final StudyMemberService studyMemberService;
     private final StudyInfoService studyInfoService;
     private final ApplicationEventPublisher eventPublisher;
+    private final StudyTodoService studyTodoService;
 
     public CommitInfoResponse getCommitDetailsById(Long commitId) {
         // 커밋 조회 예외처리
@@ -86,6 +91,17 @@ public class StudyCommitService {
                 .studyInfoId(commit.getStudyInfoId())
                 .score(2)
                 .build());
+
+        // 투두 정보 조회
+        StudyTodo studyTodo = studyTodoService.findByIdOrThrowStudyTodoException(commit.getStudyTodoId());
+
+        // 커밋 승인 알림 이벤트 발생
+        eventPublisher.publishEvent(CommitApproveEvent.builder()
+                .isPushAlarmYn(user.isPushAlarmYn())
+                .userId(commit.getUserId())
+                .studyInfoId(commit.getStudyInfoId())
+                .studyTopic(studyInfo.getTopic())
+                .studyTodoTopic(studyTodo.getTitle()));
     }
 
     @Transactional
@@ -93,6 +109,21 @@ public class StudyCommitService {
         StudyCommit commit = findStudyCommitByIdOrThrowException(commitId);
 
         commit.rejectCommit(rejectionReason);
+
+        // 유저 정보 조회
+        User user = userService.findUserByIdOrThrowException(commit.getUserId());
+        // 스터디 정보 조회
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(commit.getStudyInfoId());
+        // 투두 정보 조회
+        StudyTodo studyTodo = studyTodoService.findByIdOrThrowStudyTodoException(commit.getStudyTodoId());
+
+        // 커밋 거부 알림 이벤트 발생
+        eventPublisher.publishEvent(CommitRefuseEvent.builder()
+                .isPushAlarmYn(user.isPushAlarmYn())
+                .userId(commit.getUserId())
+                .studyInfoId(commit.getStudyInfoId())
+                .studyTopic(studyInfo.getTopic())
+                .studyTodoTopic(studyTodo.getTitle()));
     }
 
     public List<CommitInfoResponse> selectWaitingCommit(Long studyInfoId) {

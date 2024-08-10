@@ -24,7 +24,7 @@ import static org.mockito.Mockito.*;
 public class TodoRegisterMemberListenerTest extends TestConfig {
 
     @InjectMocks
-    private TodoRegisterMemberListener todoRegisterMemberListener;
+    private TodoRegisterListener todoRegisterMemberListener;
 
     @Mock
     private FcmService fcmService;
@@ -47,7 +47,7 @@ public class TodoRegisterMemberListenerTest extends TestConfig {
         doNothing().when(noticeService).TodoRegisterMemberNotice(any(TodoRegisterMemberEvent.class));
 
         // when
-        todoRegisterMemberListener.todoRegisterMemberListener(todoRegisterMemberEvent);
+        todoRegisterMemberListener.todoRegisterListener(todoRegisterMemberEvent);
 
         // then
         verify(fcmService).sendMessageMultiDevice(any(FcmMultiTokenRequest.class)); // sendMessageMultiDevice 호출 검증

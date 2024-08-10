@@ -19,7 +19,7 @@ import static org.mockito.Mockito.*;
 public class ApplyMemberListenerTest extends TestConfig {
 
     @InjectMocks
-    private ApplyMemberListener applyMemberListener;
+    private StudyApplyListener applyMemberListener;
 
     @Mock
     private FcmService fcmService;
@@ -42,7 +42,7 @@ public class ApplyMemberListenerTest extends TestConfig {
         doNothing().when(noticeService).ApplyMemberNotice(any(ApplyMemberEvent.class));
 
         // when
-        applyMemberListener.applyMemberListener(applyMemberEvent);
+        applyMemberListener.studyApplyListener(applyMemberEvent);
 
         // then
         verify(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class)); // sendMessageSingleDevice 호출 검증

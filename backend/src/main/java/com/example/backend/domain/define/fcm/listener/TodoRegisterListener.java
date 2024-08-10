@@ -1,7 +1,8 @@
 package com.example.backend.domain.define.fcm.listener;
 
+
 import com.example.backend.domain.define.fcm.FcmToken;
-import com.example.backend.domain.define.study.todo.event.TodoUpdateMemberEvent;
+import com.example.backend.domain.define.study.todo.event.TodoRegisterMemberEvent;
 import com.example.backend.study.api.event.FcmMultiTokenRequest;
 import com.example.backend.study.api.event.service.FcmService;
 import com.example.backend.study.api.event.service.NoticeService;
@@ -17,16 +18,17 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TodoUpdateMemberListener {
+public class TodoRegisterListener {
+
     private final FcmService fcmService;
 
     private final NoticeService noticeService;
 
     @Async
     @EventListener
-    public void todoUpdateMemberListener(TodoUpdateMemberEvent event) throws FirebaseMessagingException {
+    public void todoRegisterListener(TodoRegisterMemberEvent event) throws FirebaseMessagingException {
 
-        noticeService.TodoUpdateMemberNotice(event);
+        noticeService.TodoRegisterMemberNotice(event);
 
         if (!event.getPushAlarmYMemberIds().isEmpty()) {
             List<FcmToken> fcmTokens = fcmService.findFcmTokensByIdsOrThrowException(event.getPushAlarmYMemberIds());
@@ -39,8 +41,8 @@ public class TodoUpdateMemberListener {
 
             fcmService.sendMessageMultiDevice(FcmMultiTokenRequest.builder()
                     .tokens(tokens)
-                    .title("[" + event.getStudyTopic() + "] 스터디의 Todo [" + event.getTodoTitle() + "]가 변경 되었습니다.")
-                    .message("메세지 추후 변경 예정")
+                    .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
+                    .message("새로운 TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
                     .build());
         }
     }
