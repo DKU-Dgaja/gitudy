@@ -18,7 +18,7 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TodoRegisterMemberListener {
+public class TodoRegisterListener {
 
     private final FcmService fcmService;
 
@@ -26,7 +26,7 @@ public class TodoRegisterMemberListener {
 
     @Async
     @EventListener
-    public void todoRegisterMemberListener(TodoRegisterMemberEvent event) throws FirebaseMessagingException {
+    public void todoRegisterListener(TodoRegisterMemberEvent event) throws FirebaseMessagingException {
 
         noticeService.TodoRegisterMemberNotice(event);
 
@@ -41,8 +41,8 @@ public class TodoRegisterMemberListener {
 
             fcmService.sendMessageMultiDevice(FcmMultiTokenRequest.builder()
                     .tokens(tokens)
-                    .title("[" + event.getStudyTopic() + "] 새로운 Todo")
-                    .message("메세지 추후 변경 예정")
+                    .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
+                    .message("새로운 TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
                     .build());
         }
     }

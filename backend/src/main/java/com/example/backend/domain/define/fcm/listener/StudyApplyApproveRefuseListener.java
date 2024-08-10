@@ -16,7 +16,7 @@ import org.springframework.stereotype.Component;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class ApplyApproveRefuseMemberListener {
+public class StudyApplyApproveRefuseListener {
 
     private final FcmService fcmService;
 
@@ -25,7 +25,7 @@ public class ApplyApproveRefuseMemberListener {
 
     @Async
     @EventListener
-    public void applyApproveRefuseMemberListener(ApplyApproveRefuseMemberEvent event) throws FirebaseMessagingException {
+    public void studyApplyApproveRefuseListener(ApplyApproveRefuseMemberEvent event) throws FirebaseMessagingException {
 
         noticeService.ApplyApproveRefuseMemberNotice(event);
 
@@ -36,12 +36,12 @@ public class ApplyApproveRefuseMemberListener {
             String message;
 
             if (event.isApprove()) {
-                title = "[" + event.getStudyTopic() + " ] 스터디 신청";
-                message = String.format("축하합니다! '%s'님 가입이 승인되었습니다!", event.getName());
+                title = "[ " + event.getStudyTopic() + " ] 스터디 가입 완료";
+                message = "스터디 가입이 완료되었습니다. 바로 스터디 활동을 시작해보세요!";
 
             } else {
-                title = "[" + event.getStudyTopic() + "] 스터디 신청";
-                message = String.format("안타깝게도 '%s'님은 가입이 거절되었습니다.", event.getName());
+                title = "[" + event.getStudyTopic() + "] 스터디 가입 실패";
+                message = String.format("'%s'님은 가입이 거절되었습니다.", event.getName());
             }
 
             fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()

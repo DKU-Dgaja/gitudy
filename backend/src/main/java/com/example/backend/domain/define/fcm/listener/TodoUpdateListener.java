@@ -17,14 +17,14 @@ import java.util.List;
 @Component
 @RequiredArgsConstructor
 @Slf4j
-public class TodoUpdateMemberListener {
+public class TodoUpdateListener {
     private final FcmService fcmService;
 
     private final NoticeService noticeService;
 
     @Async
     @EventListener
-    public void todoUpdateMemberListener(TodoUpdateMemberEvent event) throws FirebaseMessagingException {
+    public void todoUpdateListener(TodoUpdateMemberEvent event) throws FirebaseMessagingException {
 
         noticeService.TodoUpdateMemberNotice(event);
 
@@ -39,8 +39,8 @@ public class TodoUpdateMemberListener {
 
             fcmService.sendMessageMultiDevice(FcmMultiTokenRequest.builder()
                     .tokens(tokens)
-                    .title("[" + event.getStudyTopic() + "] 스터디의 Todo [" + event.getTodoTitle() + "]가 변경 되었습니다.")
-                    .message("메세지 추후 변경 예정")
+                    .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
+                    .message("TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
                     .build());
         }
     }
