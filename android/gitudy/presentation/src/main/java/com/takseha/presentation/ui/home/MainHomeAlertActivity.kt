@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.View.GONE
 import android.view.View.VISIBLE
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -35,12 +36,25 @@ class MainHomeAlertActivity : AppCompatActivity() {
         viewModel.getNoticeList(null, 50)
         lifecycleScope.launch {
             viewModel.uiState.collectLatest {
-                if (it.isNotEmpty()) setNoticeList(it)
+                if (it != null) {
+                    if (it.isNotEmpty()) {
+                        binding.isNoAlertLayout.visibility = GONE
+                        setNoticeList(it)
+                    }
+                    else {
+                        binding.isNoAlertLayout.visibility = VISIBLE
+                    }
+                }
             }
         }
 
-        binding.backBtn.setOnClickListener {
-            finish()
+        with(binding) {
+            backBtn.setOnClickListener {
+                finish()
+            }
+            deleteAllBtn.setOnClickListener {
+                viewModel.deleteAllNotice(null, 50)
+            }
         }
     }
 

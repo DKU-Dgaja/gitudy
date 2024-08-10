@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class MainHomeAlertViewModel : ViewModel() {
     private var gitudyNoticeRepository = GitudyNoticeRepository()
 
-    private val _uiState = MutableStateFlow<List<Notice>>(emptyList())
+    private val _uiState = MutableStateFlow<List<Notice>?>(null)
     val uiState = _uiState.asStateFlow()
 
     fun getNoticeList(cursorTime: String?, limit: Long) = viewModelScope.launch  {
@@ -25,7 +25,7 @@ class MainHomeAlertViewModel : ViewModel() {
         } else {
             Log.e(
                 "MainHomeAlertViewModel",
-                "noticeListResponse status: ${noticeListResponse.code()}\nnoticeListResponse message: ${noticeListResponse.message()}"
+                "noticeListResponse status: ${noticeListResponse.code()}\nnoticeListResponse message: ${noticeListResponse.errorBody()?.string()}"
             )
         }
     }
@@ -38,7 +38,7 @@ class MainHomeAlertViewModel : ViewModel() {
         } else {
             Log.e(
                 "MainHomeAlertViewModel",
-                "emptyListResponse status: ${emptyListResponse.code()}\nemptyListResponse message: ${emptyListResponse.message()}"
+                "emptyListResponse status: ${emptyListResponse.code()}\nemptyListResponse message: ${emptyListResponse.errorBody()?.string()}"
             )
         }
     }
@@ -54,7 +54,7 @@ class MainHomeAlertViewModel : ViewModel() {
         } else {
             Log.e(
                 "MainHomeAlertViewModel",
-                "deleteNoticeListResponse status: ${deleteNoticeListResponse.code()}\ndeleteNoticeListResponse message: ${deleteNoticeListResponse.message()}"
+                "deleteNoticeListResponse status: ${deleteNoticeListResponse.code()}\ndeleteNoticeListResponse message: ${deleteNoticeListResponse.errorBody()?.string()}"
             )
         }
     }
