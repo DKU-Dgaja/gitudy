@@ -13,6 +13,8 @@ public class ResignMemberEvent {
 
     private boolean isPushAlarmYn;  // fcm 알림여부
 
+    private Long studyInfoId;
+
     private Long resignMemberId;  // 강퇴당한 멤버
 
     private String studyInfoTopic; // 강퇴당한 스터디

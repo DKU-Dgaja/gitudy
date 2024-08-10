@@ -18,5 +18,7 @@ public class TodoRegisterMemberEvent {
 
     private List<Long> pushAlarmYMemberIds;  // isPushAlarmY인 멤버
 
+    private Long studyInfoId;
+
     private String studyTopic; // 스터디 Topic
 }

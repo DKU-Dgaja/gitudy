@@ -13,6 +13,8 @@ public class WithdrawalMemberEvent {
 
     private boolean isPushAlarmYn;  // fcm 알림 여부
 
+    private Long studyInfoId;
+
     private Long studyLeaderId;  // 스터디장 id
 
     private String withdrawalMemberName; // 탈퇴한 멤버 이름

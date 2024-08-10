@@ -16,6 +16,8 @@ public class NotifyLeaderEvent {
 
     private Long notifyUserId;   // 알림받는 UserId
 
+    private Long studyInfoId;
+
     private String studyTopic;   // 알림보내는 스터디
 
     private String studyMemberName;   // 알림보내는 멤버 이름
