@@ -1,7 +1,7 @@
-package com.takseha.data.repository.member
+package com.takseha.data.repository.gitudy
 
 import com.takseha.data.api.gitudy.RetrofitInstance
-import com.takseha.data.api.gitudy.member.GitudyMemberService
+import com.takseha.data.api.gitudy.GitudyMemberService
 import com.takseha.data.dto.feed.MessageRequest
 
 class GitudyMemberRepository {

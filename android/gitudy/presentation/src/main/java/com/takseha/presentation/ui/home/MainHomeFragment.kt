@@ -75,8 +75,14 @@ class MainHomeFragment : Fragment() {
             }
         }
 
-        val characterAnim = AnimationUtils.loadAnimation(context, R.anim.alpha_character)
-        binding.characterImg.startAnimation(characterAnim)
+        with(binding) {
+            val characterAnim = AnimationUtils.loadAnimation(context, R.anim.alpha_character)
+            characterImg.startAnimation(characterAnim)
+            alarmBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
+                startActivity(intent)
+            }
+        }
     }
 
     private fun setViewModel() {

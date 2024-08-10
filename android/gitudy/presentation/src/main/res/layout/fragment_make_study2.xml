@@ -14,7 +14,7 @@
         android:id="@+id/makeStudyTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -307,7 +307,7 @@
         style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/selector_btn_r8_enable"
+        android:background="@drawable/box_non_stroke_r8"
         android:enabled="false"
         android:paddingTop="18dp"
         android:paddingBottom="18dp"

@@ -26,7 +26,7 @@
                 android:id="@+id/topBtnLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="40dp"
+                android:layout_marginTop="20dp"
                 android:gravity="center"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
@@ -49,17 +49,17 @@
                 android:id="@+id/profileTitleLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="113dp"
+                android:layout_marginTop="20dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/topBtnLayout">
 
                 <ImageView
                     android:id="@+id/profileImg"
                     android:layout_width="55dp"
                     android:layout_height="55dp"
                     android:layout_marginRight="16dp"
-                    android:clipToOutline="true"
                     android:background="@drawable/circle_non_stroke"
+                    android:clipToOutline="true"
                     android:src="@drawable/character_bebe_over_130" />
 
                 <LinearLayout
@@ -90,13 +90,13 @@
                 style="@style/B7_2"
                 android:layout_width="53dp"
                 android:layout_height="32dp"
-                android:layout_marginTop="124dp"
+                android:layout_marginTop="30dp"
                 android:background="@drawable/box_stroke_600_r4"
                 android:gravity="center"
                 android:text="수정"
                 android:textColor="@color/GS_600"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/topBtnLayout" />
 
             <androidx.cardview.widget.CardView
                 android:id="@+id/profileBodyLayout"

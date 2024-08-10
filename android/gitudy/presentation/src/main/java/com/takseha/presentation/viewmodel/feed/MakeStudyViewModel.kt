@@ -8,8 +8,8 @@ import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.repository.category.GitudyCategoryRepository
-import com.takseha.data.repository.study.GitudyStudyRepository
+import com.takseha.data.repository.gitudy.GitudyCategoryRepository
+import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

@@ -1,4 +1,4 @@
-package com.takseha.data.api.gitudy.member
+package com.takseha.data.api.gitudy
 
 import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.dto.mystudy.StudyMemberListResponse

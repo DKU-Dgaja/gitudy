@@ -1,4 +1,4 @@
-package com.takseha.data.repository.auth
+package com.takseha.data.repository.github
 
 import com.takseha.data.api.github.GithubService
 import com.takseha.data.api.github.RetrofitInstance

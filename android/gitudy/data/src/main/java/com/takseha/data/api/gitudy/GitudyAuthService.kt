@@ -1,4 +1,4 @@
-package com.takseha.data.api.gitudy.auth
+package com.takseha.data.api.gitudy
 
 import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse

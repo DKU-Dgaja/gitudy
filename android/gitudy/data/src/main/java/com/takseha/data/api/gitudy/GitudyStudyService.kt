@@ -1,4 +1,4 @@
-package com.takseha.data.api.gitudy.study
+package com.takseha.data.api.gitudy
 
 import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest

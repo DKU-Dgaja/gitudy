@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:cardCornerRadius="8dp"
+        android:backgroundTint="@color/GS_400">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingRight="16dp"
+            android:paddingLeft="16dp"
+            android:paddingTop="11dp"
+            android:paddingBottom="11dp"
+            android:gravity="center_vertical">
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginRight="8dp"
+                android:src="@drawable/ic_alert_500"/>
+            <TextView
+                android:id="@+id/snackBarText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="@style/B6_1"
+                android:textColor="@color/WHITE"/>
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+</layout>

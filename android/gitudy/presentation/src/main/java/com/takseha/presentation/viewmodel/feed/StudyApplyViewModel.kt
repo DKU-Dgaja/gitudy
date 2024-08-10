@@ -5,8 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.dto.mystudy.StudyInfoResponse
-import com.takseha.data.repository.member.GitudyMemberRepository
-import com.takseha.data.repository.study.GitudyStudyRepository
+import com.takseha.data.repository.gitudy.GitudyMemberRepository
+import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -19,6 +19,9 @@ class StudyApplyViewModel: ViewModel() {
     private val _uiState = MutableStateFlow(StudyMainInfoState())
     val uiState = _uiState.asStateFlow()
 
+    private val _isApplySucceed = MutableStateFlow<Boolean?>(null)
+    val isApplySucceed = _isApplySucceed.asStateFlow()
+
     fun getStudyInfo(studyInfoId: Int) = viewModelScope.launch {
         val studyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
 
@@ -30,8 +33,6 @@ class StudyApplyViewModel: ViewModel() {
                     studyInfo = studyInfo
                 )
             }
-
-            Log.d("StudyApplyViewModel", "_uiState: ${_uiState.value}")
         } else {
             Log.e(
                 "StudyApplyViewModel",
@@ -47,8 +48,10 @@ class StudyApplyViewModel: ViewModel() {
         val applyStudyResponse = gitudyMemberRepository.applyStudy(studyInfoId, joinCode, request)
 
         if (applyStudyResponse.isSuccessful) {
+            _isApplySucceed.value = true
             Log.d("StudyApplyViewModel", applyStudyResponse.code().toString())
         } else {
+            _isApplySucceed.value = false
             Log.e("StudyApplyViewModel", "applyStudyResponse status: ${applyStudyResponse.code()}\napplyStudyResponse message: ${applyStudyResponse.message()}")
         }
     }
