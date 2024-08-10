@@ -6,6 +6,8 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.notice.NoticeException;
 import com.example.backend.domain.define.notice.Notice;
 import com.example.backend.domain.define.notice.repository.NoticeRepository;
+import com.example.backend.domain.define.study.commit.event.CommitApproveEvent;
+import com.example.backend.domain.define.study.commit.event.CommitRefuseEvent;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.event.NotifyLeaderEvent;
@@ -184,7 +186,7 @@ public class NoticeService {
                 .build();
         noticeRepository.save(notice);
     }
-  
+
     // 팀원이 팀장에게 알림 생성 메서드  *ver2*
     @Transactional
     public void NotifyLeaderNotice(NotifyLeaderEvent event) {
@@ -193,6 +195,33 @@ public class NoticeService {
                 .userId(event.getNotifyUserId())
                 .title("[" + event.getStudyTopic() + "] 스터디 에서 알림")
                 .message(event.getStudyMemberName() + "님의 알림" + event.getMessage())
+                .localDateTime(LocalDateTime.now())
+                .build();
+        noticeRepository.save(notice);
+    }
+
+    // 팀장의 커밋 승인 알림 생성 메서드
+    @Transactional
+    public void StudyCommitApproveNotice(CommitApproveEvent event) {
+
+        Notice notice = Notice.builder()
+                .userId(event.getUserId())
+                .studyInfoId(event.getStudyInfoId())
+                .title("[" + event.getStudyTopic() + "] 커밋 승인")
+                .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대한 커밋이 승인되었습니다.\n팀장의 커밋 리뷰를 확인해보세요!")
+                .localDateTime(LocalDateTime.now())
+                .build();
+        noticeRepository.save(notice);
+    }
+
+    @Transactional
+    public void StudyCommitRefuseNotice(CommitRefuseEvent event) {
+
+        Notice notice = Notice.builder()
+                .userId(event.getUserId())
+                .studyInfoId(event.getStudyInfoId())
+                .title("[" + event.getStudyTopic() + "] 커밋 반려")
+                .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대한 커밋이 반려되었습니다.\n팀장의 커밋 리뷰를 확인해보세요!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
@@ -215,5 +244,5 @@ public class NoticeService {
             throw new NoticeException(ExceptionMessage.NOTICE_NOT_FOUND);
         }
     }
-    
+
 }
