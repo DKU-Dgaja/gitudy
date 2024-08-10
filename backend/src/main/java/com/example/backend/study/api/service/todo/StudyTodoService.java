@@ -56,6 +56,9 @@ public class StudyTodoService {
     // Todo 등록
     @Transactional
     public void registerStudyTodo(StudyTodoRequest studyTodoRequest, Long studyInfoId) {
+
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
         // 스터디에 속한 활동중인 스터디원 조회
         List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
@@ -80,8 +83,6 @@ public class StudyTodoService {
         // FCM 알림을 받을 수 있는 사용자의 ID 추출
         List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
 
-        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
-
         // 투두에 해당하는 폴더를 스터디 레포지토리에 생성
         GithubApiToken token = githubApiTokenService.getToken(studyInfo.getUserId());
         githubApiService.createTodoFolder(token.githubApiToken(), studyTodo, studyInfo.getRepositoryInfo());
@@ -90,6 +91,7 @@ public class StudyTodoService {
         eventPublisher.publishEvent(TodoRegisterMemberEvent.builder()
                 .activesMemberIds(activeMemberUserIds)
                 .pushAlarmYMemberIds(isPushAlarmYUserIds)
+                .studyInfoId(studyInfo.getId())
                 .studyTopic(studyInfo.getTopic())
                 .build());
     }
@@ -109,6 +111,9 @@ public class StudyTodoService {
     // Todo 수정
     @Transactional
     public void updateStudyTodo(StudyTodoUpdateRequest request, Long todoId, Long studyInfoId) {
+
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
         // 스터디에 속한 활동중인 스터디원 조회
         List<StudyMember> studyActiveMembers = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId);
 
@@ -122,8 +127,6 @@ public class StudyTodoService {
                 request.getTodoLink(),
                 request.getTodoDate());
 
-        // 깃허브 api를 사용해 커밋 업데이트
-        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         // 활동중인 멤버들의 userId 추출
         List<Long> activeMemberUserIds = extractUserIds(studyActiveMembers);
@@ -135,6 +138,7 @@ public class StudyTodoService {
         eventPublisher.publishEvent(TodoUpdateMemberEvent.builder()
                 .activesMemberIds(activeMemberUserIds)
                 .pushAlarmYMemberIds(isPushAlarmYUserIds)
+                .studyInfoId(studyInfo.getId())
                 .studyTopic(studyInfo.getTopic())
                 .todoTitle(studyTodo.getTitle())
                 .build());
@@ -145,8 +149,10 @@ public class StudyTodoService {
     @Transactional
     public void deleteStudyTodo(Long todoId, Long studyInfoId) {
 
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+
         // 스터디와 관련된 StudyTodo 조회
-        StudyTodo studyTodo = findByIdWithStudyInfoIdOrThrowStudyTodoException(studyInfoId, todoId);
+        StudyTodo studyTodo = findByIdWithStudyInfoIdOrThrowStudyTodoException(studyInfo.getId(), todoId);
 
         // StudyTodoMapping 테이블에서 todoId로 연결된 레코드 삭제
         studyTodoMappingRepository.deleteByTodoId(studyTodo.getId());
@@ -161,11 +167,11 @@ public class StudyTodoService {
     public StudyTodoListAndCursorIdxResponse readStudyTodoList(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        StudyInfo study = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 
-        List<StudyTodoWithCommitsResponse> studyTodoList = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
+        List<StudyTodoWithCommitsResponse> studyTodoList = studyTodoRepository.findStudyTodoListByStudyInfoId_CursorPaging(studyInfo.getId(), cursorIdx, limit);
 
         StudyTodoListAndCursorIdxResponse response = StudyTodoListAndCursorIdxResponse.builder()
                 .todoList(studyTodoList)

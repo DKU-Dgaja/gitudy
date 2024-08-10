@@ -120,6 +120,7 @@ public class StudyMemberService {
         // 알림 비동기처리
         eventPublisher.publishEvent(ResignMemberEvent.builder()
                 .isPushAlarmYn(resignUser.isPushAlarmYn())
+                .studyInfoId(studyInfo.getId())
                 .resignMemberId(resignUserId)
                 .studyInfoTopic(studyInfo.getTopic())
                 .build());
@@ -151,6 +152,7 @@ public class StudyMemberService {
         // 알림 비동기처리
         eventPublisher.publishEvent(WithdrawalMemberEvent.builder()
                 .isPushAlarmYn(studyLeader.isPushAlarmYn())
+                .studyInfoId(studyInfo.getId())
                 .studyLeaderId(studyInfo.getUserId())
                 .withdrawalMemberName(user.getName())
                 .studyInfoTopic(studyInfo.getTopic())
@@ -296,6 +298,7 @@ public class StudyMemberService {
         eventPublisher.publishEvent(ApplyApproveRefuseMemberEvent.builder()
                 .isPushAlarmYn(applyUser.isPushAlarmYn())
                 .approve(approve)
+                .studyInfoId(studyInfo.getId())
                 .applyUserId(applyUserId)
                 .studyTopic(studyInfo.getTopic())
                 .name(applyUser.getName())
@@ -343,6 +346,7 @@ public class StudyMemberService {
         eventPublisher.publishEvent(NotifyMemberEvent.builder()
                 .isPushAlarmYn(notifyUser.isPushAlarmYn())
                 .notifyUserId(notifyUserId)
+                .studyInfoId(studyInfo.getId())
                 .studyTopic(studyInfo.getTopic())
                 .message(messageRequest.getMessage())
                 .build());
@@ -363,6 +367,7 @@ public class StudyMemberService {
         eventPublisher.publishEvent(NotifyLeaderEvent.builder()
                 .isPushAlarmYn(notifyUser.isPushAlarmYn())
                 .notifyUserId(studyInfo.getUserId())
+                .studyInfoId(studyInfo.getId())
                 .studyMemberName(userInfo.getName())
                 .message(messageRequest.getMessage())
                 .build());
