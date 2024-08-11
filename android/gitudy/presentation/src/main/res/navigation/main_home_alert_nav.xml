@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_home_alert_nav"
+    app:startDestination="@id/mainHomeAlertFragment">
+
+    <fragment
+        android:id="@+id/mainHomeAlertFragment"
+        android:name="com.takseha.presentation.ui.home.MainHomeAlertFragment"
+        android:label="fragment_main_home_alert"
+        tools:layout="@layout/fragment_main_home_alert" >
+        <action
+            android:id="@+id/action_mainHomeAlertFragment_to_studyApplyMemberListFragment2"
+            app:destination="@id/studyApplyMemberListFragment2" />
+    </fragment>
+    <fragment
+        android:id="@+id/studyApplyMemberListFragment2"
+        android:name="com.takseha.presentation.ui.mystudy.StudyApplyMemberListFragment"
+        android:label="fragment_study_apply_member_list"
+        tools:layout="@layout/fragment_study_apply_member_list" >
+        <action
+            android:id="@+id/action_studyApplyMemberListFragment2_to_memberProfileFragment"
+            app:destination="@id/memberProfileFragment"
+            app:enterAnim="@anim/vertical_enter"
+            app:exitAnim="@anim/vertical_exit" />
+    </fragment>
+    <fragment
+        android:id="@+id/memberProfileFragment"
+        android:name="com.takseha.presentation.ui.mystudy.MemberProfileFragment"
+        android:label="fragment_member_profile"
+        tools:layout="@layout/fragment_member_profile" />
+</navigation>

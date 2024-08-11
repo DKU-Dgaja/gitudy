@@ -31,6 +31,7 @@
     <string name="home_recommend">새로운 스터디를\n시작해보세요</string>
     <string name="notice_alert_info">%s • %s</string>
     <string name="notice_no_alert">새로운 알림이 없어요</string>
+    <string name="notice_no_study_apply_member">새로운 가입 신청자가 없어요</string>
 
 
     <!-- Strings related to study -->
