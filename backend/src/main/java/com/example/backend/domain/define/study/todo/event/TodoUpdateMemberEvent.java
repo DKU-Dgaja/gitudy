@@ -17,6 +17,8 @@ public class TodoUpdateMemberEvent {
 
     private List<Long> pushAlarmYMemberIds;  // isPushAlarmY인 멤버
 
+    private Long studyInfoId;
+
     private String studyTopic; // 스터디 Topic
 
     private String todoTitle; // 변경 전 투두 이름

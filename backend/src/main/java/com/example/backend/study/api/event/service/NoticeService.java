@@ -98,8 +98,9 @@ public class NoticeService {
     public void ResignMemberNotice(ResignMemberEvent event) {
         Notice notice = Notice.builder()
                 .userId(event.getResignMemberId())
-                .title("알림 - 추후 변경예정")
-                .message("[" + event.getStudyInfoTopic() + "] 스터디에서 강퇴 되었습니다.")
+                .studyInfoId(event.getStudyInfoId())
+                .title("[" + event.getStudyInfoTopic() + "] 스터디 알림")
+                .message("[" + event.getStudyInfoTopic() + "]에서 강퇴 되었습니다.")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
@@ -110,7 +111,8 @@ public class NoticeService {
     public void WithdrawalMemberNotice(WithdrawalMemberEvent event) {
         Notice notice = Notice.builder()
                 .userId(event.getStudyLeaderId())
-                .title("[" + event.getStudyInfoTopic() + "] 탈퇴")
+                .studyInfoId(event.getStudyInfoId())
+                .title("[" + event.getStudyInfoTopic() + "] 스터디 알림")
                 .message(event.getWithdrawalMemberName() + "님이 탈퇴 하셨습니다.")
                 .localDateTime(LocalDateTime.now())
                 .build();
@@ -135,6 +137,7 @@ public class NoticeService {
         }
         notice = Notice.builder()
                 .userId(event.getApplyUserId())
+                .studyInfoId(event.getStudyInfoId())
                 .title(title)
                 .message(message)
                 .localDateTime(LocalDateTime.now())
@@ -150,6 +153,7 @@ public class NoticeService {
         for (Long memberId : event.getActivesMemberIds()) {
             Notice notice = Notice.builder()
                     .userId(memberId)
+                    .studyInfoId(event.getStudyInfoId())
                     .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
                     .message("새로운 TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
                     .localDateTime(LocalDateTime.now())
@@ -166,6 +170,7 @@ public class NoticeService {
         for (Long memberId : event.getActivesMemberIds()) {
             Notice notice = Notice.builder()
                     .userId(memberId)
+                    .studyInfoId(event.getStudyInfoId())
                     .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
                     .message("TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
                     .localDateTime(LocalDateTime.now())
@@ -180,6 +185,7 @@ public class NoticeService {
 
         Notice notice = Notice.builder()
                 .userId(event.getNotifyUserId())
+                .studyInfoId(event.getStudyInfoId())
                 .title("[" + event.getStudyTopic() + "] 스터디 에서 알림")
                 .message(event.getMessage())
                 .localDateTime(LocalDateTime.now())
@@ -193,6 +199,7 @@ public class NoticeService {
 
         Notice notice = Notice.builder()
                 .userId(event.getNotifyUserId())
+                .studyInfoId(event.getStudyInfoId())
                 .title("[" + event.getStudyTopic() + "] 스터디 에서 알림")
                 .message(event.getStudyMemberName() + "님의 알림" + event.getMessage())
                 .localDateTime(LocalDateTime.now())
