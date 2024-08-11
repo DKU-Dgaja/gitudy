@@ -170,7 +170,7 @@ public class StudyInfoService {
         StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
-        return getStudyInfoDetailResponse(studyInfo, categoryNames, userId);
+        return getStudyInfoDetailResponse(studyInfo, categoryNames, userId, studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(userId, studyInfoId));
     }
 
     // 마이/전체스터디 개수 조회
@@ -181,8 +181,8 @@ public class StudyInfoService {
     }
 
     // StudyInfoDetailResponse를 생성해주는 함수
-    private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<String> categoryNames, Long userId) {
-        return StudyInfoDetailResponse.of(studyInfo, categoryNames, userId);
+    private static StudyInfoDetailResponse getStudyInfoDetailResponse(StudyInfo studyInfo, List<String> categoryNames, Long userId, boolean isWaiting) {
+        return StudyInfoDetailResponse.of(studyInfo, categoryNames, userId, isWaiting);
     }
 
     // Map<STUDY_INFO_ID, List<STUDY_CATEGORY_NAME>> 생성해주는 함수
