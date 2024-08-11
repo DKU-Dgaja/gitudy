@@ -45,7 +45,7 @@ class FeedHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getFeedList(null, 10, "createdDateTime")
             viewModel.uiState.collectLatest {
-                binding.feedCnt.text = it.studyCnt.toString()
+                binding.feedCnt.text = if (it.studyCnt == null) "" else it.studyCnt.toString()
                 if (!it.isFeedEmpty) {
                     binding.isNoStudyLayout.visibility = View.GONE
                     setFeedList(it.studyInfoList, it.studyCategoryMappingMap)

@@ -36,7 +36,7 @@ class StudyApplyViewModel: ViewModel() {
         } else {
             Log.e(
                 "StudyApplyViewModel",
-                "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.message()}"
+                "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.errorBody()?.string()}"
             )
         }
     }
@@ -52,7 +52,17 @@ class StudyApplyViewModel: ViewModel() {
             Log.d("StudyApplyViewModel", applyStudyResponse.code().toString())
         } else {
             _isApplySucceed.value = false
-            Log.e("StudyApplyViewModel", "applyStudyResponse status: ${applyStudyResponse.code()}\napplyStudyResponse message: ${applyStudyResponse.message()}")
+            Log.e("StudyApplyViewModel", "applyStudyResponse status: ${applyStudyResponse.code()}\napplyStudyResponse message: ${applyStudyResponse.errorBody()?.string()}")
+        }
+    }
+
+    fun withdrawApplyStudy(studyInfoId: Int) = viewModelScope.launch {
+        val withdrawStudyResponse = gitudyMemberRepository.withdrawApplyStudy(studyInfoId)
+
+        if (withdrawStudyResponse.isSuccessful) {
+            Log.d("StudyApplyViewModel", withdrawStudyResponse.code().toString())
+        } else {
+            Log.e("StudyApplyViewModel", "withdrawStudyResponse status: ${withdrawStudyResponse.code()}\nwithdrawStudyResponse message: ${withdrawStudyResponse.errorBody()?.string()}")
         }
     }
 }

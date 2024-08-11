@@ -80,6 +80,6 @@ class FeedHomeViewModel : ViewModel() {
 data class FeedHomeUiState(
     var studyInfoList: List<StudyInfo> = listOf(),
     var studyCategoryMappingMap: Map<Int, List<String>> = mapOf(),
-    var studyCnt: Int = 0,
+    var studyCnt: Int? = null,
     var isFeedEmpty: Boolean = false
 )

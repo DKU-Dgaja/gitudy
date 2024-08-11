@@ -13,6 +13,10 @@ class GitudyMemberRepository {
         request: MessageRequest
     ) = client.applyStudy(studyInfoId, joinCode, request)
 
+    suspend fun withdrawApplyStudy(
+        studyInfoId: Int
+    ) = client.withdrawApplyStudy(studyInfoId)
+
     suspend fun notifyToLeader(
         studyInfoId: Int,
         request: MessageRequest

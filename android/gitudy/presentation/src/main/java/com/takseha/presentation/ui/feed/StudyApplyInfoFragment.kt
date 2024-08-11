@@ -1,10 +1,11 @@
 package com.takseha.presentation.ui.feed
 
-import android.content.res.ColorStateList
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -53,7 +54,6 @@ class StudyApplyInfoFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 setStudyInfo(studyInfoId, studyImgColor!!, it.studyInfo)
-                // TODO: isAlreadyApplied 필드 확인하고, 이미 신청해놓은 스터디이면 신청 취소버튼 나타나게 처리!
             }
         }
 
@@ -65,35 +65,45 @@ class StudyApplyInfoFragment : Fragment() {
                 it.findNavController()
                     .navigate(R.id.action_studyApplyInfoFragment_to_studyApplyMessageFragment)
             }
+            applyCancelBtn.setOnClickListener {
+                showWithdrawApplyStudyDialog(studyInfoId)
+            }
             // TODO: 스터디 공유 기능 추후 구현
 //            studyLinkCopyBtn.setOnClickListener {
 //            }
         }
     }
 
-    private fun setStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {
+    private fun setStudyInfo(studyInfoId: Int, studyImgColor: String, studyInfo: StudyInfoResponse) {
         with(binding) {
             studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
-            studyName.text = myStudyInfo.topic
-            studyDetail.text = myStudyInfo.info
-            studyRuleText.text = setCommitRule(myStudyInfo.periodType)
-            isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
+            if (studyInfo.isWaiting) {
+                applyCancelBtn.visibility = VISIBLE
+                studyEnterBtn.visibility = GONE
+            } else {
+                applyCancelBtn.visibility = GONE
+                studyEnterBtn.visibility = VISIBLE
+            }
+            studyName.text = studyInfo.topic
+            studyDetail.text = studyInfo.info
+            studyRuleText.text = setCommitRule(studyInfo.periodType)
+            isStudyOpenText.text = setStudyStatus(studyInfo.status)
             studyRankText.text = getString(
-                R.string.study_team_rank, 300 - studyInfoId * 10,
+                R.string.study_team_rank, studyInfo.score,
                 studyInfoId - 15
             )
             teamRankFullText.text = getString(
                 R.string.study_team_rank_full,
                 if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2,
-                if (myStudyInfo.lastCommitDay == null) "없음" else myStudyInfo.lastCommitDay
+                if (studyInfo.lastCommitDay == null) "없음" else studyInfo.lastCommitDay
             )
-            studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
+            studyGithubLinkText.text = studyInfo.githubLinkInfo.branchName
             studyMemberCntText.text = String.format(
                 getString(R.string.feed_member_number),
-                myStudyInfo.currentMember,
-                myStudyInfo.maximumMember
+                studyInfo.currentMember,
+                studyInfo.maximumMember
             )
-            setCategoryList(myStudyInfo.categoryNames)
+            setCategoryList(studyInfo.categoryNames)
         }
     }
 
@@ -119,6 +129,17 @@ class StudyApplyInfoFragment : Fragment() {
             tagList.adapter = categoryInStudyRVAdapter
             tagList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
+    }
+
+    private fun showWithdrawApplyStudyDialog(studyInfoId: Int) {
+        val customDialog = CustomDialog(requireContext())
+        customDialog.setAlertText(getString(R.string.feed_apply_study_cancel))
+        customDialog.setOnConfirmClickListener {
+            viewModel.withdrawApplyStudy(studyInfoId)
+            binding.applyCancelBtn.visibility = GONE
+            binding.studyEnterBtn.visibility = VISIBLE
+        }
+        customDialog.show()
     }
 
     override fun onDestroyView() {
