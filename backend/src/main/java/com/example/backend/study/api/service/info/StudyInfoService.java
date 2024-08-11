@@ -170,7 +170,7 @@ public class StudyInfoService {
         StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
 
         List<String> categoryNames = studyCategoryRepository.findCategoryNameListByStudyInfoJoinCategoryMapping(studyInfoId);
-        return getStudyInfoDetailResponse(studyInfo, categoryNames, userId, studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(userId, studyInfoId));
+        return getStudyInfoDetailResponse(studyInfo, categoryNames, userId, studyMemberRepository.isWaitingStudyMemberByUserIdAndStudyInfoId(userId, studyInfoId));
     }
 
     // 마이/전체스터디 개수 조회
