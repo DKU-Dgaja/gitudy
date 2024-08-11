@@ -293,7 +293,6 @@
                 android:background="@drawable/box_non_stroke_r8"
                 android:backgroundTint="#F3F5F7"
                 android:fontFamily="@font/pretendard_semibold"
-                android:movementMethod="android.text.method.ScrollingMovementMethod"
                 android:overScrollMode="always"
                 android:paddingLeft="18dp"
                 android:paddingTop="20dp"
