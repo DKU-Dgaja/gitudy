@@ -29,4 +29,6 @@ public class StudyMemberApplyResponse {
 
     private int point;  // 포인트
 
+    private boolean profilePublicYn; // 프로필 공개 여무
+
 }
