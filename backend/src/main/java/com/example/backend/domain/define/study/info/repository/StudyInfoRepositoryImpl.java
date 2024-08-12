@@ -122,7 +122,8 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
 
         if (myStudy) {
             query.join(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
-                    .where(studyMember.userId.eq(userId));
+                    .where(studyMember.userId.eq(userId)
+                            .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)));
         }
 
         return query.fetchOne().intValue(); // 결과를 int로 변환하여 리턴
