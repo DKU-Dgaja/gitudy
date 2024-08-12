@@ -16,6 +16,8 @@ public class StudyMemberApplyListAndCursorIdxResponse {
 
     private Long cursorIdx;
 
+    private String studyTopic;
+
     public void setNextCursorIdx() {
         cursorIdx = applyList == null || applyList.isEmpty() ?
                 0L : applyList.get(applyList.size() - 1).getId();
