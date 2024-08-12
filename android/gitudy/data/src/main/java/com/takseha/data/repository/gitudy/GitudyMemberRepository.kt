@@ -7,6 +7,12 @@ import com.takseha.data.dto.feed.MessageRequest
 class GitudyMemberRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyMemberService::class.java)
 
+    suspend fun getStudyApplyMemberList(
+        studyInfoId: Int,
+        cursorIdx: Long?,
+        limit: Long
+    ) = client.getStudyApplyMemberList(studyInfoId, cursorIdx, limit)
+
     suspend fun applyStudy(
         studyInfoId: Int,
         joinCode: String,

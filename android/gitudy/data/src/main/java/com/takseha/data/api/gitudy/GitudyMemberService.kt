@@ -1,6 +1,7 @@
 package com.takseha.data.api.gitudy
 
 import com.takseha.data.dto.feed.MessageRequest
+import com.takseha.data.dto.mystudy.StudyApplyMemberListResponse
 import com.takseha.data.dto.mystudy.StudyMemberListResponse
 import retrofit2.Response
 import retrofit2.http.Body
@@ -11,6 +12,13 @@ import retrofit2.http.Path
 import retrofit2.http.Query
 
 interface GitudyMemberService {
+    @GET("/member/{studyInfoId}/apply")
+    suspend fun getStudyApplyMemberList(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Query("cursorIdx") cursorIdx: Long?,
+        @Query("limit") limit: Long,
+    ): Response<StudyApplyMemberListResponse>
+
     @POST("/member/{studyInfoId}/apply")
     suspend fun applyStudy(
         @Path("studyInfoId") studyInfoId: Int,
