@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Builder
 @AllArgsConstructor
@@ -30,5 +32,7 @@ public class StudyMemberApplyResponse {
     private int point;  // 포인트
 
     private boolean profilePublicYn; // 프로필 공개 여무
+
+    private LocalDateTime createdDateTime; // 가입 신청 시간
 
 }

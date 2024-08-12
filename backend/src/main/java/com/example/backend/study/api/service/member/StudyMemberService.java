@@ -310,7 +310,7 @@ public class StudyMemberService {
     public StudyMemberApplyListAndCursorIdxResponse applyListStudyMember(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 
@@ -325,6 +325,7 @@ public class StudyMemberService {
 
         StudyMemberApplyListAndCursorIdxResponse response = StudyMemberApplyListAndCursorIdxResponse.builder()
                 .applyList(applyList)
+                .studyTopic(studyInfo.getTopic())
                 .build();
 
         response.setNextCursorIdx();
