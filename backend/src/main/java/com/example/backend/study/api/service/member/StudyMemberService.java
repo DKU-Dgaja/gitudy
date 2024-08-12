@@ -120,6 +120,7 @@ public class StudyMemberService {
         // 알림 비동기처리
         eventPublisher.publishEvent(ResignMemberEvent.builder()
                 .isPushAlarmYn(resignUser.isPushAlarmYn())
+                .studyInfoId(studyInfo.getId())
                 .resignMemberId(resignUserId)
                 .studyInfoTopic(studyInfo.getTopic())
                 .build());
@@ -151,6 +152,7 @@ public class StudyMemberService {
         // 알림 비동기처리
         eventPublisher.publishEvent(WithdrawalMemberEvent.builder()
                 .isPushAlarmYn(studyLeader.isPushAlarmYn())
+                .studyInfoId(studyInfo.getId())
                 .studyLeaderId(studyInfo.getUserId())
                 .withdrawalMemberName(user.getName())
                 .studyInfoTopic(studyInfo.getTopic())
@@ -296,6 +298,7 @@ public class StudyMemberService {
         eventPublisher.publishEvent(ApplyApproveRefuseMemberEvent.builder()
                 .isPushAlarmYn(applyUser.isPushAlarmYn())
                 .approve(approve)
+                .studyInfoId(studyInfo.getId())
                 .applyUserId(applyUserId)
                 .studyTopic(studyInfo.getTopic())
                 .name(applyUser.getName())
@@ -307,7 +310,7 @@ public class StudyMemberService {
     public StudyMemberApplyListAndCursorIdxResponse applyListStudyMember(Long studyInfoId, Long cursorIdx, Long limit) {
 
         // 스터디 조회 예외처리
-        studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
+        StudyInfo studyInfo = studyInfoService.findStudyInfoByIdOrThrowException(studyInfoId);
 
         limit = Math.min(limit, MAX_LIMIT);
 
@@ -322,6 +325,7 @@ public class StudyMemberService {
 
         StudyMemberApplyListAndCursorIdxResponse response = StudyMemberApplyListAndCursorIdxResponse.builder()
                 .applyList(applyList)
+                .studyTopic(studyInfo.getTopic())
                 .build();
 
         response.setNextCursorIdx();
@@ -343,6 +347,7 @@ public class StudyMemberService {
         eventPublisher.publishEvent(NotifyMemberEvent.builder()
                 .isPushAlarmYn(notifyUser.isPushAlarmYn())
                 .notifyUserId(notifyUserId)
+                .studyInfoId(studyInfo.getId())
                 .studyTopic(studyInfo.getTopic())
                 .message(messageRequest.getMessage())
                 .build());
@@ -363,6 +368,7 @@ public class StudyMemberService {
         eventPublisher.publishEvent(NotifyLeaderEvent.builder()
                 .isPushAlarmYn(notifyUser.isPushAlarmYn())
                 .notifyUserId(studyInfo.getUserId())
+                .studyInfoId(studyInfo.getId())
                 .studyMemberName(userInfo.getName())
                 .message(messageRequest.getMessage())
                 .build());

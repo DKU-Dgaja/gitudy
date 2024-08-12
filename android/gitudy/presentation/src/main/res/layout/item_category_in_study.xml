@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <TextView
+        android:id="@+id/categoryName"
+        style="@style/B7_1"
+        android:layout_width="56dp"
+        android:layout_height="24dp"
+        android:layout_marginEnd="8dp"
+        android:background="@drawable/box_non_stroke_r6"
+        android:backgroundTint="@color/GS_200"
+        android:gravity="center"
+        android:text="#C++"
+        android:textColor="@color/GS_600" />
+</layout>

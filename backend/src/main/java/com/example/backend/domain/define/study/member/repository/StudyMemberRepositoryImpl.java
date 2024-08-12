@@ -141,7 +141,9 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                         user.socialInfo,
                         user.profileImageUrl,
                         user.score,
-                        user.point))
+                        user.point,
+                        user.profilePublicYn,
+                        studyMember.createdDateTime))
                 .from(studyMember)
                 .join(user).on(studyMember.userId.eq(user.id))
                 .where(studyMember.studyInfoId.eq(studyInfoId)

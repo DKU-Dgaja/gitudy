@@ -15,6 +15,8 @@ import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.domain.define.study.todo.StudyTodoFixture;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import org.junit.jupiter.api.AfterEach;
@@ -147,11 +149,11 @@ class StudyCommitServiceTest extends TestConfig {
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), studyInfo.getId()));
 
-        Long studyTodoId = 1L;
+        StudyTodo studyTodo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(studyInfo.getId()));
+
         String commitSha = "123";
 
-        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), studyInfo.getId(), studyTodoId, commitSha));
-
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), studyInfo.getId(), studyTodo.getId(), commitSha));
         // when
         studyCommitService.approveCommit(savedCommit.getId());
 
@@ -167,12 +169,12 @@ class StudyCommitServiceTest extends TestConfig {
         StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), studyInfo.getId()));
 
-        Long studyTodoId = 1L;
+        StudyTodo studyTodo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(studyInfo.getId()));
+
         String commitSha = "123";
 
         StudyCommit savedCommit = studyCommitRepository.save(
-                StudyCommitFixture.createDefaultStudyCommit(user.getId(), studyInfo.getId(), studyTodoId, commitSha));
-
+                StudyCommitFixture.createDefaultStudyCommit(user.getId(), studyInfo.getId(), studyTodo.getId(), commitSha));
         // 커밋을 승인 처리
         studyCommitService.approveCommit(savedCommit.getId());
 
@@ -190,15 +192,17 @@ class StudyCommitServiceTest extends TestConfig {
     @Test
     void 커밋_거절_성공_테스트() {
         // given
-        Long studyId = 1L;
-        Long userId = 1L;
-        Long studyTodoId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfo(user.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), studyInfo.getId()));
+
+        StudyTodo studyTodo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(studyInfo.getId()));
+
         String commitSha = "123";
 
         String rejectionReason = "동작하지 않는 코드입니다.";
 
-        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyId, studyTodoId, commitSha));
-
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), studyInfo.getId(), studyTodo.getId(), commitSha));
         // when
         studyCommitService.rejectCommit(savedCommit.getId(), rejectionReason);
 

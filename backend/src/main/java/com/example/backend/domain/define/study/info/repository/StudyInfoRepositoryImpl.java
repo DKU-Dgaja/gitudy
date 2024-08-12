@@ -1,6 +1,7 @@
 package com.example.backend.domain.define.study.info.repository;
 
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.querydsl.core.types.OrderSpecifier;
@@ -71,7 +72,8 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
         // myStudy에 따라서 동적으로 추가 또는 제거
         if (myStudy) {
             query.innerJoin(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
-                    .where(studyMember.userId.eq(userId));
+                    .where(studyMember.userId.eq(userId)
+                            .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)));
         }
         query.orderBy(orderSpecifier, idOrder); // 다중 정렬 조건 적용
 
@@ -120,7 +122,8 @@ public class StudyInfoRepositoryImpl implements StudyInfoRepositoryCustom {
 
         if (myStudy) {
             query.join(studyMember).on(studyMember.studyInfoId.eq(studyInfo.id))
-                    .where(studyMember.userId.eq(userId));
+                    .where(studyMember.userId.eq(userId)
+                            .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)));
         }
 
         return query.fetchOne().intValue(); // 결과를 int로 변환하여 리턴

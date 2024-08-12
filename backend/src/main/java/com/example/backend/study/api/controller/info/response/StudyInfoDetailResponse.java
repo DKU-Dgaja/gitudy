@@ -50,7 +50,9 @@ public class StudyInfoDetailResponse {
 
     private Boolean isLeader;                       // 스터디 리더인지
 
-    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<String> categoryNames, Long userId) {
+    private Boolean isWaiting;
+
+    public static StudyInfoDetailResponse of(StudyInfo studyInfo, List<String> categoryNames, Long userId, Boolean isWaiting) {
         return StudyInfoDetailResponse.builder()
                 .userId(studyInfo.getUserId())
                 .topic(studyInfo.getTopic())
@@ -67,6 +69,7 @@ public class StudyInfoDetailResponse {
                 .repositoryInfo(studyInfo.getRepositoryInfo())
                 .categoryNames(categoryNames)
                 .isLeader(studyInfo.getUserId().equals(userId))
+                .isWaiting(isWaiting)
                 .build();
     }
 }

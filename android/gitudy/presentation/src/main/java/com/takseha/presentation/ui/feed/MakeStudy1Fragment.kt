@@ -7,6 +7,8 @@ import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -71,6 +73,7 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     title = studyNameEditText.text.toString()
+                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty() && !isValidNameBtn.isEnabled
                 }
             })
             studyDetailEditText.addTextChangedListener(object : TextWatcher {
@@ -86,6 +89,7 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     detail = studyDetailEditText.text.toString()
+                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty() && !isValidNameBtn.isEnabled
                 }
             })
             studyGithubLinkEditText.addTextChangedListener(object : TextWatcher {
@@ -112,11 +116,20 @@ class MakeStudy1Fragment : Fragment() {
                 }
 
                 override fun afterTextChanged(s: Editable?) {
+                    s?.let {
+                        val newText = it.toString().replace(" ", "-")
+                        if (newText != it.toString()) {
+                            studyGithubLinkEditText.setText(newText)
+                            studyGithubLinkEditText.setSelection(newText.length)
+                        }
+                    }
+
                     githubRepo = studyGithubLinkEditText.text.toString()
                 }
             })
 
             isValidNameBtn.setOnClickListener {
+                repoDesc.text = ""
                 if (isValidNickname(githubRepo) != 4) {
                     nextBtn.isEnabled = false
                     when (isValidNickname(githubRepo)) {
@@ -129,7 +142,7 @@ class MakeStudy1Fragment : Fragment() {
                                 ))
                         }
                         2 -> repoDesc.apply {
-                            text = "영문, 숫자, ., -, _ 외의 다른 문자가 존재해요"
+                            text = "영문, 숫자, ., -, _ 만 입력해주세요"
                             setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
@@ -150,17 +163,25 @@ class MakeStudy1Fragment : Fragment() {
                         viewModel.checkValidRepoName(githubRepo)
                         viewModel.isValidRepoName.collectLatest {
                             Log.e("MakeStudy1Fragment", it.toString())
-                            if (it == true) {
+                            if (it == null) {
+                                repoDesc.visibility = GONE
+                                waitImg.visibility = VISIBLE
+                            } else if (it == true) {
+                                repoDesc.visibility = VISIBLE
+                                waitImg.visibility = GONE
                                 repoDesc.apply {
                                     text = "생성 가능한 레포지토리 이름이에요"
                                     setTextColor(
                                         ContextCompat.getColor(
                                             requireContext(),
-                                            R.color.BASIC_BLUE
+                                            R.color.BASIC_GREEN
                                         ))
                                 }
+                                isValidNameBtn.isEnabled = false
                                 nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
-                            } else {
+                            } else if (it == false) {
+                                repoDesc.visibility = VISIBLE
+                                waitImg.visibility = GONE
                                 repoDesc.apply {
                                     text = "동일한 레포지토리 이름이 존재해요"
                                     setTextColor(

@@ -60,18 +60,18 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
     @RequiresApi(Build.VERSION_CODES.O)
     private fun setStudyInfo(holder: ViewHolder, position: Int) {
         val studyInfo = studyInfoList[position].studyInfo
-        val urgentTodo = studyInfoList[position].urgentTodo
+        val urgentTodo = studyInfoList[position].urgentTodo!!
 
         holder.studyImg.setCardBackgroundColor(Color.parseColor(studyInfo.profileImageUrl))
         holder.studyName.text = studyInfo.topic
         holder.leaderTag.visibility = if (studyInfo.isLeader) VISIBLE else GONE
         holder.teamScore.text = "${studyInfo.score}점"
-        holder.todoCheckNum.text = "${urgentTodo?.completeMemberCount ?: 0}/"
+        holder.todoCheckNum.text = "${urgentTodo.completeMemberCount ?: 0}/"
         holder.totalNum.text = studyInfo.currentMember.toString()
-        holder.progressBar.progress = urgentTodo?.completeMemberCount ?: 0
+        holder.progressBar.progress = urgentTodo.completeMemberCount ?: 0
         holder.progressBar.max = studyInfo.currentMember
 
-        if (urgentTodo == null) {
+        if (urgentTodo.todo == null) {
             holder.noTodoAlarm.visibility = VISIBLE
             holder.todoTitle.visibility = GONE
             holder.todoCheck.visibility = GONE
@@ -83,13 +83,13 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
             holder.todoCheck.visibility = VISIBLE
             holder.todoTimeText.visibility = VISIBLE
             holder.todoTime.visibility = VISIBLE
-            holder.todoTitle.text = urgentTodo.todo.title
-            holder.todoTime.text = urgentTodo.todo.todoDate
+            holder.todoTitle.text = urgentTodo.todo!!.title
+            holder.todoTime.text = urgentTodo.todo!!.todoDate
             if (urgentTodo.completeMemberCount == urgentTodo.totalMemberCount) {
                 holder.todoCheck.text = "완료"
             } else {
                 holder.todoCheck.text = "미완료"
-                if (urgentTodo.todo.todoDate == LocalDate.now().toString()) {
+                if (urgentTodo.todo?.todoDate == LocalDate.now().toString()) {
                     holder.todoTime.setTextColor(
                         ContextCompat.getColor(
                             context,

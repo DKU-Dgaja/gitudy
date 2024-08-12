@@ -14,7 +14,7 @@
         android:id="@+id/makeStudyTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="48dp"
+        android:layout_marginTop="20dp"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
@@ -54,6 +54,7 @@
         android:layout_height="26dp"
         android:layout_margin="11dp"
         android:src="@drawable/ic_camera"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="@+id/studyImg"
         app:layout_constraintEnd_toEndOf="@+id/studyImg" />
 
@@ -62,7 +63,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="11dp"
-        android:text="*별도의 사진 추가가 없을 시,\n스터디 아이콘은 랜덤 색상의 로고 이미지로 설정됩니다."
+        android:text="스터디 아이콘은 랜덤 색상의 로고 이미지로 설정됩니다."
         android:textColor="@color/GS_500"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -182,7 +183,8 @@
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginRight="10dp"
-                android:src="@drawable/ic_study_github_link" />
+                android:padding="3dp"
+                android:src="@drawable/logo_github" />
 
             <TextView
                 android:id="@+id/githubRepoLink"

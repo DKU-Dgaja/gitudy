@@ -3,7 +3,7 @@ package com.takseha.data.token
 import android.content.Context
 import android.util.Log
 import com.takseha.data.BuildConfig
-import com.takseha.data.api.gitudy.auth.GitudyAuthService
+import com.takseha.data.api.gitudy.GitudyAuthService
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.TokenResponse
 import com.takseha.data.dto.auth.login.ReissueTokenResponse
@@ -94,7 +94,7 @@ class TokenManager(context: Context) {
         }
     }
 
-    suspend fun reissueTokens(): ReissueTokenResponse? {
+    suspend fun reissueTokens(): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val token = "Bearer $refreshToken"
@@ -104,14 +104,14 @@ class TokenManager(context: Context) {
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
                     refreshToken = response.body()!!.refreshToken
-                    response.body()
+                    true
                 } else {
                     Log.e("TokenManager", "reissue response status: ${response.code()}\nreissue response message:${response.errorBody()!!.string()}")
-                    null
+                    false
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                null
+                false
             }
         }
     }

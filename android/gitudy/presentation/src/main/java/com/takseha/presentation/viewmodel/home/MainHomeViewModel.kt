@@ -5,15 +5,11 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.gson.annotations.SerializedName
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
-import com.takseha.data.dto.mystudy.Commit
-import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoProgressResponse
-import com.takseha.data.dto.mystudy.TodoStatus
-import com.takseha.data.repository.auth.GitudyAuthRepository
-import com.takseha.data.repository.study.GitudyStudyRepository
+import com.takseha.data.repository.gitudy.GitudyAuthRepository
+import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.R
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

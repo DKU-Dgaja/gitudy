@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/apply_study_nav"
+    app:startDestination="@id/studyApplyInfoFragment">
+
+    <fragment
+        android:id="@+id/studyApplyInfoFragment"
+        android:name="com.takseha.presentation.ui.feed.StudyApplyInfoFragment"
+        android:label="fragment_study_apply_info"
+        tools:layout="@layout/fragment_study_apply_info" >
+        <action
+            android:id="@+id/action_studyApplyInfoFragment_to_studyApplyMessageFragment"
+            app:destination="@id/studyApplyMessageFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studyApplyMessageFragment"
+        android:name="com.takseha.presentation.ui.feed.StudyApplyMessageFragment"
+        android:label="fragment_study_apply"
+        tools:layout="@layout/fragment_study_apply_message" >
+        <action
+            android:id="@+id/action_studyApplyMessageFragment_to_newStudyApplyFragment"
+            app:destination="@id/newStudyApplyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/newStudyApplyFragment"
+        android:name="com.takseha.presentation.ui.feed.NewStudyApplyFragment"
+        android:label="fragment_new_study_apply"
+        tools:layout="@layout/fragment_new_study_apply" />
+</navigation>

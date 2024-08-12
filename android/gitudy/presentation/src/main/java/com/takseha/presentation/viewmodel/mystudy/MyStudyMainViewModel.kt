@@ -8,9 +8,8 @@ import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
-import com.takseha.data.dto.mystudy.TodoProgressResponse
-import com.takseha.data.repository.member.GitudyMemberRepository
-import com.takseha.data.repository.study.GitudyStudyRepository
+import com.takseha.data.repository.gitudy.GitudyMemberRepository
+import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update

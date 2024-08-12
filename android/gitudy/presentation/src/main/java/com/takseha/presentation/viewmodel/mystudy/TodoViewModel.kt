@@ -5,7 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.Todo
-import com.takseha.data.repository.study.GitudyStudyRepository
+import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -30,10 +30,20 @@ class TodoViewModel : ViewModel() {
             val todoBody = todoListInfoResponse.body()!!
             Log.d("TodoViewModel", "todo body: $todoBody")
 
-            _todoListState.update {
-                it.copy(
-                    todoListInfo = todoBody.todoList
-                )
+            if (todoBody.todoList.isEmpty()) {
+                _todoListState.update {
+                    it.copy(
+                        todoListInfo = todoBody.todoList,
+                        isTodoEmpty = true
+                    )
+                }
+            } else {
+                _todoListState.update {
+                    it.copy(
+                        todoListInfo = todoBody.todoList,
+                        isTodoEmpty = false
+                    )
+                }
             }
             Log.d("TodoViewModel", "todoList: ${todoBody.todoList}")
         } else {
@@ -119,5 +129,6 @@ class TodoViewModel : ViewModel() {
 }
 
 data class TodoListInfoState(
-    var todoListInfo: List<Todo> = listOf()
+    var todoListInfo: List<Todo> = listOf(),
+    var isTodoEmpty: Boolean = false
 )
