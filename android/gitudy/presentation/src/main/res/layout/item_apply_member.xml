@@ -19,13 +19,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:gravity="center_vertical">
-                <TextView
-                    android:id="@+id/alertTitle"
-                    style="@style/B4_1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="[단국알고깃터디]"
-                    android:textColor="@color/BLACK" />
+
                 <TextView
                     android:id="@+id/dateText"
                     style="@style/B7_2"
@@ -60,6 +54,7 @@
             </LinearLayout>
         </LinearLayout>
         <ImageView
+            android:id="@+id/popBtn"
             android:layout_width="32dp"
             android:layout_height="32dp"
             android:src="@drawable/ic_arrow_down_black"

@@ -9,8 +9,10 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.activity.viewModels
+import androidx.core.os.bundleOf
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -21,6 +23,8 @@ import com.takseha.presentation.databinding.ActivityMainHomeAlertBinding
 import com.takseha.presentation.databinding.FragmentMainHomeAlertBinding
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
+import com.takseha.presentation.ui.mystudy.ToDoActivity
+import com.takseha.presentation.ui.mystudy.ToDoFragment
 import com.takseha.presentation.viewmodel.home.MainHomeAlertViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -45,7 +49,7 @@ class MainHomeAlertFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 if (it != null) {
                     if (it.isNotEmpty()) {
@@ -104,16 +108,25 @@ class MainHomeAlertFragment : Fragment() {
             override fun onClick(view: View, position: Int) {
                 val notice = noticeList[position]
 
-                if (notice.title.contains("신청")) {   // 스터디 가입 신청
-                    // TODO: 스터디 가입신청 리스트로 이동
-                } else if (notice.title.contains("완료")) {    // 스터디 가입 완료
+                if (notice.title.contains("스터디 가입 신청")) {   // 스터디 가입 신청
+                    val bundle = Bundle().apply {
+                        putInt("studyInfoId", notice.studyInfoId)
+                    }
+                    view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_studyApplyMemberListFragment, bundle)
+                } else if (notice.title.contains("스터디 가입 완료")) {    // 스터디 가입 완료
                     // 해당 스터디 상세 페이지로 이동
                     val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
-                    intent.putExtra("studyInfoId", noticeList[position].studyInfoId)
+                    intent.putExtra("studyInfoId", notice.studyInfoId)
                     startActivity(intent)
-                } else if (notice.title.contains("업데이트")) {  // 스터디 TO-DO 업데이트
-                    val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
-                    intent.putExtra("studyInfoId", noticeList[position].studyInfoId)
+                } else if (notice.title.contains("TO-DO 업데이트")) {  // 스터디 TO-DO 업데이트
+                    // 해당 스터디 TO-DO 상세 페이지로 이동
+                    val intent = Intent(requireContext(), ToDoActivity::class.java)
+                    intent.putExtra("studyInfoId", notice.studyInfoId)
+                    startActivity(intent)
+                } else if (notice.title.contains("커밋 승인") || notice.title.contains("커밋 반려")) {
+                    // 해당 스터디 TO-DO 상세 페이지로 이동
+                    val intent = Intent(requireContext(), ToDoActivity::class.java)
+                    intent.putExtra("studyInfoId", notice.studyInfoId)
                     startActivity(intent)
                 }
             }
