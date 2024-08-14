@@ -32,4 +32,10 @@ class GitudyMemberRepository {
         studyInfoId: Int,
         orderByScore: Boolean?
     ) = client.getStudyMemberList(studyInfoId, orderByScore)
+
+    suspend fun approveApplyMember(
+        studyInfoId: Int,
+        applyUserId: Int,
+        approve: Boolean
+    ) = client.approveApplyMember(studyInfoId, applyUserId, approve)
 }

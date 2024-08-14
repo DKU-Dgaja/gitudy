@@ -7,6 +7,7 @@ import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
@@ -40,6 +41,13 @@ interface GitudyMemberService {
     @GET("/member/{studyInfoId}")
     suspend fun getStudyMemberList(
         @Path("studyInfoId") studyInfoId: Int,
-        @Query("orderByScore") orderByScore: Boolean?,
+        @Query("orderByScore") orderByScore: Boolean?
     ): Response<StudyMemberListResponse>
+
+    @PATCH("/member/{studyInfoId}/apply/{applyUserId}")
+    suspend fun approveApplyMember(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Path("applyUserId") applyUserId: Int,
+        @Query("approve") approve: Boolean
+    ): Response<Void>
 }
