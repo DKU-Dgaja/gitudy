@@ -3,7 +3,6 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.mystudy.StudyApplyMember
 import com.takseha.data.dto.mystudy.StudyApplyMemberListResponse
 import com.takseha.data.repository.gitudy.GitudyMemberRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,7 +23,7 @@ class StudyApplyMemberListViewModel : ViewModel() {
             _uiState.value = studyApplyMemberListResponse.body()
         } else {
             Log.e(
-                "StudyCommentBoardViewModel",
+                "StudyApplyMemberListViewModel",
                 "studyApplyMemberListResponse status: ${studyApplyMemberListResponse.code()}\nstudyApplyMemberListResponse message: ${studyApplyMemberListResponse.errorBody()?.string()}"
             )
         }

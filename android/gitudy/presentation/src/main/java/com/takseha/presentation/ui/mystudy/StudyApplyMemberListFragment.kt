@@ -2,11 +2,13 @@ package com.takseha.presentation.ui.mystudy
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -29,9 +31,11 @@ class StudyApplyMemberListFragment : Fragment() {
     private var _binding: FragmentStudyApplyMemberListBinding? = null
     private val binding get() = _binding!!
     private val viewModel: StudyApplyMemberListViewModel by viewModels()
+    private var studyInfoId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = arguments?.getInt("studyInfoId") ?: 0
     }
 
     override fun onCreateView(
@@ -44,7 +48,6 @@ class StudyApplyMemberListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val studyInfoId = arguments?.getInt("studyInfoId") ?: 0
 
         viewModel.getStudyApplyMemberList(studyInfoId, null, 50)
         viewLifecycleOwner.lifecycleScope.launch {
@@ -66,6 +69,13 @@ class StudyApplyMemberListFragment : Fragment() {
         }
     }
 
+    // 원래 페이지로 돌아왔을 때 state 업데이트
+    override fun onResume() {
+        super.onResume()
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        viewModel.getStudyApplyMemberList(studyInfoId, null, 50)
+    }
+
     private fun setStudyApplyMemberList(studyApplyMemberList: List<StudyApplyMember>) {
         with(binding) {
             val studyApplyMemberListRVAdapter = StudyApplyMemberListRVAdapter(requireContext(), studyApplyMemberList)
@@ -81,8 +91,9 @@ class StudyApplyMemberListFragment : Fragment() {
             override fun onClick(view: View, position: Int) {
                 val bundle = Bundle().apply {
                     putSerializable("memberProfile", studyApplyMemberList[position])
+                    putInt("studyInfoId", studyInfoId)
                 }
-                view.findNavController().navigate(R.id.action_studyApplyMemberListFragment_to_memberProfileFragment, bundle)
+                view.findNavController().navigate(R.id.action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment, bundle)
             }
         }
     }

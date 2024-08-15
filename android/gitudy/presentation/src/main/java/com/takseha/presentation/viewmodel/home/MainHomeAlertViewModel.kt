@@ -21,7 +21,7 @@ class MainHomeAlertViewModel : ViewModel() {
 
         if (noticeListResponse.isSuccessful) {
             val noticeList = noticeListResponse.body()
-            _uiState.update { noticeList!! }
+            _uiState.update { noticeList }
         } else {
             Log.e(
                 "MainHomeAlertViewModel",

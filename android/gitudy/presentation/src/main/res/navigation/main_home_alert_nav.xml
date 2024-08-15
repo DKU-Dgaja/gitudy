@@ -20,14 +20,12 @@
         android:label="fragment_study_apply_member_list"
         tools:layout="@layout/fragment_study_apply_member_list" >
         <action
-            android:id="@+id/action_studyApplyMemberListFragment_to_memberProfileFragment"
-            app:destination="@id/memberProfileFragment"
-            app:enterAnim="@anim/vertical_enter"
-            app:exitAnim="@anim/vertical_exit" />
+            android:id="@+id/action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment"
+            app:destination="@id/studyApplyMemberProfileFragment" />
     </fragment>
     <fragment
-        android:id="@+id/memberProfileFragment"
-        android:name="com.takseha.presentation.ui.mystudy.MemberProfileFragment"
-        android:label="fragment_member_profile"
-        tools:layout="@layout/fragment_member_profile" />
+        android:id="@+id/studyApplyMemberProfileFragment"
+        android:name="com.takseha.presentation.ui.mystudy.StudyApplyMemberProfileFragment"
+        android:label="fragment_study_apply_member_profile"
+        tools:layout="@layout/fragment_study_apply_member_profile" />
 </navigation>

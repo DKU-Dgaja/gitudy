@@ -33,7 +33,7 @@ data class StudyApplyMember(
     @SerializedName("created_date_time")
     val createdDateTime: String,
     @SerializedName("social_info")
-    val socialInfo: SocialInfo,
+    val socialInfo: SocialInfo?,
     @SerializedName("user_id")
     val userId: Int
 ): Serializable
