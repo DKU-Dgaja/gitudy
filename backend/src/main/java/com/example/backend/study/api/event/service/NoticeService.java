@@ -87,7 +87,7 @@ public class NoticeService {
                 .userId(event.getStudyLeaderId())
                 .studyInfoId(event.getStudyInfoId())
                 .title("[" + event.getStudyTopic() + "] 스터디 가입 신청")
-                .message("새로운 스터디 가입 신청자가 있습니다. 가입 목록 확인 후 , 수락해주세요!")
+                .message("새로운 스터디 가입 신청자가 있습니다.\n가입 목록 확인 후, 수락해주세요!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
@@ -128,7 +128,7 @@ public class NoticeService {
         String message;
         if (event.isApprove()) { // 스터디장의 승인여부
             title = "[ " + event.getStudyTopic() + " ] 스터디 가입 완료";
-            message = "스터디 가입이 완료되었습니다. 바로 스터디 활동을 시작해보세요!";
+            message = "스터디 가입이 완료되었습니다.\n바로 스터디 활동을 시작해보세요!";
 
         } else {
             title = "[" + event.getStudyTopic() + "] 스터디 가입 실패";
@@ -155,7 +155,7 @@ public class NoticeService {
                     .userId(memberId)
                     .studyInfoId(event.getStudyInfoId())
                     .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
-                    .message("새로운 TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
+                    .message("새로운 TO-DO가 업데이트 되었습니다.\n지금 확인해보세요!")
                     .localDateTime(LocalDateTime.now())
                     .build();
             noticeRepository.save(notice);
@@ -172,7 +172,7 @@ public class NoticeService {
                     .userId(memberId)
                     .studyInfoId(event.getStudyInfoId())
                     .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
-                    .message("TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
+                    .message("TO-DO가 업데이트 되었습니다.\n지금 확인해보세요!")
                     .localDateTime(LocalDateTime.now())
                     .build();
             noticeRepository.save(notice);
