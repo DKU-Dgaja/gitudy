@@ -56,11 +56,11 @@ class StudyApplyMemberListFragment : Fragment() {
                     binding.studyName.text = it.studyTopic
                     if (it.applyList.isNotEmpty()) {
                         binding.isNoApplyMemberLayout.visibility = GONE
-                        setStudyApplyMemberList(it.applyList)
                     }
                     else {
                         binding.isNoApplyMemberLayout.visibility = VISIBLE
                     }
+                    setStudyApplyMemberList(it.applyList)
                 }
             }
         }

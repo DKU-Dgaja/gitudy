@@ -51,11 +51,11 @@ class MainHomeAlertFragment : Fragment() {
                 if (it != null) {
                     if (it.isNotEmpty()) {
                         binding.isNoAlertLayout.visibility = GONE
-                        setNoticeList(it)
                     }
                     else {
                         binding.isNoAlertLayout.visibility = VISIBLE
                     }
+                    setNoticeList(it)
                 }
             }
         }
