@@ -88,7 +88,7 @@ class StudyApplyMessageFragment : Fragment() {
                             binding.applyBtn.findNavController()
                                 .navigate(R.id.action_studyApplyMessageFragment_to_newStudyApplyFragment)
                         } else {
-                            makeSnackBar(getString(R.string.alert_study_apply_is_not_ok)).apply {
+                            makeSnackBar(getString(R.string.alert_study_apply_already_done)).apply {
                                 anchorView = binding.applyBtn
                             }.show()
                         }

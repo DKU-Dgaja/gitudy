@@ -73,6 +73,24 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
+                android:id="@+id/leaderTag"
+                style="@style/B6_2"
+                android:layout_width="48dp"
+                android:layout_height="28dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="7dp"
+                android:background="@drawable/box_non_stroke_r24"
+                android:backgroundTint="@color/BASIC_BLUE"
+                android:gravity="center"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="팀장"
+                android:textColor="@color/WHITE"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/studyName"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
                 android:id="@+id/studyRule"
                 style="@style/B6_2"
                 android:layout_width="wrap_content"
