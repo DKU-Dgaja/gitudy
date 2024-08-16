@@ -227,7 +227,7 @@ public class GithubApiService {
                 "web",
                 Map.of(
                         "url", webhookUrl,
-                        "content_type", "application/json"
+                        "content_type", "json"
                 ),
                 Collections.emptyList(),
                 true
