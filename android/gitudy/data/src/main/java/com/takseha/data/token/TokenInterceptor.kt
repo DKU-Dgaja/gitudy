@@ -19,7 +19,10 @@ class TokenInterceptor(
                 val isReissueSucceed = runBlocking { tokenManager.reissueTokens() }
                 if (isReissueSucceed) {
                     request = addTokenToRequest(request, tokenManager.accessToken)
+                    response.close()
                     return chain.proceed(request)
+                } else {
+                    return response
                 }
             }
         }

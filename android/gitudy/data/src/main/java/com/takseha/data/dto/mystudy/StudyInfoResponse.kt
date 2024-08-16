@@ -35,6 +35,8 @@ data class StudyInfoResponse(
     val userId: Int = 0,
     @SerializedName("is_leader")
     val isLeader: Boolean = false,
+    @SerializedName("is_waiting")
+    val isWaiting: Boolean = false,
     @SerializedName("repository_info")
     val githubLinkInfo: RepositoryInfo = RepositoryInfo()
 )

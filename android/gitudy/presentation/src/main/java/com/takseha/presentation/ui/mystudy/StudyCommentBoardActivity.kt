@@ -33,7 +33,7 @@ class StudyCommentBoardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_study_comment_board)
         setBinding()
-        window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
+        window.statusBarColor = ContextCompat.getColor(this, R.color.WHITE)
 
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
         var comment = ""

@@ -24,6 +24,7 @@
     <string name="alert_name_not_ok">이미 존재하는 닉네임입니다</string>
     <string name="alert_repo_name_not_ok">깃허브 레포지토리 이름 형식을 지켜주세요</string>
     <string name="alert_study_apply_is_not_ok">스터디 신청에 실패했어요! 잠시 후 다시 시도해주세요</string>
+    <string name="alert_study_apply_already_done">이미 가입한 스터디입니다</string>
 
 
     <!-- Strings related to home -->
@@ -31,6 +32,7 @@
     <string name="home_recommend">새로운 스터디를\n시작해보세요</string>
     <string name="notice_alert_info">%s • %s</string>
     <string name="notice_no_alert">새로운 알림이 없어요</string>
+    <string name="notice_no_study_apply_member">새로운 가입 신청자가 없어요</string>
 
 
     <!-- Strings related to study -->
@@ -67,6 +69,8 @@
     <string name="study_comment_description">멤버들에게 응원의 한마디를 남겨보세요!</string>
     <string name="study_comment_update">해당 글을\n수정하시겠습니까?</string>
     <string name="study_comment_delete">해당 글을\n삭제하시겠습니까?</string>
+    <string name="study_approve_member_apply">해당 멤버의 등록을\n수락하시겠습니까?</string>
+    <string name="study_withdraw_member_apply">해당 멤버의 등록을\n거절하시겠습니까?</string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>

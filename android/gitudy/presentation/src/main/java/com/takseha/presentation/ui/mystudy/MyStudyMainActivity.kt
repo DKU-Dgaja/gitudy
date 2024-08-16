@@ -160,6 +160,7 @@ class MyStudyMainActivity : AppCompatActivity() {
         with(binding) {
             studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
             studyName.text = myStudyInfo.topic
+            leaderTag.visibility = if (myStudyInfo.isLeader) VISIBLE else GONE
             studyRule.text = setCommitRule(myStudyInfo.periodType)
             studyInfo.text = myStudyInfo.info
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
