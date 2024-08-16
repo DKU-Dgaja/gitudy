@@ -67,7 +67,6 @@ public enum ExceptionMessage {
     STUDY_WAITING_MEMBER("이미 가입신청 완료하여 승인 대기중인 스터디 입니다."),
     STUDY_WAITING_NOT_MEMBER("해당 스터디에 가입 대기중인 유저가 아닙니다."),
     STUDY_JOIN_CODE_FAIL("스터디 참여 코드가 맞지 않습니다."),
-    STUDY_NOT_APPLY_LIST("해당 스터디에 가입신청이 없습니다"),
     STUDY_NOT_ACTIVE_MEMBER("해당 스터디의 활동중인 스터디원이 아닙니다."),
 
     // StudyCommentException

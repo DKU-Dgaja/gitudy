@@ -428,7 +428,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
 //        System.out.println("studyInfo.getCurrentMember() = " + studyInfo.getCurrentMember());
-        
+
         // when
         studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
@@ -1014,12 +1014,12 @@ public class StudyMemberServiceTest extends MockTestConfig {
         StudyMember activeStudyMember4 = StudyMemberFixture.createDefaultStudyMember(user4.getId(), studyInfo.getId());
         studyMemberRepository.saveAll(List.of(activeStudyMember1, activeStudyMember2, activeStudyMember3, activeStudyMember4));
 
-        // then
-        MemberException em = assertThrows(MemberException.class, () -> {
-            studyMemberService.applyListStudyMember(studyInfo.getId(), CursorIdx, Limit);
-        });
+        // when
+        StudyMemberApplyListAndCursorIdxResponse response = studyMemberService.applyListStudyMember(studyInfo.getId(), null, 3L);
 
-        assertEquals(ExceptionMessage.STUDY_NOT_APPLY_LIST.getText(), em.getMessage());
+        // then
+        assertNotNull(response);
+        assertTrue(response.getApplyList().isEmpty());
     }
 
     @Test
