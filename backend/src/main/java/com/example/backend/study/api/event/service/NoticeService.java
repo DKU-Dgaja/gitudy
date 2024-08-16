@@ -8,6 +8,7 @@ import com.example.backend.domain.define.notice.Notice;
 import com.example.backend.domain.define.notice.repository.NoticeRepository;
 import com.example.backend.domain.define.study.commit.event.CommitApproveEvent;
 import com.example.backend.domain.define.study.commit.event.CommitRefuseEvent;
+import com.example.backend.domain.define.study.commit.event.CommitRegisterEvent;
 import com.example.backend.domain.define.study.info.event.ApplyApproveRefuseMemberEvent;
 import com.example.backend.domain.define.study.info.event.ApplyMemberEvent;
 import com.example.backend.domain.define.study.member.event.NotifyLeaderEvent;
@@ -202,6 +203,20 @@ public class NoticeService {
                 .studyInfoId(event.getStudyInfoId())
                 .title("[" + event.getStudyTopic() + "] 스터디 에서 알림")
                 .message(event.getStudyMemberName() + "님의 알림" + event.getMessage())
+                .localDateTime(LocalDateTime.now())
+                .build();
+        noticeRepository.save(notice);
+    }
+
+    // 커밋 등록시 팀장에게 알림 생성 메서드
+    @Transactional
+    public void StudyCommitRegisterNotice(CommitRegisterEvent event) {
+
+        Notice notice = Notice.builder()
+                .userId(event.getUserId())
+                .studyInfoId(event.getStudyInfoId())
+                .title("[" + event.getStudyTopic() + "] 커밋 등록")
+                .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대해 " + event.getName() + "님이 커밋하였습니다.\n커밋을 확인하고 승인/반려해주세요!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
