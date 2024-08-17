@@ -56,11 +56,11 @@
 
             <ImageView
                 android:id="@+id/profileImg"
-                android:layout_width="65dp"
-                android:layout_height="65dp"
+                android:layout_width="55dp"
+                android:layout_height="55dp"
                 android:background="@drawable/circle_non_stroke"
-                android:padding="7dp"
-                android:src="@drawable/character_bebe_over_130"
+                android:clipToOutline="true"
+                android:src="@drawable/logo_profile_default"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -70,6 +70,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/ic_camera"
+                android:visibility="gone"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
