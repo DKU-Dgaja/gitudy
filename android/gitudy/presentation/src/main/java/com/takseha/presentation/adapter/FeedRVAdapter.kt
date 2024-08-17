@@ -18,14 +18,16 @@ import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
 class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, val studyCategoryMappingMap: Map<Int, List<String>>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
-    interface ItemClick {
+    interface OnClickListener {
         fun onClick(view: View, position: Int)
+        fun bookmarkClick(view: View, position: Int)
     }
-    var itemClick: ItemClick? = null
+    var onClickListener: OnClickListener? = null
 
     class ViewHolder(val binding: ItemFeedBinding) : RecyclerView.ViewHolder(binding.root) {
         val backgroundColor = binding.studyInfoLayout
         val studyName = binding.studyName
+        val bookmarkBtn = binding.bookmarkBtn
         val commitRule = binding.commitRule
         val teamInfo = binding.teamRankAndRecentInfo
         val teamScore = binding.teamScore
@@ -58,10 +60,14 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, 
         // holder.memberList 구현
         setMemberList(holder, position)
 
-        // 클릭 이벤트 처리
-        if (itemClick != null) {
-            holder?.itemView?.setOnClickListener { v ->
-                itemClick!!.onClick(v, position)
+        holder.bookmarkBtn.setOnClickListener { v ->
+            onClickListener!!.bookmarkClick(v, position)
+        }
+
+        // 스터디 클릭 이벤트 처리
+        if (onClickListener != null) {
+            holder.itemView.setOnClickListener { v ->
+                onClickListener!!.onClick(v, position)
             }
         }
     }

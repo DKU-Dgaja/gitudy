@@ -5,8 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.api.gitudy.GitudyBookmarksService
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
+import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -15,6 +17,7 @@ import kotlinx.coroutines.launch
 
 class FeedHomeViewModel : ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
+    private var gitudyBookmarksRepository = GitudyBookmarksRepository()
 
     private var _uiState = MutableStateFlow(FeedHomeUiState())
     val uiState = _uiState.asStateFlow()
@@ -24,11 +27,11 @@ class FeedHomeViewModel : ViewModel() {
     val cursorIdxRes: LiveData<Long?>
         get() = _cursorIdxRes
 
-    fun getFeedList(cursorIdx: Long?, limit: Long, sortby: String) = viewModelScope.launch {
+    fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) = viewModelScope.launch {
         val feedListResponse = gitudyStudyRepository.getStudyList(
             cursorIdx,
             limit,
-            sortby,
+            sortBy,
             myStudy = false
         )
         val studyCnt = getStudyCount()?.count ?: -1
@@ -58,6 +61,21 @@ class FeedHomeViewModel : ViewModel() {
             Log.e(
                 "FeedHomeViewModel",
                 "feedListResponse status: ${feedListResponse.code()}\nfeedListResponse message: ${feedListResponse.message()}"
+            )
+        }
+    }
+
+    fun setBookmarkStatus(studyInfoId: Int) = viewModelScope.launch {
+        val setBookmarkResponse = gitudyBookmarksRepository.setBookmarkStatus(
+            studyInfoId
+        )
+
+        if (setBookmarkResponse.isSuccessful) {
+
+        } else {
+            Log.e(
+                "FeedHomeViewModel",
+                "setBookmarkResponse status: ${setBookmarkResponse.code()}\nsetBookmarkResponse message: ${setBookmarkResponse.errorBody()?.string()}"
             )
         }
     }
