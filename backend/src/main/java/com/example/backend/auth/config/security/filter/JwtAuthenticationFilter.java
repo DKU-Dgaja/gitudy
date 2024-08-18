@@ -55,7 +55,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        log.info(">>>> [ Jwt 인증 필터에 진입합니다. ] <<<<");
+//        log.info(">>>> [ Jwt 인증 필터에 진입합니다. ] <<<<");
 
         // 헤더에서 JWT 토큰 추출
         String jwtToken = request.getHeader("Authorization");
@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         // JWT 토큰이 헤더에 없다면 사용자 인증이 되지 않은 상태이므로 다음 인증 필터로 이동
         if (jwtToken == null || !jwtToken.startsWith("Bearer ") || shouldNotFilter(request)) {
-            log.info(">>>> [ Jwt 토큰이 헤더에 없으므로 다음 필터로 이동합니다 ] <<<<");
+//            log.info(">>>> [ Jwt 토큰이 헤더에 없으므로 다음 필터로 이동합니다 ] <<<<");
             filterChain.doFilter(request, response);
             return;
         }
