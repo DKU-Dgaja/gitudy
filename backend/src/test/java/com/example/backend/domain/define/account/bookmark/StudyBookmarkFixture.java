@@ -1,5 +1,7 @@
 package com.example.backend.domain.define.account.bookmark;
 
+import com.example.backend.study.api.controller.bookmark.response.IsMyBookmarkResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,5 +22,19 @@ public class StudyBookmarkFixture {
             studyBookmarks.add(createDefaultStudyBookmark(userId, studyInfoId));
         }
         return studyBookmarks;
+    }
+
+    // 테스트용 마이 북마크 response 생성(true)
+    public static IsMyBookmarkResponse createIsMyBookmarkResponse(Long userId, Long studyInfoId) {
+        return IsMyBookmarkResponse.builder()
+                .isMyBookmark(true)
+                .build();
+    }
+
+    // 테스트용 마이 북마크 response 생성(false)
+    public static IsMyBookmarkResponse createIsNotMyBookmarkResponse(Long userId, Long studyInfoId) {
+        return IsMyBookmarkResponse.builder()
+                .isMyBookmark(false)
+                .build();
     }
 }
