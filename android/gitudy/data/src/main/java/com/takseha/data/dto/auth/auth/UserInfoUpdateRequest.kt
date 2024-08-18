@@ -12,5 +12,5 @@ data class UserInfoUpdateRequest(
     @SerializedName("profile_public_yn")
     val profilePublicYn: Boolean,
     @SerializedName("social_info")
-    val socialInfo: SocialInfo
+    val socialInfo: SocialInfo?
 )

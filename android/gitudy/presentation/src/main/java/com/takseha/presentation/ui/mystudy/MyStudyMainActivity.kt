@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
@@ -18,7 +17,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.takseha.data.dto.feed.Category
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.StudyComment
@@ -31,8 +29,6 @@ import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
 import com.takseha.presentation.databinding.ActivityMyStudyMainBinding
-import com.takseha.presentation.ui.common.CustomDialog
-import com.takseha.presentation.ui.home.MainHomeActivity
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch

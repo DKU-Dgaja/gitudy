@@ -6,6 +6,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.auth.auth.UserInfoUpdatePageResponse
+import com.takseha.data.dto.auth.auth.UserInfoUpdateRequest
+import com.takseha.data.dto.auth.register.CheckNicknameRequest
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.mystudy.SocialInfo
@@ -20,22 +22,24 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-class ProfileHomeViewModel : ViewModel() {
+class ProfileEditViewModel : ViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
 
-    private val _uiState = MutableStateFlow(ProfileInfoUiState())
+    private val _uiState = MutableStateFlow(UserInfoUpdatePageResponse())
     val uiState = _uiState.asStateFlow()
+
+    private var _isCorrectName = MutableLiveData<Boolean>()
+    val isCorrectName : LiveData<Boolean>
+        get() = _isCorrectName
 
     suspend fun getUserProfileInfo() {
         val userProfileInfoResponse = gitudyAuthRepository.getUserInfoUpdatePage()
 
         if (userProfileInfoResponse.isSuccessful) {
             val userProfileInfo = userProfileInfoResponse.body()!!
-            val userGithubId = getUserGithubId()
             _uiState.update {
                 it.copy(
                     name = userProfileInfo.name,
-                    githubId = userGithubId,
                     profileImageUrl = userProfileInfo.profileImageUrl,
                     profilePublicYn = userProfileInfo.profilePublicYn,
                     socialInfo = userProfileInfo.socialInfo
@@ -43,31 +47,41 @@ class ProfileHomeViewModel : ViewModel() {
             }
         } else {
             Log.e(
-                "ProfileHomeViewModel",
+                "ProfileEditViewModel",
                 "userProfileInfoResponse status: ${userProfileInfoResponse.code()}\nuserProfileInfoResponse message: ${userProfileInfoResponse.errorBody()?.string()}"
             )
         }
     }
 
-    private suspend fun getUserGithubId(): String {
-        val userGithubIdResponse = gitudyAuthRepository.getUserInfo()
+    suspend fun checkNickname(name: String) {
+        val request = CheckNicknameRequest(name)
+        val correctNameResponse = gitudyAuthRepository.checkCorrectNickname(request)
 
-        if (userGithubIdResponse.isSuccessful) {
-            return userGithubIdResponse.body()!!.githubId
+        if (correctNameResponse.isSuccessful) {
+            _isCorrectName.value = true
+        } else {
+            _isCorrectName.value = false
+            Log.e("ProfileEditViewModel", "correctNameResponse status: ${correctNameResponse.code()}\ncorrectNameResponse message: ${correctNameResponse.errorBody()?.string()}")
+
+        }
+    }
+
+    fun updateUserInfo(name: String, profileImageUrl: String, socialInfo: SocialInfo?, profilePublicYn: Boolean) = viewModelScope.launch {
+        val request = UserInfoUpdateRequest(
+            name = name,
+            profileImageUrl = profileImageUrl,
+            profilePublicYn = profilePublicYn,
+            socialInfo = socialInfo
+        )
+        val userInfoUpdateResponse = gitudyAuthRepository.updateUserInfo(request)
+
+        if (userInfoUpdateResponse.isSuccessful) {
+            Log.d("ProfileEditViewModel", userInfoUpdateResponse.code().toString())
         } else {
             Log.e(
-                "ProfileHomeViewModel",
-                "userGithubIdResponse status: ${userGithubIdResponse.code()}\nuserGithubIdResponse message: ${userGithubIdResponse.errorBody()?.string()}"
+                "ProfileEditViewModel",
+                "userInfoUpdateResponse status: ${userInfoUpdateResponse.code()}\nuserInfoUpdateResponse message: ${userInfoUpdateResponse.errorBody()?.string()}"
             )
         }
-        return "noGithubId"
     }
 }
-
-data class ProfileInfoUiState(
-    val name: String = "",
-    val githubId: String = "",
-    val profileImageUrl: String = "",
-    val profilePublicYn: Boolean? = null,
-    val socialInfo: SocialInfo? = null
-)
