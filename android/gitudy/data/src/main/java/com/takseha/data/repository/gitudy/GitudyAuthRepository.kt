@@ -12,10 +12,6 @@ class GitudyAuthRepository {
         request: CheckNicknameRequest
     ) = client.checkCorrectNickname(request)
 
-    suspend fun logout(
-        token: String
-    ) = client.logout(token)
-
     suspend fun getUserInfo(
     ) = client.getUserInfo()
 

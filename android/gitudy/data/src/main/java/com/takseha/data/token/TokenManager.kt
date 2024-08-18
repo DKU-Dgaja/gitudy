@@ -128,11 +128,28 @@ class TokenManager(context: Context) {
                     Log.d("TokenManager", "logout response status: ${response.code()}")
                 } else {
                     Log.e("TokenManager", "logout response status: ${response.code()}\nlogout response message:${response.errorBody()!!.string()}")
-                    null
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                null
+            }
+        }
+    }
+
+    suspend fun deleteUserAccount() {
+        return withContext(Dispatchers.IO) {
+            try {
+                val token = "Bearer $accessToken"
+                val response = loginApi.deleteUserAccount(token)
+
+                if (response.isSuccessful) {
+                    accessToken = ""
+                    refreshToken = ""
+                    Log.d("TokenManager", "deleteUserAccount response status: ${response.code()}")
+                } else {
+                    Log.e("TokenManager", "deleteUserAccount response status: ${response.code()}\ndeleteUserAccount response message:${response.errorBody()!!.string()}")
+                }
+            } catch (e: Exception) {
+                Log.e("TokenManager", e.message.toString())
             }
         }
     }
