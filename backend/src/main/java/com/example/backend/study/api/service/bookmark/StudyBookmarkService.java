@@ -4,6 +4,7 @@ import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.bookmark.BookmarkException;
 import com.example.backend.domain.define.account.bookmark.StudyBookmark;
 import com.example.backend.domain.define.account.bookmark.repository.StudyBookmarkRepository;
+import com.example.backend.study.api.controller.bookmark.response.IsMyBookmarkResponse;
 import com.example.backend.study.api.service.bookmark.response.BookmarkInfoResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -49,5 +50,11 @@ public class StudyBookmarkService {
 
             log.info(">>>> 북마크가 등록되었습니다: {} <<<<", savedBookmark.getId());
         }
+    }
+
+    public IsMyBookmarkResponse getIsMyBookMark(Long userId, Long studyInfoId){
+        return IsMyBookmarkResponse.builder()
+                .isMyBookmark(studyBookmarkRepository.existsStudyBookmarkByUserIdAndStudyInfoId(userId, studyInfoId))
+                .build();
     }
 }
