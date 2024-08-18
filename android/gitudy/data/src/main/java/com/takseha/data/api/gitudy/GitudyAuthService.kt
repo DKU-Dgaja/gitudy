@@ -1,9 +1,12 @@
 package com.takseha.data.api.gitudy
 
 import com.takseha.data.dto.auth.auth.UserInfoResponse
+import com.takseha.data.dto.auth.auth.UserInfoUpdatePageResponse
+import com.takseha.data.dto.auth.auth.UserInfoUpdateRequest
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.TokenResponse
 import com.takseha.data.dto.auth.login.ReissueTokenResponse
+import com.takseha.data.dto.auth.register.CheckNicknameRequest
 import com.takseha.data.dto.auth.register.RegisterRequest
 import retrofit2.Response
 import retrofit2.http.Body
@@ -42,10 +45,19 @@ interface GitudyAuthService {
 
     @POST("/auth/check-nickname")
     suspend fun checkCorrectNickname(
-        @Body request: String
+        @Body request: CheckNicknameRequest
     ): Response<Void>
 
     @GET("/auth/info")
     suspend fun getUserInfo(
     ): Response<UserInfoResponse>
+
+    @GET("/auth/update")
+    suspend fun getUserInfoUpdatePage(
+    ): Response<UserInfoUpdatePageResponse>
+
+    @POST("/auth/update")
+    suspend fun updateUserInfo(
+        @Body request: UserInfoUpdateRequest
+    ): Response<Void>
 }

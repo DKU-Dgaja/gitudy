@@ -6,6 +6,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.dto.auth.register.CheckNicknameRequest
 import com.takseha.data.dto.auth.register.RegisterRequest
 import com.takseha.data.repository.github.GithubRepository
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
@@ -47,7 +48,9 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
     suspend fun checkNickname(name: String) {
         gitudyAuthRepository = GitudyAuthRepository()
 
-        val correctNameResponse = gitudyAuthRepository.checkCorrectNickname(name)
+        val request = CheckNicknameRequest(name)
+
+        val correctNameResponse = gitudyAuthRepository.checkCorrectNickname(request)
 
         if (correctNameResponse.isSuccessful) {
             _isCorrectName.value = true

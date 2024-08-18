@@ -18,7 +18,7 @@ class AddTodoViewModel: ViewModel() {
         if (newTodoResponse.isSuccessful) {
             Log.d("AddTodoViewModel", newTodoResponse.code().toString())
         } else {
-            Log.e("AddTodoViewModel", "newTodoResponse status: ${newTodoResponse.code()}\nnewTodoResponse message: ${newTodoResponse.message()}")
+            Log.e("AddTodoViewModel", "newTodoResponse status: ${newTodoResponse.code()}\nnewTodoResponse message: ${newTodoResponse.errorBody()?.string()}")
         }
     }
 }
