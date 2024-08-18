@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -53,6 +54,14 @@ class ProfileHomeFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        Log.d("ProfileHomeFragment", "resume")
+        super.onResume()
+        lifecycleScope.launch {
+            viewModel.getUserProfileInfo()
+        }
+    }
+
     private fun setUserInfo(
         userInfo: ProfileInfoUiState
     ) {
@@ -60,7 +69,7 @@ class ProfileHomeFragment : Fragment() {
             nickname.text = userInfo.name
             githubIdText.text = getString(R.string.github_id, userInfo.githubId)
             Glide.with(this@ProfileHomeFragment)
-                .load(userInfo.profileImgUrl)
+                .load(userInfo.profileImageUrl)
                 .error(R.drawable.logo_profile_default)
                 .into(profileImg)
             githubLink.text = userInfo.socialInfo?.githubLink ?: "등록된 링크가 없어요"
