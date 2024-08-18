@@ -18,7 +18,7 @@ import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyApplyInfoBinding
-import com.takseha.presentation.ui.common.CustomDialog
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -132,14 +132,14 @@ class StudyApplyInfoFragment : Fragment() {
     }
 
     private fun showWithdrawApplyStudyDialog(studyInfoId: Int) {
-        val customDialog = CustomDialog(requireContext())
-        customDialog.setAlertText(getString(R.string.feed_apply_study_cancel))
-        customDialog.setOnConfirmClickListener {
+        val customSetDialog = CustomSetDialog(requireContext())
+        customSetDialog.setAlertText(getString(R.string.feed_apply_study_cancel))
+        customSetDialog.setOnConfirmClickListener {
             viewModel.withdrawApplyStudy(studyInfoId)
             binding.applyCancelBtn.visibility = GONE
             binding.studyEnterBtn.visibility = VISIBLE
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 
     override fun onDestroyView() {

@@ -3,8 +3,6 @@ package com.takseha.presentation.ui.feed
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -15,7 +13,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentStudyApplyMessageBinding
 import com.takseha.presentation.databinding.LayoutSnackbarGreyBinding
-import com.takseha.presentation.ui.common.CustomDialog
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -77,9 +75,9 @@ class StudyApplyMessageFragment : Fragment() {
     }
 
     private fun showApplyStudyDialog(studyInfoId: Int, joinCode: String, message: String) {
-        val customDialog = CustomDialog(requireContext())
-        customDialog.setAlertText(getString(R.string.feed_apply_study))
-        customDialog.setOnConfirmClickListener {
+        val customSetDialog = CustomSetDialog(requireContext())
+        customSetDialog.setAlertText(getString(R.string.feed_apply_study))
+        customSetDialog.setOnConfirmClickListener {
             viewModel.applyStudy(studyInfoId, "", message)
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.isApplySucceed.collectLatest {
@@ -96,7 +94,7 @@ class StudyApplyMessageFragment : Fragment() {
                 }
             }
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 
     override fun onDestroyView() {

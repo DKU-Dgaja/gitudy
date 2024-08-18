@@ -10,7 +10,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.LayoutDialogBinding
 
 // CustomDialog 클래스
-class CustomDialog(context: Context) {
+class CustomSetDialog(context: Context) {
     private val dialog: Dialog = Dialog(context, R.style.CustomDialogTheme)
     private val binding: LayoutDialogBinding = LayoutDialogBinding.inflate(LayoutInflater.from(context))
 

@@ -12,7 +12,7 @@ import com.bumptech.glide.Glide
 import com.takseha.data.dto.mystudy.StudyApplyMember
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentStudyApplyMemberProfileBinding
-import com.takseha.presentation.ui.common.CustomDialog
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.StudyApplyMemberProfileViewModel
 
 class StudyApplyMemberProfileFragment : Fragment() {
@@ -68,9 +68,9 @@ class StudyApplyMemberProfileFragment : Fragment() {
     }
 
     private fun showApproveMemberDialog(studyInfoId: Int, applyUserId: Int, approve: Boolean, alertMessage: String) {
-        val customDialog = CustomDialog(requireContext())
-        customDialog.setAlertText(alertMessage)
-        customDialog.setOnConfirmClickListener {
+        val customSetDialog = CustomSetDialog(requireContext())
+        customSetDialog.setAlertText(alertMessage)
+        customSetDialog.setOnConfirmClickListener {
             viewModel.approveApplyMember(studyInfoId, applyUserId, approve)
             with(binding) {
                 if (approve) {
@@ -90,6 +90,6 @@ class StudyApplyMemberProfileFragment : Fragment() {
                 }
             }
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 }
