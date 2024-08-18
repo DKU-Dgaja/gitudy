@@ -41,7 +41,7 @@ public class StudyApplyApproveRefuseListener {
 
             } else {
                 title = "[" + event.getStudyTopic() + "] 스터디 가입 실패";
-                message = String.format("'%s'님은 가입이 거절되었습니다.", event.getName());
+                message = "스터디 가입이 거절되었습니다🥲\n더 좋은 스터디를 찾아보세요!";
             }
 
             fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
