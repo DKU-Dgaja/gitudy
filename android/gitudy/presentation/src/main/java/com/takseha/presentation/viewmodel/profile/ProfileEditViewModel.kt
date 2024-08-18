@@ -66,7 +66,7 @@ class ProfileEditViewModel : ViewModel() {
         }
     }
 
-    fun updateUserInfo(name: String, profileImageUrl: String, socialInfo: SocialInfo?, profilePublicYn: Boolean) = viewModelScope.launch {
+    suspend fun updateUserInfo(name: String, profileImageUrl: String, socialInfo: SocialInfo?, profilePublicYn: Boolean) {
         val request = UserInfoUpdateRequest(
             name = name,
             profileImageUrl = profileImageUrl,

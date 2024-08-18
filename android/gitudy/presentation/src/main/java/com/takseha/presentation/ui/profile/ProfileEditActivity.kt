@@ -309,7 +309,7 @@ class ProfileEditActivity : AppCompatActivity() {
         val customDialog = CustomDialog(this)
         customDialog.setAlertText(getString(R.string.profile_update_info))
         customDialog.setOnConfirmClickListener {
-            viewModel.updateUserInfo(name, profileImageUrl, socialInfo, profilePublicYn)
+            lifecycleScope.launch { viewModel.updateUserInfo(name, profileImageUrl, socialInfo, profilePublicYn) }
             finish()
         }
         customDialog.show()
