@@ -93,7 +93,7 @@
                     android:checked="true"
                     android:gravity="center"
                     android:thumb="@drawable/switch_thumb"
-                    android:track="@drawable/switch_track_on"
+                    android:track="@drawable/selector_switch"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toTopOf="parent" />
 
