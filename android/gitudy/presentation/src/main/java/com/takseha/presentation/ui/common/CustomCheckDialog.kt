@@ -7,12 +7,13 @@ import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
 import android.view.WindowManager
 import com.takseha.presentation.R
+import com.takseha.presentation.databinding.LayoutDialogCheckBinding
 import com.takseha.presentation.databinding.LayoutDialogSetBinding
 
 // CustomDialog 클래스
-class CustomSetDialog(context: Context) {
+class CustomCheckDialog(context: Context) {
     private val dialog: Dialog = Dialog(context, R.style.CustomDialogTheme)
-    private val binding: LayoutDialogSetBinding = LayoutDialogSetBinding.inflate(LayoutInflater.from(context))
+    private val binding: LayoutDialogCheckBinding = LayoutDialogCheckBinding.inflate(LayoutInflater.from(context))
 
     init {
         dialog.setContentView(binding.root)
@@ -29,6 +30,18 @@ class CustomSetDialog(context: Context) {
 
     fun setAlertText(text: String) {
         binding.alertText.text = text
+    }
+
+    fun setAlertDetailText(text: String) {
+        binding.alertDetailText.text = text
+    }
+
+    fun setCancelBtnText(text: String) {
+        binding.cancelBtn.text = text
+    }
+
+    fun setConfirmBtnText(text: String) {
+        binding.confirmBtn.text = text
     }
 
     fun setOnCancelClickListener(listener: () -> Unit) {
