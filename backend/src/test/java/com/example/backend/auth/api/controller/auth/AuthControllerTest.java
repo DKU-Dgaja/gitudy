@@ -289,6 +289,36 @@ class AuthControllerTest extends MockTestConfig {
     }
 
     @Test
+    void 사용자_정보_수정_성공_테스트_링크_null일_경우() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+
+        UserUpdateRequest updateRequest = UserUpdateRequest.builder()
+                .name(savedUser.getName())
+                .profileImageUrl(savedUser.getProfileImageUrl())
+                .profilePublicYn(false)
+                .socialInfo(SocialInfo.builder()
+                        .blogLink("https://test.tistory.com/").build())
+                .build();
+        // when
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
+
+        // then
+        mockMvc.perform(post("/auth/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+
+                // then
+                .andExpect(status().isOk())
+                .andDo(print());
+    }
+
+    @Test
     void 사용자_정보_수정_성공_테스트() throws Exception {
         // given
         User savedUser = userRepository.save(generateAuthUser());
@@ -301,9 +331,11 @@ class AuthControllerTest extends MockTestConfig {
                 .profileImageUrl(savedUser.getProfileImageUrl())
                 .profilePublicYn(false)
                 .socialInfo(SocialInfo.builder()
-                        .blogLink("test@naver.com").build())
+                        .githubLink("https://github.com/test")
+                        .blogLink("https://test.tistory.com/")
+                        .linkedInLink("https://test.tistory.com/")
+                        .build())
                 .build();
-
         // when
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
@@ -353,38 +385,6 @@ class AuthControllerTest extends MockTestConfig {
                 .andDo(print());
     }
 
-    @Test
-    void 사용자_정보_수정_유효성_검사_실패_테스트() throws Exception {
-        // given
-        String expectedError = "socialInfo: Invalid social link";
-
-        User savedUser = userRepository.save(generateAuthUser());
-
-        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
-        String accessToken = jwtService.generateAccessToken(map, savedUser);
-
-        UserUpdateRequest updateRequest = UserUpdateRequest.builder()
-                .name(savedUser.getName())
-                .profileImageUrl(savedUser.getProfileImageUrl())
-                .profilePublicYn(false)
-                .socialInfo(SocialInfo.builder()
-                        .blogLink("Invalid Link").build())
-                .build();
-
-        // when
-        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
-
-        // then
-        mockMvc.perform(post("/auth/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-
-                // then
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
-    }
 
     @Test
     void 푸시_알림_여부_수정_성공_테스트() throws Exception {
