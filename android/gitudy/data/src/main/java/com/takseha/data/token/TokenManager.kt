@@ -87,7 +87,7 @@ class TokenManager(context: Context) {
                     null
                 }
             } catch (e: Exception) {
-                Log.e("TokenManager", e.message.toString())
+                Log.e("TokenManager", "register error: ${e.message}")
                 null
             }
         }

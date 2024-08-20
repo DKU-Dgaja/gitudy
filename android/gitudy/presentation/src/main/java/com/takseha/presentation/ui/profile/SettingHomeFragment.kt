@@ -7,6 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentSettingHomeBinding
 import com.takseha.presentation.ui.common.CustomCheckDialog
@@ -39,7 +41,22 @@ class SettingHomeFragment : Fragment() {
             backBtn.setOnClickListener {
                 requireActivity().finish()
             }
-            pushAlertSwitch.isChecked = pushAlarmYn
+
+            customerServiceLayout.setOnClickListener {
+                it.findNavController().navigate(R.id.action_settingHomeFragment_to_customerServiceFragment)
+            }
+
+            pushAlertSwitch.apply {
+                isChecked = pushAlarmYn
+                setOnClickListener {
+
+                }
+            }
+
+            deleteAccountLayout.setOnClickListener {
+                it.findNavController().navigate(R.id.action_settingHomeFragment_to_deleteAccountFragment)
+            }
+
             logoutBtn.setOnClickListener {
                 showLogoutDialog()
             }
@@ -55,8 +72,8 @@ class SettingHomeFragment : Fragment() {
         customCheckDialog.setOnConfirmClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.logout()
+                findNavController().navigate(R.id.action_settingHomeFragment_to_logoutCompleteFragment)
             }
-            requireActivity().finish()
         }
         customCheckDialog.show()
     }
