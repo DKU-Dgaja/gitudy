@@ -183,4 +183,13 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiResponse(responseCode = "200", description = "탈퇴한 회원 재가입 성공")
+    @PostMapping("/re-register")
+    public ResponseEntity<Void> reRegisterWithdrawnUser(@AuthenticationPrincipal User user) {
+
+        authService.reRegisterWithdrawnUser(user);
+
+        return ResponseEntity.ok().build();
+    }
+
 }

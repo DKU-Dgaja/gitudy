@@ -37,6 +37,7 @@ public enum ExceptionMessage {
     AUTH_DUPLICATE_UNAUTH_REGISTER("중복된 회원가입 요청입니다."),
     AUTH_NOT_FOUND("계정 정보를 찾을 수 없습니다."),
     AUTH_DELETE_FAIL("계정 삭제에 실패했습니다."),
+    AUTH_WITHDRAWN_USER("탈퇴한 사용자입니다. 다시 가입하려면 추가적인 절차가 필요합니다."),
 
     // UserException
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),

@@ -175,6 +175,12 @@ public class AuthService {
             return new AuthException(ExceptionMessage.AUTH_INVALID_REGISTER);
         });
 
+        // 탈퇴했던 사용자가 다시 가입을 요청하는 경우 예외를 발생시킨다.
+        if (findUser.getRole() == UserRole.WITHDRAW) {
+            log.warn(">>>> GitHub ID: {} -> {}", findUser.getGithubId(), ExceptionMessage.AUTH_WITHDRAWN_USER.getText());
+            throw new AuthException(ExceptionMessage.AUTH_WITHDRAWN_USER);
+        }
+
         // UNAUTH 토큰으로 회원가입을 요청했지만 이미 update되어 UNAUTH가 아닌 사용자 예외 처리
         if (findUser.getRole() != UserRole.UNAUTH) {
             log.warn(">>>> Not UNAUTH User : {}", ExceptionMessage.AUTH_DUPLICATE_UNAUTH_REGISTER.getText());
@@ -308,5 +314,17 @@ public class AuthService {
             log.error(">>>> User not found for githubId {} <<<<", githubId);
             return new UserException(ExceptionMessage.USER_NOT_FOUND_WITH_GITHUB_ID);
         }).getId();
+    }
+
+    @Transactional
+    public void reRegisterWithdrawnUser(User contextUser) {
+        User findUser = userRepository.findByPlatformIdAndPlatformType(contextUser.getPlatformId(), contextUser.getPlatformType())
+                .orElseThrow(() -> {
+                    log.error(">>>> User not found for platformId {} and platformType {} <<<<", contextUser.getPlatformId(), contextUser.getPlatformType());
+                    return new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
+
+        findUser.reRegister();
+        log.info("User re-Register Success: {}", findUser.getGithubId());
     }
 }

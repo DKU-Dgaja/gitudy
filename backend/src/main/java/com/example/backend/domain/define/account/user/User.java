@@ -111,6 +111,10 @@ public class User extends BaseEntity implements UserDetails {
         this.role = UserRole.WITHDRAW;
     }
 
+    public void reRegister() {
+        this.role = UserRole.USER;
+    }
+
     // Score 업데이트 메서드
     public void addUserScore(int score) {
         this.score = Math.max(0, this.score + score);
