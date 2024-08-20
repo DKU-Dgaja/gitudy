@@ -34,6 +34,18 @@ public class UserFixture {
                 .build();
     }
 
+    public static User generateWithdrawUser() {
+        return User.builder()
+                .platformId("withdraw")
+                .platformType(GITHUB)
+                .role(WITHDRAW)
+                .name("withdraw")
+                .githubId("withdraw")
+                .profileImageUrl("withdraw")
+                .score(10)
+                .build();
+    }
+
     public static User generateAuthUserByGithubId(String githubId) {
         return User.builder()
                 .platformId("1")

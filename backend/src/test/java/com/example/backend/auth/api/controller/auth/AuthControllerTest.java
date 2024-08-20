@@ -488,4 +488,65 @@ class AuthControllerTest extends MockTestConfig {
                 .andDo(print());
     }
 
+    @Test
+    void 탈퇴한_회원이_재가입을_요청하면_예외가_반환된다() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateWithdrawUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+
+        // 유효성 검사 통과하는 request
+        AuthRegisterRequest request = AuthRegisterRequest.builder()
+                .name("구영민")
+                .githubId("test@1234")
+                .pushAlarmYn(false)
+                .fcmToken("token")
+                .build();
+
+        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class)))
+                .thenThrow(new AuthException(ExceptionMessage.AUTH_WITHDRAWN_USER));
+
+        // when
+        mockMvc.perform(post("/auth/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+                // then
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.AUTH_WITHDRAWN_USER.getText()))
+                .andDo(print());
+    }
+
+    @Test
+    void 탈퇴한_회원_계정복구_요청() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateWithdrawUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+
+        String newAtk = "new-atk";
+        String newRtk = "new-rtk";
+
+        // when
+        when(authService.reRegisterWithdrawnUser(any(User.class)))
+                .thenReturn(AuthLoginResponse.builder()
+                        .accessToken(newAtk)
+                        .refreshToken(newRtk)
+                        .role(UserRole.USER)
+                        .build());
+
+        // when
+        mockMvc.perform(post("/auth/re-register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+                // then
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").value(newAtk))
+                .andExpect(jsonPath("$.refresh_token").value(newRtk));
+    }
+
 }

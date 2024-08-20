@@ -427,4 +427,37 @@ class AuthServiceTest extends MockTestConfig {
         assertFalse(deletedRefreshToken.isPresent());
     }
 
+    @Test
+    public void 탈퇴한_회원이_회원가입을_요청하면_예외가_발생한다() {
+        User withdrawUser = userRepository.save(generateWithdrawUser());
+
+        // 회원가입 요청 생성
+        AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
+                .name("testName")
+                .githubId(withdrawUser.getGithubId())
+                .build();
+
+        // then
+        RuntimeException exception = assertThrows(RuntimeException.class, () -> {
+            authService.register(request, withdrawUser);
+        });
+
+        assertEquals(ExceptionMessage.AUTH_WITHDRAWN_USER.getText(), exception.getMessage());
+    }
+
+    @Test
+    void 탈퇴한_회원이_재가입을_요청하면_계정이_복구된다() {
+        // given
+        User withdrawUser = userRepository.save(generateWithdrawUser());
+
+        // when
+        AuthLoginResponse response = authService.reRegisterWithdrawnUser(withdrawUser);
+        User findUser = userRepository.findByGithubId(withdrawUser.getGithubId()).get();
+        boolean tokenValid = jwtService.isTokenValid(response.getAccessToken(), findUser.getUsername());   // 발행한 토큰 검증
+
+        // then
+        assertEquals(USER, findUser.getRole());
+        assertThat(tokenValid).isTrue();
+    }
+
 }
