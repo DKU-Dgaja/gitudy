@@ -26,6 +26,7 @@ class CustomCheckDialog(context: Context) {
         binding.confirmBtn.setOnClickListener {
             dialog.dismiss()
         }
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
     fun setAlertText(text: String) {
