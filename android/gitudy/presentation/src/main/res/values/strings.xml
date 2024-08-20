@@ -115,5 +115,10 @@
     <string name="profile_no_commit_list">커밋 기록이 없어요</string>
     <string name="profile_no_saved_study">저장한 스터디가 없어요</string>
     <string name="profile_update_info">프로필을 수정하시겠습니까?</string>
+    <string name="profile_setting_push_alert">알림을 켜서 스터디 소식을 빠르게 받아보세요!</string>
+    <string name="alert_logout_title">로그아웃을 하시겠습니까?</string>
+    <string name="alert_logout_detail">로그아웃 시\n 참여 스터디 알림을 받지 못해요</string>
+    <string name="alert_logout_cancel">닫기</string>
+    <string name="alert_logout_confirm">로그아웃</string>
 
 </resources>

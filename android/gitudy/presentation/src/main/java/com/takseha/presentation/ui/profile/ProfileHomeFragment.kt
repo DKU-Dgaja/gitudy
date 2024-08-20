@@ -13,6 +13,7 @@ import androidx.lifecycle.lifecycleScope
 import com.bumptech.glide.Glide
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentProfileHomeBinding
+import com.takseha.presentation.ui.home.MainHomeAlertActivity
 import com.takseha.presentation.viewmodel.profile.ProfileHomeViewModel
 import com.takseha.presentation.viewmodel.profile.ProfileInfoUiState
 import kotlinx.coroutines.flow.collectLatest
@@ -41,21 +42,31 @@ class ProfileHomeFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getUserProfileInfo()
-            viewModel.uiState.collectLatest {
-                setUserInfo(it)
-            }
-        }
+            viewModel.uiState.collectLatest { uiState ->
+                setUserInfo(uiState)
 
-        with(binding) {
-            editBtn.setOnClickListener {
-                val intent = Intent(requireContext(), ProfileEditActivity::class.java)
-                startActivity(intent)
+                with(binding) {
+                    editBtn.setOnClickListener {
+                        val intent = Intent(requireContext(), ProfileEditActivity::class.java)
+                        startActivity(intent)
+                    }
+
+                    settingBtn.setOnClickListener {
+                        val intent = Intent(requireContext(), SettingActivity::class.java)
+                        intent.putExtra("pushAlarmYn", uiState.pushAlarmYn)
+                        startActivity(intent)
+                    }
+
+                    alarmBtn.setOnClickListener {
+                        val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
+                        startActivity(intent)
+                    }
+                }
             }
         }
     }
 
     override fun onResume() {
-        Log.d("ProfileHomeFragment", "resume")
         super.onResume()
         lifecycleScope.launch {
             viewModel.getUserProfileInfo()
