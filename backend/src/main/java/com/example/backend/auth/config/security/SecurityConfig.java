@@ -32,6 +32,7 @@ public class SecurityConfig {
                                 .requestMatchers("/webhook/**").hasAnyAuthority("ADMIN")
                                 // register
                                 .requestMatchers("/auth/register").hasAnyAuthority("UNAUTH", "WITHDRAW")
+                                .requestMatchers("/auth/re-register").hasAnyAuthority("WITHDRAW")
                                 // reissue
                                 .requestMatchers("/auth/reissue").permitAll()
                                 // update

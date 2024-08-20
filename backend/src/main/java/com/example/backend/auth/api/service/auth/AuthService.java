@@ -317,7 +317,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void reRegisterWithdrawnUser(User contextUser) {
+    public AuthLoginResponse reRegisterWithdrawnUser(User contextUser) {
         User findUser = userRepository.findByPlatformIdAndPlatformType(contextUser.getPlatformId(), contextUser.getPlatformType())
                 .orElseThrow(() -> {
                     log.error(">>>> User not found for platformId {} and platformType {} <<<<", contextUser.getPlatformId(), contextUser.getPlatformType());
@@ -326,5 +326,14 @@ public class AuthService {
 
         findUser.reRegister();
         log.info("User re-Register Success: {}", findUser.getGithubId());
+
+        // JWT Access Token, Refresh Token 재발급
+        JwtToken tokens = generateJwtToken(findUser);
+
+        return AuthLoginResponse.builder()
+                .accessToken(tokens.getAccessToken())
+                .refreshToken(tokens.getRefreshToken())
+                .role(findUser.getRole())
+                .build();
     }
 }
