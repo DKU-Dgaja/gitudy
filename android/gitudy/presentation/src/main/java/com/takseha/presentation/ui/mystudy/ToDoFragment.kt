@@ -16,7 +16,7 @@ import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.ToDoListRVAdapter
 import com.takseha.presentation.databinding.FragmentToDoBinding
-import com.takseha.presentation.ui.common.CustomDialog
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.TodoViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -108,12 +108,12 @@ class ToDoFragment : Fragment() {
     }
 
     private fun showDeleteTodoDialog(studyInfoId: Int, todoId: Int) {
-        val customDialog = CustomDialog(requireContext())
-        customDialog.setAlertText(getString(R.string.to_do_delete))
-        customDialog.setOnConfirmClickListener {
+        val customSetDialog = CustomSetDialog(requireContext())
+        customSetDialog.setAlertText(getString(R.string.to_do_delete))
+        customSetDialog.setOnConfirmClickListener {
             viewModel.deleteTodo(studyInfoId, todoId)
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 
     override fun onDestroyView() {

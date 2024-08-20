@@ -43,6 +43,11 @@ interface GitudyAuthService {
         @Header("Authorization") token: String
     ): Response<Void>
 
+    @POST("/auth/delete")
+    suspend fun deleteUserAccount(
+        @Header("Authorization") token: String
+    ): Response<Void>
+
     @POST("/auth/check-nickname")
     suspend fun checkCorrectNickname(
         @Body request: CheckNicknameRequest

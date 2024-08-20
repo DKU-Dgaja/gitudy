@@ -170,7 +170,6 @@
             </LinearLayout>
         </LinearLayout>
 
-        <!-- 구분선 및 소개 링크 제목 -->
         <LinearLayout
             android:id="@+id/divider1"
             android:layout_width="match_parent"

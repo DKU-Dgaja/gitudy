@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/setting_nav"
+    app:startDestination="@id/settingHomeFragment">
+
+    <fragment
+        android:id="@+id/settingHomeFragment"
+        android:name="com.takseha.presentation.ui.profile.SettingHomeFragment"
+        android:label="fragment_setting_home"
+        tools:layout="@layout/fragment_setting_home" >
+        <action
+            android:id="@+id/action_settingHomeFragment_to_customerServiceFragment"
+            app:destination="@id/customerServiceFragment" />
+        <action
+            android:id="@+id/action_settingHomeFragment_to_deleteAccountFragment"
+            app:destination="@id/deleteAccountFragment" />
+        <action
+            android:id="@+id/action_settingHomeFragment_to_logoutCompleteFragment"
+            app:destination="@id/logoutCompleteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/customerServiceFragment"
+        android:name="com.takseha.presentation.ui.profile.CustomerServiceFragment"
+        android:label="fragment_customer_service"
+        tools:layout="@layout/fragment_customer_service" />
+    <fragment
+        android:id="@+id/deleteAccountFragment"
+        android:name="com.takseha.presentation.ui.profile.DeleteAccountFragment"
+        android:label="fragment_delete_account"
+        tools:layout="@layout/fragment_delete_account" >
+        <action
+            android:id="@+id/action_deleteAccountFragment_to_deleteAccountCompleteFragment"
+            app:destination="@id/deleteAccountCompleteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/deleteAccountCompleteFragment"
+        android:name="com.takseha.presentation.ui.profile.DeleteAccountCompleteFragment"
+        android:label="fragment_delete_account_complete"
+        tools:layout="@layout/fragment_delete_account_complete" />
+    <fragment
+        android:id="@+id/logoutCompleteFragment"
+        android:name="com.takseha.presentation.ui.profile.LogoutCompleteFragment"
+        android:label="fragment_logout_complete"
+        tools:layout="@layout/fragment_logout_complete" />
+</navigation>

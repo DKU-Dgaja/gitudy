@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.auth.UserInfoUpdatePageResponse
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
@@ -31,11 +32,13 @@ class ProfileHomeViewModel : ViewModel() {
 
         if (userProfileInfoResponse.isSuccessful) {
             val userProfileInfo = userProfileInfoResponse.body()!!
-            val userGithubId = getUserGithubId()
+            val userGithubId = getUserInfo()?.githubId ?: ""
+            val userPushAlarmYn = getUserInfo()?.pushAlarmYn ?: false
             _uiState.update {
                 it.copy(
                     name = userProfileInfo.name,
                     githubId = userGithubId,
+                    pushAlarmYn = userPushAlarmYn,
                     profileImageUrl = userProfileInfo.profileImageUrl,
                     profilePublicYn = userProfileInfo.profilePublicYn,
                     socialInfo = userProfileInfo.socialInfo
@@ -49,24 +52,25 @@ class ProfileHomeViewModel : ViewModel() {
         }
     }
 
-    private suspend fun getUserGithubId(): String {
+    private suspend fun getUserInfo(): UserInfoResponse? {
         val userGithubIdResponse = gitudyAuthRepository.getUserInfo()
 
         if (userGithubIdResponse.isSuccessful) {
-            return userGithubIdResponse.body()!!.githubId
+            return userGithubIdResponse.body()!!
         } else {
             Log.e(
                 "ProfileHomeViewModel",
                 "userGithubIdResponse status: ${userGithubIdResponse.code()}\nuserGithubIdResponse message: ${userGithubIdResponse.errorBody()?.string()}"
             )
         }
-        return "noGithubId"
+        return null
     }
 }
 
 data class ProfileInfoUiState(
     val name: String = "",
     val githubId: String = "",
+    val pushAlarmYn: Boolean? = null,
     val profileImageUrl: String = "",
     val profilePublicYn: Boolean? = null,
     val socialInfo: SocialInfo? = null

@@ -19,7 +19,7 @@ import com.takseha.data.dto.mystudy.SocialInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityProfileEditBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
-import com.takseha.presentation.ui.common.CustomDialog
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.profile.ProfileEditViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -306,13 +306,13 @@ class ProfileEditActivity : AppCompatActivity() {
     }
 
     private fun showUpdateProfileInfoDialog(name: String, profileImageUrl: String, socialInfo: SocialInfo?, profilePublicYn: Boolean) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.profile_update_info))
-        customDialog.setOnConfirmClickListener {
-            viewModel.updateUserInfo(name, profileImageUrl, socialInfo, profilePublicYn)
+        val customSetDialog = CustomSetDialog(this)
+        customSetDialog.setAlertText(getString(R.string.profile_update_info))
+        customSetDialog.setOnConfirmClickListener {
+            lifecycleScope.launch { viewModel.updateUserInfo(name, profileImageUrl, socialInfo, profilePublicYn) }
             finish()
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 
     private fun setBinding() {

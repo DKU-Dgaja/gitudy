@@ -6,6 +6,9 @@
 
     <application>
         <activity
+            android:name=".ui.profile.SettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.home.MainHomeAlertActivity"
             android:exported="false" />
         <activity
@@ -60,7 +63,7 @@
         <activity
             android:name=".ui.profile.ProfileEditActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.auth.PopupAgreementActivity"
             android:exported="false"
