@@ -114,5 +114,20 @@
     <string name="profile_linkedin_link">www.linkedin.com</string>
     <string name="profile_no_commit_list">커밋 기록이 없어요</string>
     <string name="profile_no_saved_study">저장한 스터디가 없어요</string>
+    <string name="profile_update_info">프로필을 수정하시겠습니까?</string>
+    <string name="profile_setting_push_alert">알림을 켜서 스터디 소식을 빠르게 받아보세요!</string>
+    <string name="profile_delete_account_reason1">사용을 잘 안하게 돼요</string>
+    <string name="profile_delete_account_reason2">오류가 많아요</string>
+    <string name="profile_delete_account_reason3">앱 이용이 불편해요</string>
+    <string name="profile_delete_account_reason4">기타</string>
+    <string name="alert_logout_title">로그아웃을 하시겠습니까?</string>
+    <string name="alert_logout_detail">로그아웃 시\n 참여 스터디 알림을 받지 못해요</string>
+    <string name="alert_delete_account_title">회원 탈퇴를 하시겠습니까?</string>
+    <string name="alert_delete_account_detail">현재 계정의 모든 데이터가 삭제돼요</string>
+    <string name="alert_logout_cancel">닫기</string>
+    <string name="alert_logout_confirm">로그아웃</string>
+    <string name="alert_delete_account_confirm">탈퇴하기</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

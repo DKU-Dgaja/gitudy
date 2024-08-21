@@ -9,6 +9,9 @@
             android:name=".ui.profile.BookmarksActivity"
             android:exported="false" />
         <activity
+            android:name=".ui.profile.SettingActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.home.MainHomeAlertActivity"
             android:exported="false" />
         <activity
