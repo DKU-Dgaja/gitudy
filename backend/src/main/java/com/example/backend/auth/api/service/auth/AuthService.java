@@ -28,6 +28,7 @@ import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.service.github.GithubApiTokenService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -208,7 +209,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void userDelete(String userName) {
+    public void userDelete(String userName, MessageRequest request) {
         String[] platformIdAndPlatformType = extractFromSubject(userName);
         String platformId = platformIdAndPlatformType[0];
         String platformType = platformIdAndPlatformType[1];
@@ -218,6 +219,7 @@ public class AuthService {
         });
 
         try {
+            user.reason(request.getMessage());
             user.deleteUser();
             log.info(">>>> {} Info is Deleted.", user.getName());
         } catch (IllegalArgumentException e) {

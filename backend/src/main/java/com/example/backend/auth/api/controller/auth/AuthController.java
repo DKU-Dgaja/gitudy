@@ -16,6 +16,7 @@ import com.example.backend.common.exception.jwt.JwtException;
 import com.example.backend.common.exception.oauth.OAuthException;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserPlatformType;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -128,8 +129,10 @@ public class AuthController {
 
     @ApiResponse(responseCode = "200", description = "회원탈퇴 성공")
     @PostMapping("/delete")
-    public ResponseEntity<Void> userDelete(@AuthenticationPrincipal User user) {
-        authService.userDelete(user.getUsername());
+    public ResponseEntity<Void> userDelete(@AuthenticationPrincipal User user,
+                                           @Valid @RequestBody MessageRequest request) {
+
+        authService.userDelete(user.getUsername(), request);
 
         return ResponseEntity.ok().build();
     }
