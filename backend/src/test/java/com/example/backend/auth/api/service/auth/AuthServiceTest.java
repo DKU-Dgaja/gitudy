@@ -23,6 +23,7 @@ import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -224,7 +225,8 @@ class AuthServiceTest extends MockTestConfig {
 
         // when
         assertThrows(AuthException.class,
-                () -> authService.userDelete(invalidUserName));
+                () -> authService.userDelete(invalidUserName, MessageRequest.builder()
+                        .message("reason").build()));
     }
 
     @Test
@@ -243,7 +245,7 @@ class AuthServiceTest extends MockTestConfig {
         userRepository.save(user);
 
         // when
-        authService.userDelete(platformId + "_" + platformType);
+        authService.userDelete(platformId + "_" + platformType, MessageRequest.builder().message("reason").build());
         User deletedUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElse(null);
 
         // then

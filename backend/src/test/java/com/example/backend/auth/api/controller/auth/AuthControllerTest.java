@@ -21,6 +21,7 @@ import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -161,12 +162,17 @@ class AuthControllerTest extends MockTestConfig {
                 .build()
         );
 
-        doNothing().when(authService).userDelete(any(String.class));
+        MessageRequest request = MessageRequest.builder()
+                .message("reason")
+                .build();
+
+        doNothing().when(authService).userDelete(any(String.class), any(MessageRequest.class));
 
         // when
         mockMvc.perform(post("/auth/delete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
                 // then
                 .andExpect(status().isOk());
 
