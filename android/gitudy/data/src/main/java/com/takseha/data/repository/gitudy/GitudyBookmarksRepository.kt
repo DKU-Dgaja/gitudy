@@ -16,4 +16,8 @@ class GitudyBookmarksRepository {
     suspend fun setBookmarkStatus(
         studyInfoId: Int
     ) = client.setBookmarkStatus(studyInfoId)
+
+    suspend fun checkBookmarkStatus(
+        studyInfoId: Int
+    ) = client.checkBookmarkStatus(studyInfoId)
 }
