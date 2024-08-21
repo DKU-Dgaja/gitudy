@@ -114,7 +114,5 @@
     <string name="profile_linkedin_link">www.linkedin.com</string>
     <string name="profile_no_commit_list">커밋 기록이 없어요</string>
     <string name="profile_no_saved_study">저장한 스터디가 없어요</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>
