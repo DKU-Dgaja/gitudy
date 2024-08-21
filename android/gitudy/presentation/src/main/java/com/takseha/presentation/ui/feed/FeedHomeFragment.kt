@@ -82,7 +82,7 @@ class FeedHomeFragment : Fragment() {
             }
 
             override fun bookmarkClick(view: View, position: Int) {
-
+                viewModel.setBookmarkStatus(studyList[position].id)
             }
         }
     }

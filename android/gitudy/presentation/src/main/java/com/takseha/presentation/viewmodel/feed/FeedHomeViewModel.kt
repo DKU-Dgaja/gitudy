@@ -71,7 +71,7 @@ class FeedHomeViewModel : ViewModel() {
         )
 
         if (setBookmarkResponse.isSuccessful) {
-
+            Log.d("FeedHomeViewModel", setBookmarkResponse.code().toString())
         } else {
             Log.e(
                 "FeedHomeViewModel",
