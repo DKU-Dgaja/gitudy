@@ -65,10 +65,6 @@ public class GithubApiService {
                 try {
                     return tryConnectGithub(newToken);
                 } catch (IOException re) {
-
-                    // 재시도 후에도 실패한 경우는 토큰을 아예 삭제
-                    githubApiTokenService.deleteToken(userId);
-
                     log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_RESET_TOKEN_RETRY_FAIL.getText(), re.getMessage());
                     throw new GithubApiException(ExceptionMessage.GITHUB_API_RESET_TOKEN_RETRY_FAIL);
                 }
@@ -227,7 +223,7 @@ public class GithubApiService {
                 "web",
                 Map.of(
                         "url", webhookUrl,
-                        "content_type", "application/json"
+                        "content_type", "json"
                 ),
                 Collections.emptyList(),
                 true

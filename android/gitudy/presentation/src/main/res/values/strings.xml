@@ -13,6 +13,8 @@
     <string name="text_length_alert">%d자 이내</string>
     <string name="comment_hint">%s님에게 응원과 격려의 메시지를 남겨주세요!</string>
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
+    <string name="version">최신버전이에요(Beta)</string>
+    <string name="setting_later">추후 구현 예정입니다</string>
 
 
     <!-- Strings related to alert -->
@@ -129,5 +131,6 @@
     <string name="alert_delete_account_confirm">탈퇴하기</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

@@ -1,23 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:clipToPadding="false"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="50dp"
         android:gravity="center"
         app:cardCornerRadius="12dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:cardElevation="15dp">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:clipChildren="false"
             android:clipToPadding="false"
+            android:gravity="center"
             android:orientation="vertical"
             android:padding="20dp">
 
@@ -33,29 +37,25 @@
                 android:id="@+id/alertText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
                 android:layout_marginTop="8dp"
                 android:fontFamily="@font/pretendard_bold"
                 android:gravity="center"
                 android:textColor="@color/BLACK"
-                android:textSize="22dp" />
+                android:textSize="22sp" />
 
             <LinearLayout
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="-5dp"
-                android:clipToPadding="false"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:padding="5dp">
+                android:layout_marginTop="30dp"
+                android:orientation="horizontal">
 
                 <Button
                     android:id="@+id/cancelBtn"
-                    android:layout_width="140dp"
+                    style="@style/B5_1"
+                    android:layout_width="0dp"
                     android:layout_height="55dp"
                     android:layout_marginRight="16dp"
+                    android:layout_weight="1"
                     android:background="@drawable/square_r8_non_stroke"
                     android:backgroundTint="@color/GS_200"
                     android:clipToPadding="false"
@@ -64,12 +64,14 @@
 
                 <Button
                     android:id="@+id/confirmBtn"
-                    android:layout_width="140dp"
+                    style="@style/B5_1"
+                    android:layout_width="0dp"
                     android:layout_height="55dp"
+                    android:layout_weight="1"
                     android:background="@drawable/box_non_stroke_r8_green"
                     android:text="@string/confirm"
                     android:textColor="@color/BLACK" />
             </LinearLayout>
         </LinearLayout>
     </androidx.cardview.widget.CardView>
-</layout>
+</LinearLayout>

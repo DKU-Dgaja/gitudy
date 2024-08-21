@@ -9,6 +9,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.constant.CommitStatus;
+import com.example.backend.domain.define.study.commit.event.CommitRegisterEvent;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
@@ -17,9 +18,11 @@ import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
+import com.example.backend.study.api.service.user.UserService;
 import com.example.backend.webhook.api.controller.request.WebhookPayload;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -34,6 +37,8 @@ public class WebhookService {
     private final StudyCommitRepository studyCommitRepository;
     private final StudyTodoRepository studyTodoRepository;
     private final UserRepository userRepository;
+    private final ApplicationEventPublisher eventPublisher;
+    private final UserService userService;
 
     @Transactional
     public void handleCommit(WebhookPayload payload) {
@@ -55,6 +60,17 @@ public class WebhookService {
 
         //  커밋, 투두 정보 업데이트
         updateCommitAndTodoMappingStatus(user.getId(), study.getId(), todo, payload);
+
+        // 커밋 스터디장에게 알림처리
+        User studyLeader = userService.findUserByIdOrThrowException(study.getUserId());
+
+        eventPublisher.publishEvent(CommitRegisterEvent.builder()
+                .isPushAlarmYn(studyLeader.isPushAlarmYn())
+                .userId(studyLeader.getId())
+                .name(user.getName())
+                .studyInfoId(study.getId())
+                .studyTopic(study.getTopic())
+                .studyTodoTopic(todo.getTitle()));
     }
 
     private User getUserByPayLoad(String githubId) {

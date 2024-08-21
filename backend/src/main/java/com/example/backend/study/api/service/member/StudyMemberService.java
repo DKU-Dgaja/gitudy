@@ -33,6 +33,7 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -317,10 +318,13 @@ public class StudyMemberService {
         // 대기중인 멤버들의 신청목록 조회
         List<StudyMemberApplyResponse> applyList = studyMemberRepository.findStudyApplyListByStudyInfoId_CursorPaging(studyInfoId, cursorIdx, limit);
 
-        // 대기중인 멤버가 없는 경우(가입 신청x) 예외처리
+        // 대기중인 멤버가 없는 경우 빈 배열 반환
         if (applyList.isEmpty()) {
-            log.warn(">>>> {} : {} <<<<", studyInfoId, ExceptionMessage.STUDY_NOT_APPLY_LIST);
-            throw new MemberException(ExceptionMessage.STUDY_NOT_APPLY_LIST);
+
+            return StudyMemberApplyListAndCursorIdxResponse.builder()
+                    .applyList(Collections.emptyList())
+                    .studyTopic(studyInfo.getTopic())
+                    .build();
         }
 
         StudyMemberApplyListAndCursorIdxResponse response = StudyMemberApplyListAndCursorIdxResponse.builder()

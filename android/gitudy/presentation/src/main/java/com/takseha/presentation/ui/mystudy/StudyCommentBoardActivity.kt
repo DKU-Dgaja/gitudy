@@ -15,11 +15,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.presentation.R
-import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.DetailCommentListRVAdapter
 import com.takseha.presentation.databinding.ActivityStudyCommentBoardBinding
-import com.takseha.presentation.ui.common.CustomDialog
-import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.StudyCommentBoardViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -110,12 +108,12 @@ class StudyCommentBoardActivity : AppCompatActivity() {
         }
     }
     private fun showDeleteCommentDialog(studyInfoId: Int, studyCommentId: Int) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.study_comment_delete))
-        customDialog.setOnConfirmClickListener {
+        val customSetDialog = CustomSetDialog(this)
+        customSetDialog.setAlertText(getString(R.string.study_comment_delete))
+        customSetDialog.setOnConfirmClickListener {
             viewModel.deleteStudyComment(studyInfoId, studyCommentId, 10)
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 
     private fun shakeBtn(view: View) {

@@ -10,6 +10,7 @@ import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.study.api.controller.bookmark.response.IsMyBookmarkResponse;
 import com.example.backend.study.api.service.bookmark.response.BookmarkInfoResponse;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -168,5 +169,35 @@ class StudyBookmarkServiceTest extends TestConfig {
         assertNotNull(bookmark);
         assertEquals(bookmark.getUserId(), userId);
         assertEquals(bookmark.getStudyInfoId(), studyInfoId);
+    }
+
+    @Test
+    void 북마크_인지_조회_성공_테스트() {
+        // given
+        Long userId = 1L;
+        Long studyInfoId = 1L;
+        boolean expectedResponse = true;
+
+        studyBookmarkRepository.save(StudyBookmarkFixture.createDefaultStudyBookmark(userId, studyInfoId));
+
+        // when
+        IsMyBookmarkResponse response = studyBookmarkService.getIsMyBookMark(userId, studyInfoId);
+
+        // then
+        assertEquals(response.isMyBookmark(), expectedResponse);
+    }
+
+    @Test
+    void 북마크_인지_조회_실패_테스트() {
+        // given
+        Long userId = 1L;
+        Long studyInfoId = 1L;
+        boolean expectedResponse = false;
+
+        // when
+        IsMyBookmarkResponse response = studyBookmarkService.getIsMyBookMark(userId, studyInfoId);
+
+        // then
+        assertEquals(response.isMyBookmark(), expectedResponse);
     }
 }

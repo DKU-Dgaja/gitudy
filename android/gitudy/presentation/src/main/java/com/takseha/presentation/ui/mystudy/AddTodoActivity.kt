@@ -11,12 +11,11 @@ import android.view.View
 import android.widget.TextView
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityAddTodoBinding
-import com.takseha.presentation.ui.common.CustomDialog
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
 import java.time.LocalDate
 
@@ -152,13 +151,13 @@ class AddTodoActivity : AppCompatActivity() {
     }
 
     private fun showAddTodoDialog(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) {
-        val customDialog = CustomDialog(this)
-        customDialog.setAlertText(getString(R.string.to_do_add))
-        customDialog.setOnConfirmClickListener {
+        val customSetDialog = CustomSetDialog(this)
+        customSetDialog.setAlertText(getString(R.string.to_do_add))
+        customSetDialog.setOnConfirmClickListener {
             viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
             finish()
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 
     private fun setBinding() {

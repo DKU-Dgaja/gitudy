@@ -313,6 +313,7 @@ public class StudyInfoService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void checkDuplicateRepoName(UserInfoResponse userInfo, String repoName) {
 
         // 사용자의 깃허브 토큰 조회

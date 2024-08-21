@@ -19,11 +19,10 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentUpdateTodoBinding
-import com.takseha.presentation.ui.common.CustomDialog
+import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.TodoViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import java.time.LocalDate
 
 class UpdateTodoFragment : Fragment() {
     private var _binding: FragmentUpdateTodoBinding? = null
@@ -194,13 +193,13 @@ class UpdateTodoFragment : Fragment() {
     }
 
     private fun showUpdateTodoDialog(studyInfoId: Int, todoId: Int, title: String, todoLink: String, detail: String, todoDate: String) {
-        val customDialog = CustomDialog(requireContext())
-        customDialog.setAlertText(getString(R.string.to_do_update))
-        customDialog.setOnConfirmClickListener {
+        val customSetDialog = CustomSetDialog(requireContext())
+        customSetDialog.setAlertText(getString(R.string.to_do_update))
+        customSetDialog.setOnConfirmClickListener {
             viewModel.updateTodo(studyInfoId, todoId, title, todoLink, detail, todoDate)
             view?.findNavController()?.popBackStack()
         }
-        customDialog.show()
+        customSetDialog.show()
     }
 
     override fun onDestroyView() {

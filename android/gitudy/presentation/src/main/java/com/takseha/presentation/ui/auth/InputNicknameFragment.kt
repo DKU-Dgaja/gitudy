@@ -24,7 +24,7 @@ class InputNicknameFragment : Fragment() {
     private var _binding: FragmentInputNicknameBinding? = null
     private val binding get() = _binding!!
     private val viewModel: RegisterViewModel by activityViewModels()
-    private val maxLength = 6
+    private val maxLength = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
