@@ -2,7 +2,6 @@ package com.takseha.presentation.ui.feed
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -74,12 +73,16 @@ class FeedHomeFragment : Fragment() {
     }
 
     private fun clickFeedItem(feedRVAdapter: FeedRVAdapter, studyList: List<StudyInfo>) {
-        feedRVAdapter.itemClick = object : FeedRVAdapter.ItemClick {
+        feedRVAdapter.onClickListener = object : FeedRVAdapter.OnClickListener {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), StudyApplyActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].id)
                 intent.putExtra("studyImgColor", studyList[position].profileImageUrl)
                 startActivity(intent)
+            }
+
+            override fun bookmarkClick(view: View, position: Int) {
+                viewModel.setBookmarkStatus(studyList[position].id)
             }
         }
     }
