@@ -107,8 +107,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -135,8 +135,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("maximumMember: must be less than or equal to 10"))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value("maximumMember: must be less than or equal to 10"));
+
     }
 
     @Test
@@ -163,8 +163,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("maximumMember: must be greater than or equal to 1"))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value("maximumMember: must be greater than or equal to 1"));
+
     }
 
     @Test
@@ -217,8 +217,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyInfoUpdateRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
 
     }
 
@@ -246,8 +246,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").isNotEmpty())
-                .andExpect(jsonPath("$.user_id").value(savedUser.getId()))
-                .andDo(print());
+                .andExpect(jsonPath("$.user_id").value(savedUser.getId()));
+
 
     }
 
@@ -275,8 +275,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -303,8 +303,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -330,8 +330,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""));
+
     }
 
     @Test
@@ -357,8 +357,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -384,8 +384,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""));
+
     }
 
     @Test
@@ -411,8 +411,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -436,8 +436,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(1))
-                .andDo(print());
+                .andExpect(jsonPath("$.count").value(1));
+
     }
 
     @Test
@@ -461,8 +461,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 )
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.count").value(1))
-                .andDo(print());
+                .andExpect(jsonPath("$.count").value(1));
+
     }
 
     @Test
@@ -486,8 +486,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -513,8 +513,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 // then
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())))
-                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_EMPTY.getText())))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_EMPTY.getText())));
+
     }
 
     @Test
@@ -539,8 +539,8 @@ class StudyInfoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())));
+
     }
 
     @Test
@@ -565,8 +565,8 @@ class StudyInfoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS.getText())))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS.getText())));
+
     }
 
     @Test
@@ -591,8 +591,8 @@ class StudyInfoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR.getText())))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR.getText())));
+
     }
 
     @Test
@@ -619,8 +619,8 @@ class StudyInfoControllerTest extends MockTestConfig {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_INVALID_CHARS.getText())))
                 .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_CONSECUTIVE_SPECIAL_CHARS.getText())))
-                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR.getText())))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(containsString("name: " + ExceptionMessage.STUDY_REPOSITORY_NAME_ENDS_WITH_SPECIAL_CHAR.getText())));
+
     }
 
 
@@ -641,7 +641,7 @@ class StudyInfoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 }

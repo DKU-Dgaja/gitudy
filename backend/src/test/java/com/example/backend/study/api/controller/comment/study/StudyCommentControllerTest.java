@@ -97,8 +97,7 @@ class StudyCommentControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentRegisterRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -123,8 +122,7 @@ class StudyCommentControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyCommentUpdateRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -147,8 +145,7 @@ class StudyCommentControllerTest extends MockTestConfig {
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/comment/" + studyComment.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -175,8 +172,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.study_comment_list").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$.study_comment_list").isNotEmpty());
     }
 
     @Test
@@ -203,8 +199,8 @@ class StudyCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.study_comment_list").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$.study_comment_list").isNotEmpty());
+
     }
 
     @Test
@@ -229,8 +225,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()));
     }
 
     @Test
@@ -251,7 +246,7 @@ class StudyCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""));
+
     }
 }

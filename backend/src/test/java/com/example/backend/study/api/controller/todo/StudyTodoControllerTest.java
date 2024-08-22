@@ -114,8 +114,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(studyTodoRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
 
     }
 
@@ -151,8 +151,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
 
     }
 
@@ -180,8 +180,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -212,8 +212,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -243,8 +243,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -272,8 +272,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.title").value(response.getTitle()))
-                .andDo(print());
+                .andExpect(jsonPath("$.title").value(response.getTitle()));
+
     }
 
     @Test
@@ -309,8 +309,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -337,8 +337,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -362,7 +362,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].commit_sha").value("tt"))
-                .andDo(print());
+                .andExpect(jsonPath("$[0].commit_sha").value("tt"));
+
     }
 }
