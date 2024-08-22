@@ -2,11 +2,13 @@ package com.takseha.presentation.ui.feed
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -20,6 +22,8 @@ import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyApplyInfoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
+import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
+import com.takseha.presentation.viewmodel.feed.StudyMainInfoState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import kotlin.math.abs
@@ -49,11 +53,10 @@ class StudyApplyInfoFragment : Fragment() {
 
         requireActivity().window.statusBarColor = Color.parseColor(studyImgColor)
 
-        viewModel.getStudyInfo(studyInfoId)
-
         viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getStudyInfo(studyInfoId)
             viewModel.uiState.collectLatest {
-                setStudyInfo(studyInfoId, studyImgColor!!, it.studyInfo)
+                setStudyInfo(studyInfoId, studyImgColor!!, it)
             }
         }
 
@@ -68,13 +71,23 @@ class StudyApplyInfoFragment : Fragment() {
             applyCancelBtn.setOnClickListener {
                 showWithdrawApplyStudyDialog(studyInfoId)
             }
+            bookmarkBtn.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.apply {
+                        setBookmarkStatus(studyInfoId)
+                        getStudyInfo(studyInfoId)
+                    }
+                }
+            }
             // TODO: 스터디 공유 기능 추후 구현
 //            studyLinkCopyBtn.setOnClickListener {
 //            }
         }
     }
 
-    private fun setStudyInfo(studyInfoId: Int, studyImgColor: String, studyInfo: StudyInfoResponse) {
+    private fun setStudyInfo(studyInfoId: Int, studyImgColor: String, studyMainInfoState: StudyMainInfoState) {
+        val studyInfo = studyMainInfoState.studyInfo
+
         with(binding) {
             studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
             if (studyInfo.isWaiting) {
@@ -97,13 +110,20 @@ class StudyApplyInfoFragment : Fragment() {
                 if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2,
                 if (studyInfo.lastCommitDay == null) "없음" else studyInfo.lastCommitDay
             )
-            studyGithubLinkText.text = studyInfo.githubLinkInfo.branchName
+            studyGithubLinkText.text = getString(R.string.study_github_link, studyInfo.githubLinkInfo.owner, studyInfo.githubLinkInfo.name)
             studyMemberCntText.text = String.format(
                 getString(R.string.feed_member_number),
                 studyInfo.currentMember,
                 studyInfo.maximumMember
             )
             setCategoryList(studyInfo.categoryNames)
+            Log.d("StudyApplyInfoFragment", studyMainInfoState.isMyBookmark.toString())
+            val drawable = if (studyMainInfoState.isMyBookmark == true) {
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_feed_save_green)
+            } else {
+                ContextCompat.getDrawable(requireContext(), R.drawable.ic_feed_save)
+            }
+            bookmarkBtn.setImageDrawable(drawable)
         }
     }
 
@@ -135,9 +155,11 @@ class StudyApplyInfoFragment : Fragment() {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.feed_apply_study_cancel))
         customSetDialog.setOnConfirmClickListener {
-            viewModel.withdrawApplyStudy(studyInfoId)
-            binding.applyCancelBtn.visibility = GONE
-            binding.studyEnterBtn.visibility = VISIBLE
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.withdrawApplyStudy(studyInfoId)
+                binding.applyCancelBtn.visibility = GONE
+                binding.studyEnterBtn.visibility = VISIBLE
+            }
         }
         customSetDialog.show()
     }

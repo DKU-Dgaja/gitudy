@@ -167,7 +167,7 @@ class MyStudyMainActivity : AppCompatActivity() {
                 getString(R.string.study_team_rank),
                 myStudyInfo.score, studyInfoId - 15
             )
-            studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
+            studyGithubLinkText.text = getString(R.string.study_github_link, myStudyInfo.githubLinkInfo.owner, myStudyInfo.githubLinkInfo.name)
             setCategoryList(myStudyInfo.categoryNames)
         }
     }
