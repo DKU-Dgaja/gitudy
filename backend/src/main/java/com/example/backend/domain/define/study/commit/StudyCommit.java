@@ -35,7 +35,7 @@ public class StudyCommit extends BaseEntity {
     @Column(name = "USER_ID", nullable = false)
     private Long userId;                        // 사용자 정보
 
-    @Column(name = "COMMIT_SHA", nullable = false, unique = true)
+    @Column(name = "COMMIT_SHA", nullable = false)
     private String commitSHA;                   // 커밋의 식별자 SHA 값
 
     @Column(name = "MESSAGE", nullable = false)

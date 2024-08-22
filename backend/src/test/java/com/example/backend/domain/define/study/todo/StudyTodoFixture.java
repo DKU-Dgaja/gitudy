@@ -52,6 +52,14 @@ public class StudyTodoFixture {
                 .build();
     }
 
+    // 테스트용  지각 상태의 studyTodoMapping 생성
+    public static StudyTodoMapping createOverdueStudyTodoMapping(Long todoId, Long userId) {
+        return StudyTodoMapping.builder()
+                .todoId(todoId)
+                .userId(userId)
+                .status(StudyTodoStatus.TODO_OVERDUE)
+                .build();
+    }
 
     // 테스트용 To do 등록
     public static StudyTodoRequest generateStudyTodoRequest() {

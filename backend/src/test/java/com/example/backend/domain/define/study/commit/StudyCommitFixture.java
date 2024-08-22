@@ -40,6 +40,19 @@ public class StudyCommitFixture {
                 .build();
     }
 
+    public static StudyCommit createStudyCommitWithDate(Long userId, Long studyInfoId, Long studyTodoId, String commitSHA, LocalDate date) {
+        return StudyCommit.builder()
+                .studyInfoId(studyInfoId)
+                .studyTodoId(studyTodoId)
+                .userId(userId)
+                .commitSHA(commitSHA)
+                .message("메세지")
+                .commitDate(date)
+                .status(COMMIT_WAITING)
+                .rejectionReason(null)
+                .build();
+    }
+
     // 중복되지 않는 랜덤 값을 생성하는 메서드
     private static int generateUniqueRandomValue(Set<Integer> usedValues) {
         int randomValue;
