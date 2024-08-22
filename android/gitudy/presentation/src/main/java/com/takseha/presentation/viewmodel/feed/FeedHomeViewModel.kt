@@ -8,8 +8,11 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.data.api.gitudy.GitudyBookmarksService
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
+import com.takseha.data.dto.profile.Bookmark
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
+import com.takseha.presentation.adapter.FeedRVAdapter
+import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -50,8 +53,15 @@ class FeedHomeViewModel : ViewModel() {
                     )
                 }
             } else {
+                val studiesInfoWithBookmarkStatus = feedStudyListInfo.studyInfoList.map { study ->
+                    val bookmarkStatus = checkBookmarkStatus(study.id)
+                    StudyInfoWithBookmarkStatus(
+                        study,
+                        bookmarkStatus
+                    )
+                }
                 _uiState.update { it.copy(
-                    studyInfoList = feedStudyListInfo.studyInfoList,
+                    studyInfoList = studiesInfoWithBookmarkStatus,
                     studyCategoryMappingMap = feedStudyListInfo.studyCategoryMappingMap,
                     studyCnt = studyCnt,
                     isFeedEmpty = false
@@ -63,6 +73,21 @@ class FeedHomeViewModel : ViewModel() {
                 "feedListResponse status: ${feedListResponse.code()}\nfeedListResponse message: ${feedListResponse.message()}"
             )
         }
+    }
+
+    private suspend fun checkBookmarkStatus(studyInfoId: Int): Boolean {
+        val bookmarkStatusResponse = gitudyBookmarksRepository.checkBookmarkStatus(
+            studyInfoId
+        )
+        if (bookmarkStatusResponse.isSuccessful) {
+            return bookmarkStatusResponse.body()!!.myBookmark
+        } else {
+            Log.e(
+                "FeedHomeViewModel",
+                "bookmarkStatusResponse status: ${bookmarkStatusResponse.code()}\nbookmarkStatusResponse message: ${bookmarkStatusResponse.message()}"
+            )
+        }
+        return false
     }
 
     fun setBookmarkStatus(studyInfoId: Int) = viewModelScope.launch {
@@ -96,8 +121,13 @@ class FeedHomeViewModel : ViewModel() {
 }
 
 data class FeedHomeUiState(
-    var studyInfoList: List<StudyInfo> = listOf(),
+    var studyInfoList: List<StudyInfoWithBookmarkStatus> = listOf(),
     var studyCategoryMappingMap: Map<Int, List<String>> = mapOf(),
     var studyCnt: Int? = null,
     var isFeedEmpty: Boolean = false
+)
+
+data class StudyInfoWithBookmarkStatus(
+    val studyInfo: StudyInfo,
+    val isMyBookmark: Boolean
 )

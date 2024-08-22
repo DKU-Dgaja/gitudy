@@ -15,6 +15,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.FragmentFeedHomeBinding
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
+import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -61,7 +62,10 @@ class FeedHomeFragment : Fragment() {
         viewModel.getFeedList(null, 10, "createdDateTime")
     }
 
-    private fun setFeedList(studyList: List<StudyInfo>, studyCategoryMappingMap: Map<Int, List<String>>) {
+    private fun setFeedList(
+        studyList: List<StudyInfoWithBookmarkStatus>,
+        studyCategoryMappingMap: Map<Int, List<String>>
+    ) {
         with(binding) {
             val feedRVAdapter = FeedRVAdapter(requireContext(), studyList, studyCategoryMappingMap)
 
@@ -72,17 +76,22 @@ class FeedHomeFragment : Fragment() {
         }
     }
 
-    private fun clickFeedItem(feedRVAdapter: FeedRVAdapter, studyList: List<StudyInfo>) {
+    private fun clickFeedItem(
+        feedRVAdapter: FeedRVAdapter,
+        studyList: List<StudyInfoWithBookmarkStatus>
+    ) {
         feedRVAdapter.onClickListener = object : FeedRVAdapter.OnClickListener {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), StudyApplyActivity::class.java)
-                intent.putExtra("studyInfoId", studyList[position].id)
-                intent.putExtra("studyImgColor", studyList[position].profileImageUrl)
+                intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
+                intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
                 startActivity(intent)
             }
 
             override fun bookmarkClick(view: View, position: Int) {
-                viewModel.setBookmarkStatus(studyList[position].id)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.setBookmarkStatus(studyList[position].studyInfo.id)
+                }
             }
         }
     }

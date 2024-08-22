@@ -3,10 +3,12 @@ package com.takseha.presentation.adapter
 import android.content.Context
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.feed.StudyInfo
@@ -14,14 +16,20 @@ import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.UserInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
+import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
 import java.time.LocalDateTime
 import java.time.temporal.ChronoUnit
 
-class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, val studyCategoryMappingMap: Map<Int, List<String>>) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
+class FeedRVAdapter(
+    val context: Context,
+    val studyInfoList: List<StudyInfoWithBookmarkStatus>,
+    val studyCategoryMappingMap: Map<Int, List<String>>
+) : RecyclerView.Adapter<FeedRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onClick(view: View, position: Int)
         fun bookmarkClick(view: View, position: Int)
     }
+
     var onClickListener: OnClickListener? = null
 
     class ViewHolder(val binding: ItemFeedBinding) : RecyclerView.ViewHolder(binding.root) {
@@ -46,37 +54,67 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].profileImageUrl))
-        holder.studyName.text = studyInfoList[position].topic
-        holder.commitRule.text = setCommitRule(studyInfoList[position].periodType)
-        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].id - 15, if (studyInfoList[position].lastCommitDay == null ) "없음" else studyInfoList[position].lastCommitDay)
-        holder.teamScore.text = studyInfoList[position].score.toString()
-        holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].createdDateTime))
-        holder.currentMember.text = studyInfoList[position].currentMember.toString()
-        holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].maximumMember)
+        bindFull(holder, position)
+    }
 
-        // holder.categoryList 구현
-        setCategoryList(holder, position)
-        // holder.memberList 구현
-        setMemberList(holder, position)
-
-        holder.bookmarkBtn.setOnClickListener { v ->
-            onClickListener!!.bookmarkClick(v, position)
-        }
-
-        // 스터디 클릭 이벤트 처리
-        if (onClickListener != null) {
-            holder.itemView.setOnClickListener { v ->
-                onClickListener!!.onClick(v, position)
+    // payload가 있을 때
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) {
+            // payload가 없으면 전체 업데이트를 호출
+            bindFull(holder, position)
+        } else {
+            for (payload in payloads) {
+                // TODO: 나중에 로직 제대로 변경하기!
+                if (payload == "bookmark") {
+                    Log.d("FeedRVAdapter", studyInfoList[position].isMyBookmark.toString())
+                    if (holder.bookmarkBtn.drawable.constantState == ContextCompat.getDrawable(context, R.drawable.ic_feed_save_green)!!.constantState) {
+                        holder.bookmarkBtn.setImageResource(R.drawable.ic_feed_save_white)
+                    } else {
+                        holder.bookmarkBtn.setImageResource(R.drawable.ic_feed_save_green)
+                    }
+                }
             }
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun bindFull(holder: ViewHolder, position: Int) {
+        holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].studyInfo.profileImageUrl))
+        holder.studyName.text = studyInfoList[position].studyInfo.topic
+        holder.commitRule.text = setCommitRule(studyInfoList[position].studyInfo.periodType)
+        holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].studyInfo.id - 15, if (studyInfoList[position].studyInfo.lastCommitDay == null ) "없음" else studyInfoList[position].studyInfo.lastCommitDay)
+        holder.teamScore.text = studyInfoList[position].studyInfo.score.toString()
+        holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].studyInfo.createdDateTime))
+        holder.currentMember.text = studyInfoList[position].studyInfo.currentMember.toString()
+        holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].studyInfo.maximumMember)
+        if (studyInfoList[position].isMyBookmark) {
+            holder.bookmarkBtn.setImageResource(R.drawable.ic_feed_save_green)
+        } else {
+            holder.bookmarkBtn.setImageResource(R.drawable.ic_feed_save_white)
+        }
+
+        // Category 및 Member 리스트 설정
+        setCategoryList(holder, position)
+        setMemberList(holder, position)
+
+        // 북마크 버튼 클릭 이벤트 처리
+        holder.bookmarkBtn.setOnClickListener { v ->
+            onClickListener?.bookmarkClick(v, position)
+            notifyItemChanged(position, "bookmark")
+        }
+
+        // 스터디 클릭 이벤트 처리
+        holder.itemView.setOnClickListener { v ->
+            onClickListener?.onClick(v, position)
+        }
+    }
+
     private fun setCommitRule(periodType: StudyPeriodStatus): String {
-        when (periodType) {
-            StudyPeriodStatus.STUDY_PERIOD_EVERYDAY -> return context.getString(R.string.feed_rule_everyday)
-            StudyPeriodStatus.STUDY_PERIOD_WEEK -> return context.getString(R.string.feed_rule_week)
-            StudyPeriodStatus.STUDY_PERIOD_NONE -> return context.getString(R.string.feed_rule_free)
+        return when (periodType) {
+            StudyPeriodStatus.STUDY_PERIOD_EVERYDAY -> context.getString(R.string.feed_rule_everyday)
+            StudyPeriodStatus.STUDY_PERIOD_WEEK -> context.getString(R.string.feed_rule_week)
+            StudyPeriodStatus.STUDY_PERIOD_NONE -> context.getString(R.string.feed_rule_free)
         }
     }
 
@@ -90,22 +128,26 @@ class FeedRVAdapter(val context : Context, val studyInfoList : List<StudyInfo>, 
     }
 
     private fun setCategoryList(holder: ViewHolder, position: Int) {
-        var categoryList = studyCategoryMappingMap[studyInfoList[position].id] ?: listOf()
+        var categoryList = studyCategoryMappingMap[studyInfoList[position].studyInfo.id] ?: listOf()
 
-        holder.categoryList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        holder.categoryList.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         holder.categoryList.adapter = FeedCategoryRVAdapter(context, categoryList)
     }
 
     private fun setMemberList(holder: ViewHolder, position: Int) {
-        val memberList: MutableList<UserInfo> = studyInfoList[position].userInfo.toMutableList()
-        val emptyCnt = studyInfoList[position].maximumMember - studyInfoList[position].userInfo.size
+        val memberList: MutableList<UserInfo> =
+            studyInfoList[position].studyInfo.userInfo.toMutableList()
+        val emptyCnt =
+            studyInfoList[position].studyInfo.maximumMember - studyInfoList[position].studyInfo.userInfo.size
 
         // 빈 프로필 추가
         for (i in 0 until emptyCnt) {
             memberList.add(UserInfo(-1, "empty", ""))
         }
 
-        holder.memberList.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
+        holder.memberList.layoutManager =
+            LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
         holder.memberList.adapter = MemberListRVAdapter(context, memberList)
     }
 
