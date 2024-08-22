@@ -259,8 +259,8 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -290,8 +290,8 @@ public class StudyMemberControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test

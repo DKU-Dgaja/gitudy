@@ -74,8 +74,8 @@ class NoticeControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -94,8 +94,8 @@ class NoticeControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -113,7 +113,6 @@ class NoticeControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 }

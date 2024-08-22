@@ -1,8 +1,8 @@
 package com.example.backend.domain.define.study.info.repository;
 
 import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;

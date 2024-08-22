@@ -5,7 +5,6 @@ import com.example.backend.domain.define.study.commit.constant.CommitStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface StudyCommitRepository extends JpaRepository<StudyCommit, Long>, StudyCommitRepositoryCustom {
     List<StudyCommit> findByStudyTodoId(long todoId);

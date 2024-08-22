@@ -87,7 +87,9 @@ public class AuthService {
                 });
 
         // 깃허브 api 토큰 저장
+        log.info("로그인 후 받은 토큰을 저장하는 중.. (userId: {})", findUser.getId());
         githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), findUser.getId());
+        log.info("로그인 후 받은 토큰 저장 완료 (userId: {})", findUser.getId());
 
         // JWT 토큰 생성
         JwtToken jwtToken = generateJwtToken(findUser);

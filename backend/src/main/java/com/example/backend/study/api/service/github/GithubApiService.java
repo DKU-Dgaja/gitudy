@@ -94,7 +94,10 @@ public class GithubApiService {
             String newToken = parseTokenFromResponse(response);
 
             // 재발급 받은 토큰으로 업데이트
-             githubApiTokenService.saveToken(newToken, userId);
+            log.info("재발급 받은 토큰을 새로 저장하는 중.. (userId: {})", userId);
+            githubApiTokenService.saveToken(newToken, userId);
+            log.info("재발급 받은 토큰 저장 완료 (userId: {})", userId);
+
 
             return newToken;
         } catch (RuntimeException e) {

@@ -5,7 +5,6 @@ import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.bookmark.response.BookmarkInfoListAndCursorIdxResponse;
 import com.example.backend.study.api.controller.bookmark.response.IsMyBookmarkResponse;
-import com.example.backend.study.api.controller.info.response.StudyInfoDetailResponse;
 import com.example.backend.study.api.service.bookmark.StudyBookmarkService;
 import com.example.backend.study.api.service.bookmark.response.BookmarkInfoResponse;
 import io.swagger.v3.oas.annotations.media.Content;

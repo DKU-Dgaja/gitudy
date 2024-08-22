@@ -94,8 +94,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
 
     }
 
@@ -122,8 +122,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
                                 .build())))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
+
     }
 
     @Test
@@ -152,8 +152,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
 
     }
 
@@ -190,8 +190,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
                                 .build())))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
+
     }
 
     @Test
@@ -217,8 +217,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/convention/" + studyConvention.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -246,8 +246,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(response.getName()))
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -280,8 +280,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$").isNotEmpty());
+
     }
 
     @Test
@@ -312,7 +312,7 @@ public class StudyConventionControllerTest extends MockTestConfig {
                         .param("limit", "1")
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 }
