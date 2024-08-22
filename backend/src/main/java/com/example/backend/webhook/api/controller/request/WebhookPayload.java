@@ -3,7 +3,6 @@ package com.example.backend.webhook.api.controller.request;
 import jakarta.validation.constraints.Pattern;
 import lombok.Builder;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @Builder

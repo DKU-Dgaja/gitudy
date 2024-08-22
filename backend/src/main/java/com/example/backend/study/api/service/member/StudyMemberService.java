@@ -6,6 +6,7 @@ import com.example.backend.auth.api.service.rank.event.UserScoreUpdateEvent;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.constant.StudyStatus;
@@ -282,11 +283,19 @@ public class StudyMemberService {
             RepositoryInfo repoInfo = studyInfo.getRepositoryInfo();
 
             // 스터디 레포지토리에 초대
-            githubApiService.addCollaborator(githubApiTokenService.getToken(studyInfo.getUserId()).githubApiToken(),
+            log.info("레포지토리에 초대하기 전 스터디장의 토큰 조회 중.. (userId: {})", studyInfo.getUserId());
+            GithubApiToken leaderToken = githubApiTokenService.getToken(studyInfo.getUserId());
+            log.info("레포지토리에 초대하기 전 스터디장의 토큰 조회 완료 (userId: {})", studyInfo.getUserId());
+
+            githubApiService.addCollaborator(leaderToken.githubApiToken(),
                     repoInfo, findUser.getGithubId());
 
             // 스터디원의 초대 수락
-            githubApiService.acceptInvitation(githubApiTokenService.getToken(findUser.getId()).githubApiToken(), findUser.getGithubId());
+            log.info("레포지토리에 초대하기 전 스터디원의 토큰 조회 중.. (userId: {})", findUser.getId());
+            GithubApiToken memberToken = githubApiTokenService.getToken(findUser.getId());
+            log.info("레포지토리에 초대하기 전 스터디원의 토큰 조회 완료 (userId: {})", findUser.getId());
+
+            githubApiService.acceptInvitation(memberToken.githubApiToken(), findUser.getGithubId());
 
         } else {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_REFUSED);

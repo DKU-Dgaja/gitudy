@@ -84,7 +84,10 @@ public class StudyTodoService {
         List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
 
         // 투두에 해당하는 폴더를 스터디 레포지토리에 생성
+        log.info("투두 폴더를 레포지토리에 생성하기 전 토큰 조회 중.. (userId: {})", studyInfo.getUserId());
         GithubApiToken token = githubApiTokenService.getToken(studyInfo.getUserId());
+        log.info("투두 폴더를 레포지토리에 생성하기 전 토큰 조회 완료 (userId: {})", studyInfo.getUserId());
+
         githubApiService.createTodoFolder(token.githubApiToken(), studyTodo, studyInfo.getRepositoryInfo());
 
         // 알림 비동기처리

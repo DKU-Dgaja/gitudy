@@ -90,7 +90,10 @@ public class StudyInfoService {
         registerDefaultConvention(studyInfo.getId());
 
         // github에 스터디 레포지토리 생성
+        log.info("스터디 레포지토리를 생성하기 위해 토큰 조회 중.. (userId: {})", userInfo.getUserId());
         GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
+        log.info("스터디 레포지토리를 생성하기 위한 토큰 조회 완료 (userId: {})", userInfo.getUserId());
+
         githubApiService.createRepository(token.githubApiToken(), studyInfo.getRepositoryInfo(), "README.md를 작성해주세요.");
 
         return StudyInfoRegisterResponse.of(studyInfo, categories);
@@ -317,7 +320,9 @@ public class StudyInfoService {
     public void checkDuplicateRepoName(UserInfoResponse userInfo, String repoName) {
 
         // 사용자의 깃허브 토큰 조회
+        log.info("레포지토리 이름 중복 체크 전 토큰 조회 중.. (userId: {})", userInfo.getUserId());
         GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
+        log.info("레포지토리 이름 중복 체크 전 토큰 조회 완료 (userId: {})", userInfo.getUserId());
 
         // 레포지토리 이름 중복 확인
         if (githubApiService.repositoryExists(token.githubApiToken(), userInfo.getGithubId(), repoName)) {
