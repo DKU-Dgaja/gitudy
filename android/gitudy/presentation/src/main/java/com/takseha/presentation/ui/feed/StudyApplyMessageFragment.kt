@@ -50,6 +50,9 @@ class StudyApplyMessageFragment : Fragment() {
                 val message = messageToCaptain.text.toString()
                 showApplyStudyDialog(studyInfoId, "", message)
             }
+            cancelBtn.setOnClickListener {
+                requireActivity().finish()
+            }
         }
     }
 
