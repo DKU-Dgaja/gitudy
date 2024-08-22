@@ -7,21 +7,18 @@ import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.profile.Bookmark
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.BookmarkListRVAdapter
-import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.ActivityBookmarksBinding
 import com.takseha.presentation.ui.feed.StudyApplyActivity
-import com.takseha.presentation.viewmodel.mystudy.BookmarkWithStatus
-import com.takseha.presentation.viewmodel.mystudy.BooktmarksViewModel
+import com.takseha.presentation.viewmodel.profile.ProfileHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class BookmarksActivity : AppCompatActivity() {
     private lateinit var binding: ActivityBookmarksBinding
-    private val viewModel: BooktmarksViewModel by viewModels()
+    private val viewModel: ProfileHomeViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,18 +27,21 @@ class BookmarksActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             viewModel.getBookmarks(null, 10)
-            viewModel.uiState.collectLatest {
+            viewModel.bookmarksState.collectLatest {
                 if (!it.isBookmarksEmpty) {
                     binding.isNoBookmarkLayout.visibility = View.GONE
-                    setBookmarkList(it.bookmarksWithStatusInfo)
                 } else {
                     binding.isNoBookmarkLayout.visibility = View.VISIBLE
                 }
+                setBookmarkList(it.bookmarksInfo)
             }
+        }
+        binding.backBtn.setOnClickListener {
+            finish()
         }
     }
 
-    private fun setBookmarkList(bookmarks: List<BookmarkWithStatus>) {
+    private fun setBookmarkList(bookmarks: List<Bookmark>) {
         with(binding) {
             val bookmarkListRVAdapter = BookmarkListRVAdapter(this@BookmarksActivity, bookmarks)
 
@@ -52,17 +52,20 @@ class BookmarksActivity : AppCompatActivity() {
         }
     }
 
-    private fun clickFeedItem(bookmarkListRVAdapter: BookmarkListRVAdapter, bookmarks: List<BookmarkWithStatus>) {
+    private fun clickFeedItem(bookmarkListRVAdapter: BookmarkListRVAdapter, bookmarks: List<Bookmark>) {
         bookmarkListRVAdapter.onClickListener = object : BookmarkListRVAdapter.OnClickListener {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(this@BookmarksActivity, StudyApplyActivity::class.java)
-                intent.putExtra("studyInfoId", bookmarks[position].bookmarkInfo?.studyInfoId)
-                intent.putExtra("studyImgColor", bookmarks[position].bookmarkInfo?.studyInfoWithIdResponse?.profileImageUrl)
+                intent.putExtra("studyInfoId", bookmarks[position].studyInfoId)
+                intent.putExtra("studyImgColor", bookmarks[position].studyInfoWithIdResponse.profileImageUrl)
                 startActivity(intent)
             }
 
             override fun bookmarkClick(view: View, position: Int) {
-                viewModel.setBookmarkStatus(bookmarks[position].bookmarkInfo?.studyInfoId ?: 0)
+                lifecycleScope.launch {
+                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId)
+                    viewModel.getBookmarks(null, 3)
+                }
             }
         }
     }

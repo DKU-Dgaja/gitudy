@@ -36,7 +36,7 @@ class MainHomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = Color.argb(0xFF,0x1B,0x1B,0x25)
+        requireActivity().window.statusBarColor = Color.argb(0xFF, 0x1B, 0x1B, 0x25)
     }
 
     override fun onCreateView(
@@ -55,10 +55,8 @@ class MainHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.apply {
-                uiState.collectLatest {
-                    setUserInfo(it)
-                }
+            viewModel.uiState.collectLatest {
+                setUserInfo(it)
             }
         }
 
@@ -83,6 +81,12 @@ class MainHomeFragment : Fragment() {
                 startActivity(intent)
             }
         }
+    }
+
+    // 원래 페이지로 돌아왔을 때 state 업데이트
+    override fun onResume() {
+        super.onResume()
+        setViewModel()
     }
 
     private fun setViewModel() {
@@ -119,13 +123,15 @@ class MainHomeFragment : Fragment() {
         }
     }
 
-    private fun clickMyStudyItem(myStudyRVAdapter: MyStudyRVAdapter, studyList: List<MyStudyWithTodo>) {
+    private fun clickMyStudyItem(
+        myStudyRVAdapter: MyStudyRVAdapter,
+        studyList: List<MyStudyWithTodo>
+    ) {
         myStudyRVAdapter.itemClick = object : MyStudyRVAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
                 intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
-                Log.d("MyStudyHomeFragment", intent.extras.toString())
                 startActivity(intent)
             }
         }

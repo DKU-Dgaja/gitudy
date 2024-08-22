@@ -145,11 +145,14 @@ class MyStudyMainActivity : AppCompatActivity() {
     }
 
     // 원래 페이지로 돌아왔을 때 state 업데이트
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
-        viewModel.getMyStudyInfo(studyInfoId)
-        viewModel.getStudyComments(studyInfoId, 3)
+        lifecycleScope.launch {
+            viewModel.getMyStudyInfo(studyInfoId)
+            viewModel.getStudyComments(studyInfoId, 3)
+        }
     }
 
     private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {

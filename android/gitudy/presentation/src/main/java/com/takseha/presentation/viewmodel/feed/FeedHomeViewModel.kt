@@ -90,7 +90,7 @@ class FeedHomeViewModel : ViewModel() {
         return false
     }
 
-    fun setBookmarkStatus(studyInfoId: Int) = viewModelScope.launch {
+    suspend fun setBookmarkStatus(studyInfoId: Int) {
         val setBookmarkResponse = gitudyBookmarksRepository.setBookmarkStatus(
             studyInfoId
         )
