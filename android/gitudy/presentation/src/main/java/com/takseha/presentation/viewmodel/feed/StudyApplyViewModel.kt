@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MessageRequest
+import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.profile.Bookmark
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
@@ -30,11 +31,13 @@ class StudyApplyViewModel: ViewModel() {
 
         if (studyInfoResponse.isSuccessful) {
             val studyInfo = studyInfoResponse.body()!!
+            val rank = getStudyRank(studyInfoId)!!.ranking
             val bookmarkStatus = checkBookmarkStatus(studyInfoId)
 
             _uiState.update {
                 it.copy(
                     studyInfo = studyInfo,
+                    rank = rank,
                     isMyBookmark = bookmarkStatus
                 )
             }
@@ -43,6 +46,21 @@ class StudyApplyViewModel: ViewModel() {
                 "StudyApplyViewModel",
                 "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.errorBody()?.string()}"
             )
+        }
+    }
+
+    private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
+        val studyRankResponse =
+            gitudyStudyRepository.getStudyRank(studyInfoId)
+
+        if (studyRankResponse.isSuccessful) {
+            return studyRankResponse.body()!!
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "studyRankResponse status: ${studyRankResponse.code()}\nstudyRankResponse message: ${studyRankResponse.errorBody()?.string()}"
+            )
+            return null
         }
     }
 
@@ -104,5 +122,6 @@ class StudyApplyViewModel: ViewModel() {
 
 data class StudyMainInfoState(
     val studyInfo: StudyInfoResponse = StudyInfoResponse(),
+    val rank: Int = 0,
     val isMyBookmark: Boolean? = null
 )

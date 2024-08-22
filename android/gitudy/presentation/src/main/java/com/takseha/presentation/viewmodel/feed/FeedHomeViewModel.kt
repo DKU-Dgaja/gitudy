@@ -8,6 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.data.api.gitudy.GitudyBookmarksService
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
+import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.profile.Bookmark
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
@@ -55,9 +56,11 @@ class FeedHomeViewModel : ViewModel() {
             } else {
                 val studiesInfoWithBookmarkStatus = feedStudyListInfo.studyInfoList.map { study ->
                     val bookmarkStatus = checkBookmarkStatus(study.id)
+                    val rank = getStudyRank(study.id)!!.ranking
                     StudyInfoWithBookmarkStatus(
-                        study,
-                        bookmarkStatus
+                        studyInfo = study,
+                        rank = rank,
+                        isMyBookmark = bookmarkStatus
                     )
                 }
                 _uiState.update { it.copy(
@@ -72,6 +75,21 @@ class FeedHomeViewModel : ViewModel() {
                 "FeedHomeViewModel",
                 "feedListResponse status: ${feedListResponse.code()}\nfeedListResponse message: ${feedListResponse.message()}"
             )
+        }
+    }
+
+    private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
+        val studyRankResponse =
+            gitudyStudyRepository.getStudyRank(studyInfoId)
+
+        if (studyRankResponse.isSuccessful) {
+            return studyRankResponse.body()!!
+        } else {
+            Log.e(
+                "FeedHomeViewModel",
+                "studyRankResponse status: ${studyRankResponse.code()}\nstudyRankResponse message: ${studyRankResponse.errorBody()?.string()}"
+            )
+            return null
         }
     }
 
@@ -129,5 +147,6 @@ data class FeedHomeUiState(
 
 data class StudyInfoWithBookmarkStatus(
     val studyInfo: StudyInfo,
+    val rank: Int,
     val isMyBookmark: Boolean
 )

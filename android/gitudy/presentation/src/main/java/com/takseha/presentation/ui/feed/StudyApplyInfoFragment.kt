@@ -49,7 +49,10 @@ class StudyApplyInfoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
         val studyImgColor =
-            if (activity?.intent?.getStringExtra("studyImgColor") == "" || activity?.intent?.getStringExtra("studyImgColor") == "string") "#000000" else activity?.intent?.getStringExtra("studyImgColor")
+            if (activity?.intent?.getStringExtra("studyImgColor") == "" || activity?.intent?.getStringExtra(
+                    "studyImgColor"
+                ) == "string"
+            ) "#000000" else activity?.intent?.getStringExtra("studyImgColor")
 
         requireActivity().window.statusBarColor = Color.parseColor(studyImgColor)
 
@@ -85,7 +88,11 @@ class StudyApplyInfoFragment : Fragment() {
         }
     }
 
-    private fun setStudyInfo(studyInfoId: Int, studyImgColor: String, studyMainInfoState: StudyMainInfoState) {
+    private fun setStudyInfo(
+        studyInfoId: Int,
+        studyImgColor: String,
+        studyMainInfoState: StudyMainInfoState
+    ) {
         val studyInfo = studyMainInfoState.studyInfo
 
         with(binding) {
@@ -102,15 +109,18 @@ class StudyApplyInfoFragment : Fragment() {
             studyRuleText.text = setCommitRule(studyInfo.periodType)
             isStudyOpenText.text = setStudyStatus(studyInfo.status)
             studyRankText.text = getString(
-                R.string.study_team_rank, studyInfo.score,
-                studyInfoId - 15
+                R.string.study_team_rank, studyInfo.score, studyMainInfoState.rank
             )
             teamRankFullText.text = getString(
                 R.string.study_team_rank_full,
-                if (studyInfoId - 10 > 0) studyInfoId - 10 else abs(studyInfoId - 10) + 2,
-                if (studyInfo.lastCommitDay == null) "없음" else studyInfo.lastCommitDay
+                studyMainInfoState.rank,
+                studyInfo.lastCommitDay
             )
-            studyGithubLinkText.text = getString(R.string.study_github_link, studyInfo.githubLinkInfo.owner, studyInfo.githubLinkInfo.name)
+            studyGithubLinkText.text = getString(
+                R.string.study_github_link,
+                studyInfo.githubLinkInfo.owner,
+                studyInfo.githubLinkInfo.name
+            )
             studyMemberCntText.text = String.format(
                 getString(R.string.feed_member_number),
                 studyInfo.currentMember,
@@ -147,7 +157,8 @@ class StudyApplyInfoFragment : Fragment() {
         with(binding) {
             val categoryInStudyRVAdapter = CategoryInStudyRVAdapter(requireContext(), categoryList)
             tagList.adapter = categoryInStudyRVAdapter
-            tagList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            tagList.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
     }
 
