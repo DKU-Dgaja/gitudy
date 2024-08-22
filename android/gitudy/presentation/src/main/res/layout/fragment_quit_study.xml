@@ -68,7 +68,7 @@
             android:layout_width="28dp"
             android:layout_height="28dp"
             android:layout_marginRight="10dp"
-            android:src="@drawable/selector_radio_clicked" />
+            android:src="@drawable/selector_radio_checked" />
 
         <EditText
             style="@style/B4_2"
