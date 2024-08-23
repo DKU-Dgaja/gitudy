@@ -4,10 +4,11 @@ import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.auth.UserInfoUpdatePageResponse
 import com.takseha.data.dto.auth.auth.UserInfoUpdateRequest
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
-import com.takseha.data.dto.auth.login.TokenResponse
 import com.takseha.data.dto.auth.login.ReissueTokenResponse
+import com.takseha.data.dto.auth.login.TokenResponse
 import com.takseha.data.dto.auth.register.CheckNicknameRequest
 import com.takseha.data.dto.auth.register.RegisterRequest
+import com.takseha.data.dto.feed.MessageRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -45,7 +46,8 @@ interface GitudyAuthService {
 
     @POST("/auth/delete")
     suspend fun deleteUserAccount(
-        @Header("Authorization") token: String
+        @Header("Authorization") token: String,
+        @Body request: MessageRequest
     ): Response<Void>
 
     @POST("/auth/check-nickname")
