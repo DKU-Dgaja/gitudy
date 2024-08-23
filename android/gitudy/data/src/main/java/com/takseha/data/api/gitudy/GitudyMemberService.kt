@@ -50,4 +50,9 @@ interface GitudyMemberService {
         @Path("applyUserId") applyUserId: Int,
         @Query("approve") approve: Boolean
     ): Response<Void>
+
+    @PATCH("/member/{studyInfoId}/withdrawal")
+    suspend fun withdrawStudy(
+        @Path("studyInfoId") studyInfoId: Int
+    ): Response<Void>
 }
