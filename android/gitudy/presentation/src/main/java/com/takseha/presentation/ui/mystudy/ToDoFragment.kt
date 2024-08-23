@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +26,7 @@ class ToDoFragment : Fragment() {
     private var _binding: FragmentToDoBinding? = null
     private val binding get() = _binding!!
     private val viewModel: TodoViewModel by viewModels()
+    private var studyInfoId: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,8 +38,8 @@ class ToDoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
+        activity!!.window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
 
         viewModel.getTodoList(studyInfoId)
         lifecycleScope.launch {
@@ -59,14 +61,16 @@ class ToDoFragment : Fragment() {
 
         with(binding) {
             backBtn.setOnClickListener {
-                requireActivity().finish()
+                it.findNavController().popBackStack()
+            }
+            addTodoBtn.setOnClickListener {
+                it.findNavController().navigate(R.id.action_toDoFragment_to_addTodoFragment)
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        val studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
         viewModel.getTodoList(studyInfoId)
     }
 
@@ -87,14 +91,7 @@ class ToDoFragment : Fragment() {
                 val bundle = Bundle().apply {
                     putInt("commitId", commit.id)
                 }
-                view?.findNavController()?.navigate(R.id.action_toDoFragment_to_myCommitFragment, bundle)
-            }
-
-            override fun onUpdateClick(view: View, position: Int) {
-                val bundle = Bundle().apply {
-                    putInt("todoId", todoList[position].id)
-                }
-                view.findNavController().navigate(R.id.action_toDoFragment_to_updateTodoFragment, bundle)
+                view?.findNavController()?.navigate(R.id.action_toDoFragment_to_commitDetailFragment, bundle)
             }
 
             override fun onDeleteClick(view: View, position: Int) {

@@ -4,10 +4,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
-    android:paddingBottom="49dp"
-    tools:context=".ui.mystudy.CaptainStudySettingActivity">
+    android:paddingBottom="48dp"
+    tools:context=".ui.mystudy.MyStudySettingFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/constraintLayout"
@@ -38,7 +39,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/studySettingTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -53,10 +54,10 @@
         android:id="@+id/mainSettingBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="109dp"
+        android:layout_marginTop="36dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+        app:layout_constraintTop_toBottomOf="@+id/studySettingTitle">
 
         <TextView
             style="@style/B4_1"
@@ -78,10 +79,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/studyEndBtn"
+        android:id="@+id/studyQuitBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainSettingBtn">
@@ -90,7 +91,7 @@
             style="@style/B4_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="스터디 종료"
+            android:text="스터디 탈퇴"
             android:textColor="@color/GS_900"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -105,53 +106,42 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <LinearLayout
-        android:id="@+id/linearLayout4"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/memberSettingBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="61dp"
-        app:layout_constraintTop_toBottomOf="@+id/studyEndBtn">
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/studyQuitBtn">
 
         <TextView
+            style="@style/B4_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/pretendard_bold"
             android:text="팀원 관리"
-            android:textColor="@color/BLACK"
-            android:textSize="20sp" />
+            android:textColor="@color/GS_900"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="wrap_content"
-        android:layout_height="204dp"
-        android:layout_marginTop="20dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
-
-    <Button
-        android:id="@+id/alarmBtn"
-        style="@style/B6_1"
-        android:layout_width="100dp"
-        android:layout_height="44dp"
-        android:layout_marginRight="12dp"
-        android:background="@drawable/box_non_stroke_r8"
-        android:backgroundTint="@color/BLACK"
-        android:text="@string/send_message"
-        android:textColor="@color/WHITE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/kickMemberBtn" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/kickMemberBtn"
-        style="@style/B6_1"
-        android:layout_width="76dp"
-        android:layout_height="44dp"
-        android:background="@drawable/box_non_stroke_r8"
-        android:backgroundTint="@color/BASIC_RED"
-        android:text="강퇴"
+        android:id="@+id/studyEndBtn"
+        style="@style/B5_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box_non_stroke_r8_black"
+        android:text="스터디 종료"
         android:textColor="@color/WHITE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

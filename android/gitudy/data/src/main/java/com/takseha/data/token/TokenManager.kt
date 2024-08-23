@@ -7,6 +7,7 @@ import com.takseha.data.api.gitudy.GitudyAuthService
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.TokenResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
+import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.sharedPreferences.SP
 import com.takseha.data.sharedPreferences.SPKey
 import kotlinx.coroutines.Dispatchers
@@ -137,11 +138,11 @@ class TokenManager(context: Context) {
         }
     }
 
-    suspend fun deleteUserAccount(): Boolean {
+    suspend fun deleteUserAccount(messageRequest: MessageRequest): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val token = "Bearer $accessToken"
-                val response = loginApi.deleteUserAccount(token)
+                val response = loginApi.deleteUserAccount(token, messageRequest)
 
                 if (response.isSuccessful) {
                     accessToken = ""

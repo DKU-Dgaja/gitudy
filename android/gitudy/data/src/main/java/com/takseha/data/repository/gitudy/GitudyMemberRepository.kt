@@ -38,4 +38,8 @@ class GitudyMemberRepository {
         applyUserId: Int,
         approve: Boolean
     ) = client.approveApplyMember(studyInfoId, applyUserId, approve)
+
+    suspend fun withdrawStudy(
+        studyInfoId: Int
+    ) = client.withdrawStudy(studyInfoId)
 }

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mystudy_main_nav"
+    app:startDestination="@id/myStudyMainFragment">
+
+    <fragment
+        android:id="@+id/myStudyMainFragment"
+        android:name="com.takseha.presentation.ui.mystudy.MyStudyMainFragment"
+        android:label="fragment_my_study_main"
+        tools:layout="@layout/fragment_my_study_main" >
+        <action
+            android:id="@+id/action_myStudyMainFragment_to_toDoFragment"
+            app:destination="@id/toDoFragment" />
+        <action
+            android:id="@+id/action_myStudyMainFragment_to_studyCommentBoardFragment"
+            app:destination="@id/studyCommentBoardFragment" />
+        <action
+            android:id="@+id/action_myStudyMainFragment_to_myStudySettingFragment"
+            app:destination="@id/myStudySettingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/toDoFragment"
+        android:name="com.takseha.presentation.ui.mystudy.ToDoFragment"
+        android:label="fragment_to_do"
+        tools:layout="@layout/fragment_to_do" >
+        <action
+            android:id="@+id/action_toDoFragment_to_addTodoFragment"
+            app:destination="@id/addTodoFragment" />
+        <action
+            android:id="@+id/action_toDoFragment_to_commitDetailFragment"
+            app:destination="@id/commitDetailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/myStudySettingFragment"
+        android:name="com.takseha.presentation.ui.mystudy.MyStudySettingFragment"
+        android:label="fragment_my_study_setting"
+        tools:layout="@layout/fragment_my_study_setting" >
+        <action
+            android:id="@+id/action_myStudySettingFragment_to_quitStudyFragment"
+            app:destination="@id/quitStudyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studyCommentBoardFragment"
+        android:name="com.takseha.presentation.ui.mystudy.StudyCommentBoardFragment"
+        android:label="fragment_study_comment_board"
+        tools:layout="@layout/fragment_study_comment_board" />
+    <fragment
+        android:id="@+id/addTodoFragment"
+        android:name="com.takseha.presentation.ui.mystudy.AddTodoFragment"
+        android:label="fragment_add_todo"
+        tools:layout="@layout/fragment_add_todo" />
+    <fragment
+        android:id="@+id/commitDetailFragment"
+        android:name="com.takseha.presentation.ui.profile.CommitDetailFragment"
+        android:label="fragment_commit_detail"
+        tools:layout="@layout/fragment_commit_detail" >
+        <action
+            android:id="@+id/action_commitDetailFragment_to_commitWebViewFragment"
+            app:destination="@id/commitWebViewFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/commitWebViewFragment"
+        android:name="com.takseha.presentation.ui.profile.CommitWebViewFragment"
+        android:label="fragment_commit_web_view"
+        tools:layout="@layout/fragment_commit_web_view" />
+    <fragment
+        android:id="@+id/quitStudyFragment"
+        android:name="com.takseha.presentation.ui.mystudy.QuitStudyFragment"
+        android:label="fragment_quit_study"
+        tools:layout="@layout/fragment_quit_study" >
+        <action
+            android:id="@+id/action_quitStudyFragment_to_studyQuitCompleteFragment"
+            app:destination="@id/studyQuitCompleteFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/recommandNewStudyFragment"
+        android:name="com.takseha.presentation.ui.mystudy.RecommendNewStudyFragment"
+        android:label="fragment_recommand_new_study"
+        tools:layout="@layout/fragment_recommend_new_study" />
+    <fragment
+        android:id="@+id/studyQuitCompleteFragment"
+        android:name="com.takseha.presentation.ui.mystudy.StudyQuitCompleteFragment"
+        android:label="fragment_study_quit_complete"
+        tools:layout="@layout/fragment_study_quit_complete" >
+        <action
+            android:id="@+id/action_studyQuitCompleteFragment_to_recommandNewStudyFragment"
+            app:destination="@id/recommandNewStudyFragment" />
+    </fragment>
+</navigation>

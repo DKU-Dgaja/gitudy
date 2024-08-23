@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.mystudy.AddTodoActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.mystudy.AddTodoFragment">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/BACKGROUND">
+        android:layout_height="match_parent">
 
         <LinearLayout
             android:id="@+id/addTodoLayout"
@@ -68,7 +67,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:background="@drawable/box_non_stroke_r12"
-                android:backgroundTint="@color/WHITE"
+                android:backgroundTint="#F4F5F5"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:paddingTop="19dp"
@@ -89,7 +88,7 @@
                     android:inputType="text"
                     android:maxLength="20"
                     android:textColor="@color/BLACK"
-                    android:textColorHint="@color/GS_400" />
+                    android:textColorHint="@color/GS_500" />
 
                 <TextView
                     android:id="@+id/titleTextLengthAlert"
@@ -118,7 +117,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/box_non_stroke_r12"
-                android:backgroundTint="@color/WHITE"
+                android:backgroundTint="#F4F5F5"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:paddingTop="19dp"
@@ -138,7 +137,7 @@
                     android:hint="참고 링크를 입력해주세요."
                     android:inputType="text"
                     android:textColor="@color/BLACK"
-                    android:textColorHint="@color/GS_400" />
+                    android:textColorHint="@color/GS_500" />
 
             </LinearLayout>
 
@@ -148,7 +147,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 android:background="@drawable/box_non_stroke_r12"
-                android:backgroundTint="@color/WHITE"
+                android:backgroundTint="#F4F5F5"
                 android:gravity="center_vertical"
                 android:paddingLeft="20dp"
                 android:paddingTop="19dp"
@@ -168,7 +167,7 @@
                     android:hint="TO-DO에 대한\n간단한 설명을 적어주세요."
                     android:maxLength="50"
                     android:textColor="@color/BLACK"
-                    android:textColorHint="@color/GS_400" />
+                    android:textColorHint="@color/GS_500" />
 
                 <TextView
                     android:id="@+id/bodyTextLengthAlert"
@@ -222,7 +221,7 @@
                     android:layout_width="160dp"
                     android:layout_height="wrap_content"
                     android:background="@drawable/box_non_stroke_r8"
-                    android:backgroundTint="@color/WHITE"
+                    android:backgroundTint="#F4F5F5"
                     android:gravity="center"
                     android:paddingLeft="20dp"
                     android:paddingTop="9dp"
@@ -258,4 +257,5 @@
                 app:layout_constraintEnd_toEndOf="parent" />
         </LinearLayout>
     </ScrollView>
+
 </androidx.constraintlayout.widget.ConstraintLayout>

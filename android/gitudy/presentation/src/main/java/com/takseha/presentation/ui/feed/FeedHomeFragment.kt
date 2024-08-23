@@ -42,6 +42,11 @@ class FeedHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        with(binding) {
+            makeNewStudyBtn.setOnClickListener {
+                startActivity(Intent(activity, MakeStudyActivity::class.java))
+            }
+        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getFeedList(null, 10, "createdDateTime")
             viewModel.uiState.collectLatest {

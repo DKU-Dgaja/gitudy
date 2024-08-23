@@ -2,7 +2,6 @@ package com.takseha.data.dto.feed
 
 
 import com.google.gson.annotations.SerializedName
-import com.takseha.data.dto.mystudy.RepositoryInfo
 
 data class MakeStudyRequest(
     @SerializedName("categories_id")

@@ -22,7 +22,6 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
     RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onCommitClick(commit: Commit)
-        fun onUpdateClick(view: View, position: Int)
         fun onDeleteClick(view: View, position: Int)
         fun onLinkClick(view: View, position: Int)
     }
@@ -90,16 +89,10 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
 
     private fun showPopupMenu(view: View, position: Int) {
         val popup = PopupMenu(context, view)
-        popup.inflate(R.menu.update_delete_menu)
+        popup.inflate(R.menu.delete_menu)
 
         popup.setOnMenuItemClickListener { item: MenuItem ->
             when (item.itemId) {
-                R.id.menu_edit -> {
-                    // 수정 버튼 클릭 처리
-                    this.onClickListener?.onUpdateClick(view, position)
-                    true
-                }
-
                 R.id.menu_delete -> {
                     // 삭제 버튼 클릭 처리
                     this.onClickListener?.onDeleteClick(view, position)

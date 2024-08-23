@@ -6,35 +6,49 @@ import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.viewModels
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.DetailCommentListRVAdapter
-import com.takseha.presentation.databinding.ActivityStudyCommentBoardBinding
+import com.takseha.presentation.databinding.FragmentStudyCommentBoardBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.StudyCommentBoardViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-// TODO: Android Studio 업데이트 후 생성한 Activity: 기본 Activity 양식 변경됨 -> 추후 통일하기
-class StudyCommentBoardActivity : AppCompatActivity() {
-    private lateinit var binding: ActivityStudyCommentBoardBinding
+class StudyCommentBoardFragment : Fragment() {
+    private var _binding: FragmentStudyCommentBoardBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: StudyCommentBoardViewModel by viewModels()
+    private var studyInfoId: Int = 0
+    private var comment = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_study_comment_board)
-        setBinding()
-        window.statusBarColor = ContextCompat.getColor(this, R.color.WHITE)
+    }
 
-        val studyInfoId = intent.getIntExtra("studyInfoId", 0)
-        var comment = ""
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentStudyCommentBoardBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        activity!!.window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+
+        studyInfoId = activity!!.intent.getIntExtra("studyInfoId", 0)
 
         // TODO: limit 무한스크롤 관련 구현
         viewModel.getStudyComments(studyInfoId, 10)
@@ -42,9 +56,8 @@ class StudyCommentBoardActivity : AppCompatActivity() {
 
         with(binding) {
             backBtn.setOnClickListener {
-                finish()
+                it.findNavController().popBackStack()
             }
-
             newCommentBody.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -67,7 +80,7 @@ class StudyCommentBoardActivity : AppCompatActivity() {
                 viewModel.makeStudyComment(studyInfoId, comment, 10)
 
                 newCommentBody.setText("")
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(newCommentBody.windowToken, 0)
             }
         }
@@ -83,9 +96,9 @@ class StudyCommentBoardActivity : AppCompatActivity() {
 
     private fun setStudyComments(comments: List<StudyComment>) {
         with(binding) {
-            val commentDetailListRVAdapter = DetailCommentListRVAdapter(this@StudyCommentBoardActivity, comments)
+            val commentDetailListRVAdapter = DetailCommentListRVAdapter(requireContext(), comments)
             commentList.adapter = commentDetailListRVAdapter
-            commentList.layoutManager = LinearLayoutManager(this@StudyCommentBoardActivity)
+            commentList.layoutManager = LinearLayoutManager(requireContext())
 
             clickStudyCommentItem(commentDetailListRVAdapter, comments)
         }
@@ -108,7 +121,7 @@ class StudyCommentBoardActivity : AppCompatActivity() {
         }
     }
     private fun showDeleteCommentDialog(studyInfoId: Int, studyCommentId: Int) {
-        val customSetDialog = CustomSetDialog(this)
+        val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.study_comment_delete))
         customSetDialog.setOnConfirmClickListener {
             viewModel.deleteStudyComment(studyInfoId, studyCommentId, 10)
@@ -123,9 +136,8 @@ class StudyCommentBoardActivity : AppCompatActivity() {
         animator.start()
     }
 
-    private fun setBinding() {
-        binding = ActivityStudyCommentBoardBinding.inflate(layoutInflater)
-        val view = binding.root
-        setContentView(view)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

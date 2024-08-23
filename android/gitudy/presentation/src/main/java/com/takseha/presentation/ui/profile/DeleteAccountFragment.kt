@@ -76,7 +76,7 @@ class DeleteAccountFragment : Fragment() {
         customCheckDialog.setConfirmBtnText(getString(R.string.alert_delete_account_confirm))
         customCheckDialog.setOnConfirmClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.deleteUserAccount()
+                viewModel.deleteUserAccount(message)
                 findNavController().navigate(R.id.action_deleteAccountFragment_to_deleteAccountCompleteFragment)
             }
         }

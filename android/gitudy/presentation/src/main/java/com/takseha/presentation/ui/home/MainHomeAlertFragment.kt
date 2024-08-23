@@ -20,7 +20,6 @@ import com.takseha.presentation.R
 import com.takseha.presentation.adapter.NoticeListRVAdapter
 import com.takseha.presentation.databinding.FragmentMainHomeAlertBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
-import com.takseha.presentation.ui.mystudy.ToDoActivity
 import com.takseha.presentation.viewmodel.home.MainHomeAlertViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -107,6 +106,7 @@ class MainHomeAlertFragment : Fragment() {
         }
     }
 
+    // TODO: 해당 스터디 TO-DO 상세 페이지로 이동
     private fun clickNoticeItem(noticeListRVAdapter: NoticeListRVAdapter, noticeList: List<Notice>) {
         noticeListRVAdapter.onClickListener = object : NoticeListRVAdapter.OnClickListener {
             override fun onClick(view: View, position: Int) {
@@ -117,20 +117,24 @@ class MainHomeAlertFragment : Fragment() {
                         putInt("studyInfoId", notice.studyInfoId)
                     }
                     view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_studyApplyMemberListFragment, bundle)
-                } else if (notice.title.contains("스터디 가입 완료")) {    // 스터디 가입 완료
+                } else if (notice.title.contains("스터디")) {
                     // 해당 스터디 상세 페이지로 이동
                     val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                     intent.putExtra("studyInfoId", notice.studyInfoId)
                     startActivity(intent)
                 } else if (notice.title.contains("TO-DO 업데이트")) {  // 스터디 TO-DO 업데이트
                     // 해당 스터디 TO-DO 상세 페이지로 이동
-                    val intent = Intent(requireContext(), ToDoActivity::class.java)
-                    intent.putExtra("studyInfoId", notice.studyInfoId)
+                    val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
+                        putExtra("studyInfoId", notice.studyInfoId)
+                        putExtra("targetFragment", "toDoFragment")
+                    }
                     startActivity(intent)
                 } else if (notice.title.contains("커밋 승인") || notice.title.contains("커밋 반려")) {
-                    // 해당 스터디 TO-DO 상세 페이지로 이동
-                    val intent = Intent(requireContext(), ToDoActivity::class.java)
-                    intent.putExtra("studyInfoId", notice.studyInfoId)
+                    // 해당 스터디 상세 페이지로 이동
+                    val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
+                        putExtra("studyInfoId", notice.studyInfoId)
+                        putExtra("targetFragment", "toDoFragment")
+                    }
                     startActivity(intent)
                 }
             }

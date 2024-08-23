@@ -13,6 +13,9 @@
         <action
             android:id="@+id/action_mainHomeAlertFragment_to_studyApplyMemberListFragment"
             app:destination="@id/studyApplyMemberListFragment" />
+        <action
+            android:id="@+id/action_mainHomeAlertFragment_to_toDoFragment"
+            app:destination="@id/toDoFragment" />
     </fragment>
     <fragment
         android:id="@+id/studyApplyMemberListFragment"
@@ -28,4 +31,9 @@
         android:name="com.takseha.presentation.ui.mystudy.StudyApplyMemberProfileFragment"
         android:label="fragment_study_apply_member_profile"
         tools:layout="@layout/fragment_study_apply_member_profile" />
+    <fragment
+        android:id="@+id/toDoFragment"
+        android:name="com.takseha.presentation.ui.mystudy.ToDoFragment"
+        android:label="fragment_to_do"
+        tools:layout="@layout/fragment_to_do" />
 </navigation>

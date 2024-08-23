@@ -46,7 +46,7 @@
     <string name="study_unlock">스터디 공개</string>
     <string name="study_deleted">스터디 종료</string>
     <string name="study_team_rank">%d점 • %d등</string>
-    <string name="study_member_score">%d점</string>
+    <string name="study_member_score">기여도 %d</string>
     <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %s</string>
     <string name="study_github_link">https://github.com/%s/%s</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>
@@ -76,6 +76,10 @@
     <string name="study_quit_reason1">해야 할 TO-DO가 너무 많아요</string>
     <string name="study_quit_reason2">더 이상 스터디가 필요하지 않아요</string>
     <string name="study_quit_reason3">팀원들과 맞지 않아 불편해요</string>
+    <string name="study_quit_alert_title">스터디를 탈퇴하시겠습니까?</string>
+    <string name="study_quit_alert_detail">스터디 활동 기록은 남아있어요</string>
+    <string name="study_end_alert_title">스터디를 종료하시겠습니까?</string>
+    <string name="study_end_alert_detail">스터디의 모든 활동이 중단돼요</string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
@@ -132,6 +136,5 @@
     <string name="alert_logout_cancel">닫기</string>
     <string name="alert_logout_confirm">로그아웃</string>
     <string name="alert_delete_account_confirm">탈퇴하기</string>
-
 
 </resources>
