@@ -1,12 +1,12 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.content.Context
-import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -24,7 +24,6 @@ import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.StudyComment
-import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
@@ -43,6 +42,7 @@ class MyStudyMainFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MyStudyMainViewModel by viewModels()
     private var studyInfoId: Int = 0
+    private var isLeader: Boolean? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,9 +56,11 @@ class MyStudyMainFragment : Fragment() {
         return binding.root
     }
     // TODO: todo link 버튼 눌렀을 때 이동하는 기능 구현
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         var comment = ""
 
         viewModel.getMyStudyInfo(studyInfoId)
@@ -69,8 +71,9 @@ class MyStudyMainFragment : Fragment() {
         with(binding) {
             val bundle = Bundle().apply {
                 putInt("studyInfoId", studyInfoId)
+                putBoolean("isLeader", isLeader!!)
             }
-
+            Log.d("MyStudyMainFragment", bundle.toString())
             backBtn.setOnClickListener {
                 requireActivity().finish()
             }

@@ -38,7 +38,7 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/studySettingTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
@@ -53,10 +53,11 @@
         android:id="@+id/mainSettingBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="109dp"
+        android:layout_marginTop="36dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/constraintLayout">
+        app:layout_constraintTop_toBottomOf="@+id/studySettingTitle">
 
         <TextView
             style="@style/B4_1"
@@ -82,6 +83,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="25dp"
+        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/mainSettingBtn">
@@ -135,10 +137,11 @@
 
 
     <LinearLayout
-        android:id="@+id/linearLayout4"
+        android:id="@+id/memberSettingTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="61dp"
+        android:visibility="gone"
         app:layout_constraintTop_toBottomOf="@+id/studyQuitBtn">
 
         <TextView
@@ -152,11 +155,13 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/memberList"
         android:layout_width="wrap_content"
         android:layout_height="204dp"
         android:layout_marginTop="20dp"
+        android:visibility="gone"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout4" />
+        app:layout_constraintTop_toBottomOf="@+id/memberSettingTitle" />
 
     <Button
         android:id="@+id/alarmBtn"
@@ -167,6 +172,7 @@
         android:background="@drawable/box_non_stroke_r8"
         android:backgroundTint="@color/BLACK"
         android:text="@string/send_message"
+        android:visibility="gone"
         android:textColor="@color/WHITE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/kickMemberBtn" />
@@ -179,6 +185,7 @@
         android:background="@drawable/box_non_stroke_r8"
         android:backgroundTint="@color/BASIC_RED"
         android:text="강퇴"
+        android:visibility="gone"
         android:textColor="@color/WHITE"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

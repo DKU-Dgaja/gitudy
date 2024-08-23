@@ -77,6 +77,7 @@ class MyStudyHomeFragment : Fragment() {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
+                intent.putExtra("isLeader", studyList[position].studyInfo.isLeader)
                 intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
                 startActivity(intent)
             }
