@@ -48,7 +48,7 @@
     <string name="study_team_rank">%d점 • %d등</string>
     <string name="study_member_score">%d점</string>
     <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %s</string>
-    <string name="study_github_link">https://github.com/DKU-Dgaja/gitudy</string>
+    <string name="study_github_link">https://github.com/%s/%s</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>
     <string name="study_to_do">백준의 1253번 문제 풀기</string>
     <string name="study_to_do_body">본문내용이 그렇게 많으려나?? 글자 수 제한해서 2줄 이상 안넘게 막으면 접고 펼치는거 없앨 수 있어. 그럼 더 간결해보이긴 해</string>
@@ -73,6 +73,9 @@
     <string name="study_comment_delete">해당 글을\n삭제하시겠습니까?</string>
     <string name="study_approve_member_apply">해당 멤버의 등록을\n수락하시겠습니까?</string>
     <string name="study_withdraw_member_apply">해당 멤버의 등록을\n거절하시겠습니까?</string>
+    <string name="study_quit_reason1">해야 할 TO-DO가 너무 많아요</string>
+    <string name="study_quit_reason2">더 이상 스터디가 필요하지 않아요</string>
+    <string name="study_quit_reason3">팀원들과 맞지 않아 불편해요</string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
@@ -129,8 +132,6 @@
     <string name="alert_logout_cancel">닫기</string>
     <string name="alert_logout_confirm">로그아웃</string>
     <string name="alert_delete_account_confirm">탈퇴하기</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 
 </resources>

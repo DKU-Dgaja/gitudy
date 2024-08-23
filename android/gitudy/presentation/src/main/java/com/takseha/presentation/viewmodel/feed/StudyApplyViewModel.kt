@@ -4,7 +4,10 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MessageRequest
+import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.mystudy.StudyInfoResponse
+import com.takseha.data.dto.profile.Bookmark
+import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
 import com.takseha.data.repository.gitudy.GitudyMemberRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,6 +18,7 @@ import kotlinx.coroutines.launch
 class StudyApplyViewModel: ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
     private var gitudyMemberRepository = GitudyMemberRepository()
+    private var gitudyBookmarksRepository = GitudyBookmarksRepository()
 
     private val _uiState = MutableStateFlow(StudyMainInfoState())
     val uiState = _uiState.asStateFlow()
@@ -27,10 +31,14 @@ class StudyApplyViewModel: ViewModel() {
 
         if (studyInfoResponse.isSuccessful) {
             val studyInfo = studyInfoResponse.body()!!
+            val rank = getStudyRank(studyInfoId)!!.ranking
+            val bookmarkStatus = checkBookmarkStatus(studyInfoId)
 
             _uiState.update {
                 it.copy(
-                    studyInfo = studyInfo
+                    studyInfo = studyInfo,
+                    rank = rank,
+                    isMyBookmark = bookmarkStatus
                 )
             }
         } else {
@@ -41,7 +49,52 @@ class StudyApplyViewModel: ViewModel() {
         }
     }
 
-    fun applyStudy(studyInfoId: Int, joinCode: String, message: String) = viewModelScope.launch {
+    private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
+        val studyRankResponse =
+            gitudyStudyRepository.getStudyRank(studyInfoId)
+
+        if (studyRankResponse.isSuccessful) {
+            return studyRankResponse.body()!!
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "studyRankResponse status: ${studyRankResponse.code()}\nstudyRankResponse message: ${studyRankResponse.errorBody()?.string()}"
+            )
+            return null
+        }
+    }
+
+    private suspend fun checkBookmarkStatus(studyInfoId: Int): Boolean {
+        val bookmarkStatusResponse = gitudyBookmarksRepository.checkBookmarkStatus(
+            studyInfoId
+        )
+        if (bookmarkStatusResponse.isSuccessful) {
+            return bookmarkStatusResponse.body()!!.myBookmark
+        } else {
+            Log.e(
+                "StudyApplyViewModel",
+                "bookmarkStatusResponse status: ${bookmarkStatusResponse.code()}\nbookmarkStatusResponse message: ${bookmarkStatusResponse.message()}"
+            )
+        }
+        return false
+    }
+
+    suspend fun setBookmarkStatus(studyInfoId: Int) {
+        val setBookmarkResponse = gitudyBookmarksRepository.setBookmarkStatus(
+            studyInfoId
+        )
+
+        if (setBookmarkResponse.isSuccessful) {
+            Log.d("StudyApplyViewModel", setBookmarkResponse.code().toString())
+        } else {
+            Log.e(
+                "StudyApplyViewModel",
+                "setBookmarkResponse status: ${setBookmarkResponse.code()}\nsetBookmarkResponse message: ${setBookmarkResponse.errorBody()?.string()}"
+            )
+        }
+    }
+
+    suspend fun applyStudy(studyInfoId: Int, joinCode: String, message: String) {
         val request = MessageRequest(message)
         Log.d("StudyApplyViewModel", request.toString())
 
@@ -56,7 +109,7 @@ class StudyApplyViewModel: ViewModel() {
         }
     }
 
-    fun withdrawApplyStudy(studyInfoId: Int) = viewModelScope.launch {
+    suspend fun withdrawApplyStudy(studyInfoId: Int) {
         val withdrawStudyResponse = gitudyMemberRepository.withdrawApplyStudy(studyInfoId)
 
         if (withdrawStudyResponse.isSuccessful) {
@@ -68,5 +121,7 @@ class StudyApplyViewModel: ViewModel() {
 }
 
 data class StudyMainInfoState(
-    var studyInfo: StudyInfoResponse = StudyInfoResponse()
+    val studyInfo: StudyInfoResponse = StudyInfoResponse(),
+    val rank: Int = 0,
+    val isMyBookmark: Boolean? = null
 )

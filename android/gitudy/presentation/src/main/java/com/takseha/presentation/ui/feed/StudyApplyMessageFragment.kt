@@ -50,6 +50,9 @@ class StudyApplyMessageFragment : Fragment() {
                 val message = messageToCaptain.text.toString()
                 showApplyStudyDialog(studyInfoId, "", message)
             }
+            cancelBtn.setOnClickListener {
+                requireActivity().finish()
+            }
         }
     }
 
@@ -78,8 +81,8 @@ class StudyApplyMessageFragment : Fragment() {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.feed_apply_study))
         customSetDialog.setOnConfirmClickListener {
-            viewModel.applyStudy(studyInfoId, "", message)
             viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.applyStudy(studyInfoId, "", message)
                 viewModel.isApplySucceed.collectLatest {
                     if (it != null) {
                         if (it) {

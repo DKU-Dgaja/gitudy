@@ -10,9 +10,13 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.takseha.data.dto.profile.Bookmark
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.BookmarkListRVAdapter
 import com.takseha.presentation.databinding.FragmentProfileHomeBinding
+import com.takseha.presentation.ui.feed.StudyApplyActivity
 import com.takseha.presentation.ui.home.MainHomeAlertActivity
 import com.takseha.presentation.viewmodel.profile.ProfileHomeViewModel
 import com.takseha.presentation.viewmodel.profile.ProfileInfoUiState
@@ -26,7 +30,8 @@ class ProfileHomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
     }
 
     override fun onCreateView(
@@ -41,9 +46,9 @@ class ProfileHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getUserProfileInfo()
-            viewModel.uiState.collectLatest { uiState ->
-                setUserInfo(uiState)
+            setViewModel()
+            viewModel.userUiState.collectLatest { userUiState ->
+                setUserInfo(userUiState)
 
                 with(binding) {
                     editBtn.setOnClickListener {
@@ -53,7 +58,7 @@ class ProfileHomeFragment : Fragment() {
 
                     settingBtn.setOnClickListener {
                         val intent = Intent(requireContext(), SettingActivity::class.java)
-                        intent.putExtra("pushAlarmYn", uiState.pushAlarmYn)
+                        intent.putExtra("pushAlarmYn", userUiState.pushAlarmYn)
                         startActivity(intent)
                     }
 
@@ -64,12 +69,34 @@ class ProfileHomeFragment : Fragment() {
                 }
             }
         }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.bookmarksState.collectLatest { bookmarksState ->
+                Log.d("ProfileHomeFragment", bookmarksState.bookmarksInfo.toString())
+                Log.d("ProfileHomeFragment", bookmarksState.isBookmarksEmpty.toString())
+                if (!bookmarksState.isBookmarksEmpty) {
+                    binding.isNoBookmarkLayout.visibility = View.GONE
+                } else {
+                    binding.isNoBookmarkLayout.visibility = View.VISIBLE
+                }
+                setBookmarkList(bookmarksState.bookmarksInfo)
+                binding.bookmarkMoreBtn.setOnClickListener {
+                    val intent = Intent(requireContext(), BookmarksActivity::class.java)
+                    startActivity(intent)
+                }
+            }
+        }
     }
 
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
-            viewModel.getUserProfileInfo()
+        setViewModel()
+    }
+
+    private fun setViewModel() {
+        viewModel.apply {
+            getUserProfileInfo()
+            getBookmarks(null, 3)
         }
     }
 
@@ -86,6 +113,41 @@ class ProfileHomeFragment : Fragment() {
             githubLink.text = userInfo.socialInfo?.githubLink ?: "등록된 링크가 없어요"
             blogLink.text = userInfo.socialInfo?.blogLink ?: "등록된 링크가 없어요"
             linkedinLink.text = userInfo.socialInfo?.linkedInLink ?: "등록된 링크가 없어요"
+        }
+    }
+
+    private fun setBookmarkList(bookmarks: List<Bookmark>) {
+        with(binding) {
+            val bookmarkListRVAdapter = BookmarkListRVAdapter(requireContext(), bookmarks)
+
+            bookmarkList.adapter = bookmarkListRVAdapter
+            bookmarkList.layoutManager = LinearLayoutManager(requireContext())
+
+            clickBookmarkItem(bookmarkListRVAdapter, bookmarks)
+        }
+    }
+
+    private fun clickBookmarkItem(
+        bookmarkListRVAdapter: BookmarkListRVAdapter,
+        bookmarks: List<Bookmark>
+    ) {
+        bookmarkListRVAdapter.onClickListener = object : BookmarkListRVAdapter.OnClickListener {
+            override fun onClick(view: View, position: Int) {
+                val intent = Intent(requireContext(), StudyApplyActivity::class.java)
+                intent.putExtra("studyInfoId", bookmarks[position].studyInfoId)
+                intent.putExtra(
+                    "studyImgColor",
+                    bookmarks[position].studyInfoWithIdResponse.profileImageUrl
+                )
+                startActivity(intent)
+            }
+
+            override fun bookmarkClick(view: View, position: Int) {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId)
+                    viewModel.getBookmarks(null, 3)
+                }
+            }
         }
     }
 

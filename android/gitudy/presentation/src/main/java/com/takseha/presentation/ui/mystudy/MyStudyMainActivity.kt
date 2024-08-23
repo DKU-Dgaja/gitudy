@@ -18,6 +18,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
+import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
@@ -103,11 +104,13 @@ class MyStudyMainActivity : AppCompatActivity() {
                 }
             })
             postBtn.setOnClickListener {
-                viewModel.makeStudyComment(studyInfoId, comment, 3)
+                lifecycleScope.launch {
+                    viewModel.makeStudyComment(studyInfoId, comment, 3)
 
-                newCommentBody.setText("")
-                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                imm.hideSoftInputFromWindow(newCommentBody.windowToken, 0)
+                    newCommentBody.setText("")
+                    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(newCommentBody.windowToken, 0)
+                }
             }
         }
     }
@@ -130,10 +133,12 @@ class MyStudyMainActivity : AppCompatActivity() {
                         todoDetailLayout.visibility = GONE
                         todoDetailBody.visibility = GONE
                         noTodoAlarm.visibility = VISIBLE
+                        setUrgentTodoInfo(it.todoInfo)
                     }
                 }
                 setConventionInfo(it.conventionInfo)
                 setMemberRank(it.studyMemberListInfo)
+                setStudyRank(it.rankAndScore)
             }
         }
 
@@ -145,11 +150,14 @@ class MyStudyMainActivity : AppCompatActivity() {
     }
 
     // 원래 페이지로 돌아왔을 때 state 업데이트
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
         val studyInfoId = intent.getIntExtra("studyInfoId", 0)
-        viewModel.getMyStudyInfo(studyInfoId)
-        viewModel.getStudyComments(studyInfoId, 3)
+        lifecycleScope.launch {
+            viewModel.getMyStudyInfo(studyInfoId)
+            viewModel.getStudyComments(studyInfoId, 3)
+        }
     }
 
     private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {
@@ -160,11 +168,7 @@ class MyStudyMainActivity : AppCompatActivity() {
             studyRule.text = setCommitRule(myStudyInfo.periodType)
             studyInfo.text = myStudyInfo.info
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
-            studyRankText.text = String.format(
-                getString(R.string.study_team_rank),
-                myStudyInfo.score, studyInfoId - 15
-            )
-            studyGithubLinkText.text = myStudyInfo.githubLinkInfo.branchName
+            studyGithubLinkText.text = getString(R.string.study_github_link, myStudyInfo.githubLinkInfo.owner, myStudyInfo.githubLinkInfo.name)
             setCategoryList(myStudyInfo.categoryNames)
         }
     }
@@ -185,6 +189,15 @@ class MyStudyMainActivity : AppCompatActivity() {
                 }
                 firstTodoLink = todoInfo.todoLink
             }
+        }
+    }
+
+    private fun setStudyRank(rankAndScore: StudyRankResponse) {
+        with(binding) {
+            studyRankText.text = String.format(
+                getString(R.string.study_team_rank),
+                rankAndScore.score, rankAndScore.ranking
+            )
         }
     }
 

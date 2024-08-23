@@ -3,6 +3,7 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
@@ -31,6 +32,7 @@ class MyStudyMainViewModel : ViewModel() {
         if (myStudyInfoResponse.isSuccessful) {
             val myStudyInfo = myStudyInfoResponse.body()!!
             val urgentTodo = getUrgentTodo(studyInfoId)
+            val rankAndScore = getStudyRank(studyInfoId)!!
             val convention = getConvention(studyInfoId)
             val studyMemberList = getStudyMemberList(studyInfoId)
 
@@ -41,6 +43,7 @@ class MyStudyMainViewModel : ViewModel() {
                         todoInfo = urgentTodo,
                         conventionInfo = convention,
                         studyMemberListInfo = studyMemberList,
+                        rankAndScore = rankAndScore,
                         isUrgentTodo = false
                     )
                 }
@@ -51,6 +54,7 @@ class MyStudyMainViewModel : ViewModel() {
                         todoInfo = urgentTodo,
                         conventionInfo = convention,
                         studyMemberListInfo = studyMemberList,
+                        rankAndScore = rankAndScore,
                         isUrgentTodo = true
                     )
                 }
@@ -59,7 +63,7 @@ class MyStudyMainViewModel : ViewModel() {
         } else {
             Log.e(
                 "MyStudyMainViewModel",
-                "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.message()}"
+                "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.errorBody()?.string()}"
             )
         }
     }
@@ -73,7 +77,7 @@ class MyStudyMainViewModel : ViewModel() {
         } else {
             Log.e(
                 "MyStudyMainViewModel",
-                "studyCommentListResponse status: ${studyCommentListResponse.code()}\nstudyCommentListResponse message: ${studyCommentListResponse.message()}"
+                "studyCommentListResponse status: ${studyCommentListResponse.code()}\nstudyCommentListResponse message: ${studyCommentListResponse.errorBody()?.string()}"
             )
         }
     }
@@ -88,7 +92,7 @@ class MyStudyMainViewModel : ViewModel() {
         } else {
             Log.e(
                 "MainHomeViewModel",
-                "urgentTodoResponse status: ${urgentTodoResponse.code()}\nurgentTodoResponse message: ${urgentTodoResponse.message()}"
+                "urgentTodoResponse status: ${urgentTodoResponse.code()}\nurgentTodoResponse message: ${urgentTodoResponse.errorBody()?.string()}"
             )
         }
         return null
@@ -112,7 +116,7 @@ class MyStudyMainViewModel : ViewModel() {
         } else {
             Log.e(
                 "MyStudyMainViewModel",
-                "conventionInfoResponse status: ${conventionInfoResponse.code()}\nconventionInfoResponse message: ${conventionInfoResponse.message()}"
+                "conventionInfoResponse status: ${conventionInfoResponse.code()}\nconventionInfoResponse message: ${conventionInfoResponse.errorBody()?.string()}"
             )
         }
         // 에러 발생 시 null return
@@ -129,13 +133,28 @@ class MyStudyMainViewModel : ViewModel() {
         } else {
             Log.e(
                 "MyStudyMainViewModel",
-                "studyMemberListResponse status: ${studyMemberListResponse.code()}\nstudyMemberListResponse message: ${studyMemberListResponse.message()}"
+                "studyMemberListResponse status: ${studyMemberListResponse.code()}\nstudyMemberListResponse message: ${studyMemberListResponse.errorBody()?.string()}"
             )
             return listOf()
         }
     }
 
-    fun makeStudyComment(studyInfoId: Int, content: String, limit: Long) = viewModelScope.launch {
+    private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
+        val studyRankResponse =
+            gitudyStudyRepository.getStudyRank(studyInfoId)
+
+        if (studyRankResponse.isSuccessful) {
+            return studyRankResponse.body()!!
+        } else {
+            Log.e(
+                "MyStudyMainViewModel",
+                "studyRankResponse status: ${studyRankResponse.code()}\nstudyRankResponse message: ${studyRankResponse.errorBody()?.string()}"
+            )
+            return null
+        }
+    }
+
+    suspend fun makeStudyComment(studyInfoId: Int, content: String, limit: Long) {
         val newStudyCommentResponse =
             gitudyStudyRepository.makeStudyComment(studyInfoId, content)
 
@@ -146,16 +165,17 @@ class MyStudyMainViewModel : ViewModel() {
         } else {
             Log.e(
                 "MyStudyMainViewModel",
-                "newStudyCommentResponse status: ${newStudyCommentResponse.code()}\nnewStudyCommentResponse message: ${newStudyCommentResponse.message()}"
+                "newStudyCommentResponse status: ${newStudyCommentResponse.code()}\nnewStudyCommentResponse message: ${newStudyCommentResponse.errorBody()?.string()}"
             )
         }
     }
 }
 
 data class MyStudyMainInfoState(
-    var myStudyInfo: StudyInfoResponse = StudyInfoResponse(),
-    var todoInfo: Todo? = null,
-    var conventionInfo: StudyConvention? = null,
-    var studyMemberListInfo: List<StudyMember> = listOf(),
-    var isUrgentTodo: Boolean = true
+    val myStudyInfo: StudyInfoResponse = StudyInfoResponse(),
+    val todoInfo: Todo? = null,
+    val conventionInfo: StudyConvention? = null,
+    val studyMemberListInfo: List<StudyMember> = listOf(),
+    val rankAndScore: StudyRankResponse = StudyRankResponse(0, 0),
+    val isUrgentTodo: Boolean = true
 )

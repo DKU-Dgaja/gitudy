@@ -21,6 +21,10 @@ class GitudyStudyRepository {
         myStudy: Boolean
     ) = client.getStudyCount(myStudy)
 
+    suspend fun getStudyRank(
+        studyInfoId: Int
+    ) = client.getStudyRank(studyInfoId)
+
     suspend fun makeNewStudy(
         request: MakeStudyRequest
     ) = client.makeNewStudy(request)

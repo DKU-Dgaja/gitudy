@@ -4,6 +4,7 @@ import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyListResponse
+import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.StudyInfoResponse
@@ -40,6 +41,11 @@ interface GitudyStudyService {
     suspend fun makeNewStudy(
         @Body request: MakeStudyRequest
     ): Response<Void>
+
+    @GET("/study/rank/{studyInfoId}")
+    suspend fun getStudyRank(
+        @Path("studyInfoId") studyInfoId: Int
+    ): Response<StudyRankResponse>
 
     @POST("/study/check-name")
     suspend fun checkValidRepoName(

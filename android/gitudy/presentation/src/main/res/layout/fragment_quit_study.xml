@@ -48,36 +48,77 @@
         android:textColor="@color/BLACK"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quitStudyTitle" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/quitReasonList"
+    <RadioGroup
+        android:id="@+id/deleteReasonSelectRadioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="48dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/quitReason" />
+        app:layout_constraintTop_toBottomOf="@+id/quitReason">
 
-    <LinearLayout
+        <RadioButton
+            android:id="@+id/reason1CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/study_quit_reason1"
+            android:textColor="@color/GS_700" />
+
+        <RadioButton
+            android:id="@+id/reason2CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/study_quit_reason2"
+            android:textColor="@color/GS_700" />
+
+        <RadioButton
+            android:id="@+id/reason3CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/study_quit_reason3"
+            android:textColor="@color/GS_700" />
+
+        <RadioButton
+            android:id="@+id/reason4CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/profile_delete_account_reason4"
+            android:textColor="@color/GS_700" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/newReasonEditText"
+        style="@style/B6_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="15dp"
-        android:gravity="center_vertical"
-        app:layout_constraintTop_toBottomOf="@+id/quitReasonList">
-
-        <ImageView
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:layout_marginRight="10dp"
-            android:src="@drawable/selector_radio_clicked" />
-
-        <EditText
-            style="@style/B4_2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="기타 이유를 적어주세요"
-            android:textColor="@color/GS_700"
-            android:textColorHint="@color/GS_300" />
-    </LinearLayout>
+        android:background="@drawable/box_non_stroke_r8"
+        android:backgroundTint="#F3F5F7"
+        android:hint="기타 탈퇴 이유를 입력해주세요"
+        android:paddingStart="14dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="20dp"
+        android:textColor="@color/GS_700"
+        android:textColorHint="@color/GS_500"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/deleteReasonSelectRadioGroup" />
 
     <Button
         android:id="@+id/quitStudyBtn"
