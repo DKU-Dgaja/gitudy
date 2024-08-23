@@ -47,6 +47,9 @@ class MakeStudy3Fragment : Fragment() {
             exitBtn.setOnClickListener {
                 requireActivity().finish()
             }
+
+            val currentIdx = requireActivity().intent.getStringExtra("currentIdx") ?: "0"
+            setStudyImg(currentIdx.toInt())
         }
     }
 
@@ -54,6 +57,23 @@ class MakeStudy3Fragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.newStudyInfoState.collectLatest {
                 setNewStudyDetail(it)
+            }
+        }
+    }
+
+    private fun setStudyImg(currentIdx: Int) {
+        with(binding) {
+            when (currentIdx) {
+                0 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_1)
+                1 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_2)
+                2 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_3)
+                3 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_4)
+                4 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_5)
+                5 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_6)
+                6 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_7)
+                7 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_8)
+                8 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_9)
+                else -> studyImg.setImageResource(R.drawable.bg_mystudy_small_10)
             }
         }
     }

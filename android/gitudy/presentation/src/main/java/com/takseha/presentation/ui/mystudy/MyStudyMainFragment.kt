@@ -160,8 +160,10 @@ class MyStudyMainFragment : Fragment() {
     }
 
     private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {
+        val studyImgSrc = setStudyImg(studyImgColor.toInt())
+
         with(binding) {
-            studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
+            studyImg.setImageResource(studyImgSrc)
             studyName.text = myStudyInfo.topic
             leaderTag.visibility = if (myStudyInfo.isLeader) VISIBLE else GONE
             studyRule.text = setCommitRule(myStudyInfo.periodType)
@@ -187,6 +189,21 @@ class MyStudyMainFragment : Fragment() {
                         ))
                 }
             }
+        }
+    }
+
+    private fun setStudyImg(currentIdx: Int): Int {
+        return when (currentIdx) {
+            0 -> R.drawable.bg_mystudy_full_1
+            1 -> R.drawable.bg_mystudy_full_2
+            2 -> R.drawable.bg_mystudy_full_3
+            3 -> R.drawable.bg_mystudy_full_4
+            4 -> R.drawable.bg_mystudy_full_5
+            5 -> R.drawable.bg_mystudy_full_6
+            6 -> R.drawable.bg_mystudy_full_7
+            7 -> R.drawable.bg_mystudy_full_8
+            8 -> R.drawable.bg_mystudy_full_9
+            else -> R.drawable.bg_mystudy_full_10
         }
     }
 

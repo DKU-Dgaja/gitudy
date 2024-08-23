@@ -18,8 +18,6 @@ import kotlinx.coroutines.launch
 class MakeStudyViewModel: ViewModel() {
     private lateinit var gitudyStudyRepository: GitudyStudyRepository
     private lateinit var gitudyCategoryRepository: GitudyCategoryRepository
-    private val backgroundColorList = listOf("#00BE93", "#00A19A", "#008291", "#08647A", "#386C5F", "#6E9B7B")
-    val randIdx = (0..5).random()
 
     private val _categoryState = MutableStateFlow<List<Category>>(emptyList())
     val categoryState = _categoryState.asStateFlow()
@@ -33,8 +31,8 @@ class MakeStudyViewModel: ViewModel() {
     fun setStudyIntro(title: String, detail: String, githubRepo: String, categoryIdList: List<Int>) {
         _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryName = githubRepo, categoriesId = categoryIdList) }
     }
-    fun setStudyRule(commitTimes: StudyPeriodStatus, isPublic: StudyStatus, maxMember: Int) {
-        _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = backgroundColorList[randIdx]) }
+    fun setStudyRule(commitTimes: StudyPeriodStatus, isPublic: StudyStatus, maxMember: Int, profileImageUrl: String) {
+        _newStudyInfoState.update { it.copy(periodType = commitTimes, status = isPublic, maximumMember = maxMember, profileImageUrl = profileImageUrl) }
     }
 
     fun checkValidRepoName(name: String) = viewModelScope.launch {

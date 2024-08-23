@@ -33,7 +33,7 @@ class FeedRVAdapter(
     var onClickListener: OnClickListener? = null
 
     class ViewHolder(val binding: ItemFeedBinding) : RecyclerView.ViewHolder(binding.root) {
-        val backgroundColor = binding.studyInfoLayout
+        val studyImg = binding.studyImg
         val studyName = binding.studyName
         val bookmarkBtn = binding.bookmarkBtn
         val commitRule = binding.commitRule
@@ -80,7 +80,9 @@ class FeedRVAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun bindFull(holder: ViewHolder, position: Int) {
-        holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].studyInfo.profileImageUrl))
+        val studyImage = setStudyImg(studyInfoList[position].studyInfo.profileImageUrl.toInt())
+
+        holder.studyImg.setImageResource(studyImage)
         holder.studyName.text = studyInfoList[position].studyInfo.topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].studyInfo.periodType)
         holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].rank,
@@ -109,6 +111,21 @@ class FeedRVAdapter(
         // 스터디 클릭 이벤트 처리
         holder.itemView.setOnClickListener { v ->
             onClickListener?.onClick(v, position)
+        }
+    }
+
+    private fun setStudyImg(currentIdx: Int): Int {
+        return when (currentIdx) {
+            0 -> R.drawable.bg_feed_full_1
+            1 -> R.drawable.bg_feed_full_2
+            2 -> R.drawable.bg_feed_full_3
+            3 -> R.drawable.bg_feed_full_4
+            4 -> R.drawable.bg_feed_full_5
+            5 -> R.drawable.bg_feed_full_6
+            6 -> R.drawable.bg_feed_full_7
+            7 -> R.drawable.bg_feed_full_8
+            8 -> R.drawable.bg_feed_full_9
+            else -> R.drawable.bg_feed_full_10
         }
     }
 

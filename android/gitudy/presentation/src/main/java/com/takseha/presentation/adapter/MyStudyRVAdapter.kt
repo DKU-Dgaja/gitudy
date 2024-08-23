@@ -61,8 +61,9 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
     private fun setStudyInfo(holder: ViewHolder, position: Int) {
         val studyInfo = studyInfoList[position].studyInfo
         val urgentTodo = studyInfoList[position].urgentTodo!!
+        val studyImage = setStudyImg(studyInfo.profileImageUrl.toInt())
 
-        holder.studyImg.setCardBackgroundColor(Color.parseColor(studyInfo.profileImageUrl))
+        holder.studyImg.setImageResource(studyImage)
         holder.studyName.text = studyInfo.topic
         holder.leaderTag.visibility = if (studyInfo.isLeader) VISIBLE else GONE
         holder.teamScore.text = "${studyInfo.score}점"
@@ -98,6 +99,21 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
                     )
                 }
             }
+        }
+    }
+
+    private fun setStudyImg(currentIdx: Int): Int {
+        return when (currentIdx) {
+            0 -> R.drawable.bg_mystudy_small_1
+            1 -> R.drawable.bg_mystudy_small_2
+            2 -> R.drawable.bg_mystudy_small_3
+            3 -> R.drawable.bg_mystudy_small_4
+            4 -> R.drawable.bg_mystudy_small_5
+            5 -> R.drawable.bg_mystudy_small_6
+            6 -> R.drawable.bg_mystudy_small_7
+            7 -> R.drawable.bg_mystudy_small_8
+            8 -> R.drawable.bg_mystudy_small_9
+            else -> R.drawable.bg_mystudy_small_10
         }
     }
 
