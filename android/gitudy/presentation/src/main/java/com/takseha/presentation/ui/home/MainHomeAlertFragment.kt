@@ -106,6 +106,7 @@ class MainHomeAlertFragment : Fragment() {
         }
     }
 
+    // TODO: 해당 스터디 TO-DO 상세 페이지로 이동
     private fun clickNoticeItem(noticeListRVAdapter: NoticeListRVAdapter, noticeList: List<Notice>) {
         noticeListRVAdapter.onClickListener = object : NoticeListRVAdapter.OnClickListener {
             override fun onClick(view: View, position: Int) {
@@ -123,16 +124,18 @@ class MainHomeAlertFragment : Fragment() {
                     startActivity(intent)
                 } else if (notice.title.contains("TO-DO 업데이트")) {  // 스터디 TO-DO 업데이트
                     // 해당 스터디 TO-DO 상세 페이지로 이동
-                    val bundle = Bundle().apply {
-                        putInt("studyInfoId", notice.studyInfoId)
+                    val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
+                        putExtra("studyInfoId", notice.studyInfoId)
+                        putExtra("targetFragment", "toDoFragment")
                     }
-                    view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_toDoFragment, bundle)
+                    startActivity(intent)
                 } else if (notice.title.contains("커밋 승인") || notice.title.contains("커밋 반려")) {
-                    // 해당 스터디 TO-DO 상세 페이지로 이동
-                    val bundle = Bundle().apply {
-                        putInt("studyInfoId", notice.studyInfoId)
+                    // 해당 스터디 상세 페이지로 이동
+                    val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
+                        putExtra("studyInfoId", notice.studyInfoId)
+                        putExtra("targetFragment", "toDoFragment")
                     }
-                    view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_toDoFragment, bundle)
+                    startActivity(intent)
                 }
             }
         }
