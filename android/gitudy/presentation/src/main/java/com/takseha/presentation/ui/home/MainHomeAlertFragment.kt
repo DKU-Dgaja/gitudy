@@ -20,7 +20,6 @@ import com.takseha.presentation.R
 import com.takseha.presentation.adapter.NoticeListRVAdapter
 import com.takseha.presentation.databinding.FragmentMainHomeAlertBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
-import com.takseha.presentation.ui.mystudy.ToDoActivity
 import com.takseha.presentation.viewmodel.home.MainHomeAlertViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -124,14 +123,16 @@ class MainHomeAlertFragment : Fragment() {
                     startActivity(intent)
                 } else if (notice.title.contains("TO-DO 업데이트")) {  // 스터디 TO-DO 업데이트
                     // 해당 스터디 TO-DO 상세 페이지로 이동
-                    val intent = Intent(requireContext(), ToDoActivity::class.java)
-                    intent.putExtra("studyInfoId", notice.studyInfoId)
-                    startActivity(intent)
+                    val bundle = Bundle().apply {
+                        putInt("studyInfoId", notice.studyInfoId)
+                    }
+                    view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_toDoFragment, bundle)
                 } else if (notice.title.contains("커밋 승인") || notice.title.contains("커밋 반려")) {
                     // 해당 스터디 TO-DO 상세 페이지로 이동
-                    val intent = Intent(requireContext(), ToDoActivity::class.java)
-                    intent.putExtra("studyInfoId", notice.studyInfoId)
-                    startActivity(intent)
+                    val bundle = Bundle().apply {
+                        putInt("studyInfoId", notice.studyInfoId)
+                    }
+                    view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_toDoFragment, bundle)
                 }
             }
         }
