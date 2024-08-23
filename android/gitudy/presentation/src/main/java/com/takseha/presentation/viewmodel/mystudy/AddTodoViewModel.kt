@@ -10,7 +10,7 @@ import kotlinx.coroutines.launch
 class AddTodoViewModel: ViewModel() {
     private var gitudyStudyRepository: GitudyStudyRepository = GitudyStudyRepository()
 
-    fun makeNewTodo(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) = viewModelScope.launch {
+    suspend fun makeNewTodo(studyInfoId: Int, title: String, todoLink: String, detail: String, todoDate: String) {
         val request = MakeTodoRequest(detail = detail, title = title, todoDate = todoDate, todoLink = todoLink)
 
         val newTodoResponse = gitudyStudyRepository.makeNewTodo(studyInfoId, request)

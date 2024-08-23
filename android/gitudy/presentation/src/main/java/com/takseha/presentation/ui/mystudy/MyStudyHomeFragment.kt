@@ -42,11 +42,6 @@ class MyStudyHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding) {
-            makeNewStudyBtn.setOnClickListener {
-                startActivity(Intent(activity, MakeStudyActivity::class.java))
-            }
-        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
                 binding.myStudyCnt.text = it.studyCnt.toString()

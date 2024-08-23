@@ -57,7 +57,7 @@ class CommitDetailFragment : Fragment() {
                 .into(profileImg)
             nickname.text = commit!!.rejectionReason
             githubLinkBtn.setOnClickListener {
-                it.findNavController().navigate(R.id.action_myCommitFragment_to_commitWebViewFragment)
+                it.findNavController().navigate(R.id.action_toDoFragment_to_commitDetailFragment)
             }
             backBtn.setOnClickListener {
                 requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
