@@ -71,8 +71,11 @@ public class User extends BaseEntity implements UserDetails {
     @Column(name = "POINT")
     private int point = 0;                                      // 사용자 포인트
 
+    @Column(name = "WITHDRAWAL_REASON")
+    private String withdrawalReason;                            // 탈퇴 이유
+
     @Builder
-    public User(String platformId, UserPlatformType platformType, UserRole role, SocialInfo socialInfo, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, boolean profilePublicYn, int score, int point) {
+    public User(String platformId, UserPlatformType platformType, UserRole role, SocialInfo socialInfo, String githubId, String name, String profileImageUrl, boolean pushAlarmYn, boolean profilePublicYn, int score, int point, String withdrawalReason) {
         this.platformId = platformId;
         this.platformType = platformType;
         this.role = role;
@@ -84,6 +87,7 @@ public class User extends BaseEntity implements UserDetails {
         this.profilePublicYn = profilePublicYn;
         this.score = score;
         this.point = point;
+        this.withdrawalReason = withdrawalReason;
     }
 
     // 회원가입 (UNAUTH -> USER)
@@ -114,6 +118,11 @@ public class User extends BaseEntity implements UserDetails {
     // Score 업데이트 메서드
     public void addUserScore(int score) {
         this.score = Math.max(0, this.score + score);
+    }
+
+    // 탈퇴 이유 메서드
+    public void reason(String withdrawalReason) {
+        this.withdrawalReason = withdrawalReason;
     }
 
     // Spring Security UserDetails Area

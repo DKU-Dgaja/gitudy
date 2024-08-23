@@ -1,13 +1,7 @@
-/*
 package com.example.backend.auth.api.service.rank;
 
 import com.example.backend.MockTestConfig;
-import com.example.backend.auth.api.service.rank.response.StudyRankingResponse;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
-import com.example.backend.domain.define.study.info.StudyInfo;
-import com.example.backend.domain.define.study.info.StudyInfoFixture;
-import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
-import com.example.backend.study.api.service.info.StudyInfoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,9 +25,8 @@ public class RankingServiceTest extends MockTestConfig {
     @Autowired
     private ZSetOperations<String, Object> zSetOperations;
 
-
     @Autowired
-    private StudyInfoRepository studyInfoRepository;
+    private RedisTemplate<String, Object> redisTemplate;
 
     private Random random = new Random();
     private static final String USER_RANKING_KEY = "user_ranking";
@@ -47,8 +40,8 @@ public class RankingServiceTest extends MockTestConfig {
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
-       // redisTemplate.delete(USER_RANKING_KEY);
-        //redisTemplate.delete(STUDY_RANKING_KEY);
+        redisTemplate.delete(USER_RANKING_KEY);
+        redisTemplate.delete(STUDY_RANKING_KEY);
     }
 
     @Test
@@ -77,7 +70,7 @@ public class RankingServiceTest extends MockTestConfig {
     }
 
 
- @Test
+ /*@Test
     void 특정_유저_랭킹_조회() {
         User savedUser1 = userRepository.save(generateAuthUser());  // score: 10   4등
         User savedUser2 = userRepository.save(generateAdminUser()); // score: 100  1등
@@ -106,7 +99,7 @@ public class RankingServiceTest extends MockTestConfig {
 
         assertEquals(response1.getRanking(), 4);
         assertEquals(response1.getScore(), 10);
-    }
+    }*/
 
 
 
@@ -137,7 +130,7 @@ public class RankingServiceTest extends MockTestConfig {
         rankingService.updateStudyScore(studyInfoId, 13);
     }
 
-    @Test
+    /*@Test
     void 특정_스터디_랭킹_조회() {
 
         StudyInfo studyInfo1 = studyInfoRepository.save(StudyInfoFixture.createPublicStudyInfoScore(1L, 530));
@@ -166,6 +159,5 @@ public class RankingServiceTest extends MockTestConfig {
 
         assertEquals(response3.getRanking(), 4);
         assertEquals(response3.getScore(), 40);
-    }
+    }*/
 }
-*/
