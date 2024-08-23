@@ -58,7 +58,7 @@ class MyStudyMainFragment : Fragment() {
     // TODO: todo link 버튼 눌렀을 때 이동하는 기능 구현
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        studyInfoId = activity!!.intent.getIntExtra("studyInfoId", 0)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         var comment = ""
 
         viewModel.getMyStudyInfo(studyInfoId)
@@ -117,7 +117,7 @@ class MyStudyMainFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
-                activity!!.window.statusBarColor = Color.parseColor(it.myStudyInfo.profileImageUrl)
+                requireActivity().window.statusBarColor = Color.parseColor(it.myStudyInfo.profileImageUrl)
                 setMyStudyInfo(it.myStudyInfo.id, it.myStudyInfo.profileImageUrl, it.myStudyInfo)
                 if (it.isUrgentTodo) {
                     with(binding) {
