@@ -117,7 +117,7 @@ class MainHomeAlertFragment : Fragment() {
                         putInt("studyInfoId", notice.studyInfoId)
                     }
                     view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_studyApplyMemberListFragment, bundle)
-                } else if (notice.title.contains("스터디 가입 완료")) {    // 스터디 가입 완료
+                } else if (notice.title.contains("스터디")) {
                     // 해당 스터디 상세 페이지로 이동
                     val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                     intent.putExtra("studyInfoId", notice.studyInfoId)

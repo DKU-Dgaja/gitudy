@@ -6,6 +6,7 @@ import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.SetConventionRequest
+import com.takseha.data.dto.mystudy.UpdateStudyInfoRequest
 
 class GitudyStudyRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyStudyService::class.java)
@@ -93,6 +94,11 @@ class GitudyStudyRepository {
         studyCommentId: Int,
         content: String
     ) = client.updateStudyComment(studyInfoId, studyCommentId, content)
+
+    suspend fun updateStudyInfo(
+        studyInfoId: Int,
+        request: UpdateStudyInfoRequest
+    ) = client.updateStudyInfo(studyInfoId, request)
 
     suspend fun deleteStudyComment(
         studyInfoId: Int,

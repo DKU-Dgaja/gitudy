@@ -13,6 +13,7 @@ import com.takseha.data.dto.mystudy.StudyCommentListResponse
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
+import com.takseha.data.dto.mystudy.UpdateStudyInfoRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -126,6 +127,12 @@ interface GitudyStudyService {
         @Path("studyInfoId") studyInfoId: Int,
         @Path("studyCommentId") studyCommentId: Int,
         @Body content: String
+    ): Response<Void>
+
+    @PATCH("/study/{studyInfoId}")
+    suspend fun updateStudyInfo(
+        @Path("studyInfoId") studyInfoId: Int,
+        @Body request: UpdateStudyInfoRequest
     ): Response<Void>
 
     @DELETE("/study/{studyInfoId}/comment/{studyCommentId}")

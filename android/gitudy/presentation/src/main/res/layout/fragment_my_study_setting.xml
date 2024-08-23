@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:clipToPadding="false"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
     android:paddingBottom="48dp"
@@ -54,7 +55,6 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="36dp"
-        android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studySettingTitle">
@@ -79,42 +79,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/studyEndBtn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/mainSettingBtn">
-
-        <TextView
-            style="@style/B4_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="스터디 종료"
-            android:textColor="@color/GS_900"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <ImageView
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@drawable/ic_arrow"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/studyQuitBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="25dp"
+        android:layout_marginTop="28dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/studyEndBtn">
+        app:layout_constraintTop_toBottomOf="@+id/mainSettingBtn">
 
         <TextView
             style="@style/B4_1"
@@ -135,59 +106,42 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-
-    <LinearLayout
-        android:id="@+id/memberSettingTitle"
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/memberSettingBtn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="61dp"
-        android:visibility="gone"
+        android:layout_marginTop="28dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studyQuitBtn">
 
         <TextView
+            style="@style/B4_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/pretendard_bold"
             android:text="팀원 관리"
-            android:textColor="@color/BLACK"
-            android:textSize="20sp" />
+            android:textColor="@color/GS_900"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/memberList"
-        android:layout_width="wrap_content"
-        android:layout_height="204dp"
-        android:layout_marginTop="20dp"
-        android:visibility="gone"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/memberSettingTitle" />
-
-    <Button
-        android:id="@+id/alarmBtn"
-        style="@style/B6_1"
-        android:layout_width="100dp"
-        android:layout_height="44dp"
-        android:layout_marginRight="12dp"
-        android:background="@drawable/box_non_stroke_r8"
-        android:backgroundTint="@color/BLACK"
-        android:text="@string/send_message"
-        android:visibility="gone"
-        android:textColor="@color/WHITE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/kickMemberBtn" />
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/ic_arrow"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <Button
-        android:id="@+id/kickMemberBtn"
-        style="@style/B6_1"
-        android:layout_width="76dp"
-        android:layout_height="44dp"
-        android:background="@drawable/box_non_stroke_r8"
-        android:backgroundTint="@color/BASIC_RED"
-        android:text="강퇴"
-        android:visibility="gone"
+        android:id="@+id/studyEndBtn"
+        style="@style/B5_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box_non_stroke_r8_black"
+        android:text="스터디 종료"
         android:textColor="@color/WHITE"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
-
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
