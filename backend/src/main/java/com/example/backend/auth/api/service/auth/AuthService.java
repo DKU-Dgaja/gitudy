@@ -189,7 +189,7 @@ public class AuthService {
 
         // fcmToken 저장
         FcmToken fcmToken = FcmToken.builder()
-                .userId(user.getId())
+                .userId(findUser.getId())
                 .fcmToken(request.getFcmToken())
                 .build();
         fcmTokenRepository.save(fcmToken);
