@@ -78,7 +78,7 @@ class RegisterViewModel(application: Application) : AndroidViewModel(application
         tokenManager = TokenManager(getApplication())
 
         val request = registerInfoState.value
-
+        Log.d("RegisterViewModel", "request: $request")
         val registerResponse = tokenManager.getRegisterTokens(request)
 
         if (registerResponse != null) {

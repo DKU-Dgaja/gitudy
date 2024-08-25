@@ -48,8 +48,8 @@ class MakeStudy3Fragment : Fragment() {
                 requireActivity().finish()
             }
 
-            val currentIdx = requireActivity().intent.getStringExtra("currentIdx") ?: "0"
-            setStudyImg(currentIdx.toInt())
+            val studyCnt = requireActivity().intent.getIntExtra("studyCnt", 0)
+            setStudyImg(studyCnt)
         }
     }
 
@@ -61,9 +61,9 @@ class MakeStudy3Fragment : Fragment() {
         }
     }
 
-    private fun setStudyImg(currentIdx: Int) {
+    private fun setStudyImg(studyCnt: Int) {
         with(binding) {
-            when (currentIdx) {
+            when (studyCnt) {
                 0 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_1)
                 1 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_2)
                 2 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_3)
@@ -88,7 +88,7 @@ class MakeStudy3Fragment : Fragment() {
                 if (studyInfo.status == StudyStatus.STUDY_PUBLIC) getString(R.string.study_unlock) else getString(
                     R.string.study_lock
                 )
-            maxMemberText.text = studyInfo.maximumMember.toString()
+            maxMemberText.text = getString(R.string.feed_member_full_number, studyInfo.maximumMember)
             githubRepoLink.text = studyInfo.repositoryName
             commitRule.text =
                 if (studyInfo.periodType == StudyPeriodStatus.STUDY_PERIOD_WEEK) getString(R.string.feed_rule_week) else if (studyInfo.periodType == StudyPeriodStatus.STUDY_PERIOD_EVERYDAY) getString(

@@ -1,7 +1,8 @@
 package com.takseha.presentation.viewmodel.feed
 
+import android.app.Application
 import android.util.Log
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.Category
 import com.takseha.data.dto.feed.CheckRepoNameRequest
@@ -15,7 +16,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MakeStudyViewModel: ViewModel() {
+class MakeStudyViewModel(application: Application) : AndroidViewModel(application)  {
     private lateinit var gitudyStudyRepository: GitudyStudyRepository
     private lateinit var gitudyCategoryRepository: GitudyCategoryRepository
 

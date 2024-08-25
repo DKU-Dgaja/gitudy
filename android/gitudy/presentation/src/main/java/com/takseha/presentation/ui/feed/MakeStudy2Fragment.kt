@@ -11,6 +11,7 @@ import androidx.navigation.findNavController
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.sharedPreferences.SP
+import com.takseha.data.sharedPreferences.SPKey
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentMakeStudy2Binding
 import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
@@ -19,7 +20,6 @@ class MakeStudy2Fragment : Fragment() {
     private var _binding: FragmentMakeStudy2Binding? = null
     private val binding get() = _binding!!
     private val viewModel: MakeStudyViewModel by activityViewModels()
-    private lateinit var prefs: SP
     private var memberNum = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -36,8 +36,8 @@ class MakeStudy2Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        prefs = SP(requireContext())
-        val currentIdx = getCurrentIdx()
+        val studyCnt = requireActivity().intent.getIntExtra("studyCnt", 0)
+        val imageIdx = studyCnt % 10
 
         with(binding) {
             memberNumber.text =
@@ -58,13 +58,9 @@ class MakeStudy2Fragment : Fragment() {
                 val isPublic =
                     if (publicCheck.isChecked) StudyStatus.STUDY_PUBLIC else StudyStatus.STUDY_PRIVATE
 
-                viewModel.setStudyRule(commitTime, isPublic, memberNum, currentIdx)
-
-                val bundle = Bundle().apply {
-                    putString("currentIdx", currentIdx)
-                }
+                viewModel.setStudyRule(commitTime, isPublic, memberNum, imageIdx.toString())
                 it.findNavController()
-                    .navigate(R.id.action_makeStudy2Fragment_to_makeStudy3Fragment, bundle)
+                    .navigate(R.id.action_makeStudy2Fragment_to_makeStudy3Fragment)
             }
             exitBtn.setOnClickListener {
                 requireActivity().finish()
@@ -89,12 +85,6 @@ class MakeStudy2Fragment : Fragment() {
                     commitCntSelectRadioGroup.checkedRadioButtonId != -1 && isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
             }
         }
-    }
-
-    private fun getCurrentIdx(): String {
-        val currentIdx = prefs.loadPref("current_idx", "0")
-        prefs.savePref("current_idx", { 10 % (currentIdx.toInt() + 1) }.toString())
-        return currentIdx
     }
 
     override fun onDestroyView() {

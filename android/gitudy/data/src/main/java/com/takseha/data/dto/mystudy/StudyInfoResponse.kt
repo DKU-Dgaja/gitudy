@@ -24,7 +24,7 @@ data class StudyInfoResponse(
     @SerializedName("period_type")
     val periodType: StudyPeriodStatus = StudyPeriodStatus.STUDY_PERIOD_WEEK,
     @SerializedName("profile_image_url")
-    val profileImageUrl: String = "#ffffff",
+    val profileImageUrl: String = "-1",
     @SerializedName("score")
     val score: Int = 0,
     @SerializedName("status")

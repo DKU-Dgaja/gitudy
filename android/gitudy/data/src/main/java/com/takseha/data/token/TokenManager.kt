@@ -25,13 +25,13 @@ class TokenManager(context: Context) {
 
 
     var accessToken: String?
-        get() = prefs.loadPref(SPKey.ACCESS_TOKEN, "0")
+        get() = prefs.loadPref(SPKey.ACCESS_TOKEN, "")
         set(value) {
             prefs.savePref(SPKey.ACCESS_TOKEN, value!!)
         }
 
     var refreshToken: String?
-        get() = prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
+        get() = prefs.loadPref(SPKey.REFRESH_TOKEN, "")
         set(value) {
             prefs.savePref(SPKey.REFRESH_TOKEN, value!!)
         }
