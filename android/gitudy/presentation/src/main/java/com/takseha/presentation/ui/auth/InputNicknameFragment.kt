@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -61,6 +63,8 @@ class InputNicknameFragment : Fragment() {
                     var nicknameLength = inputNicknameEditText.length()
                     val nicknameLengthText = getString(R.string.text_length)
 
+                    isNameOkBtn.visibility = VISIBLE
+                    validationCheckedImg.visibility = GONE
                     confirmBtn.isEnabled = false    // 확인 버튼 초기화
 
                     if (nicknameLength > 0) {
@@ -125,6 +129,8 @@ class InputNicknameFragment : Fragment() {
                                     R.color.GS_500
                                 ))
                         }
+                        isNameOkBtn.visibility = GONE
+                        validationCheckedImg.visibility = VISIBLE
                         confirmBtn.isEnabled = true
                     } else {
                         nicknameLengthWithMax.apply {

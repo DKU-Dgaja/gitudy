@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.feed
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -42,16 +43,15 @@ class FeedHomeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getFeedList(null, 10, "createdDateTime")
             viewModel.uiState.collectLatest {
                 with(binding) {
                     feedCnt.text = if (it.studyCnt == null) "" else it.studyCnt.toString()
                     if (!it.isFeedEmpty) {
                         isNoStudyLayout.visibility = View.GONE
-                        setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
                     } else {
                         isNoStudyLayout.visibility = View.VISIBLE
                     }
+                    setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
                 }
             }
         }
@@ -65,7 +65,12 @@ class FeedHomeFragment : Fragment() {
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
-        viewModel.getFeedList(null, 10, "createdDateTime")
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getFeedList(null, 10, "createdDateTime")
+            Log.d("FeedHomeFragment", viewModel.uiState.value.toString())
+        }
     }
 
     private fun setFeedList(

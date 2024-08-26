@@ -12,7 +12,7 @@ import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,7 +28,7 @@ import kotlinx.coroutines.launch
 class StudyCommentBoardFragment : Fragment() {
     private var _binding: FragmentStudyCommentBoardBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: StudyCommentBoardViewModel by viewModels()
+    private val viewModel: StudyCommentBoardViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var comment = ""
 

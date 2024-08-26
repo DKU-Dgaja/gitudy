@@ -8,7 +8,7 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -25,8 +25,9 @@ import kotlinx.coroutines.launch
 class ToDoFragment : Fragment() {
     private var _binding: FragmentToDoBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TodoViewModel by viewModels()
+    private val viewModel: TodoViewModel by activityViewModels()
     private var studyInfoId: Int = 0
+    private var isLeader: Boolean? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,10 +41,14 @@ class ToDoFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         activity!!.window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
+        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
 
         viewModel.getTodoList(studyInfoId)
         lifecycleScope.launch {
             viewModel.todoListState.collectLatest {
+                if (!isLeader!!) {
+                    binding.addTodoBtn.visibility = GONE
+                }
                 if (it.isTodoEmpty) {
                     binding.isNoTodoLayout.visibility = VISIBLE
                 } else {

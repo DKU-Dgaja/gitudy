@@ -3,15 +3,12 @@ package com.takseha.presentation.adapter
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.takseha.data.dto.feed.UserInfo
-import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.presentation.R
-import com.takseha.presentation.databinding.ItemMemberInRankBinding
 import com.takseha.presentation.databinding.ItemMemberInStudyListBinding
 
 class MemberListRVAdapter(val context : Context, val userInfoList : List<UserInfo>) : RecyclerView.Adapter<MemberListRVAdapter.ViewHolder>() {

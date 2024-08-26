@@ -2,9 +2,10 @@ package com.takseha.presentation.ui.mystudy
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
-import com.takseha.presentation.ui.feed.MakeStudyActivity
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.flow.collectLatest
@@ -36,7 +36,6 @@ class MyStudyHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMyStudyHomeBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
@@ -46,11 +45,11 @@ class MyStudyHomeFragment : Fragment() {
             viewModel.myStudyState.collectLatest {
                 binding.myStudyCnt.text = it.studyCnt.toString()
                 if (!it.isMyStudiesEmpty) {
-                    binding.isNoStudyLayout.visibility = View.GONE
-                    setMyStudyList(it.myStudiesWithTodo)
+                    binding.isNoStudyLayout.visibility = GONE
                 } else {
-                    binding.isNoStudyLayout.visibility = View.VISIBLE
+                    binding.isNoStudyLayout.visibility = VISIBLE
                 }
+                setMyStudyList(it.myStudiesWithTodo)
             }
         }
     }
@@ -58,7 +57,9 @@ class MyStudyHomeFragment : Fragment() {
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
-        viewModel.getMyStudyList(null, 7)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.getMyStudyList(null, 10)
+        }
     }
 
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {

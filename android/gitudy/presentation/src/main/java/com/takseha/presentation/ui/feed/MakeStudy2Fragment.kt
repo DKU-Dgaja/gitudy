@@ -2,16 +2,14 @@ package com.takseha.presentation.ui.feed
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.sharedPreferences.SP
-import com.takseha.data.sharedPreferences.SPKey
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentMakeStudy2Binding
 import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
@@ -20,10 +18,12 @@ class MakeStudy2Fragment : Fragment() {
     private var _binding: FragmentMakeStudy2Binding? = null
     private val binding get() = _binding!!
     private val viewModel: MakeStudyViewModel by activityViewModels()
-    private var memberNum = 0
+    private var memberNum: Int = 0
+    private var studyCnt: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyCnt = requireActivity().intent.getIntExtra("studyCnt", 0)
     }
 
     override fun onCreateView(
@@ -36,21 +36,20 @@ class MakeStudy2Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val studyCnt = requireActivity().intent.getIntExtra("studyCnt", 0)
         val imageIdx = studyCnt % 10
 
         with(binding) {
             memberNumber.text =
                 String.format(getString(R.string.feed_member_full_number), memberNum)
-            setMaxMember()
 
-            commitCntSelectRadioGroup.setOnClickListener {
-                nextBtn.isEnabled =
-                    commitCntSelectRadioGroup.checkedRadioButtonId != -1 && isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
+            setMaxMember()
+            commitCntSelectRadioGroup.setOnCheckedChangeListener { _, _ ->
+                nextBtn.isEnabled = isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
+                Log.d("MakeStudy2Fragment", "${commitCntSelectRadioGroup.checkedRadioButtonId }, ${isStudyOpenRadioGroup.checkedRadioButtonId }, ${memberNum}")
             }
-            isStudyOpenRadioGroup.setOnClickListener {
+            isStudyOpenRadioGroup.setOnCheckedChangeListener { _, _ ->
                 nextBtn.isEnabled =
-                    commitCntSelectRadioGroup.checkedRadioButtonId != -1 && isStudyOpenRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
+                    commitCntSelectRadioGroup.checkedRadioButtonId != -1 && memberNum != 0
             }
             nextBtn.setOnClickListener {
                 val commitTime =
@@ -59,8 +58,11 @@ class MakeStudy2Fragment : Fragment() {
                     if (publicCheck.isChecked) StudyStatus.STUDY_PUBLIC else StudyStatus.STUDY_PRIVATE
 
                 viewModel.setStudyRule(commitTime, isPublic, memberNum, imageIdx.toString())
+                val bundle = Bundle().apply {
+                    putStringArrayList("categories", arguments?.getStringArrayList("categories"))
+                }
                 it.findNavController()
-                    .navigate(R.id.action_makeStudy2Fragment_to_makeStudy3Fragment)
+                    .navigate(R.id.action_makeStudy2Fragment_to_makeStudy3Fragment, bundle)
             }
             exitBtn.setOnClickListener {
                 requireActivity().finish()

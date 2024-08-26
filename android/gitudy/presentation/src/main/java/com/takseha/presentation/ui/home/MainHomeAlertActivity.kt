@@ -16,7 +16,5 @@ class MainHomeAlertActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_home_alert)
         window.statusBarColor = ContextCompat.getColor(this, R.color.WHITE)
-
-        viewModel.getNoticeList(null, 50)
     }
 }

@@ -5,7 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
-    android:padding="22dp"
+    android:paddingStart="22dp"
+    android:paddingEnd="22dp"
+    android:paddingBottom="48dp"
+    android:clipToPadding="false"
     tools:context=".ui.auth.LoginActivity">
 
     <LinearLayout
@@ -35,26 +38,25 @@
         style="@style/B5_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="21dp"
         android:background="@drawable/box_non_stroke_r8_green"
         android:drawableLeft="@drawable/ic_login_github"
         android:drawableTint="@color/GS_900"
         android:padding="18dp"
         android:text="Github로 로그인"
         android:textColor="@color/GS_900"
-        app:layout_constraintBottom_toTopOf="@+id/otherLoginBtn"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <TextView
-        android:id="@+id/otherLoginBtn"
-        style="@style/B6_3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="13dp"
-        android:text="다른 계정으로 시작하기"
-        android:textColor="@color/GS_500"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
+
+<!--    <TextView-->
+<!--        android:id="@+id/otherLoginBtn"-->
+<!--        style="@style/B6_3"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginBottom="13dp"-->
+<!--        android:text="다른 계정으로 시작하기"-->
+<!--        android:textColor="@color/GS_500"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent" />-->
 </androidx.constraintlayout.widget.ConstraintLayout>

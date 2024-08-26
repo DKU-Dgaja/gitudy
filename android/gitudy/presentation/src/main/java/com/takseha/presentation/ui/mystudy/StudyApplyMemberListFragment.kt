@@ -1,8 +1,6 @@
 package com.takseha.presentation.ui.mystudy
 
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -10,17 +8,12 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.home.Notice
 import com.takseha.data.dto.mystudy.StudyApplyMember
-import com.takseha.data.dto.mystudy.StudyApplyMemberListResponse
 import com.takseha.presentation.R
-import com.takseha.presentation.adapter.NoticeListRVAdapter
 import com.takseha.presentation.adapter.StudyApplyMemberListRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyApplyMemberListBinding
 import com.takseha.presentation.viewmodel.mystudy.StudyApplyMemberListViewModel
@@ -30,7 +23,7 @@ import kotlinx.coroutines.launch
 class StudyApplyMemberListFragment : Fragment() {
     private var _binding: FragmentStudyApplyMemberListBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: StudyApplyMemberListViewModel by viewModels()
+    private val viewModel: StudyApplyMemberListViewModel by activityViewModels()
     private var studyInfoId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {

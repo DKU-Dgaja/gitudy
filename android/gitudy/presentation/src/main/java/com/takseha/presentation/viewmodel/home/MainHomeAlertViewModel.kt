@@ -11,14 +11,19 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class MainHomeAlertViewModel : ViewModel() {
-    private var gitudyNoticeRepository = GitudyNoticeRepository()
+    private val gitudyNoticeRepository = GitudyNoticeRepository()
 
     private val _uiState = MutableStateFlow<List<Notice>?>(null)
     val uiState = _uiState.asStateFlow()
 
-    fun getNoticeList(cursorTime: String?, limit: Long) = viewModelScope.launch  {
-        val noticeListResponse = gitudyNoticeRepository.getNoticeList(cursorTime, limit)
+    init {
+        viewModelScope.launch {
+            getNoticeList(null, 50)
+        }
+    }
 
+    suspend fun getNoticeList(cursorTime: String?, limit: Long) {
+        val noticeListResponse = gitudyNoticeRepository.getNoticeList(cursorTime, limit)
         if (noticeListResponse.isSuccessful) {
             val noticeList = noticeListResponse.body()
             _uiState.update { noticeList }
@@ -30,9 +35,8 @@ class MainHomeAlertViewModel : ViewModel() {
         }
     }
 
-    fun deleteAllNotice(cursorTime: String?, limit: Long) = viewModelScope.launch  {
+    fun deleteAllNotice(cursorTime: String?, limit: Long) = viewModelScope.launch {
         val emptyListResponse = gitudyNoticeRepository.deleteAllNotice()
-
         if (emptyListResponse.isSuccessful) {
             getNoticeList(cursorTime, limit)
         } else {
@@ -43,14 +47,14 @@ class MainHomeAlertViewModel : ViewModel() {
         }
     }
 
-    fun deleteNotice(id: String, cursorTime: String?, limit: Long) = viewModelScope.launch  {
+    fun deleteNotice(id: String, cursorTime: String?, limit: Long) = viewModelScope.launch {
         val deleteNoticeListResponse = gitudyNoticeRepository.deleteNotice(id)
-
         if (deleteNoticeListResponse.isSuccessful) {
             getNoticeList(cursorTime, limit)
             Log.d(
                 "MainHomeAlertViewModel",
-                "deleteNoticeListResponse status: ${deleteNoticeListResponse.code()}")
+                "deleteNoticeListResponse status: ${deleteNoticeListResponse.code()}"
+            )
         } else {
             Log.e(
                 "MainHomeAlertViewModel",
@@ -59,3 +63,4 @@ class MainHomeAlertViewModel : ViewModel() {
         }
     }
 }
+

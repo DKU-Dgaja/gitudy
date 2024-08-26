@@ -12,7 +12,6 @@ import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.R
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -33,6 +32,13 @@ class MainHomeViewModel : ViewModel() {
     val cursorIdxRes: LiveData<Long?>
         get() = _cursorIdxRes
 
+    init {
+        viewModelScope.launch {
+            getUserInfo()
+            getMyStudyList(null, 10)
+        }
+    }
+
     suspend fun getUserInfo() {
         val userInfoResponse = gitudyAuthRepository.getUserInfo()
 
@@ -47,7 +53,7 @@ class MainHomeViewModel : ViewModel() {
                     rank = userInfo.rank
                 )
             }
-            getProgressInfo(uiState)
+            updateProgressInfo()
         } else {
             Log.e(
                 "MainHomeViewModel",
@@ -56,59 +62,27 @@ class MainHomeViewModel : ViewModel() {
         }
     }
 
-    private fun getProgressInfo(state: StateFlow<MainHomeUserInfoUiState>) {
-        when (state.value.score) {
-            in 0..15 -> _uiState.update { it.copy(progressScore = it.score) }
-            in 16..30 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 15,
-                    characterImgSrc = R.drawable.character_bebe_to_30
-                )
-            }
-
-            in 31..50 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 30,
-                    progressMax = 20,
-                    characterImgSrc = R.drawable.character_bebe_to_50
-                )
-            }
-
-            in 51..70 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 50,
-                    progressMax = 20,
-                    characterImgSrc = R.drawable.character_bebe_to_70
-                )
-            }
-
-            in 71..100 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 70,
-                    progressMax = 30,
-                    characterImgSrc = R.drawable.character_bebe_to_100
-                )
-            }
-
-            in 101..130 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 100,
-                    progressMax = 30,
-                    characterImgSrc = R.drawable.character_bebe_to_130
-                )
-            }
-
-            else -> _uiState.update {
-                it.copy(
-                    progressScore = 1,
-                    progressMax = 1,
-                    characterImgSrc = R.drawable.character_bebe_to_130
-                )
-            }
+    private fun updateProgressInfo() {
+        val uiStateValue = uiState.value
+        val progressInfo = when (uiStateValue.score) {
+            in 0..15 -> ProgressInfo(uiStateValue.score, R.drawable.character_bebe_to_15)
+            in 16..30 -> ProgressInfo(uiStateValue.score - 15, R.drawable.character_bebe_to_30, 15)
+            in 31..50 -> ProgressInfo(uiStateValue.score - 30, R.drawable.character_bebe_to_50, 20)
+            in 51..70 -> ProgressInfo(uiStateValue.score - 50, R.drawable.character_bebe_to_70, 20)
+            in 71..100 -> ProgressInfo(uiStateValue.score - 70, R.drawable.character_bebe_to_100, 30)
+            in 101..130 -> ProgressInfo(uiStateValue.score - 100, R.drawable.character_bebe_to_130, 30)
+            else -> ProgressInfo(1, R.drawable.character_bebe_to_130, 1)
+        }
+        _uiState.update {
+            it.copy(
+                progressScore = progressInfo.score,
+                progressMax = progressInfo.max,
+                characterImgSrc = progressInfo.imgSrc
+            )
         }
     }
 
-    fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+    suspend fun getMyStudyList(cursorIdx: Long?, limit: Long) {
         val myStudyListResponse = gitudyStudyRepository.getStudyList(
             cursorIdx,
             limit,
@@ -185,6 +159,8 @@ class MainHomeViewModel : ViewModel() {
         }
         return null
     }
+
+    private data class ProgressInfo(val score: Int, val imgSrc: Int, val max: Int = 15)
 }
 
 data class MyStudyWithTodo(

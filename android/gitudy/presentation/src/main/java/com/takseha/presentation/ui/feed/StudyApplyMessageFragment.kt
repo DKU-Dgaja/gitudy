@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.google.android.material.snackbar.Snackbar
@@ -21,7 +21,7 @@ import kotlinx.coroutines.launch
 class StudyApplyMessageFragment : Fragment() {
     private var _binding: FragmentStudyApplyMessageBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: StudyApplyViewModel by viewModels()
+    private val viewModel: StudyApplyViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

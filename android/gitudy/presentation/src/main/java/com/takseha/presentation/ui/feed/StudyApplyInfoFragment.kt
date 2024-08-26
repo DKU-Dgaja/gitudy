@@ -1,6 +1,5 @@
 package com.takseha.presentation.ui.feed
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,39 +9,36 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyApplyInfoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
-import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
 import com.takseha.presentation.viewmodel.feed.StudyMainInfoState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 class StudyApplyInfoFragment : Fragment() {
     private var _binding: FragmentStudyApplyInfoBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: StudyApplyViewModel by viewModels()
+    private val viewModel: StudyApplyViewModel by activityViewModels()
     private val colorList = listOf(
-        R.color.BG_1,
-        R.color.BG_2,
-        R.color.BG_3,
-        R.color.BG_4,
-        R.color.BG_5,
-        R.color.BG_6,
-        R.color.BG_7,
-        R.color.BG_8,
+        R.color.BG_10,
         R.color.BG_9,
-        R.color.BG_10
+        R.color.BG_8,
+        R.color.BG_7,
+        R.color.BG_6,
+        R.color.BG_5,
+        R.color.BG_4,
+        R.color.BG_3,
+        R.color.BG_2,
+        R.color.BG_1
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -167,16 +163,16 @@ class StudyApplyInfoFragment : Fragment() {
 
     private fun setStudyImg(currentIdx: Int): Int {
         return when (currentIdx) {
-            0 -> R.drawable.bg_mystudy_full_1
-            1 -> R.drawable.bg_mystudy_full_2
-            2 -> R.drawable.bg_mystudy_full_3
-            3 -> R.drawable.bg_mystudy_full_4
-            4 -> R.drawable.bg_mystudy_full_5
-            5 -> R.drawable.bg_mystudy_full_6
-            6 -> R.drawable.bg_mystudy_full_7
-            7 -> R.drawable.bg_mystudy_full_8
-            8 -> R.drawable.bg_mystudy_full_9
-            else -> R.drawable.bg_mystudy_full_10
+            0 -> R.drawable.bg_mystudy_full_10
+            1 -> R.drawable.bg_mystudy_full_9
+            2 -> R.drawable.bg_mystudy_full_8
+            3 -> R.drawable.bg_mystudy_full_7
+            4 -> R.drawable.bg_mystudy_full_6
+            5 -> R.drawable.bg_mystudy_full_5
+            6 -> R.drawable.bg_mystudy_full_4
+            7 -> R.drawable.bg_mystudy_full_3
+            8 -> R.drawable.bg_mystudy_full_2
+            else -> R.drawable.bg_mystudy_full_1
         }
     }
 

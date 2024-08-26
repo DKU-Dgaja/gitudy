@@ -59,8 +59,7 @@
                     android:layout_height="27dp"
                     android:layout_marginRight="6dp"
                     android:background="@drawable/circle_non_stroke"
-                    android:clipToOutline="true"
-                    android:src="@drawable/character_bebe_over_130" />
+                    android:clipToOutline="true" />
 
                 <TextView
                     android:id="@+id/nickname"
@@ -128,14 +127,14 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_thumbs_up" />
-
-                <TextView
-                    style="@style/B7_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="2dp"
-                    android:text="0"
-                    android:textColor="@color/GS_600" />
+                <ImageView
+                    android:id="@+id/heartBtn"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="8dp"
+                    android:src="@drawable/ic_heart"
+                    app:layout_constraintStart_toEndOf="@+id/likeBtn"
+                    app:layout_constraintTop_toBottomOf="@+id/contentText" />
 
             </LinearLayout>
 

@@ -9,7 +9,6 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.CommitStatus
-import com.takseha.data.dto.mystudy.LikeCount
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCommitBinding
 

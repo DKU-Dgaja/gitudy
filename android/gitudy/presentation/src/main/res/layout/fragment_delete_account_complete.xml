@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="225dp"
-        android:text="회원 탈퇴가\n완료되었습니다!\n\n또 만나요~"
+        android:text="회원 탈퇴가\n완료되었습니다!\n\n안녕~"
         android:textColor="@color/GS_900"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

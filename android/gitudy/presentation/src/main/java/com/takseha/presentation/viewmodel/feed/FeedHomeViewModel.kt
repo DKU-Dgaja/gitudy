@@ -31,7 +31,16 @@ class FeedHomeViewModel : ViewModel() {
     val cursorIdxRes: LiveData<Long?>
         get() = _cursorIdxRes
 
-    fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) = viewModelScope.launch {
+    init {
+        // 초기 데이터 로딩
+        refreshFeedList()
+    }
+
+    private fun refreshFeedList() = viewModelScope.launch {
+        getFeedList(null, 10, "createdDateTime")
+    }
+
+    suspend fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) {
         val feedListResponse = gitudyStudyRepository.getStudyList(
             cursorIdx,
             limit,

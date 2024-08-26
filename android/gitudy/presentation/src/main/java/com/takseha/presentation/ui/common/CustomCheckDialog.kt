@@ -5,10 +5,8 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
-import android.view.WindowManager
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.LayoutDialogCheckBinding
-import com.takseha.presentation.databinding.LayoutDialogSetBinding
 
 // CustomDialog 클래스
 class CustomCheckDialog(context: Context) {

@@ -20,7 +20,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="225dp"
-        android:text="로그아웃이\n완료되었습니다!\n\n안녕~"
+        android:text="로그아웃이\n완료되었습니다!\n\n또 만나요~"
         android:textColor="@color/GS_900"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

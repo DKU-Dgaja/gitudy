@@ -1,7 +1,6 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +10,6 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemMystudyBinding
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
@@ -104,16 +102,16 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
 
     private fun setStudyImg(currentIdx: Int): Int {
         return when (currentIdx) {
-            0 -> R.drawable.bg_mystudy_small_1
-            1 -> R.drawable.bg_mystudy_small_2
-            2 -> R.drawable.bg_mystudy_small_3
-            3 -> R.drawable.bg_mystudy_small_4
-            4 -> R.drawable.bg_mystudy_small_5
-            5 -> R.drawable.bg_mystudy_small_6
-            6 -> R.drawable.bg_mystudy_small_7
-            7 -> R.drawable.bg_mystudy_small_8
-            8 -> R.drawable.bg_mystudy_small_9
-            else -> R.drawable.bg_mystudy_small_10
+            0 -> R.drawable.bg_mystudy_small_10
+            1 -> R.drawable.bg_mystudy_small_9
+            2 -> R.drawable.bg_mystudy_small_8
+            3 -> R.drawable.bg_mystudy_small_7
+            4 -> R.drawable.bg_mystudy_small_6
+            5 -> R.drawable.bg_mystudy_small_5
+            6 -> R.drawable.bg_mystudy_small_4
+            7 -> R.drawable.bg_mystudy_small_3
+            8 -> R.drawable.bg_mystudy_small_2
+            else -> R.drawable.bg_mystudy_small_1
         }
     }
 

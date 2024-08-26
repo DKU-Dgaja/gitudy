@@ -1,7 +1,6 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +10,6 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.UserInfo
 import com.takseha.presentation.R
@@ -116,16 +114,16 @@ class FeedRVAdapter(
 
     private fun setStudyImg(currentIdx: Int): Int {
         return when (currentIdx) {
-            0 -> R.drawable.bg_feed_full_1
-            1 -> R.drawable.bg_feed_full_2
-            2 -> R.drawable.bg_feed_full_3
-            3 -> R.drawable.bg_feed_full_4
-            4 -> R.drawable.bg_feed_full_5
-            5 -> R.drawable.bg_feed_full_6
-            6 -> R.drawable.bg_feed_full_7
-            7 -> R.drawable.bg_feed_full_8
-            8 -> R.drawable.bg_feed_full_9
-            else -> R.drawable.bg_feed_full_10
+            0 -> R.drawable.bg_feed_full_10
+            1 -> R.drawable.bg_feed_full_9
+            2 -> R.drawable.bg_feed_full_8
+            3 -> R.drawable.bg_feed_full_7
+            4 -> R.drawable.bg_feed_full_6
+            5 -> R.drawable.bg_feed_full_5
+            6 -> R.drawable.bg_feed_full_4
+            7 -> R.drawable.bg_feed_full_3
+            8 -> R.drawable.bg_feed_full_2
+            else -> R.drawable.bg_feed_full_1
         }
     }
 

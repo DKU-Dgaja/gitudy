@@ -5,7 +5,6 @@ import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
-import android.view.WindowManager
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.LayoutDialogSetBinding
 
