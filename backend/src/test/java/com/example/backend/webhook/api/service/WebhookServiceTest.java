@@ -21,6 +21,7 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.webhook.api.controller.request.CommitPayload;
@@ -89,7 +90,7 @@ class WebhookServiceTest extends TestConfig {
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
-                List.of(todoFolderName + "/" + "solution.java"), null, commitDate)));
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
 
         // when
         webhookService.handleCommit(payload);
@@ -125,7 +126,7 @@ class WebhookServiceTest extends TestConfig {
         LocalDate commitDate = todo.getTodoDate().plusDays(1);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
-                List.of(todoFolderName + "/" + "solution.java"), null, commitDate)));
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
 
         // when
         webhookService.handleCommit(payload);
@@ -161,7 +162,7 @@ class WebhookServiceTest extends TestConfig {
         String username = "invalid";
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
-                List.of(todoFolderName + "/" + "solution.java"), null, commitDate)));
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
 
         // when
         UserException e = assertThrows(UserException.class, () -> webhookService.handleCommit(payload));
@@ -213,7 +214,7 @@ class WebhookServiceTest extends TestConfig {
         String todoFolderName = "invalid-folder-name";
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
-                List.of(todoFolderName + "/" + "solution.java"), null, commitDate)));
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
 
         // when
         TodoException e = assertThrows(TodoException.class, () -> webhookService.handleCommit(payload));
@@ -241,7 +242,7 @@ class WebhookServiceTest extends TestConfig {
         LocalDate commitDate = todo.getTodoDate().minusDays(1);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
-                List.of(todoFolderName + "/" + "solution.java"), null, commitDate)));
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
 
         // when
         MemberException e = assertThrows(MemberException.class, () -> webhookService.handleCommit(payload));
@@ -267,7 +268,7 @@ class WebhookServiceTest extends TestConfig {
         LocalDate commitDate = todo.getTodoDate().minusDays(3);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
-                List.of(todoFolderName + "/" + "solution.java"), null, commitDate)));
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
 
         // when
         webhookService.handleCommit(payload);
@@ -304,7 +305,7 @@ class WebhookServiceTest extends TestConfig {
         LocalDate commitDate = todo.getTodoDate().plusDays(3);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
-                List.of(todoFolderName + "/" + "solution.java"), null, commitDate)));
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
 
         // when
         webhookService.handleCommit(payload);
@@ -443,5 +444,33 @@ class WebhookServiceTest extends TestConfig {
 
         assertEquals(TODO_OVERDUE, mappingA.getStatus());
         assertEquals(TODO_COMPLETE, mappingB.getStatus());
+    }
+
+    @Test
+    void 투두_폴더_생성_커밋의_경우_커밋_등록을_하지_않는다() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
+
+        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
+
+        String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
+        WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(
+                "e4adeb0d170eca2d4fe8f738876e607a43e94953",
+                "Create todo folder",
+                user.getGithubId(), List.of(todo.getTodoFolderName() + "/test.md"),
+                List.of(), LocalDate.of(2024, 8, 26)
+        )));
+
+        // when
+        webhookService.handleCommit(payload);
+        StudyTodoMapping findTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(todo.getId(), user.getId()).get();
+        List<StudyCommit> commitList = studyCommitRepository.findByStudyTodoIdAndUserId(todo.getId(), user.getId());
+
+        // then
+        assertEquals(StudyTodoStatus.TODO_INCOMPLETE, findTodoMapping.getStatus());
+        assertEquals(0, commitList.size());
     }
 }
