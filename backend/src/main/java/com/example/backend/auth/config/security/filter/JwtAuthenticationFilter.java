@@ -78,7 +78,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 subject = jwtService.extractSubject(accessToken);
                 // JWT 토큰 인증 로직 (JWT 검증 후 인증된 Authentication을 SecurityContext에 등록
                 authenticateUserWithJwtToken(subject, accessToken, request);
-                log.info(">>>> [ Jwt 토큰이 성공적으로 인증되었습니다. ] <<<<");
 
                 // JWT 토큰 인증을 마치면 다음 인증 필터로 이동
                 filterChain.doFilter(request, response);

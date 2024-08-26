@@ -56,6 +56,9 @@ public class WebhookService {
         // 스터디 특정
         StudyInfo study = getStudyByPayLoad(payload.repositoryFullName());
 
+        // 투두 폴더 생성 시 발생하는 커밋이라면 제외
+        if (isTodoFolderCreateCommit(payload)) return;
+
         for (CommitPayload commit : payload.commits()) {
             // 추가/수정 커밋리스트에서 폴더 이름 추출
             Set<String> folderNames = extractFolderNames(commit.commitAdded(), commit.commitModified());
@@ -64,29 +67,56 @@ public class WebhookService {
                 // 투두 특정
                 StudyTodo todo = getTodoByPayLoad(folderName);
 
-                // 사용자 특정
-                User user = getUserByPayLoad(commit.username());
-
-                // 권한 검증
-                if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), study.getId())) {
-                    log.warn(">>>> Github ID: {} {} <<<<", commit.username(), ExceptionMessage.STUDY_NOT_ACTIVE_MEMBER.getText());
-                    throw new MemberException(ExceptionMessage.STUDY_NOT_ACTIVE_MEMBER);
-                }
+                // 권한 검증 및 사용자 특정
+                User user = validateAndGetUser(commit.username(), study);
 
                 // 커밋, 투두 정보 업데이트
                 updateCommitAndTodoMappingStatus(user.getId(), study.getId(), todo, commit);
 
                 // 커밋 스터디장에게 알림처리
-                User studyLeader = userService.findUserByIdOrThrowException(study.getUserId());
-                eventPublisher.publishEvent(CommitRegisterEvent.builder()
-                        .isPushAlarmYn(studyLeader.isPushAlarmYn())
-                        .userId(studyLeader.getId())
-                        .name(user.getName())
-                        .studyInfoId(study.getId())
-                        .studyTopic(study.getTopic())
-                        .studyTodoTopic(todo.getTitle()));
+                notifyStudyLeader(study, user, todo);
             }
         }
+    }
+
+    private void notifyStudyLeader(StudyInfo study, User user, StudyTodo todo) {
+        User studyLeader = userService.findUserByIdOrThrowException(study.getUserId());
+        eventPublisher.publishEvent(CommitRegisterEvent.builder()
+                .isPushAlarmYn(studyLeader.isPushAlarmYn())
+                .userId(studyLeader.getId())
+                .name(user.getName())
+                .studyInfoId(study.getId())
+                .studyTopic(study.getTopic())
+                .studyTodoTopic(todo.getTitle()));
+    }
+
+    private User validateAndGetUser(String username, StudyInfo study) {
+        User user = getUserByPayLoad(username);
+
+        if (!studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getId(), study.getId())) {
+            log.warn(">>>> Github ID: {} {} <<<<", username, ExceptionMessage.STUDY_NOT_ACTIVE_MEMBER.getText());
+            throw new MemberException(ExceptionMessage.STUDY_NOT_ACTIVE_MEMBER);
+        }
+
+        return user;
+    }
+
+    private boolean isTodoFolderCreateCommit(WebhookPayload payload) {
+        // 전달받은 커밋이 1개인지 확인
+        if (payload.commits().size() != 1) return false;
+
+        CommitPayload commit = payload.commits().get(0);
+
+        // 추가된 파일이 1개이면서 수정된 파일은 없는지 확인
+        if (commit.commitAdded().size() != 1 || !commit.commitModified().isEmpty()) return false;
+
+        // 추가된 파일이 .md 확장자인지(마크다운 파일인지) 확인
+        String addedFilePath = commit.commitAdded().get(0);
+        return isMarkdownFile(addedFilePath);
+    }
+
+    private boolean isMarkdownFile(String addedFilePath) {
+        return addedFilePath.endsWith(".md");
     }
 
     private Set<String> extractFolderNames(List<String>... fileLists) {
@@ -97,7 +127,6 @@ public class WebhookService {
                 .map(filePath -> filePath.substring(0, filePath.indexOf("/")))  // 폴더 이름 추출
                 .collect(Collectors.toSet());                   // Set<String>
     }
-
 
     private User getUserByPayLoad(String githubId) {
         return userRepository.findByGithubId(githubId).orElseThrow(() -> {
@@ -154,5 +183,7 @@ public class WebhookService {
                 .commitDate(commit.commitDate())
                 .status(CommitStatus.COMMIT_WAITING)
                 .build());
+
+        log.info(">>>> {}님의 '{}' 투두에 대한 커밋 등록을 완료하였습니다 <<<<", commit.username(), todo.getTitle());
     }
 }
