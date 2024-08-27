@@ -279,8 +279,9 @@ public class StudyTodoService {
                     // 커밋의 사용자 정보 조회
                     User user = userService.findUserByIdOrThrowException(commit.getUserId());
                     String userName = user.getName();
+                    String profileImageUrl = user.getProfileImageUrl();
                     // 사용자 이름을 포함한 CommitInfoResponse 객체 생성
-                    return CommitInfoResponse.of(commit, userName);
+                    return CommitInfoResponse.of(commit, userName, profileImageUrl);
                 })
                 .collect(Collectors.toList());
     }

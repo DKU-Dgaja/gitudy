@@ -48,7 +48,7 @@ public class StudyCommitService {
         // 사용자 이름 조회
         User user = userService.findUserByIdOrThrowException(commit.getUserId());
 
-        return CommitInfoResponse.of(commit, user.getName());
+        return CommitInfoResponse.of(commit, user.getName(), user.getProfileImageUrl());
     }
 
     public List<CommitInfoResponse> selectUserCommitList(Long userId, Long studyId, Long cursorIdx, Long limit) {
@@ -136,7 +136,8 @@ public class StudyCommitService {
                     // 사용자 이름 조회
                     User user = userService.findUserByIdOrThrowException(commit.getUserId());
                     String userName = user.getName();
-                    return CommitInfoResponse.of(commit, userName);
+                    String profileImageUrl = user.getProfileImageUrl();
+                    return CommitInfoResponse.of(commit, userName, profileImageUrl);
                 })
                 .toList();
     }
