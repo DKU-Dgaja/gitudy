@@ -49,8 +49,13 @@ class MainHomeAlertFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val filter = IntentFilter("com.takseha.NEW_NOTIFICATION")
-        requireActivity().registerReceiver(broadcastReceiver, filter, RECEIVER_NOT_EXPORTED)
+
+        binding.alertSwipeRefreshLayout.setOnRefreshListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.getNoticeList(null, 50)
+                binding.alertSwipeRefreshLayout.isRefreshing = false
+            }
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
@@ -71,16 +76,6 @@ class MainHomeAlertFragment : Fragment() {
             }
             deleteAllBtn.setOnClickListener {
                 viewModel.deleteAllNotice(null, 50)
-            }
-        }
-    }
-
-    private val broadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context?, intent: Intent?) {
-            if (intent?.action == "com.takseha.NEW_NOTIFICATION") {
-                viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.getNoticeList(null, 50)
-                }
             }
         }
     }
@@ -161,7 +156,6 @@ class MainHomeAlertFragment : Fragment() {
 
     override fun onDestroyView() {
         super.onDestroyView()
-        requireActivity().unregisterReceiver(broadcastReceiver)
         _binding = null
     }
 }

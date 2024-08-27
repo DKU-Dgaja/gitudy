@@ -49,7 +49,9 @@ class SettingHomeFragment : Fragment() {
             pushAlertSwitch.apply {
                 isChecked = pushAlarmYn
                 setOnClickListener {
-
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.updatePushAlarmYn(pushAlertSwitch.isChecked)
+                    }
                 }
             }
 
