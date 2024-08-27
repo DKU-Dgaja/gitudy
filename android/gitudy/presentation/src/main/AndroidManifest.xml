@@ -51,7 +51,7 @@
         <activity
             android:name=".ui.profile.ProfileEditActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.auth.PopupAgreementActivity"
             android:exported="false"

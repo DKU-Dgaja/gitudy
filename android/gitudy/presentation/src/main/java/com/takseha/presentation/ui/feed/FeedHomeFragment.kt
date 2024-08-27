@@ -5,6 +5,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -42,14 +44,21 @@ class FeedHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 with(binding) {
-                    feedCnt.text = if (it.studyCnt == null) "" else it.studyCnt.toString()
-                    if (!it.isFeedEmpty) {
-                        isNoStudyLayout.visibility = View.GONE
+                    if (it.studyCnt == null) {
+                        loadingImg.visibility = VISIBLE
+                        feedCnt.text = ""
                     } else {
-                        isNoStudyLayout.visibility = View.VISIBLE
+                        loadingImg.visibility = GONE
+                        feedCnt.text = it.studyCnt.toString()
+                    }
+                    if (!it.isFeedEmpty) {
+                        isNoStudyLayout.visibility = GONE
+                    } else {
+                        isNoStudyLayout.visibility = VISIBLE
                     }
                     setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
                 }

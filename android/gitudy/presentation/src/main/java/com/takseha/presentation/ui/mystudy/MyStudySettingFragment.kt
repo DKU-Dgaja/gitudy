@@ -46,22 +46,31 @@ class MyStudySettingFragment : Fragment() {
             if (isLeader!!) {
                 studyQuitBtn.visibility = GONE
                 studyEndBtn.visibility = VISIBLE
+                memberSettingBtn.visibility = VISIBLE
             } else {
                 studyQuitBtn.visibility = VISIBLE
                 studyEndBtn.visibility = GONE
+                memberSettingBtn.visibility = GONE
             }
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
+            }
+            mainSettingBtn.setOnClickListener {
+                it.findNavController().navigate(R.id.action_myStudySettingFragment_to_myStudyDefaultSettingFragment)
+            }
+            memberSettingBtn.setOnClickListener {
+                it.findNavController().navigate(R.id.action_myStudySettingFragment_to_myStudySettingMemberFragment)
             }
             studyQuitBtn.setOnClickListener {
                 it.findNavController().navigate(R.id.action_myStudySettingFragment_to_quitStudyFragment)
             }
             studyEndBtn.setOnClickListener {
+                showStudyEndDialog()
             }
         }
     }
 
-    private fun showStudyEndDialog(message: String) {
+    private fun showStudyEndDialog() {
         val customCheckDialog = CustomCheckDialog(requireContext())
         customCheckDialog.setAlertText(getString(R.string.study_end_alert_title))
         customCheckDialog.setAlertDetailText(getString(R.string.study_end_alert_detail))
