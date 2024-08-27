@@ -56,7 +56,7 @@ class WebhookService(
             return@map Commit(
                 commitId = it.id,
                 message = it.message,
-                username = it.committer.username,
+                username = it.author.username,
                 commitAdded = it.added,
                 commitModified = it.modified,
                 commitDate = commitDate
