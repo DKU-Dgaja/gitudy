@@ -55,4 +55,14 @@ public class UserService {
                 .toList();
     }
 
+    // 사용자 ID로 이름을 조회하는 메서드
+    public String findUserNameById(Long userId) {
+        return userRepository.findById(userId)
+                .map(User::getName)
+                .orElseThrow(() -> {
+                    log.warn(">>>> {} : {} <<<<", userId, ExceptionMessage.USER_NOT_FOUND);
+                    return new UserException(ExceptionMessage.USER_NOT_FOUND);
+                });
+
+    }
 }

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.example.backend.domain.define.account.user.QUser.user;
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
 
 @Slf4j
@@ -35,8 +36,10 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
                         studyCommit.commitDate,
                         studyCommit.status,
                         studyCommit.rejectionReason,
-                        studyCommit.likeCount))
+                        studyCommit.likeCount,
+                        user.name))
                 .from(studyCommit)
+                .leftJoin(user).on(studyCommit.userId.eq(user.id))
                 .where(studyCommit.userId.eq(userId))
                 .orderBy(studyCommit.id.desc());
 
