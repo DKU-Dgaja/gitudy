@@ -1,5 +1,6 @@
 package com.example.backend.domain.define.study.todo.repository;
 
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
@@ -58,8 +59,11 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
                         StudyCommit::getStudyTodoId,
                         Collectors.mapping(
                                 commit -> {
-                                    String userName = userService.findUserNameById(commit.getUserId());  // 사용자 이름 조회
-                                    return CommitInfoResponse.of(commit, userName);
+                                    // 사용자 이름 조회
+                                    User user = userService.findUserByIdOrThrowException(commit.getUserId());
+                                    String name = user.getName();
+                                    String profileImageUrl = user.getProfileImageUrl();
+                                    return CommitInfoResponse.of(commit, name, profileImageUrl);
                                 },
                                 Collectors.toList())
                 ));
