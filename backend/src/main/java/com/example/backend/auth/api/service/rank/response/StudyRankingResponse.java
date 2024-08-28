@@ -9,7 +9,7 @@ import lombok.Getter;
 @AllArgsConstructor
 public class StudyRankingResponse {
 
-    private int score;
+    private double score;
 
     private Long ranking;
 }
