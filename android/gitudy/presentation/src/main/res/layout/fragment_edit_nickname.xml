@@ -56,7 +56,6 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="75dp"
             android:background="@null"
-            android:text="@string/nickname"
             android:textColor="@color/BLACK"
             android:textColorHint="@color/GS_300"
             app:layout_constraintEnd_toEndOf="parent"

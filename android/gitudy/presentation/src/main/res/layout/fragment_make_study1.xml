@@ -111,6 +111,12 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
+                    android:paddingStart="20dp"
+                    android:paddingEnd="15dp"
+                    android:paddingTop="20dp"
+                    android:paddingBottom="20dp"
+                    android:backgroundTint="#F4F5F5"
+                    android:background="@drawable/box_non_stroke_r12"
                     android:gravity="center_vertical"
                     android:orientation="horizontal">
 
@@ -120,30 +126,52 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:background="@drawable/box_non_stroke_r12"
-                        android:backgroundTint="#F4F5F5"
+                        android:background="@null"
                         android:hint="@string/feed_make_study_github_repo"
-                        android:padding="20dp"
                         android:textColorHint="@color/GS_500" />
 
                     <TextView
                         android:id="@+id/isValidNameBtn"
                         style="@style/B7_1"
-                        android:layout_width="35dp"
+                        android:layout_width="42dp"
                         android:layout_height="25dp"
                         android:layout_marginLeft="10dp"
-                        android:background="@drawable/selector_btn_r12_enable"
-                        android:enabled="false"
+                        android:background="@drawable/selector_btn_r85_enable"
+                        android:enabled="true"
                         android:gravity="center"
                         android:text="확인"
-                        android:textColor="@drawable/selector_text_color_enable" />
+                        android:textColor="@drawable/selector_text_color_enable_white" />
+
+                    <LinearLayout
+                        android:id="@+id/validationCheckedImg"
+                        android:layout_width="60dp"
+                        android:layout_height="30dp"
+                        android:layout_marginLeft="10dp"
+                        android:background="@drawable/box_stroke_200_r85"
+                        android:gravity="center"
+                        android:orientation="horizontal"
+                        android:visibility="gone">
+
+                        <ImageView
+                            android:layout_width="14dp"
+                            android:layout_height="14dp"
+                            android:layout_marginEnd="1dp"
+                            android:src="@drawable/ic_check_grey_c" />
+
+                        <TextView
+                            style="@style/B7_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="인증"
+                            android:textColor="@color/GS_500" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <ImageView
+                    android:layout_gravity="center_horizontal"
                     android:id="@+id/waitImg"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
-                    android:layout_marginLeft="20dp"
                     android:src="@drawable/ic_wait"
                     android:visibility="gone" />
 
@@ -152,8 +180,8 @@
                     style="@style/B7_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginLeft="15dp"
                     android:layout_marginTop="4dp"
+                    android:layout_marginStart="15dp"
                     android:text="@string/feed_make_study_github_repo_desc"
                     android:textColor="@color/GS_400"
                     android:visibility="visible" />

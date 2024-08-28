@@ -125,21 +125,20 @@
                 style="@style/B4_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="20dp"
                 android:button="@drawable/selector_radio_checked"
                 android:drawablePadding="8dp"
                 android:text="공개 스터디"
                 android:textColor="@color/GS_700" />
 
-            <RadioButton
-                android:id="@+id/privateCheck"
-                style="@style/B4_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:button="@drawable/selector_radio_checked"
-                android:drawablePadding="8dp"
-                android:text="비밀 스터디"
-                android:textColor="@color/GS_700" />
+<!--            <RadioButton-->
+<!--                android:id="@+id/privateCheck"-->
+<!--                style="@style/B4_2"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:button="@drawable/selector_radio_checked"-->
+<!--                android:drawablePadding="8dp"-->
+<!--                android:text="비밀 스터디"-->
+<!--                android:textColor="@color/GS_700" />-->
         </RadioGroup>
         <LinearLayout
             android:layout_gravity="center_vertical"
@@ -152,16 +151,15 @@
                 style="@style/B6_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="28dp"
                 android:text="깃터디 회원 누구나 입장 가능"
                 android:textColor="@color/GS_500" />
 
-            <TextView
-                style="@style/B6_3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="초대 코드가 있는 사람만 입장 가능"
-                android:textColor="@color/GS_500" />
+<!--            <TextView-->
+<!--                style="@style/B6_3"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="초대 코드가 있는 사람만 입장 가능"-->
+<!--                android:textColor="@color/GS_500" />-->
             </LinearLayout>
         </LinearLayout>
 

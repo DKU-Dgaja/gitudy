@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -18,7 +18,7 @@ import kotlinx.coroutines.launch
 class SettingHomeFragment : Fragment() {
     private var _binding: FragmentSettingHomeBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: SettingHomeViewModel by viewModels()
+    private val viewModel: SettingHomeViewModel by activityViewModels()
     private var pushAlarmYn: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,7 +49,9 @@ class SettingHomeFragment : Fragment() {
             pushAlertSwitch.apply {
                 isChecked = pushAlarmYn
                 setOnClickListener {
-
+                    viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.updatePushAlarmYn(pushAlertSwitch.isChecked)
+                    }
                 }
             }
 

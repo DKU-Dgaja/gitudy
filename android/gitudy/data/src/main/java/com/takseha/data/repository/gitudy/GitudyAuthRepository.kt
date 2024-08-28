@@ -21,4 +21,8 @@ class GitudyAuthRepository {
     suspend fun updateUserInfo(
         request: UserInfoUpdateRequest
     ) = client.updateUserInfo(request)
+
+    suspend fun updatePushAlarmYn(
+        pushAlarmEnable: Boolean
+    ) = client.updatePushAlarmYn(pushAlarmEnable)
 }

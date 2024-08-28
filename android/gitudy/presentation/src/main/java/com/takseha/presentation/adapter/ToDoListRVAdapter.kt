@@ -51,7 +51,6 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
         holder.todoTitle.text = todoList[position].title
         holder.todoDate.text = todoList[position].todoDate
         holder.todoDetail.text = todoList[position].detail
-//        setCommitList(holder.commitList, todoList[position].commitList)
         setCommitList(holder, position)
 
         if (todoList[position].todoDate == LocalDate.now().toString()) {
@@ -72,13 +71,6 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
             this.onClickListener?.onLinkClick(v, position)
         }
     }
-
-//    private fun setCommitList(commitListView: RecyclerView, commitList: List<Commit>) {
-//        val commitListRVAdapter = CommitListRVAdapter(context, commitList, this.onClickListener!!)
-//
-//        commitListView.adapter = commitListRVAdapter
-//        commitListView.layoutManager = LinearLayoutManager(context)
-//    }
 
     private fun setCommitList(holder: ViewHolder, position: Int) {
         holder.commitList.layoutManager =

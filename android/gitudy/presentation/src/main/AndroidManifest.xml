@@ -15,10 +15,6 @@
             android:name=".ui.home.MainHomeAlertActivity"
             android:exported="false" />
         <activity
-            android:name=".ui.mystudy.StudyCommentBoardActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".ui.mystudy.CommitConventionActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
@@ -37,19 +33,8 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".ui.mystudy.AddTodoActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-        <activity
             android:name=".ui.mystudy.MemberStudySettingActivity"
             android:exported="false" />
-        <activity
-            android:name=".ui.mystudy.CaptainStudySettingActivity"
-            android:exported="false" />
-        <activity
-            android:name=".ui.mystudy.ToDoActivity"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.mystudy.MyStudyMainActivity"
             android:exported="false"
@@ -66,7 +51,7 @@
         <activity
             android:name=".ui.profile.ProfileEditActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".ui.auth.PopupAgreementActivity"
             android:exported="false"

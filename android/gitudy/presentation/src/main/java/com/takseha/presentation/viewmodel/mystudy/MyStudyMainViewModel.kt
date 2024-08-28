@@ -2,7 +2,6 @@ package com.takseha.presentation.viewmodel.mystudy
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
@@ -14,9 +13,8 @@ import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
-class MyStudyMainViewModel : ViewModel() {
+class MyStudyMainViewModel() : ViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
     private var gitudyMemberRepository = GitudyMemberRepository()
 
@@ -26,7 +24,7 @@ class MyStudyMainViewModel : ViewModel() {
     private val _commentState = MutableStateFlow<List<StudyComment>>(emptyList())
     val commentState = _commentState.asStateFlow()
 
-    fun getMyStudyInfo(studyInfoId: Int) = viewModelScope.launch {
+    suspend fun getMyStudyInfo(studyInfoId: Int) {
         val myStudyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
 
         if (myStudyInfoResponse.isSuccessful) {
@@ -68,7 +66,7 @@ class MyStudyMainViewModel : ViewModel() {
         }
     }
 
-    fun getStudyComments(studyInfoId: Int, limit: Long) = viewModelScope.launch {
+    suspend fun getStudyComments(studyInfoId: Int, limit: Long) {
         val studyCommentListResponse =
             gitudyStudyRepository.getStudyComments(studyInfoId, null, limit)
 

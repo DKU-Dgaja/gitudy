@@ -1,7 +1,6 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
@@ -16,7 +15,7 @@ import android.view.inputmethod.InputMethodManager
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -40,12 +39,32 @@ import java.time.LocalDate
 class MyStudyMainFragment : Fragment() {
     private var _binding: FragmentMyStudyMainBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MyStudyMainViewModel by viewModels()
+    private val viewModel: MyStudyMainViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
+    private lateinit var studyImgColor: String
+    private val colorList = listOf(
+        R.color.BG_10,
+        R.color.BG_9,
+        R.color.BG_8,
+        R.color.BG_7,
+        R.color.BG_6,
+        R.color.BG_5,
+        R.color.BG_4,
+        R.color.BG_3,
+        R.color.BG_2,
+        R.color.BG_1
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
+        studyImgColor = requireActivity().intent?.getStringExtra("studyImgColor") ?: "0"
+        requireActivity().window.statusBarColor = ContextCompat.getColor(
+            requireContext(),
+            colorList[studyImgColor!!.toIntOrNull() ?: 0]
+        )
     }
 
     override fun onCreateView(
@@ -55,16 +74,12 @@ class MyStudyMainFragment : Fragment() {
         _binding = FragmentMyStudyMainBinding.inflate(inflater, container, false)
         return binding.root
     }
+
     // TODO: todo link 버튼 눌렀을 때 이동하는 기능 구현
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
-        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         var comment = ""
-
-        viewModel.getMyStudyInfo(studyInfoId)
-        viewModel.getStudyComments(studyInfoId, 3)
 
         observeViewModel()
 
@@ -78,13 +93,16 @@ class MyStudyMainFragment : Fragment() {
                 requireActivity().finish()
             }
             settingBtn.setOnClickListener {
-                view.findNavController().navigate(R.id.action_myStudyMainFragment_to_myStudySettingFragment, bundle)
+                view.findNavController()
+                    .navigate(R.id.action_myStudyMainFragment_to_myStudySettingFragment, bundle)
             }
             todoMoreBtn.setOnClickListener {
-                view.findNavController().navigate(R.id.action_myStudyMainFragment_to_toDoFragment, bundle)
+                view.findNavController()
+                    .navigate(R.id.action_myStudyMainFragment_to_toDoFragment, bundle)
             }
             commentMoreBtn.setOnClickListener {
-                view.findNavController().navigate(R.id.action_myStudyMainFragment_to_studyCommentBoardFragment, bundle)
+                view.findNavController()
+                    .navigate(R.id.action_myStudyMainFragment_to_studyCommentBoardFragment, bundle)
             }
 
             newCommentBody.addTextChangedListener(object : TextWatcher {
@@ -109,7 +127,8 @@ class MyStudyMainFragment : Fragment() {
                     viewModel.makeStudyComment(studyInfoId, comment, 3)
 
                     newCommentBody.setText("")
-                    val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                    val imm =
+                        requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                     imm.hideSoftInputFromWindow(newCommentBody.windowToken, 0)
                 }
             }
@@ -120,8 +139,7 @@ class MyStudyMainFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
-                requireActivity().window.statusBarColor = Color.parseColor(it.myStudyInfo.profileImageUrl)
-                setMyStudyInfo(it.myStudyInfo.id, it.myStudyInfo.profileImageUrl, it.myStudyInfo)
+                setMyStudyInfo(studyImgColor, it.myStudyInfo)
                 if (it.isUrgentTodo) {
                     with(binding) {
                         noTodoAlarm.visibility = GONE
@@ -153,21 +171,34 @@ class MyStudyMainFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        lifecycleScope.launch {
+        requireActivity().window.statusBarColor = ContextCompat.getColor(
+            requireContext(),
+            colorList[studyImgColor.toIntOrNull() ?: 0]
+        )
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMyStudyInfo(studyInfoId)
             viewModel.getStudyComments(studyInfoId, 3)
         }
     }
 
-    private fun setMyStudyInfo(studyInfoId: Int, studyImgColor: String, myStudyInfo: StudyInfoResponse) {
+    private fun setMyStudyInfo(
+        studyImgColor: String,
+        myStudyInfo: StudyInfoResponse
+    ) {
+        val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
+
         with(binding) {
-            studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
+            studyImg.setImageResource(studyImgSrc)
             studyName.text = myStudyInfo.topic
             leaderTag.visibility = if (myStudyInfo.isLeader) VISIBLE else GONE
             studyRule.text = setCommitRule(myStudyInfo.periodType)
             studyInfo.text = myStudyInfo.info
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
-            studyGithubLinkText.text = getString(R.string.study_github_link, myStudyInfo.githubLinkInfo.owner, myStudyInfo.githubLinkInfo.name)
+            studyGithubLinkText.text = getString(
+                R.string.study_github_link,
+                myStudyInfo.githubLinkInfo.owner,
+                myStudyInfo.githubLinkInfo.name
+            )
             setCategoryList(myStudyInfo.categoryNames)
         }
     }
@@ -184,9 +215,25 @@ class MyStudyMainFragment : Fragment() {
                         ContextCompat.getColor(
                             requireContext(),
                             R.color.BASIC_RED
-                        ))
+                        )
+                    )
                 }
             }
+        }
+    }
+
+    private fun setStudyImg(currentIdx: Int): Int {
+        return when (currentIdx) {
+            0 -> R.drawable.bg_mystudy_full_10
+            1 -> R.drawable.bg_mystudy_full_9
+            2 -> R.drawable.bg_mystudy_full_8
+            3 -> R.drawable.bg_mystudy_full_7
+            4 -> R.drawable.bg_mystudy_full_6
+            5 -> R.drawable.bg_mystudy_full_5
+            6 -> R.drawable.bg_mystudy_full_4
+            7 -> R.drawable.bg_mystudy_full_3
+            8 -> R.drawable.bg_mystudy_full_2
+            else -> R.drawable.bg_mystudy_full_1
         }
     }
 
@@ -203,7 +250,8 @@ class MyStudyMainFragment : Fragment() {
         with(binding) {
             val categoryInStudyRVAdapter = CategoryInStudyRVAdapter(requireContext(), categoryList)
             tagList.adapter = categoryInStudyRVAdapter
-            tagList.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
+            tagList.layoutManager =
+                LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
         }
     }
 

@@ -79,7 +79,7 @@
     <string name="study_quit_alert_title">스터디를 탈퇴하시겠습니까?</string>
     <string name="study_quit_alert_detail">스터디 활동 기록은 남아있어요</string>
     <string name="study_end_alert_title">스터디를 종료하시겠습니까?</string>
-    <string name="study_end_alert_detail">스터디의 모든 활동이 중단돼요</string>
+    <string name="study_end_alert_detail">스터디의 모든 활동이 종료돼요</string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
@@ -136,5 +136,7 @@
     <string name="alert_logout_cancel">닫기</string>
     <string name="alert_logout_confirm">로그아웃</string>
     <string name="alert_delete_account_confirm">탈퇴하기</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

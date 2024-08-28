@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.profile
 
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -33,7 +34,7 @@ class CommitDetailFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
-            commit = it.getSerializable(ARG_COMMIT) as Commit
+            commit = it.getSerializable(ARG_COMMIT) as Commit?
         }
     }
 
@@ -47,21 +48,24 @@ class CommitDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
 
         with(binding) {
-            commitTitle.text = commit!!.message
+            commitTitle.text = commit?.message
             Glide.with(this@CommitDetailFragment)
-                .load("https://avatars.githubusercontent.com/u/86196342?v=4")
+                .load(commit?.profileImageUrl)
                 .error(R.drawable.logo_profile_default)
                 .into(profileImg)
-            nickname.text = commit!!.rejectionReason
+            nickname.text = commit?.name
             githubLinkBtn.setOnClickListener {
-                it.findNavController().navigate(R.id.action_toDoFragment_to_commitDetailFragment)
+//                val bundle = Bundle().apply {
+//                    putSerializable("githubUrl", commit.)
+//                }
+//                Log.d("ToDoFragment", bundle.toString())
+//                it.findNavController().navigate(R.id.action_toDoFragment_to_commitDetailFragment, bundle)
             }
             backBtn.setOnClickListener {
-                requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
-                requireActivity().supportFragmentManager.popBackStack()
+                it.findNavController().popBackStack()
             }
         }
     }

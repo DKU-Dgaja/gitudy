@@ -4,7 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -44,9 +43,6 @@ class MainHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMainHomeBinding.inflate(inflater, container, false)
-
-        setViewModel()
-
         return binding.root
     }
 
@@ -61,15 +57,13 @@ class MainHomeFragment : Fragment() {
         }
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.apply {
-                myStudyState.collectLatest {
-                    if (!it.isMyStudiesEmpty) {
-                        binding.isNoStudyLayout.visibility = GONE
-                        setMyStudyList(it.myStudiesWithTodo)
-                    } else {
-                        binding.isNoStudyLayout.visibility = VISIBLE
-                    }
+            viewModel.myStudyState.collectLatest {
+                if (!it.isMyStudiesEmpty) {
+                    binding.isNoStudyLayout.visibility = GONE
+                } else {
+                    binding.isNoStudyLayout.visibility = VISIBLE
                 }
+                setMyStudyList(it.myStudiesWithTodo)
             }
         }
 
@@ -90,7 +84,7 @@ class MainHomeFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.apply {
                 getUserInfo()
                 getMyStudyList(null, 7)

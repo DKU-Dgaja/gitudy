@@ -1,6 +1,5 @@
 package com.takseha.presentation.ui.feed
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -10,28 +9,37 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyApplyInfoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
-import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
 import com.takseha.presentation.viewmodel.feed.StudyMainInfoState
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import kotlin.math.abs
 
 class StudyApplyInfoFragment : Fragment() {
     private var _binding: FragmentStudyApplyInfoBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: StudyApplyViewModel by viewModels()
+    private val viewModel: StudyApplyViewModel by activityViewModels()
+    private val colorList = listOf(
+        R.color.BG_10,
+        R.color.BG_9,
+        R.color.BG_8,
+        R.color.BG_7,
+        R.color.BG_6,
+        R.color.BG_5,
+        R.color.BG_4,
+        R.color.BG_3,
+        R.color.BG_2,
+        R.color.BG_1
+    )
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,19 +55,18 @@ class StudyApplyInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
-        val studyImgColor =
-            if (activity?.intent?.getStringExtra("studyImgColor") == "" || activity?.intent?.getStringExtra(
-                    "studyImgColor"
-                ) == "string"
-            ) "#000000" else activity?.intent?.getStringExtra("studyImgColor")
+        val studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0) ?: 0
+        val studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
 
-        requireActivity().window.statusBarColor = Color.parseColor(studyImgColor)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(
+            requireContext(),
+            colorList[studyImgColor!!.toIntOrNull() ?: 0]
+        )
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getStudyInfo(studyInfoId)
             viewModel.uiState.collectLatest {
-                setStudyInfo(studyInfoId, studyImgColor!!, it)
+                setStudyInfo(studyInfoId, studyImgColor, it)
             }
         }
 
@@ -96,7 +103,8 @@ class StudyApplyInfoFragment : Fragment() {
         val studyInfo = studyMainInfoState.studyInfo
 
         with(binding) {
-            studyBackgroundImg.setBackgroundColor(Color.parseColor(studyImgColor))
+            val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
+            studyImg.setImageResource(studyImgSrc)
             if (studyInfo.isWaiting) {
                 applyCancelBtn.visibility = VISIBLE
                 studyEnterBtn.visibility = GONE
@@ -138,18 +146,33 @@ class StudyApplyInfoFragment : Fragment() {
     }
 
     private fun setCommitRule(periodType: StudyPeriodStatus): String {
-        when (periodType) {
-            StudyPeriodStatus.STUDY_PERIOD_EVERYDAY -> return requireContext().getString(R.string.feed_rule_everyday)
-            StudyPeriodStatus.STUDY_PERIOD_WEEK -> return requireContext().getString(R.string.feed_rule_week)
-            StudyPeriodStatus.STUDY_PERIOD_NONE -> return requireContext().getString(R.string.feed_rule_free)
+        return when (periodType) {
+            StudyPeriodStatus.STUDY_PERIOD_EVERYDAY -> requireContext().getString(R.string.feed_rule_everyday)
+            StudyPeriodStatus.STUDY_PERIOD_WEEK -> requireContext().getString(R.string.feed_rule_week)
+            StudyPeriodStatus.STUDY_PERIOD_NONE -> requireContext().getString(R.string.feed_rule_free)
         }
     }
 
     private fun setStudyStatus(status: StudyStatus): String {
-        when (status) {
-            StudyStatus.STUDY_PRIVATE -> return requireContext().getString(R.string.study_lock)
-            StudyStatus.STUDY_PUBLIC -> return requireContext().getString(R.string.study_unlock)
-            StudyStatus.STUDY_DELETED -> return requireContext().getString(R.string.study_deleted)
+        return when (status) {
+            StudyStatus.STUDY_PRIVATE -> requireContext().getString(R.string.study_lock)
+            StudyStatus.STUDY_PUBLIC -> requireContext().getString(R.string.study_unlock)
+            StudyStatus.STUDY_DELETED -> requireContext().getString(R.string.study_deleted)
+        }
+    }
+
+    private fun setStudyImg(currentIdx: Int): Int {
+        return when (currentIdx) {
+            0 -> R.drawable.bg_mystudy_full_10
+            1 -> R.drawable.bg_mystudy_full_9
+            2 -> R.drawable.bg_mystudy_full_8
+            3 -> R.drawable.bg_mystudy_full_7
+            4 -> R.drawable.bg_mystudy_full_6
+            5 -> R.drawable.bg_mystudy_full_5
+            6 -> R.drawable.bg_mystudy_full_4
+            7 -> R.drawable.bg_mystudy_full_3
+            8 -> R.drawable.bg_mystudy_full_2
+            else -> R.drawable.bg_mystudy_full_1
         }
     }
 

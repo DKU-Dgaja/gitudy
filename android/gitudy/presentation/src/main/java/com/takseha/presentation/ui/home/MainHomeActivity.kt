@@ -1,8 +1,8 @@
 package com.takseha.presentation.ui.home
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.appcompat.app.AppCompatActivity
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMainHomeBinding
 import com.takseha.presentation.ui.feed.FeedHomeFragment

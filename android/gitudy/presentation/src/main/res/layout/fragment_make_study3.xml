@@ -41,9 +41,9 @@
     <ImageView
         android:id="@+id/studyImg"
         android:layout_width="128dp"
-        android:layout_height="154dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/ic_study_grey"
+        android:layout_height="128dp"
+        android:layout_marginTop="40dp"
+        android:src="@drawable/bg_mystudy_small_default"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle" />

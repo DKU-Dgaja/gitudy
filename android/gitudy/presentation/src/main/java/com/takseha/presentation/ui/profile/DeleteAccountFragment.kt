@@ -7,7 +7,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
@@ -20,7 +20,7 @@ import kotlinx.coroutines.launch
 class DeleteAccountFragment : Fragment() {
     private var _binding: FragmentDeleteAccountBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: SettingHomeViewModel by viewModels()
+    private val viewModel: SettingHomeViewModel by activityViewModels()
     private lateinit var message: String
 
     override fun onCreate(savedInstanceState: Bundle?) {

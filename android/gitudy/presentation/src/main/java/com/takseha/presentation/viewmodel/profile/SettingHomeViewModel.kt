@@ -11,6 +11,20 @@ class SettingHomeViewModel(application: Application) : AndroidViewModel(applicat
     private lateinit var gitudyAuthRepository: GitudyAuthRepository
     private lateinit var tokenManager: TokenManager
 
+    suspend fun updatePushAlarmYn(pushAlarmEnable: Boolean) {
+        gitudyAuthRepository = GitudyAuthRepository()
+        val updatePushAlarmYnResponse = gitudyAuthRepository.updatePushAlarmYn(pushAlarmEnable)
+
+        if (updatePushAlarmYnResponse.isSuccessful) {
+            Log.d("SettingHomeViewModel", updatePushAlarmYnResponse.code().toString())
+        } else {
+            Log.e(
+                "SettingHomeViewModel",
+                "updatePushAlarmYnResponse status: ${updatePushAlarmYnResponse.code()}\nupdatePushAlarmYnResponse message: ${updatePushAlarmYnResponse.errorBody()?.string()}"
+            )
+        }
+    }
+
     suspend fun logout() {
         tokenManager = TokenManager(getApplication())
         val logoutResponse = tokenManager.logout()

@@ -29,7 +29,19 @@ class ProfileHomeViewModel : ViewModel() {
     val bookmarkCursorIdxRes: LiveData<Long?>
         get() = _bookmarkCursorIdxRes
 
-    fun getUserProfileInfo() = viewModelScope.launch {
+    init {
+        loadInitialData()
+    }
+
+    private fun loadInitialData() = viewModelScope.launch {
+        try {
+            getUserProfileInfo()
+        } catch (e: Exception) {
+            Log.e("ProfileHomeViewModel", "Failed to load initial data", e)
+        }
+    }
+
+    suspend fun getUserProfileInfo() {
         val userProfileInfoResponse = gitudyAuthRepository.getUserInfoUpdatePage()
 
         if (userProfileInfoResponse.isSuccessful) {
@@ -68,7 +80,7 @@ class ProfileHomeViewModel : ViewModel() {
         return null
     }
 
-    fun getBookmarks(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+    suspend fun getBookmarks(cursorIdx: Long?, limit: Long) {
         val bookmarksResponse = gitudyBookmarksRepository.getBookmarks(
             cursorIdx,
             limit
@@ -99,12 +111,13 @@ class ProfileHomeViewModel : ViewModel() {
         }
     }
 
-    suspend fun setBookmarkStatus(studyInfoId: Int) {
+    fun setBookmarkStatus(studyInfoId: Int) = viewModelScope.launch {
         val setBookmarkResponse = gitudyBookmarksRepository.setBookmarkStatus(
             studyInfoId
         )
 
         if (setBookmarkResponse.isSuccessful) {
+            getBookmarks(null, 3)
             Log.d("ProfileHomeViewModel", setBookmarkResponse.code().toString())
         } else {
             Log.e(

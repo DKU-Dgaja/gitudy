@@ -1,7 +1,6 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
-import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,13 +10,14 @@ import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.UserInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
+import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
 import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.temporal.ChronoUnit
 
 class FeedRVAdapter(
@@ -33,7 +33,7 @@ class FeedRVAdapter(
     var onClickListener: OnClickListener? = null
 
     class ViewHolder(val binding: ItemFeedBinding) : RecyclerView.ViewHolder(binding.root) {
-        val backgroundColor = binding.studyInfoLayout
+        val studyImg = binding.studyImg
         val studyName = binding.studyName
         val bookmarkBtn = binding.bookmarkBtn
         val commitRule = binding.commitRule
@@ -80,7 +80,9 @@ class FeedRVAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun bindFull(holder: ViewHolder, position: Int) {
-        holder.backgroundColor.setBackgroundColor(Color.parseColor(studyInfoList[position].studyInfo.profileImageUrl))
+        val studyImage = setStudyImg(studyInfoList[position].studyInfo.profileImageUrl.toIntOrNull() ?: 0)
+
+        holder.studyImg.setImageResource(studyImage)
         holder.studyName.text = studyInfoList[position].studyInfo.topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].studyInfo.periodType)
         holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].rank,
@@ -112,6 +114,21 @@ class FeedRVAdapter(
         }
     }
 
+    private fun setStudyImg(currentIdx: Int): Int {
+        return when (currentIdx) {
+            0 -> R.drawable.bg_feed_full_10
+            1 -> R.drawable.bg_feed_full_9
+            2 -> R.drawable.bg_feed_full_8
+            3 -> R.drawable.bg_feed_full_7
+            4 -> R.drawable.bg_feed_full_6
+            5 -> R.drawable.bg_feed_full_5
+            6 -> R.drawable.bg_feed_full_4
+            7 -> R.drawable.bg_feed_full_3
+            8 -> R.drawable.bg_feed_full_2
+            else -> R.drawable.bg_feed_full_1
+        }
+    }
+
     private fun setCommitRule(periodType: StudyPeriodStatus): String {
         return when (periodType) {
             StudyPeriodStatus.STUDY_PERIOD_EVERYDAY -> context.getString(R.string.feed_rule_everyday)
@@ -123,10 +140,11 @@ class FeedRVAdapter(
     @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateTotalDayCnt(createdDate: String): Long {
         val createdDateLocalDate = LocalDateTime.parse(createdDate)
-
+        val utcZonedDateTime = createdDateLocalDate.atZone(ZoneId.of("UTC"))
+        val koreaZonedDateTime = utcZonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
         val nowDate = LocalDateTime.now()
 
-        return ChronoUnit.DAYS.between(createdDateLocalDate, nowDate)
+        return ChronoUnit.DAYS.between(koreaZonedDateTime, nowDate)
     }
 
     private fun setCategoryList(holder: ViewHolder, position: Int) {

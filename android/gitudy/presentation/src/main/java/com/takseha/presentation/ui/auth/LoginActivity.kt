@@ -1,8 +1,8 @@
 package com.takseha.presentation.ui.auth
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.ViewModelProvider
 import com.takseha.presentation.R
@@ -25,9 +25,9 @@ class LoginActivity : AppCompatActivity() {
             githubLoginBtn.setOnClickListener {
                 startLogin("GITHUB")
             }
-            otherLoginBtn.setOnClickListener {
-                startActivity(Intent(baseContext, SubLoginActivity::class.java))
-            }
+//            otherLoginBtn.setOnClickListener {
+//                startActivity(Intent(baseContext, SubLoginActivity::class.java))
+//            }
         }
     }
     private fun setBinding() {

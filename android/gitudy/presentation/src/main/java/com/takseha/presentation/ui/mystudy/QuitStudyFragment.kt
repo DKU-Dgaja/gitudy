@@ -1,29 +1,26 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
-import com.takseha.presentation.databinding.FragmentDeleteAccountBinding
 import com.takseha.presentation.databinding.FragmentQuitStudyBinding
-import com.takseha.presentation.databinding.FragmentSettingHomeBinding
 import com.takseha.presentation.ui.common.CustomCheckDialog
 import com.takseha.presentation.viewmodel.mystudy.MyStudySettingViewModel
-import com.takseha.presentation.viewmodel.profile.SettingHomeViewModel
 import kotlinx.coroutines.launch
 
 class QuitStudyFragment : Fragment() {
     private var _binding: FragmentQuitStudyBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MyStudySettingViewModel by viewModels()
+    private val viewModel: MyStudySettingViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private lateinit var message: String
 

@@ -2,12 +2,10 @@ package com.takseha.presentation.ui.mystudy
 
 import android.content.Intent
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import com.takseha.presentation.R
-import com.takseha.presentation.databinding.FragmentMyStudySettingBinding
+import androidx.fragment.app.Fragment
 import com.takseha.presentation.databinding.FragmentRecommendNewStudyBinding
 import com.takseha.presentation.ui.feed.MakeStudyActivity
 

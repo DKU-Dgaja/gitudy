@@ -14,7 +14,7 @@ import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.takseha.presentation.R
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 class UpdateTodoFragment : Fragment() {
     private var _binding: FragmentUpdateTodoBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: TodoViewModel by viewModels()
+    private val viewModel: TodoViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

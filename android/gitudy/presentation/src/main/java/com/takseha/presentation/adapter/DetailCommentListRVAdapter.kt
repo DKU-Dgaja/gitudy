@@ -15,6 +15,7 @@ import com.bumptech.glide.Glide
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCommentDetailBinding
+import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -53,8 +54,8 @@ class DetailCommentListRVAdapter(val context: Context, val commentList: List<Stu
             .into(holder.profileImg)
 
         holder.writerName.text = commentList[position].userInfo.name
-        holder.date.text =
-            getCreatedDate(commentList[position].commentSetDate)
+        val localDateTime = LocalDateTime.parse(commentList[position].commentSetDate)
+        holder.date.text = UTCToKoreanTimeConverter().convertToKoreaDate(localDateTime)
         holder.content.text = commentList[position].content
 
         if (commentList[position].isMyComment) {
@@ -74,14 +75,6 @@ class DetailCommentListRVAdapter(val context: Context, val commentList: List<Stu
             this.onClickListener?.onHeartClick(v, position)
         }
 
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getCreatedDate(date: String): String {
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.getDefault())
-        val localDateTime = LocalDateTime.parse(date)
-
-        return localDateTime.format(dateFormat)
     }
 
     private fun showPopupMenu(view: View, position: Int) {

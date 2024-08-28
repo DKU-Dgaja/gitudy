@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.takseha.data.dto.mystudy.StudyApplyMember
@@ -18,7 +18,7 @@ import com.takseha.presentation.viewmodel.mystudy.StudyApplyMemberProfileViewMod
 class StudyApplyMemberProfileFragment : Fragment() {
     private var _binding: FragmentStudyApplyMemberProfileBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: StudyApplyMemberProfileViewModel by viewModels()
+    private val viewModel: StudyApplyMemberProfileViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

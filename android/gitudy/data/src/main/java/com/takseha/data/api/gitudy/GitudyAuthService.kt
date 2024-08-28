@@ -63,6 +63,11 @@ interface GitudyAuthService {
     suspend fun getUserInfoUpdatePage(
     ): Response<UserInfoUpdatePageResponse>
 
+    @GET("/auth/update/pushAlarmYn/{pushAlarmEnable}")
+    suspend fun updatePushAlarmYn(
+        @Path("pushAlarmEnable") pushAlarmEnable: Boolean
+    ): Response<Void>
+
     @POST("/auth/update")
     suspend fun updateUserInfo(
         @Body request: UserInfoUpdateRequest
