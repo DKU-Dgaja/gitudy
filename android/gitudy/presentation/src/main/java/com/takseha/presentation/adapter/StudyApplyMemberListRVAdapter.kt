@@ -11,6 +11,7 @@ import com.bumptech.glide.Glide
 import com.takseha.data.dto.mystudy.StudyApplyMember
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemApplyMemberBinding
+import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -42,8 +43,8 @@ class StudyApplyMemberListRVAdapter(val context: Context, val studyApplyMemberLi
             .error(R.drawable.logo_profile_default)
             .into(holder.memberProfileImg)
 
-        holder.date.text =
-            getCreatedDate(studyApplyMemberList[position].createdDateTime)
+        val localDateTime = LocalDateTime.parse(studyApplyMemberList[position].createdDateTime)
+        holder.date.text = UTCToKoreanTimeConverter().convertToKoreaDate(localDateTime)
         holder.memberName.text = studyApplyMemberList[position].name
 
         // 클릭 이벤트 처리
@@ -52,14 +53,6 @@ class StudyApplyMemberListRVAdapter(val context: Context, val studyApplyMemberLi
                 onClickListener!!.onClick(v, position)
             }
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getCreatedDate(date: String): String {
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.getDefault())
-        val localDateTime = LocalDateTime.parse(date)
-
-        return localDateTime.format(dateFormat)
     }
 
     override fun getItemCount(): Int {
