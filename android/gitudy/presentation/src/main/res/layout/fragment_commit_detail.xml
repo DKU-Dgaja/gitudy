@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#8027292E"
+    android:background="@color/BACKGROUND_BLACK"
     tools:context=".ui.profile.CommitDetailFragment">
 
     <androidx.cardview.widget.CardView
@@ -44,14 +44,36 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <TextView
+                android:id="@+id/commitInfo"
+                style="@style/B7_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="@color/GS_400"
+                android:layout_marginTop="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
+
+            <TextView
+                android:id="@+id/commitStatus"
+                style="@style/B7_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="4dp"
+                android:layout_marginTop="10dp"
+                android:text=""
+                app:layout_constraintStart_toEndOf="@+id/commitInfo"
+                app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
+
             <LinearLayout
                 android:id="@+id/profileLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="150dp"
                 android:gravity="center"
+                android:layout_marginTop="46dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/commitInfo">
 
                 <ImageView
                     android:id="@+id/profileImg"
@@ -68,15 +90,6 @@
                     android:layout_height="wrap_content"
                     android:textColor="@color/GS_800" />
             </LinearLayout>
-
-            <ImageView
-                android:id="@+id/moreFuncBtn"
-                android:layout_width="32dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/ic_more"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
 
             <LinearLayout
                 android:id="@+id/divider1"

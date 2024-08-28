@@ -59,7 +59,7 @@
     <string name="to_do_delete">현재 TO-DO를\n삭제하시겠습니까?</string>
     <string name="no_to_do_alarm">등록된 TO-DO가 없어요</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
-    <string name="commit_github_url_basic">https://github.com/DKU-Dgaja/gitudy-study-jusung/commit/%s</string>
+    <string name="commit_github_url">https://github.com/%s/%s/commit/%s</string>
     <string name="commit_convention">ToDoCode 메세지</string>
     <string name="commit_convention_description">커밋할 때, 해당 To-Do의\nToDoCode를 커밋 메세지 맨 앞에 넣어주세요.\n띄어쓰기 한 칸은 필수!</string>
     <string name="commit_convention_ex">3Dck8A [BOJ]#1234:JAVA\n45jB9r [PROG]Lv2_34번:c++</string>

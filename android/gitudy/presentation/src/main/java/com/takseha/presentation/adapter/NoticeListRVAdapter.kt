@@ -37,7 +37,7 @@ class NoticeListRVAdapter(val context: Context, val noticeList: List<Notice>) :
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val localDateTime = LocalDateTime.parse(noticeList[position].localDateTime)
-        holder.date.text = UTCToKoreanTimeConverter().convertToKoreaDate(localDateTime)
+        holder.date.text = UTCToKoreanTimeConverter().convertToKoreaTime(localDateTime)
         holder.title.text = noticeList[position].title
         holder.content.text = noticeList[position].message
 

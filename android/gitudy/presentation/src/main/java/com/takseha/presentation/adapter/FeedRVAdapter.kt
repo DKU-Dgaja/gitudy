@@ -18,6 +18,7 @@ import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
 import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
 import java.time.LocalDateTime
 import java.time.ZoneId
+import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 
 class FeedRVAdapter(
@@ -139,12 +140,14 @@ class FeedRVAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun calculateTotalDayCnt(createdDate: String): Long {
-        val createdDateLocalDate = LocalDateTime.parse(createdDate)
-        val utcZonedDateTime = createdDateLocalDate.atZone(ZoneId.of("UTC"))
+        val createdDateLocalDateTime = LocalDateTime.parse(createdDate)
+        val utcZonedDateTime = createdDateLocalDateTime.atZone(ZoneId.of("UTC"))
         val koreaZonedDateTime = utcZonedDateTime.withZoneSameInstant(ZoneId.of("Asia/Seoul"))
-        val nowDate = LocalDateTime.now()
+        val nowKoreaLocalDateTime = LocalDateTime.now(ZoneId.of("Asia/Seoul"))
+        val createdDateKoreaLocalDate = koreaZonedDateTime.toLocalDate()
+        val nowKoreaLocalDate = nowKoreaLocalDateTime.toLocalDate()
 
-        return ChronoUnit.DAYS.between(koreaZonedDateTime, nowDate)
+        return ChronoUnit.DAYS.between(createdDateKoreaLocalDate, nowKoreaLocalDate)
     }
 
     private fun setCategoryList(holder: ViewHolder, position: Int) {
