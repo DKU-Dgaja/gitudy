@@ -12,6 +12,8 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
+import java.util.TimeZone;
+
 
 @Configuration
 public class ProjectConfig implements WebMvcConfigurer {
@@ -39,6 +41,7 @@ public class ProjectConfig implements WebMvcConfigurer {
         // Java 8 날짜/시간 모듈 등록
         mapper.registerModule(javaTimeModule);
         mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        mapper.setTimeZone(TimeZone.getTimeZone("Asia/Seoul"));
 
         return mapper;
     }
