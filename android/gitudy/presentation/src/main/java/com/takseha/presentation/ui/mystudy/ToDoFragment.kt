@@ -1,6 +1,7 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -11,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.Todo
@@ -42,6 +44,13 @@ class ToDoFragment : Fragment() {
         activity!!.window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
+
+        binding.todoSwipeRefreshLayout.setOnRefreshListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.getTodoList(studyInfoId)
+                binding.todoSwipeRefreshLayout.isRefreshing = false
+            }
+        }
 
         viewModel.getTodoList(studyInfoId)
         lifecycleScope.launch {
@@ -94,9 +103,10 @@ class ToDoFragment : Fragment() {
         todoListRVAdapter.onClickListener = object : ToDoListRVAdapter.OnClickListener {
             override fun onCommitClick(commit: Commit) {
                 val bundle = Bundle().apply {
-                    putInt("commitId", commit.id)
+                    putSerializable("commit", commit)
                 }
-                view?.findNavController()?.navigate(R.id.action_toDoFragment_to_commitDetailFragment, bundle)
+                Log.d("ToDoFragment", bundle.toString())
+                view!!.findNavController().navigate(R.id.action_toDoFragment_to_commitDetailFragment, bundle)
             }
 
             override fun onDeleteClick(view: View, position: Int) {

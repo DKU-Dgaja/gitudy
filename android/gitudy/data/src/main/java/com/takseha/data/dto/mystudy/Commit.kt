@@ -14,9 +14,9 @@ data class Commit(
     @SerializedName("like_count")
     val likeCount: LikeCount,
     @SerializedName("message")
-    val message: String,
+    val message: String?,
     @SerializedName("rejection-reason")
-    val rejectionReason: String,
+    val rejectionReason: String?,
     @SerializedName("status")
     val status: CommitStatus,
     @SerializedName("study_info_id")
@@ -24,7 +24,11 @@ data class Commit(
     @SerializedName("study_todo_id")
     val studyTodoId: Int,
     @SerializedName("user_id")
-    val userId: Int
+    val userId: Int,
+    @SerializedName("name")
+    val name: String,
+    @SerializedName("profile_image_url")
+    val profileImageUrl: String?
 ): Serializable
 
 data class LikeCount(
