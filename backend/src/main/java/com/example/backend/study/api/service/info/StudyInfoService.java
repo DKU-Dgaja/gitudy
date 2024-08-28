@@ -80,6 +80,8 @@ public class StudyInfoService {
                 .userid(userInfo.getUserId())
                 .score(5)
                 .build());
+
+        studyInfo.addStudyScore(1);
         // 스터디 초기 점수추가 이벤트
         eventPublisher.publishEvent(StudyScoreSaveEvent.builder()
                 .studyInfoId(studyInfo.getId())
