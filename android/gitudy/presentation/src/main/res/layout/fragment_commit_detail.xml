@@ -92,19 +92,18 @@
             </LinearLayout>
 
             <TextView
-                android:id="@+id/commitManageBtn"
-                style="@style/B7_2"
-                android:visibility="gone"
-                android:layout_width="80dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="46dp"
-                android:background="@drawable/box_non_stroke_r85_black"
-                android:enabled="false"
-                android:gravity="center"
-                android:text="승인 | 반려"
-                android:textColor="@color/WHITE"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/commitInfo" />
+            android:id="@+id/commitManageBtn"
+            style="@style/B7_2"
+            android:visibility="gone"
+            android:layout_width="80dp"
+            android:layout_height="32dp"
+            android:layout_marginTop="46dp"
+            android:background="@drawable/box_non_stroke_r85_black"
+            android:gravity="center"
+            android:text="승인 | 반려"
+            android:textColor="@color/WHITE"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/commitInfo" />
 
             <LinearLayout
                 android:id="@+id/commitCheckedImg"
@@ -125,10 +124,11 @@
                     android:src="@drawable/ic_check_grey_c" />
 
                 <TextView
+                    android:id="@+id/commitStateText"
                     style="@style/B7_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="처리 완료"
+                    android:text=""
                     android:textColor="@color/GS_500" />
             </LinearLayout>
 

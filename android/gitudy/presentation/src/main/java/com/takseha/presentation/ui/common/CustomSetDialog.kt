@@ -27,6 +27,19 @@ class CustomSetDialog(context: Context) {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
+    fun setCancelBtnText(text: String) {
+        binding.cancelBtn.text = text
+    }
+
+    fun setCancelBtnTextColor(textColor: Int) {
+        binding.cancelBtn.setTextColor(textColor)
+
+    }
+
+    fun setConfirmBtnText(text: String) {
+        binding.confirmBtn.text = text
+    }
+
     fun setAlertText(text: String) {
         binding.alertText.text = text
     }

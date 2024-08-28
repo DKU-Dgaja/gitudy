@@ -28,14 +28,14 @@ import retrofit2.http.Query
 interface GitudyCommitsService {
     @GET("/commits/{commitId}/approve")
     suspend fun approveCommit(
-        @Query("studyInfoId") studyInfoId: Int,
-        @Path("commitId") commitId: Int
+        @Path("commitId") commitId: Int,
+        @Query("studyInfoId") studyInfoId: Int
     ): Response<Void>
 
     @GET("/commits/{commitId}/reject")
     suspend fun rejectCommit(
+        @Path("commitId") commitId: Int,
         @Query("studyInfoId") studyInfoId: Int,
-        @Query("request") request: CommitRejectRequest,
-        @Path("commitId") commitId: Int
+        @Query("request") request: CommitRejectRequest
     ): Response<Void>
 }

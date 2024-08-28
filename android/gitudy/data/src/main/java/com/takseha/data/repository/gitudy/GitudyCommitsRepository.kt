@@ -14,13 +14,13 @@ class GitudyCommitsRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyCommitsService::class.java)
 
     suspend fun approveCommit(
-        studyInfoId: Int,
-        commitId: Int
-    ) = client.approveCommit(studyInfoId, commitId)
+        commitId: Int,
+        studyInfoId: Int
+    ) = client.approveCommit(commitId, studyInfoId)
 
     suspend fun rejectCommit(
+        commitId: Int,
         studyInfoId: Int,
         request: CommitRejectRequest,
-        commitId: Int
-    ) = client.rejectCommit(studyInfoId, request, commitId)
+    ) = client.rejectCommit(commitId, studyInfoId, request)
 }

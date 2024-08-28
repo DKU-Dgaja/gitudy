@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import com.takseha.presentation.databinding.FragmentCommitWebViewBinding
 
 class CommitWebViewFragment : Fragment() {
@@ -32,6 +33,9 @@ class CommitWebViewFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.commitWebView.loadUrl(githubUrl!!)
+        binding.exitBtn.setOnClickListener {
+            it.findNavController().popBackStack()
+        }
     }
 
     override fun onDestroyView() {
