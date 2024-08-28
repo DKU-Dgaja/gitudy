@@ -10,8 +10,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="860dp"
-        android:elevation="50dp"
         android:layout_marginBottom="-20dp"
+        android:elevation="50dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -49,9 +49,9 @@
                 style="@style/B7_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:text=""
                 android:textColor="@color/GS_400"
-                android:layout_marginTop="10dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
 
@@ -70,8 +70,8 @@
                 android:id="@+id/profileLayout"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center"
                 android:layout_marginTop="46dp"
+                android:gravity="center"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/commitInfo">
 
@@ -89,6 +89,47 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/GS_800" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/commitManageBtn"
+                style="@style/B7_2"
+                android:visibility="gone"
+                android:layout_width="80dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="46dp"
+                android:background="@drawable/box_non_stroke_r85_black"
+                android:enabled="false"
+                android:gravity="center"
+                android:text="승인 | 반려"
+                android:textColor="@color/WHITE"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/commitInfo" />
+
+            <LinearLayout
+                android:id="@+id/commitCheckedImg"
+                android:layout_width="80dp"
+                android:layout_height="32dp"
+                android:layout_marginTop="46dp"
+                android:background="@drawable/box_stroke_200_r85"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:visibility="gone"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/commitInfo">
+
+                <ImageView
+                    android:layout_width="14dp"
+                    android:layout_height="14dp"
+                    android:layout_marginEnd="1dp"
+                    android:src="@drawable/ic_check_grey_c" />
+
+                <TextView
+                    style="@style/B7_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="처리 완료"
+                    android:textColor="@color/GS_500" />
             </LinearLayout>
 
             <LinearLayout
@@ -140,6 +181,7 @@
                     android:layout_width="24dp"
                     android:layout_height="24dp"
                     android:src="@drawable/ic_thumbs_up" />
+
                 <ImageView
                     android:id="@+id/heartBtn"
                     android:layout_width="20dp"
