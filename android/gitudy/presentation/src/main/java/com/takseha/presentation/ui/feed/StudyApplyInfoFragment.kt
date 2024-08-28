@@ -60,7 +60,7 @@ class StudyApplyInfoFragment : Fragment() {
 
         requireActivity().window.statusBarColor = ContextCompat.getColor(
             requireContext(),
-            colorList[studyImgColor!!.toInt()]
+            colorList[studyImgColor!!.toIntOrNull() ?: 0]
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
@@ -103,7 +103,7 @@ class StudyApplyInfoFragment : Fragment() {
         val studyInfo = studyMainInfoState.studyInfo
 
         with(binding) {
-            val studyImgSrc = setStudyImg(studyImgColor.toInt())
+            val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
             studyImg.setImageResource(studyImgSrc)
             if (studyInfo.isWaiting) {
                 applyCancelBtn.visibility = VISIBLE

@@ -78,7 +78,7 @@ class FeedRVAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun bindFull(holder: ViewHolder, position: Int) {
-        val studyImage = setStudyImg(studyInfoList[position].studyInfo.profileImageUrl.toInt())
+        val studyImage = setStudyImg(studyInfoList[position].studyInfo.profileImageUrl.toIntOrNull() ?: 0)
 
         holder.studyImg.setImageResource(studyImage)
         holder.studyName.text = studyInfoList[position].studyInfo.topic

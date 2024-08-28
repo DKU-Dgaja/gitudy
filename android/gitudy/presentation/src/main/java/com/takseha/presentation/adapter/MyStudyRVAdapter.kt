@@ -59,7 +59,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
     private fun setStudyInfo(holder: ViewHolder, position: Int) {
         val studyInfo = studyInfoList[position].studyInfo
         val urgentTodo = studyInfoList[position].urgentTodo!!
-        val studyImage = setStudyImg(studyInfo.profileImageUrl.toInt())
+        val studyImage = setStudyImg(studyInfo.profileImageUrl.toIntOrNull() ?: 0)
 
         holder.studyImg.setImageResource(studyImage)
         holder.studyName.text = studyInfo.topic

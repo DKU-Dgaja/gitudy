@@ -63,7 +63,7 @@ class MyStudyMainFragment : Fragment() {
         studyImgColor = requireActivity().intent?.getStringExtra("studyImgColor") ?: "0"
         requireActivity().window.statusBarColor = ContextCompat.getColor(
             requireContext(),
-            colorList[studyImgColor.toInt()]
+            colorList[studyImgColor!!.toIntOrNull() ?: 0]
         )
     }
 
@@ -173,7 +173,7 @@ class MyStudyMainFragment : Fragment() {
         super.onResume()
         requireActivity().window.statusBarColor = ContextCompat.getColor(
             requireContext(),
-            colorList[studyImgColor.toInt()]
+            colorList[studyImgColor.toIntOrNull() ?: 0]
         )
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getMyStudyInfo(studyInfoId)
@@ -185,7 +185,7 @@ class MyStudyMainFragment : Fragment() {
         studyImgColor: String,
         myStudyInfo: StudyInfoResponse
     ) {
-        val studyImgSrc = setStudyImg(studyImgColor.toInt())
+        val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
 
         with(binding) {
             studyImg.setImageResource(studyImgSrc)
