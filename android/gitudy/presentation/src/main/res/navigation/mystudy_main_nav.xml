@@ -46,6 +46,9 @@
         <action
             android:id="@+id/action_myStudySettingFragment_to_myStudyDefaultSettingFragment"
             app:destination="@id/myStudyDefaultSettingFragment" />
+        <action
+            android:id="@+id/action_myStudySettingFragment_to_studyApplyMemberListFragment"
+            app:destination="@id/studyApplyMemberListFragment" />
     </fragment>
     <fragment
         android:id="@+id/studyCommentBoardFragment"
@@ -104,4 +107,18 @@
         android:name="com.takseha.presentation.ui.mystudy.MyStudySettingMemberFragment"
         android:label="fragment_my_study_setting_member"
         tools:layout="@layout/fragment_my_study_setting_member" />
+    <fragment
+        android:id="@+id/studyApplyMemberListFragment"
+        android:name="com.takseha.presentation.ui.mystudy.StudyApplyMemberListFragment"
+        android:label="fragment_study_apply_member_list"
+        tools:layout="@layout/fragment_study_apply_member_list" >
+        <action
+            android:id="@+id/action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment"
+            app:destination="@id/studyApplyMemberProfileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/studyApplyMemberProfileFragment"
+        android:name="com.takseha.presentation.ui.mystudy.StudyApplyMemberProfileFragment"
+        android:label="fragment_study_apply_member_profile"
+        tools:layout="@layout/fragment_study_apply_member_profile" />
 </navigation>

@@ -45,10 +45,12 @@ class MyStudySettingFragment : Fragment() {
         with(binding) {
             if (isLeader!!) {
                 studyQuitBtn.visibility = GONE
+                studyApplyMemberManageBtn.visibility = VISIBLE
                 studyEndBtn.visibility = VISIBLE
                 memberSettingBtn.visibility = VISIBLE
             } else {
                 studyQuitBtn.visibility = VISIBLE
+                studyApplyMemberManageBtn.visibility = GONE
                 studyEndBtn.visibility = GONE
                 memberSettingBtn.visibility = GONE
             }
@@ -60,6 +62,12 @@ class MyStudySettingFragment : Fragment() {
             }
             memberSettingBtn.setOnClickListener {
                 it.findNavController().navigate(R.id.action_myStudySettingFragment_to_myStudySettingMemberFragment)
+            }
+            studyApplyMemberManageBtn.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putInt("studyInfoId", studyInfoId)
+                }
+                it.findNavController().navigate(R.id.action_myStudySettingFragment_to_studyApplyMemberListFragment, bundle)
             }
             studyQuitBtn.setOnClickListener {
                 it.findNavController().navigate(R.id.action_myStudySettingFragment_to_quitStudyFragment)
