@@ -55,7 +55,11 @@ class CommitDetailFragment : Fragment() {
             viewModel.repositoryInfoState.collectLatest { repositoryInfo ->
                 with(binding) {
                     if (isLeader!!) {
-                        commitManageBtn.visibility = VISIBLE
+                        if (commit?.status != CommitStatus.COMMIT_APPROVAL && commit?.status != CommitStatus.COMMIT_REJECTION) {
+                            commitManageBtn.visibility = VISIBLE
+                        } else {
+
+                        }
                     } else {
                         commitManageBtn.visibility = GONE
                     }
@@ -63,7 +67,10 @@ class CommitDetailFragment : Fragment() {
                     commitTitle.text = commit?.message
                     commitInfo.text = getString(R.string.study_to_do_commit_info, commit?.name, commit?.commitDate,)
                     when (commit?.status) {
-                        CommitStatus.COMMIT_APPROVAL -> commitStatus.text = "승인완료"
+                        CommitStatus.COMMIT_APPROVAL -> {
+                            commitStatus.text = "승인완료"
+                            commitStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_BLUE))
+                        }
                         CommitStatus.COMMIT_DELETE -> {
                             commitStatus.text = "커밋삭제"
                             commitStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.GS_500))
@@ -96,6 +103,9 @@ class CommitDetailFragment : Fragment() {
                     commitManageBtn.setOnClickListener {
                         showCommitManageDialog(studyInfoId, commit!!.id)
                     }
+                    postBtn.setOnClickListener {
+
+                    }
                 }
             }
         }
@@ -106,14 +116,18 @@ class CommitDetailFragment : Fragment() {
         customSetDialog.setAlertText(getString(R.string.commit_approve))
         customSetDialog.setConfirmBtnText("승인")
         customSetDialog.setCancelBtnText("반려")
-        customSetDialog.setCancelBtnTextColor(R.color.BASIC_RED)
+        customSetDialog.setCancelBtnTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_RED))
         customSetDialog.setOnConfirmClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.approveCommit(studyInfoId, commitId)
                 with(binding) {
                     commitManageBtn.visibility = GONE
-                    commitStateText.text = "승인 완료"
+                    commitStateText.text = "승인완료"
                     commitCheckedImg.visibility = VISIBLE
+                    commitStatus.apply {
+                        text = "승인완료"
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_BLUE))
+                    }
                 }
             }
         }
@@ -122,8 +136,9 @@ class CommitDetailFragment : Fragment() {
                 viewModel.rejectCommit(studyInfoId, "", commitId)
                 with(binding) {
                     commitManageBtn.visibility = GONE
-                    commitStateText.text = "반려 완료"
+                    commitStateText.text = "커밋반려"
                     commitCheckedImg.visibility = VISIBLE
+                    commitStatus.text = "커밋반려"
                 }
             }
         }

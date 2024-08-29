@@ -32,15 +32,10 @@ class FeedHomeViewModel : ViewModel() {
         get() = _cursorIdxRes
 
     init {
-        // 초기 데이터 로딩
-        refreshFeedList()
-    }
-
-    private fun refreshFeedList() = viewModelScope.launch {
         getFeedList(null, 10, "createdDateTime")
     }
 
-    suspend fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) {
+    fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) = viewModelScope.launch {
         val feedListResponse = gitudyStudyRepository.getStudyList(
             cursorIdx,
             limit,

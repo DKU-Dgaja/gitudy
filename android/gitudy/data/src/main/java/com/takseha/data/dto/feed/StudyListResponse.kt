@@ -23,7 +23,7 @@ data class StudyInfo(
     @SerializedName("is_leader")
     val isLeader: Boolean,
     @SerializedName("last_commit_day")
-    val lastCommitDay: String,
+    val lastCommitDay: String?,
     @SerializedName("maximum_member")
     val maximumMember: Int,
     @SerializedName("period_type")

@@ -1,5 +1,7 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +21,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.feed.StudyStatus
@@ -31,6 +34,8 @@ import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyMainBinding
+import com.takseha.presentation.databinding.LayoutSnackbarDescBinding
+import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -95,6 +100,17 @@ class MyStudyMainFragment : Fragment() {
             settingBtn.setOnClickListener {
                 view.findNavController()
                     .navigate(R.id.action_myStudyMainFragment_to_myStudySettingFragment, bundle)
+            }
+            studyGithubLink.setOnClickListener {
+                val textToCopy = studyGithubLinkText.text
+                val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("label", textToCopy)
+                clipboard.setPrimaryClip(clip)
+
+                copyOkImg.visibility = VISIBLE
+                copyOkImg.postDelayed({
+                    copyOkImg.visibility = GONE
+                }, 2000)
             }
             todoMoreBtn.setOnClickListener {
                 view.findNavController()

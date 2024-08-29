@@ -204,18 +204,13 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/githubLinkBtn" />
 
-            <ScrollView
+            <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/commentList"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
                 app:layout_constraintTop_toBottomOf="@+id/divider2"
-                tools:layout_editor_absoluteX="22dp">
-
-                <androidx.recyclerview.widget.RecyclerView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
-            </ScrollView>
+                tools:layout_editor_absoluteX="22dp"/>
 
             <LinearLayout
                 android:layout_width="match_parent"

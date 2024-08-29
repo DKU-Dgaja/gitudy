@@ -87,7 +87,7 @@ class FeedRVAdapter(
         holder.studyName.text = studyInfoList[position].studyInfo.topic
         holder.commitRule.text = setCommitRule(studyInfoList[position].studyInfo.periodType)
         holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].rank,
-            studyInfoList[position].studyInfo.lastCommitDay
+            studyInfoList[position].studyInfo.lastCommitDay ?: "없음"
         )
         holder.teamScore.text = studyInfoList[position].studyInfo.score.toString()
         holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].studyInfo.createdDateTime))

@@ -15,6 +15,7 @@
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
     <string name="version">최신버전이에요(Beta)</string>
     <string name="setting_later">추후 구현 예정입니다</string>
+    <string name="copy_succeed">클립보드에 복사되었습니다</string>
 
 
     <!-- Strings related to alert -->

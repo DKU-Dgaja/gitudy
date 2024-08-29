@@ -1,5 +1,10 @@
 package com.takseha.presentation.ui.feed
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,16 +13,21 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyApplyInfoBinding
+import com.takseha.presentation.databinding.LayoutSnackbarDescBinding
+import com.takseha.presentation.databinding.LayoutSnackbarGreyBinding
+import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import com.takseha.presentation.viewmodel.feed.StudyMainInfoState
@@ -74,6 +84,17 @@ class StudyApplyInfoFragment : Fragment() {
             backBtn.setOnClickListener {
                 requireActivity().finish()
             }
+            studyGithubLink.setOnClickListener {
+                val textToCopy = studyGithubLinkText.text
+                val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("label", textToCopy)
+                clipboard.setPrimaryClip(clip)
+
+                copyOkImg.visibility = VISIBLE
+                copyOkImg.postDelayed({
+                    copyOkImg.visibility = GONE
+                }, 2000)
+            }
             studyEnterBtn.setOnClickListener {
                 it.findNavController()
                     .navigate(R.id.action_studyApplyInfoFragment_to_studyApplyMessageFragment)
@@ -122,7 +143,7 @@ class StudyApplyInfoFragment : Fragment() {
             teamRankFullText.text = getString(
                 R.string.study_team_rank_full,
                 studyMainInfoState.rank,
-                studyInfo.lastCommitDay
+                studyInfo.lastCommitDay ?: "없음"
             )
             studyGithubLinkText.text = getString(
                 R.string.study_github_link,

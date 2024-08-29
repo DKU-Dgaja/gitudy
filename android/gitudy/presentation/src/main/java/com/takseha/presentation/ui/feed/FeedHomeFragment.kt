@@ -76,10 +76,7 @@ class FeedHomeFragment : Fragment() {
         super.onResume()
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getFeedList(null, 10, "createdDateTime")
-            Log.d("FeedHomeFragment", viewModel.uiState.value.toString())
-        }
+        viewModel.getFeedList(null, 10, "createdDateTime")
     }
 
     private fun setFeedList(

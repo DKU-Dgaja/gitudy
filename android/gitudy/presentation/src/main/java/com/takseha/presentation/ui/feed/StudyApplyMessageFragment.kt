@@ -51,7 +51,7 @@ class StudyApplyMessageFragment : Fragment() {
                 showApplyStudyDialog(studyInfoId, "", message)
             }
             cancelBtn.setOnClickListener {
-                requireActivity().finish()
+                it.findNavController().popBackStack()
             }
         }
     }
