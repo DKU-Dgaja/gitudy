@@ -133,4 +133,9 @@ public class StudyInfo extends BaseEntity {
     public void addStudyScore(int score) {
         this.score = Math.max(0, this.score + score);
     }
+
+    // 마지막 커밋 시간 업데이트
+    public void updateLastCommitDateToCurrent() {
+        this.lastCommitDay = LocalDate.now();
+    }
 }
