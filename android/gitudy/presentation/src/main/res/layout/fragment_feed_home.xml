@@ -119,19 +119,24 @@
         android:layout_width="80dp"
         android:layout_height="80dp"
         android:src="@drawable/ic_wait"
-        app:layout_constraintBottom_toBottomOf="@+id/feedList"
+        app:layout_constraintBottom_toBottomOf="@+id/feedSwipeRefreshLayout"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/feedList"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/feedSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="30dp"
         android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout"/>
+        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/feedList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <ImageView
         android:id="@+id/makeNewStudyBtn"
