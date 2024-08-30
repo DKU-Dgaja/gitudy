@@ -372,4 +372,20 @@ public class StudyInfoFixture {
                 .periodType(StudyPeriodType.STUDY_PERIOD_EVERYDAY)
                 .build();
     }
+
+    public static StudyInfo createDefaultPublicStudyInfoWithDate(Long userId, LocalDate date) {
+        return StudyInfo.builder()
+                .userId(userId)
+                .topic("토픽")
+                .status(STUDY_PUBLIC)
+                .currentMember(1)
+                .maximumMember(10)
+                .lastCommitDay(date)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner("user")
+                        .name("name")
+                        .branchName("main")
+                        .build())
+                .build();
+    }
 }

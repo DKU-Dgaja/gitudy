@@ -35,6 +35,8 @@ import java.util.List;
 
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_OVERDUE;
+import static com.mongodb.assertions.Assertions.assertFalse;
+import static com.mongodb.assertions.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -98,6 +100,7 @@ class WebhookServiceTest extends TestConfig {
         // when
         List<StudyCommit> commitList = studyCommitRepository.findByStudyTodoIdAndUserId(todo.getId(), user.getId());
         StudyTodoMapping mapping = studyTodoMappingRepository.findByTodoIdAndUserId(todo.getId(), user.getId()).get();
+        StudyInfo findStudy = studyInfoRepository.findById(study.getId()).get();
 
         // then
         assertEquals(TODO_COMPLETE, mapping.getStatus());
@@ -424,7 +427,7 @@ class WebhookServiceTest extends TestConfig {
                                 commitBId, messageB, user.getGithubId(),
                                 List.of(todoB.getTodoFolderName() + "/solution.java"), null,
                                 LocalDate.now())
-                        ));
+                ));
 
         // when
         webhookService.handleCommit(payload);
@@ -472,5 +475,35 @@ class WebhookServiceTest extends TestConfig {
         // then
         assertEquals(StudyTodoStatus.TODO_INCOMPLETE, findTodoMapping.getStatus());
         assertEquals(0, commitList.size());
+    }
+
+    @Test
+    void 마지막_커밋_활동일_업데이트_성공() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.createDefaultPublicStudyInfoWithDate(user.getId(), LocalDate.now().minusDays(1)));
+        StudyMember member = studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
+        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
+        StudyTodoMapping todoMapping = studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), user.getId()));
+
+        String commitId = "123";
+        String message = "commit message";
+        String username = user.getGithubId();
+        String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
+        String todoFolderName = todo.getTodoFolderName();
+
+        // 마감일 지킨 커밋
+        LocalDate commitDate = todo.getTodoDate().minusDays(1);
+
+        WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
+                List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
+
+        // when
+        webhookService.handleCommit(payload);
+        StudyInfo findStudy = studyInfoRepository.findById(study.getId()).get();
+
+        // then
+        assertFalse(findStudy.getLastCommitDay() == LocalDate.now().minusDays(1));
+        assertEquals(LocalDate.now(), findStudy.getLastCommitDay());
     }
 }
