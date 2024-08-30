@@ -73,6 +73,9 @@ public class WebhookService {
                 // 커밋, 투두 정보 업데이트
                 updateCommitAndTodoMappingStatus(user.getId(), study.getId(), todo, commit);
 
+                // 마지막 커밋 활동 시간 업데이트
+                study.updateLastCommitDateToCurrent();
+
                 // 커밋 스터디장에게 알림처리
                 notifyStudyLeader(study, user, todo);
             }
