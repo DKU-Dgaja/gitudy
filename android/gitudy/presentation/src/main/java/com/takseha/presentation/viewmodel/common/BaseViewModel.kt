@@ -36,6 +36,22 @@ abstract class BaseViewModel : ViewModel() {
         }
     }
 
+    protected suspend fun <T> safeApiResponse(
+        dispatcher: CoroutineDispatcher = Dispatchers.IO,
+        apiCall: suspend () -> T
+    ): T? {
+        return withContext(dispatcher) {
+            try {
+                apiCall()
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    _snackbarMessage.value = "네트워크 연결을 확인해주세요"
+                }
+                null
+            }
+        }
+    }
+
     fun resetSnackbarMessage() {
         _snackbarMessage.value = null
     }
