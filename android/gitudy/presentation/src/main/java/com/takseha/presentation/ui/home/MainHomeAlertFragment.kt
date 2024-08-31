@@ -37,6 +37,7 @@ class MainHomeAlertFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        viewModel.getNoticeList(null, 50)
     }
 
     override fun onCreateView(
@@ -49,14 +50,6 @@ class MainHomeAlertFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        binding.alertSwipeRefreshLayout.setOnRefreshListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.getNoticeList(null, 50)
-                binding.alertSwipeRefreshLayout.isRefreshing = false
-            }
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 if (it != null) {
@@ -71,6 +64,12 @@ class MainHomeAlertFragment : Fragment() {
         }
 
         with(binding) {
+            alertSwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.getNoticeList(null, 50)
+                    alertSwipeRefreshLayout.isRefreshing = false
+                }
+            }
             backBtn.setOnClickListener {
                 requireActivity().finish()
             }

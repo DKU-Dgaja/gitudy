@@ -65,11 +65,13 @@ class MyStudyMainFragment : Fragment() {
         super.onCreate(savedInstanceState)
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
-        studyImgColor = requireActivity().intent?.getStringExtra("studyImgColor") ?: "0"
+        studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
         requireActivity().window.statusBarColor = ContextCompat.getColor(
             requireContext(),
-            colorList[studyImgColor!!.toIntOrNull() ?: 0]
+            colorList[studyImgColor.toIntOrNull() ?: 0]
         )
+        viewModel.getMyStudyInfo(studyInfoId)
+        viewModel.getStudyComments(studyInfoId, 3)
     }
 
     override fun onCreateView(
@@ -93,7 +95,15 @@ class MyStudyMainFragment : Fragment() {
                 putInt("studyInfoId", studyInfoId)
                 putBoolean("isLeader", isLeader!!)
             }
-            Log.d("MyStudyMainFragment", bundle.toString())
+
+            myStudyMainSwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.getMyStudyInfo(studyInfoId)
+                    viewModel.getStudyComments(studyInfoId, 3)
+                    myStudyMainSwipeRefreshLayout.isRefreshing = false
+                }
+            }
+
             backBtn.setOnClickListener {
                 requireActivity().finish()
             }
@@ -103,7 +113,8 @@ class MyStudyMainFragment : Fragment() {
             }
             studyGithubLink.setOnClickListener {
                 val textToCopy = studyGithubLinkText.text
-                val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("label", textToCopy)
                 clipboard.setPrimaryClip(clip)
 
@@ -139,7 +150,7 @@ class MyStudyMainFragment : Fragment() {
                 }
             })
             postBtn.setOnClickListener {
-                lifecycleScope.launch {
+                viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.makeStudyComment(studyInfoId, comment, 3)
 
                     newCommentBody.setText("")
@@ -191,10 +202,8 @@ class MyStudyMainFragment : Fragment() {
             requireContext(),
             colorList[studyImgColor.toIntOrNull() ?: 0]
         )
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getMyStudyInfo(studyInfoId)
-            viewModel.getStudyComments(studyInfoId, 3)
-        }
+        viewModel.getMyStudyInfo(studyInfoId)
+        viewModel.getStudyComments(studyInfoId, 3)
     }
 
     private fun setMyStudyInfo(

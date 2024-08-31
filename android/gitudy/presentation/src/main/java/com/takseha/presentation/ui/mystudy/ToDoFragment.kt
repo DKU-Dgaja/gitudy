@@ -31,6 +31,14 @@ class ToDoFragment : Fragment() {
     private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        studyInfoId = requireActivity().intent?.getIntExtra("studyInfoId", 0) ?: 0
+        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
+        viewModel.getTodoList(studyInfoId)
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,19 +49,7 @@ class ToDoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity!!.window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
-        studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
-        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
-
-        binding.todoSwipeRefreshLayout.setOnRefreshListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.getTodoList(studyInfoId)
-                binding.todoSwipeRefreshLayout.isRefreshing = false
-            }
-        }
-
-        viewModel.getTodoList(studyInfoId)
-        lifecycleScope.launch {
+        viewLifecycleOwner.lifecycleScope.launch {
             viewModel.todoListState.collectLatest {
                 if (!isLeader!!) {
                     binding.addTodoBtn.visibility = GONE
@@ -74,6 +70,12 @@ class ToDoFragment : Fragment() {
         }
 
         with(binding) {
+            todoSwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.getTodoList(studyInfoId)
+                    todoSwipeRefreshLayout.isRefreshing = false
+                }
+            }
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
             }
@@ -123,7 +125,9 @@ class ToDoFragment : Fragment() {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.to_do_delete))
         customSetDialog.setOnConfirmClickListener {
-            viewModel.deleteTodo(studyInfoId, todoId)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.deleteTodo(studyInfoId, todoId)
+            }
         }
         customSetDialog.show()
     }

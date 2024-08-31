@@ -38,6 +38,8 @@ class StudyApplyInfoFragment : Fragment() {
     private var _binding: FragmentStudyApplyInfoBinding? = null
     private val binding get() = _binding!!
     private val viewModel: StudyApplyViewModel by activityViewModels()
+    private var studyInfoId: Int = 0
+    private var studyImgColor: String = "0"
     private val colorList = listOf(
         R.color.BG_10,
         R.color.BG_9,
@@ -53,6 +55,9 @@ class StudyApplyInfoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
+        viewModel.getStudyInfo(studyInfoId)
     }
 
     override fun onCreateView(
@@ -65,22 +70,25 @@ class StudyApplyInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0) ?: 0
-        val studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
 
         requireActivity().window.statusBarColor = ContextCompat.getColor(
             requireContext(),
-            colorList[studyImgColor!!.toIntOrNull() ?: 0]
+            colorList[studyImgColor.toIntOrNull() ?: 0]
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getStudyInfo(studyInfoId)
             viewModel.uiState.collectLatest {
                 setStudyInfo(studyInfoId, studyImgColor, it)
             }
         }
 
         with(binding) {
+            studyApplySwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.getStudyInfo(studyInfoId)
+                    studyApplySwipeRefreshLayout.isRefreshing = false
+                }
+            }
             backBtn.setOnClickListener {
                 requireActivity().finish()
             }
@@ -126,6 +134,13 @@ class StudyApplyInfoFragment : Fragment() {
         with(binding) {
             val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
             studyImg.setImageResource(studyImgSrc)
+            if (studyInfo.currentMember == studyInfo.maximumMember) {
+                studyEnterBtn.isEnabled = false
+                studyEnterBtn.text = "모집 완료"
+            } else {
+                studyEnterBtn.isEnabled = true
+                studyEnterBtn.text = "스터디 신청하기"
+            }
             if (studyInfo.isWaiting) {
                 applyCancelBtn.visibility = VISIBLE
                 studyEnterBtn.visibility = GONE
