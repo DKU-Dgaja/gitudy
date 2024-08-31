@@ -1,5 +1,6 @@
 package com.takseha.presentation.viewmodel.common
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.CoroutineDispatcher
@@ -31,23 +32,8 @@ abstract class BaseViewModel : ViewModel() {
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     onError(e)
+                    Log.e("BaseViewModel", e.toString())
                 }
-            }
-        }
-    }
-
-    protected suspend fun <T> safeApiResponse(
-        dispatcher: CoroutineDispatcher = Dispatchers.IO,
-        apiCall: suspend () -> T
-    ): T? {
-        return withContext(dispatcher) {
-            try {
-                apiCall()
-            } catch (e: Exception) {
-                withContext(Dispatchers.Main) {
-                    _snackbarMessage.value = "네트워크 연결을 확인해주세요"
-                }
-                null
             }
         }
     }

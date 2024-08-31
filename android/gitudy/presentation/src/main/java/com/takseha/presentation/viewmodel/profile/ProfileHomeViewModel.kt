@@ -31,34 +31,43 @@ class ProfileHomeViewModel : BaseViewModel() {
         get() = _bookmarkCursorIdxRes
 
     fun getUserProfileInfo() = viewModelScope.launch {
-        val result = safeApiResponse {
-            val userProfileInfoResponse = async { gitudyAuthRepository.getUserInfoUpdatePage() }
-            val userGithubInfo = async { getUserInfo() }
-            Pair(userProfileInfoResponse.await(), userGithubInfo.await())
-        }
+        safeApiCall(
+            apiCall = {
+                val userProfileInfoResponse = async { gitudyAuthRepository.getUserInfoUpdatePage() }
+                val userGithubInfoResponse = async { gitudyAuthRepository.getUserInfo() }
 
-        result?.let { (userProfileInfoResponse, userGithubInfo) ->
-            if (userProfileInfoResponse.isSuccessful) {
-                val userProfileInfo = userProfileInfoResponse.body()!!
-                val userGithubId = userGithubInfo?.githubId ?: ""
-                val userPushAlarmYn = userGithubInfo?.pushAlarmYn ?: false
-                _userUiState.update {
-                    it.copy(
-                        name = userProfileInfo.name,
-                        githubId = userGithubId,
-                        pushAlarmYn = userPushAlarmYn,
-                        profileImageUrl = userProfileInfo.profileImageUrl,
-                        profilePublicYn = userProfileInfo.profilePublicYn,
-                        socialInfo = userProfileInfo.socialInfo
+                Pair(
+                    userProfileInfoResponse.await(),
+                    userGithubInfoResponse.await()
+                )
+            },
+            onSuccess = { (userProfileInfoResponse, userGithubInfoResponse) ->
+                if (userProfileInfoResponse.isSuccessful && userGithubInfoResponse.isSuccessful) {
+                    val userProfileInfo = userProfileInfoResponse.body()!!
+                    val userGithubInfo = userGithubInfoResponse.body()!!
+                    val userGithubId = userGithubInfo.githubId
+                    val userPushAlarmYn = userGithubInfo.pushAlarmYn
+
+                    _userUiState.update {
+                        it.copy(
+                            name = userProfileInfo.name,
+                            githubId = userGithubId,
+                            pushAlarmYn = userPushAlarmYn,
+                            profileImageUrl = userProfileInfo.profileImageUrl,
+                            profilePublicYn = userProfileInfo.profilePublicYn,
+                            socialInfo = userProfileInfo.socialInfo
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "ProfileHomeViewModel",
+                        "userProfileInfoResponse status: ${userProfileInfoResponse.code()}, userProfileInfoResponse error message: ${
+                            userProfileInfoResponse.errorBody()?.string()
+                        }"
                     )
                 }
-            } else {
-                Log.e(
-                    "ProfileHomeViewModel",
-                    "userProfileInfoResponse status ${userProfileInfoResponse.code()}, userProfileInfoResponse status ${userProfileInfoResponse.errorBody()?.string()}"
-                )
             }
-        } ?: Log.e("ProfileHomeViewModel", "API 호출 실패")
+        )
     }
 
 
@@ -68,13 +77,17 @@ class ProfileHomeViewModel : BaseViewModel() {
             if (response.isSuccessful) {
                 Log.d(
                     "ProfileHomeViewModel",
-                    "userGithubIdResponse status: ${response.code()}\nuserGithubIdResponse message: ${response.errorBody()?.string()}"
+                    "userGithubIdResponse status: ${response.code()}\nuserGithubIdResponse message: ${
+                        response.errorBody()?.string()
+                    }"
                 )
                 response.body()
             } else {
                 Log.e(
                     "ProfileHomeViewModel",
-                    "userGithubIdResponse status: ${response.code()}\nuserGithubIdResponse message: ${response.errorBody()?.string()}"
+                    "userGithubIdResponse status: ${response.code()}\nuserGithubIdResponse message: ${
+                        response.errorBody()?.string()
+                    }"
                 )
                 null
             }
@@ -89,9 +102,10 @@ class ProfileHomeViewModel : BaseViewModel() {
         safeApiCall(
             apiCall = {
                 gitudyBookmarksRepository.getBookmarks(
-                cursorIdx,
-                limit
-            ) },
+                    cursorIdx,
+                    limit
+                )
+            },
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     val bookmarksInfo = response.body()!!
@@ -106,10 +120,12 @@ class ProfileHomeViewModel : BaseViewModel() {
                             )
                         }
                     } else {
-                        _bookmarksState.update { it.copy(
-                            bookmarksInfo = bookmarksInfo.bookmarkInfoList,
-                            isBookmarksEmpty = false
-                        ) }
+                        _bookmarksState.update {
+                            it.copy(
+                                bookmarksInfo = bookmarksInfo.bookmarkInfoList,
+                                isBookmarksEmpty = false
+                            )
+                        }
                     }
                 } else {
                     Log.e(
@@ -123,9 +139,11 @@ class ProfileHomeViewModel : BaseViewModel() {
 
     suspend fun setBookmarkStatus(studyInfoId: Int) {
         safeApiCall(
-            apiCall = { gitudyBookmarksRepository.setBookmarkStatus(
-                studyInfoId
-            ) },
+            apiCall = {
+                gitudyBookmarksRepository.setBookmarkStatus(
+                    studyInfoId
+                )
+            },
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     getBookmarks(null, 3)
@@ -133,7 +151,9 @@ class ProfileHomeViewModel : BaseViewModel() {
                 } else {
                     Log.e(
                         "ProfileHomeViewModel",
-                        "setBookmarkResponse status: ${response.code()}\nsetBookmarkResponse message: ${response.errorBody()?.string()}"
+                        "setBookmarkResponse status: ${response.code()}\nsetBookmarkResponse message: ${
+                            response.errorBody()?.string()
+                        }"
                     )
                 }
             }

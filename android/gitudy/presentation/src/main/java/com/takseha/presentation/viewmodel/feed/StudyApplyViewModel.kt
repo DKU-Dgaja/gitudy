@@ -27,38 +27,42 @@ class StudyApplyViewModel : BaseViewModel() {
     val isApplySucceed = _isApplySucceed.asStateFlow()
 
     fun getStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val result = safeApiResponse {
-            val studyInfoResponseDeferred =
-                async { gitudyStudyRepository.getStudyInfo(studyInfoId) }
-            val rankDeferred = async { getStudyRank(studyInfoId)?.ranking ?: 0 }
-            val bookmarkStatusDeferred = async { checkBookmarkStatus(studyInfoId) }
+        safeApiCall(
+            apiCall = {
+                val studyInfoResponse = async { gitudyStudyRepository.getStudyInfo(studyInfoId) }
+                val studyRankResponse = async { gitudyStudyRepository.getStudyRank(studyInfoId) }
+                val bookmarkStatusResponse = async { gitudyBookmarksRepository.checkBookmarkStatus(
+                    studyInfoId
+                ) }
 
-            Triple(
-                studyInfoResponseDeferred.await(),
-                rankDeferred.await(),
-                bookmarkStatusDeferred.await()
-            )
-        }
-        result?.let { (studyInfoResponse, rank, bookmarkStatus) ->
-            if (studyInfoResponse.isSuccessful) {
-                val studyInfo = studyInfoResponse.body()!!
+                // Triple로 세 가지 결과를 반환
+                Triple(
+                    studyInfoResponse.await(),
+                    studyRankResponse.await(),
+                    bookmarkStatusResponse.await()
+                )
+            },
+            onSuccess = { (studyInfoResponse, studyRankResponse, bookmarkStatusResponse) ->
+                if (studyInfoResponse.isSuccessful && studyRankResponse.isSuccessful && bookmarkStatusResponse.isSuccessful) {
+                    val studyInfo = studyInfoResponse.body()!!
+                    val studyRank = studyRankResponse.body()!!.ranking
+                    val bookmarkStatus = bookmarkStatusResponse.body()!!.myBookmark
 
-                _uiState.update {
-                    it.copy(
-                        studyInfo = studyInfo,
-                        rank = rank,
-                        isMyBookmark = bookmarkStatus
+                    _uiState.update {
+                        it.copy(
+                            studyInfo = studyInfo,
+                            rank = studyRank,
+                            isMyBookmark = bookmarkStatus
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "StudyApplyViewModel",
+                        "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.errorBody()?.string()}"
                     )
                 }
-            } else {
-                Log.e(
-                    "StudyApplyViewModel",
-                    "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${
-                        studyInfoResponse.errorBody()?.string()
-                    }"
-                )
             }
-        } ?: Log.e("StudyApplyViewModel", "API 호출 실패")
+        )
     }
 
     private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {

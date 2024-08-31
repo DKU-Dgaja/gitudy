@@ -91,59 +91,71 @@ class MainHomeViewModel : BaseViewModel() {
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
-        val result = safeApiResponse {
-            val myStudyListResponseDeferred = async {
-                gitudyStudyRepository.getStudyList(
-                    cursorIdx,
-                    limit,
-                    sortBy = "createdDateTime",
-                    myStudy = true
+        safeApiCall(
+            apiCall = {
+                val myStudyListResponse = async {
+                    gitudyStudyRepository.getStudyList(
+                        cursorIdx,
+                        limit,
+                        sortBy = "createdDateTime",
+                        myStudy = true
+                    )
+                }
+                val studyCntResponse = async { gitudyStudyRepository.getStudyCount(true) }
+
+                // Pair로 두 가지 결과를 반환
+                Pair(
+                    myStudyListResponse.await(),
+                    studyCntResponse.await()
                 )
-            }
-            val studyCntDeferred = async { getStudyCount()?.count ?: -1 }
-            Pair(myStudyListResponseDeferred.await(), studyCntDeferred.await())
-        }
-        result?.let { (myStudyListResponse, studyCnt) ->
-            if (myStudyListResponse.isSuccessful) {
-                val myStudyListInfo = myStudyListResponse.body()!!
+            },
+            onSuccess = { (myStudyListResponse, studyCntResponse) ->
+                if (myStudyListResponse.isSuccessful && studyCntResponse.isSuccessful) {
+                    val myStudyListInfo = myStudyListResponse.body()!!
+                    val studyCnt = studyCntResponse.body()!!.count
 
-                _cursorIdxRes.value = myStudyListInfo.cursorIdx
-                Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
+                    _cursorIdxRes.value = myStudyListInfo.cursorIdx
+                    Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
 
-                val studies = myStudyListInfo.studyInfoList
-                if (studies.isEmpty()) {
-                    _myStudyState.update {
-                        it.copy(
-                            isMyStudiesEmpty = true,
-                            studyCnt = studyCnt
-                        )
+                    val studies = myStudyListInfo.studyInfoList
+                    if (studies.isEmpty()) {
+                        _myStudyState.update {
+                            it.copy(
+                                isMyStudiesEmpty = true,
+                                studyCnt = studyCnt
+                            )
+                        }
+                    } else {
+                        viewModelScope.launch {
+                            // 비동기적으로 urgentTodo를 가져온 후 리스트를 업데이트
+                            val studiesWithTodo = studies.map { study ->
+                                val urgentTodo = async { getUrgentTodoProgress(study.id) }.await()
+                                MyStudyWithTodo(
+                                    study,
+                                    urgentTodo
+                                )
+                            }
+                            _myStudyState.update {
+                                it.copy(
+                                    myStudiesWithTodo = studiesWithTodo,
+                                    studyCnt = studyCnt,
+                                    isMyStudiesEmpty = false
+                                )
+                            }
+                        }
                     }
                 } else {
-                    val studiesWithTodo = studies.map { study ->
-                        val urgentTodo = getUrgentTodoProgress(study.id)
-                        MyStudyWithTodo(
-                            study,
-                            urgentTodo
-                        )
-                    }
-                    _myStudyState.update {
-                        it.copy(
-                            myStudiesWithTodo = studiesWithTodo,
-                            studyCnt = studyCnt,
-                            isMyStudiesEmpty = false
-                        )
-                    }
+                    Log.e(
+                        "MainHomeViewModel",
+                        "myStudyListResponse status: ${myStudyListResponse.code()}\nmyStudyListResponse message: ${
+                            myStudyListResponse.errorBody()?.string()
+                        }"
+                    )
                 }
-            } else {
-                Log.e(
-                    "MainHomeViewModel",
-                    "myStudyListResponse status: ${myStudyListResponse.code()}\nmyStudyListResponse message: ${
-                        myStudyListResponse.errorBody()?.string()
-                    }"
-                )
             }
-        } ?: Log.e("MainHomeViewModel", "API 호출 실패")
+        )
     }
+
 
     private suspend fun getUrgentTodoProgress(studyInfoId: Int): TodoProgressResponse? {
        return try {

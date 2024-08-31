@@ -30,63 +30,57 @@ class MyStudyMainViewModel() : BaseViewModel() {
     val commentState = _commentState.asStateFlow()
 
     fun getMyStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val result = safeApiResponse {
-            val myStudyInfoResponse = async { gitudyStudyRepository.getStudyInfo(studyInfoId) }
-            val urgentTodo = async { getUrgentTodo(studyInfoId) }
-            val rankAndScore = async { getStudyRank(studyInfoId)!! }
-            val convention = null
-            val studyMemberList = async { getStudyMemberList(studyInfoId) }
-            Quintuple(
-                myStudyInfoResponse.await(),
-                urgentTodo.await(),
-                rankAndScore.await(),
-                convention,
-                studyMemberList.await()
-            )
-        }
-        result?.let { (
-                          myStudyInfoResponse,
-                          urgentTodo,
-                          rankAndScore,
-                          convention,
-                          studyMemberList
-                      ) ->
-            if (myStudyInfoResponse.isSuccessful) {
-                val myStudyInfo = myStudyInfoResponse.body()!!
+        safeApiCall(
+            apiCall = {
+                val myStudyInfoResponse = async { gitudyStudyRepository.getStudyInfo(studyInfoId) }
+                val urgentTodoResponse = async { gitudyStudyRepository.getTodoProgress(studyInfoId) }
+                val rankAndScoreResponse = async { gitudyStudyRepository.getStudyRank(studyInfoId) }
+                val studyMemberListResponse = async { gitudyMemberRepository.getStudyMemberList(studyInfoId, true) }
+                val convention = null // convention 값은 null
 
-                if (urgentTodo == null) {
-                    _myStudyState.update {
-                        it.copy(
-                            myStudyInfo = myStudyInfo,
-                            todoInfo = urgentTodo,
-                            conventionInfo = convention,
-                            studyMemberListInfo = studyMemberList,
-                            rankAndScore = rankAndScore,
-                            isUrgentTodo = false
-                        )
-                    }
-                } else {
-                    _myStudyState.update {
-                        it.copy(
-                            myStudyInfo = myStudyInfo,
-                            todoInfo = urgentTodo,
-                            conventionInfo = convention,
-                            studyMemberListInfo = studyMemberList,
-                            rankAndScore = rankAndScore,
-                            isUrgentTodo = true
-                        )
-                    }
-                }
-                Log.d("MyStudyMainViewModel", "_myStudyState: ${_myStudyState.value}")
-            } else {
-                Log.e(
-                    "MyStudyMainViewModel",
-                    "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${
-                        myStudyInfoResponse.errorBody()?.string()
-                    }"
+                Quintuple(
+                    myStudyInfoResponse.await(),
+                    urgentTodoResponse.await(),
+                    rankAndScoreResponse.await(),
+                    studyMemberListResponse.await(),
+                    convention
                 )
+            },
+            onSuccess = { (
+                              myStudyInfoResponse,
+                              urgentTodoResponse,
+                              rankAndScoreResponse,
+                              studyMemberListResponse,
+                              convention
+                          ) ->
+                if (myStudyInfoResponse.isSuccessful
+                    && urgentTodoResponse.isSuccessful
+                    && rankAndScoreResponse.isSuccessful
+                    && studyMemberListResponse.isSuccessful) {
+                    val myStudyInfo = myStudyInfoResponse.body()!!
+                    val urgentTodo = urgentTodoResponse.body()!!.todo
+                    val rankAndScore = rankAndScoreResponse.body()!!
+                    val studyMemberList = studyMemberListResponse.body()!!
+
+                    _myStudyState.update {
+                        it.copy(
+                            myStudyInfo = myStudyInfo,
+                            todoInfo = urgentTodo,
+                            conventionInfo = convention,
+                            studyMemberListInfo = studyMemberList,
+                            rankAndScore = rankAndScore,
+                            isUrgentTodo = urgentTodo != null
+                        )
+                    }
+                    Log.d("MyStudyMainViewModel", "_myStudyState: ${_myStudyState.value}")
+                } else {
+                    Log.e(
+                        "MyStudyMainViewModel",
+                        "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.errorBody()?.string()}"
+                    )
+                }
             }
-        } ?: Log.e("MyStudyMainViewModel", "API 호출 실패")
+        )
     }
 
     fun getStudyComments(studyInfoId: Int, limit: Long) = viewModelScope.launch {

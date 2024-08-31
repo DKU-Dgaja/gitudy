@@ -3,23 +3,19 @@ package com.takseha.presentation.viewmodel.feed
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.api.gitudy.GitudyBookmarksService
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.feed.StudyRankResponse
-import com.takseha.data.dto.profile.Bookmark
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
-import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.viewmodel.common.BaseViewModel
-import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+
 
 class FeedHomeViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
@@ -34,59 +30,58 @@ class FeedHomeViewModel : BaseViewModel() {
         get() = _cursorIdxRes
 
     fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) = viewModelScope.launch {
-        val result = safeApiResponse {
-            val feedListResponse = async {
-                gitudyStudyRepository.getStudyList(cursorIdx, limit, sortBy, myStudy = false)
-            }
-            val studyCnt = async { getStudyCount()?.count ?: -1 }
+        safeApiCall(
+            apiCall = {
+                val feedListResponseDeferred = async { gitudyStudyRepository.getStudyList(cursorIdx, limit, sortBy, myStudy = false) }
+                val studyCountResponseDeferred = async { gitudyStudyRepository.getStudyCount(false) }
 
-            Pair(feedListResponse.await(), studyCnt.await())
-        }
+                Pair(feedListResponseDeferred.await(), studyCountResponseDeferred.await())
+            },
+            onSuccess = { (feedListResponse, studyCountResponse) ->
+                if (feedListResponse.isSuccessful && studyCountResponse.isSuccessful) {
+                    val feedStudyListInfo = feedListResponse.body()!!
+                    val studyCnt = studyCountResponse.body()!!.count
+                    _cursorIdxRes.value = feedStudyListInfo.cursorIdx
 
-        result?.let { (feedListResponse, studyCnt) ->
-            if (feedListResponse.isSuccessful) {
-                val feedStudyListInfo = feedListResponse.body()!!
-                _cursorIdxRes.value = feedStudyListInfo.cursorIdx
-
-                if (feedStudyListInfo.studyInfoList.isEmpty()) {
-                    _uiState.update {
-                        it.copy(
-                            isFeedEmpty = true,
-                            studyCnt = studyCnt
-                        )
-                    }
-                } else {
-                    launch {
-                        val studiesInfoWithBookmarkStatus =
-                            feedStudyListInfo.studyInfoList.map { study ->
-                                val bookmarkStatus = async { checkBookmarkStatus(study.id) }.await()
-                                val rank = async { getStudyRank(study.id)!!.ranking }.await()
+                    if (feedStudyListInfo.studyInfoList.isEmpty()) {
+                        _uiState.update {
+                            it.copy(
+                                isFeedEmpty = true,
+                                studyCnt = studyCnt
+                            )
+                        }
+                    } else {
+                        viewModelScope.launch {
+                            // 비동기 작업을 직접 수행
+                            val studiesInfoWithBookmarkStatus = feedStudyListInfo.studyInfoList.map { study ->
+                                val bookmarkStatus = checkBookmarkStatus(study.id)
+                                val rank = getStudyRank(study.id)?.ranking ?: 0
                                 StudyInfoWithBookmarkStatus(
                                     studyInfo = study,
                                     rank = rank,
                                     isMyBookmark = bookmarkStatus
                                 )
                             }
-                        _uiState.update {
-                            it.copy(
-                                studyInfoList = studiesInfoWithBookmarkStatus,
-                                studyCategoryMappingMap = feedStudyListInfo.studyCategoryMappingMap,
-                                studyCnt = studyCnt,
-                                isFeedEmpty = false
-                            )
+                            _uiState.update {
+                                it.copy(
+                                    studyInfoList = studiesInfoWithBookmarkStatus,
+                                    studyCategoryMappingMap = feedStudyListInfo.studyCategoryMappingMap,
+                                    studyCnt = studyCnt,
+                                    isFeedEmpty = false
+                                )
+                            }
                         }
                     }
+                } else {
+                    Log.e(
+                        "FeedHomeViewModel",
+                        "feedListResponse status: ${feedListResponse.code()}\nfeedListResponse message: ${feedListResponse.errorBody()?.string()}"
+                    )
                 }
-            } else {
-                Log.e(
-                    "FeedHomeViewModel",
-                    "feedListResponse status: ${feedListResponse.code()}\nfeedListResponse message: ${
-                        feedListResponse.errorBody()?.string()
-                    }"
-                )
             }
-        } ?: Log.e("FeedHomeViewModel", "API 호출 실패")
+        )
     }
+
 
     private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
         return try {
