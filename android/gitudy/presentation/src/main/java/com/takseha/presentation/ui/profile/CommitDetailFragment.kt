@@ -37,6 +37,7 @@ class CommitDetailFragment : Fragment() {
         arguments?.let {
             commit = it.getSerializable("commit") as Commit?
         }
+        viewModel.getRepositoryInfo(studyInfoId)
     }
 
     override fun onCreateView(
@@ -51,7 +52,6 @@ class CommitDetailFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND_BLACK)
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getRepositoryInfo(studyInfoId)
             viewModel.repositoryInfoState.collectLatest { repositoryInfo ->
                 with(binding) {
                     if (isLeader!!) {

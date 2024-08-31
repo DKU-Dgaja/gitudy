@@ -1,6 +1,7 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -29,6 +30,7 @@ class StudyApplyMemberListFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         studyInfoId = arguments?.getInt("studyInfoId") ?: 0
+        viewModel.getStudyApplyMemberList(studyInfoId, null, 50)
     }
 
     override fun onCreateView(
@@ -41,37 +43,44 @@ class StudyApplyMemberListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        viewModel.getStudyApplyMemberList(studyInfoId, null, 50)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 if (it != null) {
                     binding.studyName.text = it.studyTopic
                     if (it.applyList.isNotEmpty()) {
                         binding.isNoApplyMemberLayout.visibility = GONE
-                    }
-                    else {
+                    } else {
                         binding.isNoApplyMemberLayout.visibility = VISIBLE
                     }
                     setStudyApplyMemberList(it.applyList)
                 }
             }
         }
-        binding.backBtn.setOnClickListener {
-            it.findNavController().popBackStack()
+        with(binding) {
+            applyMemberListSwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.getStudyApplyMemberList(studyInfoId, null, 50)
+                    applyMemberListSwipeRefreshLayout.isRefreshing = false
+                }
+            }
+            backBtn.setOnClickListener {
+                it.findNavController().popBackStack()
+            }
         }
     }
 
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.WHITE)
         viewModel.getStudyApplyMemberList(studyInfoId, null, 50)
     }
 
     private fun setStudyApplyMemberList(studyApplyMemberList: List<StudyApplyMember>) {
         with(binding) {
-            val studyApplyMemberListRVAdapter = StudyApplyMemberListRVAdapter(requireContext(), studyApplyMemberList)
+            val studyApplyMemberListRVAdapter =
+                StudyApplyMemberListRVAdapter(requireContext(), studyApplyMemberList)
             applyMemberList.adapter = studyApplyMemberListRVAdapter
             applyMemberList.layoutManager = LinearLayoutManager(requireContext())
 
@@ -79,16 +88,23 @@ class StudyApplyMemberListFragment : Fragment() {
         }
     }
 
-    private fun clickNoticeItem(studyApplyMemberListRVAdapter: StudyApplyMemberListRVAdapter, studyApplyMemberList: List<StudyApplyMember>) {
-        studyApplyMemberListRVAdapter.onClickListener = object : StudyApplyMemberListRVAdapter.OnClickListener {
-            override fun onClick(view: View, position: Int) {
-                val bundle = Bundle().apply {
-                    putSerializable("memberProfile", studyApplyMemberList[position])
-                    putInt("studyInfoId", studyInfoId)
+    private fun clickNoticeItem(
+        studyApplyMemberListRVAdapter: StudyApplyMemberListRVAdapter,
+        studyApplyMemberList: List<StudyApplyMember>
+    ) {
+        studyApplyMemberListRVAdapter.onClickListener =
+            object : StudyApplyMemberListRVAdapter.OnClickListener {
+                override fun onClick(view: View, position: Int) {
+                    val bundle = Bundle().apply {
+                        putSerializable("memberProfile", studyApplyMemberList[position])
+                        putInt("studyInfoId", studyInfoId)
+                    }
+                    view.findNavController().navigate(
+                        R.id.action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment,
+                        bundle
+                    )
                 }
-                view.findNavController().navigate(R.id.action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment, bundle)
             }
-        }
     }
 
     override fun onDestroyView() {

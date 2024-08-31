@@ -30,7 +30,8 @@ class InputNicknameFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
     }
 
     override fun onCreateView(
@@ -47,7 +48,6 @@ class InputNicknameFragment : Fragment() {
         // registerInfoState 업데이트
         val args: InputNicknameFragmentArgs by navArgs()
         viewModel.setPushAlarmYn(args.pushAlarmYn)
-        Log.d("InputNicknameFragment", viewModel.registerInfoState.value.toString())
 
         with(binding) {
             inputNicknameEditText.addTextChangedListener(object : TextWatcher {
@@ -117,7 +117,6 @@ class InputNicknameFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     var name = inputNicknameEditText.text.toString()
                     viewModel.checkNickname(name)
-
                     val isCorrectName = viewModel.isCorrectName.value
                     Log.e("InputNicknameFragment", isCorrectName.toString())
                     if (isCorrectName == true) {
@@ -127,7 +126,8 @@ class InputNicknameFragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.GS_500
-                                ))
+                                )
+                            )
                         }
                         isNameOkBtn.visibility = GONE
                         validationCheckedImg.visibility = VISIBLE
@@ -139,7 +139,8 @@ class InputNicknameFragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
                         confirmBtn.isEnabled = false
                     }
@@ -148,13 +149,12 @@ class InputNicknameFragment : Fragment() {
 
             confirmBtn.setOnClickListener {
                 viewModel.setNickname(inputNicknameEditText.text.toString())
-                Log.d(
-                    "InputNicknameFragment", viewModel.registerInfoState.value.toString())
                 it.findNavController()
                     .navigate(R.id.action_inputNicknameFragment_to_inputIdFragment)
             }
         }
     }
+
     private fun isValidNickname(text: String): Boolean {
         val regex = "^[a-zA-Z0-9ㄱ-ㅎ가가-힣]*$"
         val emojiRegex = "[\\uD83C-\\uDBFF\\uDC00-\\uDFFF]+"

@@ -11,8 +11,8 @@ import com.takseha.presentation.databinding.FragmentCommitWebViewBinding
 class CommitWebViewFragment : Fragment() {
     private var _binding : FragmentCommitWebViewBinding? = null
     private val binding get() = _binding!!
-
     private var githubUrl: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         arguments?.let {
@@ -32,9 +32,11 @@ class CommitWebViewFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        binding.commitWebView.loadUrl(githubUrl!!)
-        binding.exitBtn.setOnClickListener {
-            it.findNavController().popBackStack()
+        with(binding) {
+            commitWebView.loadUrl(githubUrl!!)
+            exitBtn.setOnClickListener {
+                it.findNavController().popBackStack()
+            }
         }
     }
 

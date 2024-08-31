@@ -22,9 +22,13 @@ class StudyApplyMessageFragment : Fragment() {
     private var _binding: FragmentStudyApplyMessageBinding? = null
     private val binding get() = _binding!!
     private val viewModel: StudyApplyViewModel by activityViewModels()
+    private var studyInfoId: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.WHITE)
+        studyInfoId = requireActivity().intent?.getIntExtra("studyInfoId", 0) ?: 0
     }
 
     override fun onCreateView(
@@ -37,11 +41,6 @@ class StudyApplyMessageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val studyInfoId = activity?.intent?.getIntExtra("studyInfoId", 0) ?: 0
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.WHITE)
-
         with(binding) {
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
@@ -77,6 +76,7 @@ class StudyApplyMessageFragment : Fragment() {
         return snackBar
     }
 
+    // TODO: 추후 코드 리팩토링 필요 -> collectLatest를 value로 바꿔도 될듯?
     private fun showApplyStudyDialog(studyInfoId: Int, joinCode: String, message: String) {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.feed_apply_study))

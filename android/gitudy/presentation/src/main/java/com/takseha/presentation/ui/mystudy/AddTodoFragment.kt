@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.mystudy
 
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -9,11 +10,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentAddTodoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
@@ -29,6 +32,7 @@ class AddTodoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
     }
 
     override fun onCreateView(
@@ -39,11 +43,9 @@ class AddTodoFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        studyInfoId = activity!!.intent.getIntExtra("studyInfoId", 0)
-
         with(binding) {
             var title = todoTitleText.text.toString()
             var detail = todoDetailText.text.toString()
@@ -167,7 +169,7 @@ class AddTodoFragment : Fragment() {
         customSetDialog.setOnConfirmClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
-                view?.findNavController()?.popBackStack()
+                findNavController().popBackStack()
             }
         }
         customSetDialog.show()

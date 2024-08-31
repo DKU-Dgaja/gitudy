@@ -36,6 +36,7 @@ class MainHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = Color.argb(0xFF, 0x1B, 0x1B, 0x25)
+        setViewModel()
     }
 
     override fun onCreateView(
@@ -84,12 +85,8 @@ class MainHomeFragment : Fragment() {
     }
 
     private fun setViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.apply {
-                getUserInfo()
-                getMyStudyList(null, 7)
-            }
-        }
+        viewModel.getUserInfo()
+        viewModel.getMyStudyList(null, 10)
     }
 
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {

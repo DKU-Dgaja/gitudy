@@ -48,8 +48,8 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studyCommentBoardTitle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/commentList"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/commentSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="60dp"
@@ -57,7 +57,12 @@
         app:layout_constraintBottom_toTopOf="@+id/newCommentBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/studyCommentBoardTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/studyCommentBoardTitle">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/commentList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/newCommentBox"

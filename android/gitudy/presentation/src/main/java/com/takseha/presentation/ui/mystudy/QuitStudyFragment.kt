@@ -26,6 +26,7 @@ class QuitStudyFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
     }
 
     override fun onCreateView(
@@ -38,8 +39,6 @@ class QuitStudyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
-
         with(binding) {
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
