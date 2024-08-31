@@ -15,6 +15,7 @@ import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.R
+import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,7 +23,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-class ProfileEditViewModel : ViewModel() {
+class ProfileEditViewModel : BaseViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
 
     private val _uiState = MutableStateFlow(UserInfoUpdatePageResponse())
@@ -32,38 +33,44 @@ class ProfileEditViewModel : ViewModel() {
     val isCorrectName : LiveData<Boolean>
         get() = _isCorrectName
 
-    suspend fun getUserProfileInfo() {
-        val userProfileInfoResponse = gitudyAuthRepository.getUserInfoUpdatePage()
-
-        if (userProfileInfoResponse.isSuccessful) {
-            val userProfileInfo = userProfileInfoResponse.body()!!
-            _uiState.update {
-                it.copy(
-                    name = userProfileInfo.name,
-                    profileImageUrl = userProfileInfo.profileImageUrl,
-                    profilePublicYn = userProfileInfo.profilePublicYn,
-                    socialInfo = userProfileInfo.socialInfo
-                )
+    fun getUserProfileInfo() =viewModelScope.launch {
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.getUserInfoUpdatePage() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val userProfileInfo = response.body()!!
+                    _uiState.update {
+                        it.copy(
+                            name = userProfileInfo.name,
+                            profileImageUrl = userProfileInfo.profileImageUrl,
+                            profilePublicYn = userProfileInfo.profilePublicYn,
+                            socialInfo = userProfileInfo.socialInfo
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "ProfileEditViewModel",
+                        "userProfileInfoResponse status: ${response.code()}\nuserProfileInfoResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
             }
-        } else {
-            Log.e(
-                "ProfileEditViewModel",
-                "userProfileInfoResponse status: ${userProfileInfoResponse.code()}\nuserProfileInfoResponse message: ${userProfileInfoResponse.errorBody()?.string()}"
-            )
-        }
+        )
     }
 
     suspend fun checkNickname(name: String) {
         val request = CheckNicknameRequest(name)
-        val correctNameResponse = gitudyAuthRepository.checkCorrectNickname(request)
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.checkCorrectNickname(request) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    _isCorrectName.value = true
+                } else {
+                    _isCorrectName.value = false
+                    Log.e("ProfileEditViewModel", "correctNameResponse status: ${response.code()}\ncorrectNameResponse message: ${response.errorBody()?.string()}")
 
-        if (correctNameResponse.isSuccessful) {
-            _isCorrectName.value = true
-        } else {
-            _isCorrectName.value = false
-            Log.e("ProfileEditViewModel", "correctNameResponse status: ${correctNameResponse.code()}\ncorrectNameResponse message: ${correctNameResponse.errorBody()?.string()}")
-
-        }
+                }
+            }
+        )
     }
 
     suspend fun updateUserInfo(name: String, profileImageUrl: String, socialInfo: SocialInfo?, profilePublicYn: Boolean) {
@@ -73,15 +80,18 @@ class ProfileEditViewModel : ViewModel() {
             profilePublicYn = profilePublicYn,
             socialInfo = socialInfo
         )
-        val userInfoUpdateResponse = gitudyAuthRepository.updateUserInfo(request)
-
-        if (userInfoUpdateResponse.isSuccessful) {
-            Log.d("ProfileEditViewModel", userInfoUpdateResponse.code().toString())
-        } else {
-            Log.e(
-                "ProfileEditViewModel",
-                "userInfoUpdateResponse status: ${userInfoUpdateResponse.code()}\nuserInfoUpdateResponse message: ${userInfoUpdateResponse.errorBody()?.string()}"
-            )
-        }
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.updateUserInfo(request) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("ProfileEditViewModel", response.code().toString())
+                } else {
+                    Log.e(
+                        "ProfileEditViewModel",
+                        "userInfoUpdateResponse status: ${response.code()}\nuserInfoUpdateResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
+            }
+        )
     }
 }

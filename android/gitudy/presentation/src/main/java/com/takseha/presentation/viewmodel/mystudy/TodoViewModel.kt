@@ -6,12 +6,13 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
+import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class TodoViewModel : ViewModel() {
+class TodoViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
 
     private val _todoListState = MutableStateFlow(TodoListInfoState())
@@ -20,111 +21,124 @@ class TodoViewModel : ViewModel() {
     val todoState = _todoState.asStateFlow()
 
     fun getTodoList(studyInfoId: Int) = viewModelScope.launch {
-        val todoListInfoResponse = gitudyStudyRepository.getTodoList(
-            studyInfoId,
-            cursorIdx = null,
-            limit = 10
-        )
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getTodoList(
+                studyInfoId,
+                cursorIdx = null,
+                limit = 10
+            ) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val todoBody = response.body()!!
+                    Log.d("TodoViewModel", "todo body: $todoBody")
 
-        if (todoListInfoResponse.isSuccessful) {
-            val todoBody = todoListInfoResponse.body()!!
-            Log.d("TodoViewModel", "todo body: $todoBody")
-
-            if (todoBody.todoList.isEmpty()) {
-                _todoListState.update {
-                    it.copy(
-                        todoListInfo = todoBody.todoList,
-                        isTodoEmpty = true
-                    )
-                }
-            } else {
-                _todoListState.update {
-                    it.copy(
-                        todoListInfo = todoBody.todoList,
-                        isTodoEmpty = false
+                    if (todoBody.todoList.isEmpty()) {
+                        _todoListState.update {
+                            it.copy(
+                                todoListInfo = todoBody.todoList,
+                                isTodoEmpty = true
+                            )
+                        }
+                    } else {
+                        _todoListState.update {
+                            it.copy(
+                                todoListInfo = todoBody.todoList,
+                                isTodoEmpty = false
+                            )
+                        }
+                    }
+                    Log.d("TodoViewModel", "todoList: ${todoBody.todoList}")
+                } else {
+                    Log.e(
+                        "TodoViewModel",
+                        "todoListInfoResponse status: ${response.code()}\ntodoListInfoResponse message: ${
+                            response.errorBody()?.string()
+                        }"
                     )
                 }
             }
-            Log.d("TodoViewModel", "todoList: ${todoBody.todoList}")
-        } else {
-            Log.e(
-                "TodoViewModel",
-                "todoListInfoResponse status: ${todoListInfoResponse.code()}\ntodoListInfoResponse message: ${
-                    todoListInfoResponse.errorBody()?.string()
-                }"
-            )
-        }
+        )
     }
 
     fun getTodo(studyInfoId: Int, todoId: Int) = viewModelScope.launch {
-        val getTodoResponse = gitudyStudyRepository.getTodo(
-            studyInfoId,
-            todoId
-        )
-
-        if (getTodoResponse.isSuccessful) {
-            val todoInfo = getTodoResponse.body()!!
-            _todoState.update {
-                it.copy(
-                    title = todoInfo.title,
-                    todoLink = todoInfo.todoLink,
-                    detail = todoInfo.detail,
-                    todoDate = todoInfo.todoDate
-                )
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getTodo(
+                studyInfoId,
+                todoId
+            ) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val todoInfo = response.body()!!
+                    _todoState.update {
+                        it.copy(
+                            title = todoInfo.title,
+                            todoLink = todoInfo.todoLink,
+                            detail = todoInfo.detail,
+                            todoDate = todoInfo.todoDate
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "TodoViewModel",
+                        "getTodoResponse status: ${response.code()}\ngetTodoResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
             }
-        } else {
-            Log.e(
-                "TodoViewModel",
-                "getTodoResponse status: ${getTodoResponse.code()}\ngetTodoResponse message: ${
-                    getTodoResponse.errorBody()?.string()
-                }"
-            )
-        }
+        )
     }
 
-    fun updateTodo(
+    suspend fun updateTodo(
         studyInfoId: Int,
         todoId: Int,
         title: String,
         todoLink: String,
         detail: String,
         todoDate: String
-    ) = viewModelScope.launch {
+    ) {
         val request = MakeTodoRequest(detail = detail, title = title, todoDate = todoDate, todoLink = todoLink)
-
-        val updateTodoResponse = gitudyStudyRepository.updateTodo(
-            studyInfoId,
-            todoId,
-            request
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.updateTodo(
+                studyInfoId,
+                todoId,
+                request
+            ) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("TodoViewModel", "updateTodoResponse: ${response.code()}")
+                } else {
+                    Log.e(
+                        "TodoViewModel",
+                        "updateTodoResponse status: ${response.code()}\nupdateTodoResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
         )
-        if (updateTodoResponse.isSuccessful) {
-            Log.d("TodoViewModel", "updateTodoResponse: ${updateTodoResponse.code()}")
-        } else {
-            Log.e(
-                "TodoViewModel",
-                "updateTodoResponse status: ${updateTodoResponse.code()}\nupdateTodoResponse message: ${
-                    updateTodoResponse.errorBody()?.string()
-                }"
-            )
-        }
     }
 
-    fun deleteTodo(studyInfoId: Int, todoId: Int) = viewModelScope.launch {
-        val deleteTodoResponse = gitudyStudyRepository.deleteTodo(
-            studyInfoId,
-            todoId
+    suspend fun deleteTodo(studyInfoId: Int, todoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.deleteTodo(
+                studyInfoId,
+                todoId
+            ) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    getTodoList(studyInfoId)
+                    Log.d("TodoViewModel", "deleteTodoResponse: ${response.code()}")
+                } else {
+                    Log.e(
+                        "TodoViewModel",
+                        "deleteTodoResponse status: ${response.code()}\ndeleteTodoResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
         )
-        if (deleteTodoResponse.isSuccessful) {
-            getTodoList(studyInfoId)
-            Log.d("TodoViewModel", "deleteTodoResponse: ${deleteTodoResponse.code()}")
-        } else {
-            Log.e(
-                "TodoViewModel",
-                "deleteTodoResponse status: ${deleteTodoResponse.code()}\ndeleteTodoResponse message: ${
-                    deleteTodoResponse.errorBody()?.string()
-                }"
-            )
-        }
     }
 }
 

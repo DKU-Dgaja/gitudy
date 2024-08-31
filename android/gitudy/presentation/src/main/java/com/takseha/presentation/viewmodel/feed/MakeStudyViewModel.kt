@@ -11,12 +11,14 @@ import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.repository.gitudy.GitudyCategoryRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
+import com.takseha.presentation.viewmodel.common.BaseApplicationViewModel
+import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MakeStudyViewModel(application: Application) : AndroidViewModel(application)  {
+class MakeStudyViewModel() : BaseViewModel()  {
     private lateinit var gitudyStudyRepository: GitudyStudyRepository
     private lateinit var gitudyCategoryRepository: GitudyCategoryRepository
 
@@ -38,41 +40,46 @@ class MakeStudyViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun checkValidRepoName(name: String) = viewModelScope.launch {
         gitudyStudyRepository = GitudyStudyRepository()
-
         val request = CheckRepoNameRequest(name)
-        val isValidRepoNameResponse = gitudyStudyRepository.checkValidRepoName(request)
-
-        if (isValidRepoNameResponse.isSuccessful) {
-            _isValidRepoName.value = true
-        } else {
-            _isValidRepoName.value = false
-            Log.e("MakeStudyViewModel", "isValidRepoNameResponse status: ${isValidRepoNameResponse.code()}\nisValidRepoNameResponse message: ${isValidRepoNameResponse.errorBody()?.string()}")
-        }
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.checkValidRepoName(request) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    _isValidRepoName.value = true
+                } else {
+                    _isValidRepoName.value = false
+                    Log.e("MakeStudyViewModel", "isValidRepoNameResponse status: ${response.code()}\nisValidRepoNameResponse message: ${response.errorBody()?.string()}")
+                }
+            }
+        )
     }
 
     fun getAllCategory() = viewModelScope.launch {
         gitudyCategoryRepository = GitudyCategoryRepository()
-        val categoryListResponse = gitudyCategoryRepository.getAllCategory()
-
-        if (categoryListResponse.isSuccessful) {
-            _categoryState.value = categoryListResponse.body()!!
-        } else {
-            Log.e("MakeStudyViewModel", "categoryListResponse status: ${categoryListResponse.code()}\ncategoryListResponse message: ${categoryListResponse.errorBody()?.string()}")
-        }
+        safeApiCall(
+            apiCall = { gitudyCategoryRepository.getAllCategory() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    _categoryState.value = response.body()!!
+                } else {
+                    Log.e("MakeStudyViewModel", "categoryListResponse status: ${response.code()}\ncategoryListResponse message: ${response.errorBody()?.string()}")
+                }
+            }
+        )
     }
 
-    fun makeNewStudy() = viewModelScope.launch {
+    suspend fun makeNewStudy() {
         gitudyStudyRepository = GitudyStudyRepository()
-
         val request = newStudyInfoState.value
-        Log.d("MakeStudyViewModel", request.toString())
-
-        val newStudyResponse = gitudyStudyRepository.makeNewStudy(request)
-
-        if (newStudyResponse.isSuccessful) {
-            Log.d("MakeStudyViewModel", newStudyResponse.code().toString())
-        } else {
-            Log.e("MakeStudyViewModel", "newStudyResponse status: ${newStudyResponse.code()}\nnewStudyResponse message: ${newStudyResponse.errorBody()?.string()}")
-        }
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.makeNewStudy(request) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("MakeStudyViewModel", response.code().toString())
+                } else {
+                    Log.e("MakeStudyViewModel", "newStudyResponse status: ${response.code()}\nnewStudyResponse message: ${response.errorBody()?.string()}")
+                }
+            }
+        )
     }
 }

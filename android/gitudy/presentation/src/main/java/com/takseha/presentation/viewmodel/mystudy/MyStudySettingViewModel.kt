@@ -7,21 +7,25 @@ import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.UpdateStudyInfoRequest
 import com.takseha.data.repository.gitudy.GitudyMemberRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
+import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class MyStudySettingViewModel: ViewModel() {
+class MyStudySettingViewModel: BaseViewModel() {
     private var gitudyMemberRepository = GitudyMemberRepository()
     private var gitudyStudyRepository = GitudyStudyRepository()
 
     suspend fun withdrawStudy(studyInfoId: Int) {
-        val withdrawStudyResponse = gitudyMemberRepository.withdrawStudy(studyInfoId)
-
-        if (withdrawStudyResponse.isSuccessful) {
-            Log.d("MyStudySettingViewModel", withdrawStudyResponse.code().toString())
-        } else {
-            Log.e("MyStudySettingViewModel", "withdrawStudyResponse status: ${withdrawStudyResponse.code()}\nwithdrawStudyResponse message: ${withdrawStudyResponse.errorBody()?.string()}")
-        }
+        safeApiCall(
+            apiCall = { gitudyMemberRepository.withdrawStudy(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("MyStudySettingViewModel", response.code().toString())
+                } else {
+                    Log.e("MyStudySettingViewModel", "withdrawStudyResponse status: ${response.code()}\nwithdrawStudyResponse message: ${response.errorBody()?.string()}")
+                }
+            }
+        )
     }
 
 //    suspend fun endStudy(studyInfoId: Int) {

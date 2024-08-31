@@ -1,21 +1,21 @@
 package com.takseha.presentation.viewmodel.feed
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.mystudy.StudyInfoResponse
-import com.takseha.data.dto.profile.Bookmark
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
 import com.takseha.data.repository.gitudy.GitudyMemberRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
+import com.takseha.presentation.viewmodel.common.BaseViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class StudyApplyViewModel: ViewModel() {
+class StudyApplyViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
     private var gitudyMemberRepository = GitudyMemberRepository()
     private var gitudyBookmarksRepository = GitudyBookmarksRepository()
@@ -27,96 +27,139 @@ class StudyApplyViewModel: ViewModel() {
     val isApplySucceed = _isApplySucceed.asStateFlow()
 
     fun getStudyInfo(studyInfoId: Int) = viewModelScope.launch {
-        val studyInfoResponse = gitudyStudyRepository.getStudyInfo(studyInfoId)
+        val result = safeApiResponse {
+            val studyInfoResponseDeferred =
+                async { gitudyStudyRepository.getStudyInfo(studyInfoId) }
+            val rankDeferred = async { getStudyRank(studyInfoId)?.ranking ?: 0 }
+            val bookmarkStatusDeferred = async { checkBookmarkStatus(studyInfoId) }
 
-        if (studyInfoResponse.isSuccessful) {
-            val studyInfo = studyInfoResponse.body()!!
-            val rank = getStudyRank(studyInfoId)!!.ranking
-            val bookmarkStatus = checkBookmarkStatus(studyInfoId)
-
-            _uiState.update {
-                it.copy(
-                    studyInfo = studyInfo,
-                    rank = rank,
-                    isMyBookmark = bookmarkStatus
-                )
-            }
-        } else {
-            Log.e(
-                "StudyApplyViewModel",
-                "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.errorBody()?.string()}"
+            Triple(
+                studyInfoResponseDeferred.await(),
+                rankDeferred.await(),
+                bookmarkStatusDeferred.await()
             )
         }
+        result?.let { (studyInfoResponse, rank, bookmarkStatus) ->
+            if (studyInfoResponse.isSuccessful) {
+                val studyInfo = studyInfoResponse.body()!!
+
+                _uiState.update {
+                    it.copy(
+                        studyInfo = studyInfo,
+                        rank = rank,
+                        isMyBookmark = bookmarkStatus
+                    )
+                }
+            } else {
+                Log.e(
+                    "StudyApplyViewModel",
+                    "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${
+                        studyInfoResponse.errorBody()?.string()
+                    }"
+                )
+            }
+        } ?: Log.e("StudyApplyViewModel", "API 호출 실패")
     }
 
     private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
-        val studyRankResponse =
-            gitudyStudyRepository.getStudyRank(studyInfoId)
-
-        if (studyRankResponse.isSuccessful) {
-            return studyRankResponse.body()!!
-        } else {
-            Log.e(
-                "MyStudyMainViewModel",
-                "studyRankResponse status: ${studyRankResponse.code()}\nstudyRankResponse message: ${studyRankResponse.errorBody()?.string()}"
-            )
-            return null
+        return try {
+            val response = gitudyStudyRepository.getStudyRank(studyInfoId)
+            if (response.isSuccessful) {
+                response.body()!!
+            } else {
+                Log.e(
+                    "StudyApplyViewModel",
+                    "studyRankResponse status: ${response.code()}\nstudyRankResponse message: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+                null
+            }
+        } catch (e: Exception) {
+            Log.e("StudyApplyViewModel", "Error fetching getUserInfo()", e)
+            null
         }
     }
 
     private suspend fun checkBookmarkStatus(studyInfoId: Int): Boolean {
-        val bookmarkStatusResponse = gitudyBookmarksRepository.checkBookmarkStatus(
-            studyInfoId
-        )
-        if (bookmarkStatusResponse.isSuccessful) {
-            return bookmarkStatusResponse.body()!!.myBookmark
-        } else {
-            Log.e(
-                "StudyApplyViewModel",
-                "bookmarkStatusResponse status: ${bookmarkStatusResponse.code()}\nbookmarkStatusResponse message: ${bookmarkStatusResponse.message()}"
+        return try {
+            val response = gitudyBookmarksRepository.checkBookmarkStatus(
+                studyInfoId
             )
+            if (response.isSuccessful) {
+                response.body()!!.myBookmark
+            } else {
+                Log.e(
+                    "StudyApplyViewModel",
+                    "bookmarkStatusResponse status: ${response.code()}\nbookmarkStatusResponse message: ${response.message()}"
+                )
+                false
+            }
+        } catch (e: Exception) {
+            Log.e("StudyApplyViewModel", "Error fetching getUserInfo()", e)
+            false
         }
-        return false
     }
 
     suspend fun setBookmarkStatus(studyInfoId: Int) {
-        val setBookmarkResponse = gitudyBookmarksRepository.setBookmarkStatus(
-            studyInfoId
+        safeApiCall(
+            apiCall = {
+                gitudyBookmarksRepository.setBookmarkStatus(
+                    studyInfoId
+                )
+            },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("StudyApplyViewModel", response.code().toString())
+                } else {
+                    Log.e(
+                        "StudyApplyViewModel",
+                        "setBookmarkResponse status: ${response.code()}\nsetBookmarkResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
         )
-
-        if (setBookmarkResponse.isSuccessful) {
-            Log.d("StudyApplyViewModel", setBookmarkResponse.code().toString())
-        } else {
-            Log.e(
-                "StudyApplyViewModel",
-                "setBookmarkResponse status: ${setBookmarkResponse.code()}\nsetBookmarkResponse message: ${setBookmarkResponse.errorBody()?.string()}"
-            )
-        }
     }
 
     suspend fun applyStudy(studyInfoId: Int, joinCode: String, message: String) {
         val request = MessageRequest(message)
-        Log.d("StudyApplyViewModel", request.toString())
-
-        val applyStudyResponse = gitudyMemberRepository.applyStudy(studyInfoId, joinCode, request)
-
-        if (applyStudyResponse.isSuccessful) {
-            _isApplySucceed.value = true
-            Log.d("StudyApplyViewModel", applyStudyResponse.code().toString())
-        } else {
-            _isApplySucceed.value = false
-            Log.e("StudyApplyViewModel", "applyStudyResponse status: ${applyStudyResponse.code()}\napplyStudyResponse message: ${applyStudyResponse.errorBody()?.string()}")
-        }
+        safeApiCall(
+            apiCall = { gitudyMemberRepository.applyStudy(studyInfoId, joinCode, request) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    _isApplySucceed.value = true
+                    Log.d("StudyApplyViewModel", response.code().toString())
+                } else {
+                    _isApplySucceed.value = false
+                    Log.e(
+                        "StudyApplyViewModel",
+                        "applyStudyResponse status: ${response.code()}\napplyStudyResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
+        )
     }
 
     suspend fun withdrawApplyStudy(studyInfoId: Int) {
-        val withdrawStudyResponse = gitudyMemberRepository.withdrawApplyStudy(studyInfoId)
-
-        if (withdrawStudyResponse.isSuccessful) {
-            Log.d("StudyApplyViewModel", withdrawStudyResponse.code().toString())
-        } else {
-            Log.e("StudyApplyViewModel", "withdrawStudyResponse status: ${withdrawStudyResponse.code()}\nwithdrawStudyResponse message: ${withdrawStudyResponse.errorBody()?.string()}")
-        }
+        safeApiCall(
+            apiCall = { gitudyMemberRepository.withdrawApplyStudy(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("StudyApplyViewModel", response.code().toString())
+                } else {
+                    Log.e(
+                        "StudyApplyViewModel",
+                        "withdrawStudyResponse status: ${response.code()}\nwithdrawStudyResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
+        )
     }
 }
 
