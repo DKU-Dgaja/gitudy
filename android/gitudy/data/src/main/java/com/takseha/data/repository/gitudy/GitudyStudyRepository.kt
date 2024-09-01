@@ -69,6 +69,10 @@ class GitudyStudyRepository {
         studyInfoId: Int
     ) = client.getStudyInfo(studyInfoId)
 
+    suspend fun deleteStudy(
+        studyInfoId: Int
+    ) = client.deleteStudy(studyInfoId)
+
     suspend fun setConvention(
         studyInfoId: Int,
         request: SetConventionRequest

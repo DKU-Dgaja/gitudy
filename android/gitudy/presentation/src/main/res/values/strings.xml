@@ -46,7 +46,8 @@
     <string name="study_commit_rule">주 1회 커밋 필수</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
-    <string name="study_deleted">스터디 종료</string>
+    <string name="study_deleted">스터디 삭제</string>
+    <string name="study_inactive">스터디 종료</string>
     <string name="study_team_rank">%d점 • %d등</string>
     <string name="study_member_score">기여도 %d</string>
     <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %s</string>
@@ -84,6 +85,8 @@
     <string name="study_quit_alert_detail">스터디 활동 기록은 남아있어요</string>
     <string name="study_end_alert_title">스터디를 종료하시겠습니까?</string>
     <string name="study_end_alert_detail">스터디의 모든 활동이 종료돼요</string>
+    <string name="study_delete_alert_title">스터디를 삭제하시겠습니까?</string>
+    <string name="study_delete_alert_detail">스터디 및 스터디의 모든 활동 기록이 삭제돼요 </string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>

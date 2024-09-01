@@ -28,15 +28,16 @@ class MyStudySettingViewModel: BaseViewModel() {
         )
     }
 
-//    suspend fun endStudy(studyInfoId: Int) {
-//        val request = UpdateStudyInfoRequest()
-//        val endStudyResponse = gitudyStudyRepository.updateStudyInfo(studyInfoId)
-//
-//        if (endStudyResponse.isSuccessful) {
-//
-//            Log.d("MyStudySettingViewModel", endStudyResponse.code().toString())
-//        } else {
-//            Log.e("MyStudySettingViewModel", "endStudyResponse status: ${endStudyResponse.code()}\nendStudyResponse message: ${endStudyResponse.errorBody()?.string()}")
-//        }
-//    }
+    suspend fun deleteStudy(studyInfoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.deleteStudy(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("MyStudySettingViewModel", response.code().toString())
+                } else {
+                    Log.e("MyStudySettingViewModel", "deleteStudyResponse status: ${response.code()}\ndeleteStudyResponse message: ${response.errorBody()?.string()}")
+                }
+            }
+        )
+    }
 }
