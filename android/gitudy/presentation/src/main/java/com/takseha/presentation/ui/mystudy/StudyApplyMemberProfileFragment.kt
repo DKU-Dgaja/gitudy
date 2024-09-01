@@ -92,6 +92,7 @@ class StudyApplyMemberProfileFragment : Fragment() {
         customSetDialog.setOnConfirmClickListener {
             with(binding) {
                 loadingIndicator.visibility = VISIBLE
+                exitBtn.isEnabled = false
                 applyBtn.apply {
                     isEnabled = false
                     backgroundTintList = ContextCompat.getColorStateList(requireContext(), R.color.GS_200)
@@ -107,8 +108,11 @@ class StudyApplyMemberProfileFragment : Fragment() {
                 viewModel.approveApplyMember(studyInfoId, applyUserId, approve)
                 viewModel.responseState.collectLatest {
                     if (it != null) {
+                        with(binding) {
+                            loadingIndicator.visibility = GONE
+                            exitBtn.isEnabled = true
+                        }
                         if (it) {
-                            binding.loadingIndicator.visibility = GONE
                             with(binding) {
                                 if (approve) {
                                     applyBtn.text = "수락 완료"
