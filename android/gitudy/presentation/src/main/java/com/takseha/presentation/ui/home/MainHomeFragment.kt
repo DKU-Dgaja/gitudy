@@ -36,7 +36,10 @@ class MainHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = Color.argb(0xFF, 0x1B, 0x1B, 0x25)
-        setViewModel()
+        lifecycleScope.launch {
+            launch { viewModel.getUserInfo() }
+            launch { viewModel.getMyStudyList(null, 10) }
+        }
     }
 
     override fun onCreateView(
@@ -81,12 +84,10 @@ class MainHomeFragment : Fragment() {
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
-        setViewModel()
-    }
-
-    private fun setViewModel() {
-        viewModel.getUserInfo()
-        viewModel.getMyStudyList(null, 10)
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch { viewModel.getUserInfo() }
+            launch { viewModel.getMyStudyList(null, 10) }
+        }
     }
 
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {

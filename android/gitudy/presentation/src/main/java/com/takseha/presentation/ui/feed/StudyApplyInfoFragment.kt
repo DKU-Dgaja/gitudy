@@ -31,6 +31,7 @@ import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import com.takseha.presentation.viewmodel.feed.StudyMainInfoState
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -57,7 +58,11 @@ class StudyApplyInfoFragment : Fragment() {
         super.onCreate(savedInstanceState)
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
-        viewModel.getStudyInfo(studyInfoId)
+        lifecycleScope.launch {
+            launch { viewModel.getStudyInfo(studyInfoId) }
+            launch { viewModel.getStudyRank(studyInfoId) }
+            launch { viewModel.checkBookmarkStatus(studyInfoId) }
+        }
     }
 
     override fun onCreateView(
@@ -78,14 +83,16 @@ class StudyApplyInfoFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
-                setStudyInfo(studyInfoId, studyImgColor, it)
+                setStudyInfo(studyImgColor, it)
             }
         }
 
         with(binding) {
             studyApplySwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.getStudyInfo(studyInfoId)
+                    launch { viewModel.getStudyInfo(studyInfoId) }
+                    launch { viewModel.getStudyRank(studyInfoId) }
+                    launch { viewModel.checkBookmarkStatus(studyInfoId) }
                     studyApplySwipeRefreshLayout.isRefreshing = false
                 }
             }
@@ -112,10 +119,7 @@ class StudyApplyInfoFragment : Fragment() {
             }
             bookmarkBtn.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.apply {
-                        setBookmarkStatus(studyInfoId)
-                        getStudyInfo(studyInfoId)
-                    }
+                    viewModel.setBookmarkStatus(studyInfoId)
                 }
             }
             // TODO: 스터디 공유 기능 추후 구현
@@ -124,8 +128,16 @@ class StudyApplyInfoFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch { viewModel.getStudyInfo(studyInfoId) }
+            launch { viewModel.getStudyRank(studyInfoId) }
+            launch { viewModel.checkBookmarkStatus(studyInfoId) }
+        }
+    }
+
     private fun setStudyInfo(
-        studyInfoId: Int,
         studyImgColor: String,
         studyMainInfoState: StudyMainInfoState
     ) {

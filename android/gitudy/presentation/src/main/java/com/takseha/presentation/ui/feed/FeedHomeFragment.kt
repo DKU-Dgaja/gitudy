@@ -31,7 +31,10 @@ class FeedHomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
-        viewModel.getFeedList(null, 50, "createdDateTime")
+        lifecycleScope.launch {
+            launch { viewModel.getFeedList(null, 50, "createdDateTime") }
+            launch { viewModel.getStudyCount() }
+        }
     }
 
     override fun onCreateView(
@@ -48,33 +51,35 @@ class FeedHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 with(binding) {
-                    if (it.studyCnt == null) {
+                    feedCnt.text = if (it.studyCnt == null) "" else it.studyCnt.toString()
+
+                    if (it.isFeedEmpty == null) {
                         loadingImg.visibility = VISIBLE
-                        feedCnt.text = ""
                     } else {
                         loadingImg.visibility = GONE
-                        feedCnt.text = it.studyCnt.toString()
-                    }
-                    if (!it.isFeedEmpty) {
-                        isNoStudyLayout.visibility = GONE
-                    } else {
-                        isNoStudyLayout.visibility = VISIBLE
+                        if (!it.isFeedEmpty!!) {
+                            isNoStudyLayout.visibility = GONE
+                        } else {
+                            isNoStudyLayout.visibility = VISIBLE
+                        }
                     }
                     setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
                 }
             }
         }
-        binding.feedSwipeRefreshLayout.setOnRefreshListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.getFeedList(null, 50, "createdDateTime")
-                binding.feedSwipeRefreshLayout.isRefreshing = false
+        with(binding) {
+            feedSwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    launch { viewModel.getFeedList(null, 50, "createdDateTime") }
+                    launch { viewModel.getStudyCount() }
+                    feedSwipeRefreshLayout.isRefreshing = false
+                }
             }
-        }
-
-        binding.makeNewStudyBtn.setOnClickListener {
-            val intent = Intent(requireContext(), MakeStudyActivity::class.java)
-            intent.putExtra("studyCnt", viewModel.uiState.value.studyCnt)
-            startActivity(intent)
+            makeNewStudyBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MakeStudyActivity::class.java)
+                intent.putExtra("studyCnt", viewModel.uiState.value.studyCnt)
+                startActivity(intent)
+            }
         }
     }
 
@@ -84,7 +89,10 @@ class FeedHomeFragment : Fragment() {
         super.onResume()
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
-        viewModel.getFeedList(null, 10, "createdDateTime")
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch { viewModel.getFeedList(null, 50, "createdDateTime") }
+            launch { viewModel.getStudyCount() }
+        }
     }
 
     private fun setFeedList(

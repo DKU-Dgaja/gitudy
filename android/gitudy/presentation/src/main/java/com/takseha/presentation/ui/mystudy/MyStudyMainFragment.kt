@@ -37,6 +37,7 @@ import com.takseha.presentation.databinding.FragmentMyStudyMainBinding
 import com.takseha.presentation.databinding.LayoutSnackbarDescBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -70,8 +71,13 @@ class MyStudyMainFragment : Fragment() {
             requireContext(),
             colorList[studyImgColor.toIntOrNull() ?: 0]
         )
-        viewModel.getMyStudyInfo(studyInfoId)
-        viewModel.getStudyComments(studyInfoId, 3)
+        lifecycleScope.launch {
+            launch { viewModel.getMyStudyInfo(studyInfoId) }
+            launch { viewModel.getUrgentTodo(studyInfoId) }
+            launch { viewModel.getStudyMemberList(studyInfoId) }
+            launch { viewModel.getStudyRankAndScore(studyInfoId) }
+            launch { viewModel.getStudyComments(studyInfoId, 3) }
+        }
     }
 
     override fun onCreateView(
@@ -98,8 +104,11 @@ class MyStudyMainFragment : Fragment() {
 
             myStudyMainSwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.getMyStudyInfo(studyInfoId)
-                    viewModel.getStudyComments(studyInfoId, 3)
+                    launch { viewModel.getMyStudyInfo(studyInfoId) }
+                    launch { viewModel.getUrgentTodo(studyInfoId) }
+                    launch { viewModel.getStudyMemberList(studyInfoId) }
+                    launch { viewModel.getStudyRankAndScore(studyInfoId) }
+                    launch { viewModel.getStudyComments(studyInfoId, 3) }
                     myStudyMainSwipeRefreshLayout.isRefreshing = false
                 }
             }
@@ -202,8 +211,13 @@ class MyStudyMainFragment : Fragment() {
             requireContext(),
             colorList[studyImgColor.toIntOrNull() ?: 0]
         )
-        viewModel.getMyStudyInfo(studyInfoId)
-        viewModel.getStudyComments(studyInfoId, 3)
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch { viewModel.getMyStudyInfo(studyInfoId) }
+            launch { viewModel.getUrgentTodo(studyInfoId) }
+            launch { viewModel.getStudyMemberList(studyInfoId) }
+            launch { viewModel.getStudyRankAndScore(studyInfoId) }
+            launch { viewModel.getStudyComments(studyInfoId, 3) }
+        }
     }
 
     private fun setMyStudyInfo(
@@ -264,10 +278,7 @@ class MyStudyMainFragment : Fragment() {
 
     private fun setStudyRank(rankAndScore: StudyRankResponse) {
         with(binding) {
-            studyRankText.text = String.format(
-                getString(R.string.study_team_rank),
-                rankAndScore.score, rankAndScore.ranking
-            )
+            studyRankText.text = getString(R.string.study_team_rank, rankAndScore.score, rankAndScore.ranking)
         }
     }
 

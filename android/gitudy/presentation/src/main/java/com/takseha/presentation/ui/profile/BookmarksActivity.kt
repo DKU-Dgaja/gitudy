@@ -77,8 +77,7 @@ class BookmarksActivity : AppCompatActivity() {
 
             override fun bookmarkClick(view: View, position: Int) {
                 lifecycleScope.launch {
-                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId)
-                    viewModel.getBookmarks(null, 3)
+                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId, null, 50)
                 }
             }
         }

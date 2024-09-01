@@ -29,7 +29,10 @@ class MyStudyHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
-        viewModel.getMyStudyList(null, 50)
+        lifecycleScope.launch {
+            launch { viewModel.getMyStudyList(null, 50) }
+            launch { viewModel.getStudyCount() }
+        }
     }
 
     override fun onCreateView(
@@ -55,7 +58,8 @@ class MyStudyHomeFragment : Fragment() {
         }
         binding.myStudySwipeRefreshLayout.setOnRefreshListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.getMyStudyList(null, 50)
+                launch { viewModel.getMyStudyList(null, 50) }
+                launch { viewModel.getStudyCount() }
                 binding.myStudySwipeRefreshLayout.isRefreshing = false
             }
         }
@@ -64,7 +68,10 @@ class MyStudyHomeFragment : Fragment() {
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
-        viewModel.getMyStudyList(null, 50)
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch { viewModel.getMyStudyList(null, 50) }
+            launch { viewModel.getStudyCount() }
+        }
     }
 
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {

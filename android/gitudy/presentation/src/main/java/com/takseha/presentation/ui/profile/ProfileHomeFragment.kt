@@ -31,8 +31,11 @@ class ProfileHomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
-        viewModel.getUserProfileInfo()
-        viewModel.getBookmarks(null, 3)
+        lifecycleScope.launch {
+            launch { viewModel.getUserProfileInfo() }
+            launch { viewModel.getUserInfo() }
+            launch { viewModel.getBookmarks(null, 3) }
+        }
     }
 
     override fun onCreateView(
@@ -88,8 +91,11 @@ class ProfileHomeFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        viewModel.getUserProfileInfo()
-        viewModel.getBookmarks(null, 3)
+        lifecycleScope.launch {
+            launch { viewModel.getUserProfileInfo() }
+            launch { viewModel.getUserInfo() }
+            launch { viewModel.getBookmarks(null, 3) }
+        }
     }
 
     private fun setUserInfo(
@@ -148,7 +154,7 @@ class ProfileHomeFragment : Fragment() {
 
             override fun bookmarkClick(view: View, position: Int) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId)
+                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId, null, 3)
                 }
             }
         }
