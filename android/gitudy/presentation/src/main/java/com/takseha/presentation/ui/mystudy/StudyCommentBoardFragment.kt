@@ -8,6 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
@@ -34,6 +36,9 @@ class StudyCommentBoardFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        viewModel.getStudyComments(studyInfoId, 10)
     }
 
     override fun onCreateView(
@@ -46,16 +51,29 @@ class StudyCommentBoardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        activity!!.window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
-
-        studyInfoId = activity!!.intent.getIntExtra("studyInfoId", 0)
 
         // TODO: limit 무한스크롤 관련 구현
-        viewModel.getStudyComments(studyInfoId, 10)
-        observeViewModel()
-
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.commentState.collectLatest {
+                if (it != null) {
+                    if (it.isEmpty()) {
+                        binding.isNoCommentLayout.visibility = VISIBLE
+                    } else {
+                        binding.isNoCommentLayout.visibility = GONE
+                    }
+                    setStudyComments(it)
+                }
+            }
+        }
         with(binding) {
-            backBtn.setOnClickListener {
+            commentSwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.getStudyComments(studyInfoId, 50)
+                    commentSwipeRefreshLayout.isRefreshing = false
+                }
+            }
+
+                backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
             }
             newCommentBody.addTextChangedListener(object : TextWatcher {
@@ -77,19 +95,12 @@ class StudyCommentBoardFragment : Fragment() {
             })
 
             postBtn.setOnClickListener {
-                viewModel.makeStudyComment(studyInfoId, comment, 10)
-
-                newCommentBody.setText("")
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.makeStudyComment(studyInfoId, comment, 10)
+                    newCommentBody.setText("")
+                }
                 val imm = requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 imm.hideSoftInputFromWindow(newCommentBody.windowToken, 0)
-            }
-        }
-    }
-
-    private fun observeViewModel() {
-        lifecycleScope.launch {
-            viewModel.commentState.collectLatest {
-                setStudyComments(it)
             }
         }
     }
@@ -124,7 +135,9 @@ class StudyCommentBoardFragment : Fragment() {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.study_comment_delete))
         customSetDialog.setOnConfirmClickListener {
-            viewModel.deleteStudyComment(studyInfoId, studyCommentId, 10)
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.deleteStudyComment(studyInfoId, studyCommentId, 10)
+            }
         }
         customSetDialog.show()
     }

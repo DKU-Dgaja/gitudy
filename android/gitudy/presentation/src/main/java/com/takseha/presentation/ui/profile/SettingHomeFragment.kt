@@ -23,7 +23,7 @@ class SettingHomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        pushAlarmYn = activity?.intent?.getBooleanExtra("pushAlarmYn", false) ?: false
+        pushAlarmYn = requireActivity().intent?.getBooleanExtra("pushAlarmYn", false) ?: false
     }
 
     override fun onCreateView(
@@ -36,7 +36,6 @@ class SettingHomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         with(binding) {
             backBtn.setOnClickListener {
                 requireActivity().finish()

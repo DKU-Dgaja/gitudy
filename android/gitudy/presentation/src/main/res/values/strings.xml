@@ -3,6 +3,7 @@
     <string name="app_name">Gitudy</string>
 
     <!-- Strings related to common -->
+    <string name="network_error">네트워크 연결을 확인해주세요</string>
     <string name="confirm">확인</string>
     <string name="cancel">취소</string>
     <string name="save">저장하기</string>
@@ -15,6 +16,7 @@
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
     <string name="version">최신버전이에요(Beta)</string>
     <string name="setting_later">추후 구현 예정입니다</string>
+    <string name="copy_succeed">클립보드에 복사되었습니다</string>
 
 
     <!-- Strings related to alert -->
@@ -57,9 +59,10 @@
     <string name="to_do_add">새로운 TO-DO를\n추가하시겠습니까?</string>
     <string name="to_do_update">수정된 TO-DO를\n저장하시겠습니까?</string>
     <string name="to_do_delete">현재 TO-DO를\n삭제하시겠습니까?</string>
+    <string name="commit_approve">해당 커밋을\n승인하시겠습니까?</string>
     <string name="no_to_do_alarm">등록된 TO-DO가 없어요</string>
     <string name="comment">우리 2월까지 마무리 할 수 있겠지?</string>
-    <string name="commit_github_url_basic">https://github.com/DKU-Dgaja/gitudy-study-jusung/commit/%s</string>
+    <string name="commit_github_url">https://github.com/%s/%s/commit/%s</string>
     <string name="commit_convention">ToDoCode 메세지</string>
     <string name="commit_convention_description">커밋할 때, 해당 To-Do의\nToDoCode를 커밋 메세지 맨 앞에 넣어주세요.\n띄어쓰기 한 칸은 필수!</string>
     <string name="commit_convention_ex">3Dck8A [BOJ]#1234:JAVA\n45jB9r [PROG]Lv2_34번:c++</string>
@@ -69,6 +72,7 @@
     <string name="quit_study">탈퇴하기</string>
     <string name="study_comment_title">응원 한마디</string>
     <string name="study_comment_description">멤버들에게 응원의 한마디를 남겨보세요!</string>
+    <string name="study_comment_recommand">첫번째 글을 작성해보세요 :)</string>
     <string name="study_comment_update">해당 글을\n수정하시겠습니까?</string>
     <string name="study_comment_delete">해당 글을\n삭제하시겠습니까?</string>
     <string name="study_approve_member_apply">해당 멤버의 등록을\n수락하시겠습니까?</string>

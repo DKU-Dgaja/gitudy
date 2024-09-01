@@ -2,22 +2,28 @@ package com.takseha.presentation.ui.mystudy
 
 import android.app.DatePickerDialog
 import android.icu.util.Calendar
+import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentAddTodoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -29,6 +35,7 @@ class AddTodoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
     }
 
     override fun onCreateView(
@@ -39,11 +46,9 @@ class AddTodoFragment : Fragment() {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        studyInfoId = activity!!.intent.getIntExtra("studyInfoId", 0)
-
         with(binding) {
             var title = todoTitleText.text.toString()
             var detail = todoDetailText.text.toString()
@@ -165,9 +170,25 @@ class AddTodoFragment : Fragment() {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.to_do_add))
         customSetDialog.setOnConfirmClickListener {
+            with(binding) {
+                loadingIndicator.visibility = VISIBLE
+                backBtn.isEnabled = false
+                applyBtn.isEnabled = false
+            }
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
-                view?.findNavController()?.popBackStack()
+                viewModel.responseState.collectLatest {
+                    if (it != null) {
+                        with(binding) {
+                            loadingIndicator.visibility = GONE
+                            backBtn.isEnabled = true
+                        }
+                        if (it) {
+                            findNavController().popBackStack()
+                        }
+                        // TODO: todo 생성 실패 시 로직 구현!
+                    }
+                }
             }
         }
         customSetDialog.show()

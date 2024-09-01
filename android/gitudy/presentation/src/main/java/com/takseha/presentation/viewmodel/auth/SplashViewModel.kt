@@ -1,37 +1,39 @@
-package com.takseha.presentation.viewmodel.auth
-
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import com.takseha.data.dto.auth.login.RoleStatus
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
+import com.takseha.presentation.viewmodel.common.BaseViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-class SplashViewModel: ViewModel() {
-    private var gitudyAuthRepository: GitudyAuthRepository = GitudyAuthRepository()
+class SplashViewModel : BaseViewModel() {
+    private val gitudyAuthRepository = GitudyAuthRepository()
 
-    private var _availableTokenCheck = MutableLiveData<Boolean>()
-    val availableTokenCheck : LiveData<Boolean>
-        get() = _availableTokenCheck
+    private val _availableTokenCheck = MutableStateFlow<Boolean?>(null)
+    val availableTokenCheck = _availableTokenCheck.asStateFlow()
 
     suspend fun checkAvailableToken() {
-        val checkTokenResponse = gitudyAuthRepository.getUserInfo()
-
-        if (checkTokenResponse.isSuccessful) {
-            _availableTokenCheck.value =
-                !(checkTokenResponse.body()?.role == RoleStatus.WITHDRAW || checkTokenResponse.body()?.role == RoleStatus.UNAUTH)
-        } else {
-            if (checkTokenResponse.code() == 401 || checkTokenResponse.code() == 403) {
-                // token 문제일 때
-                _availableTokenCheck.value = false
-            } else {
-                // 다른 문제일 때
-                // todo: 서버에 문제가 있습니다. 이런 식의 팝업창 띄우기
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.getUserInfo() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val role = response.body()?.role
+                    _availableTokenCheck.value =
+                        !(role == RoleStatus.WITHDRAW || role == RoleStatus.UNAUTH)
+                } else {
+                    if (response.code() == 401 || response.code() == 403) {
+                        // 토큰 재발급
+                        _availableTokenCheck.value = false
+                    } else {
+                        // 기타 서버 에러
+                    }
+                    Log.e(
+                        "SplashViewModel",
+                        "checkTokenResponse status: ${response.code()}\ncheckTokenResponse message: ${
+                            response.errorBody()!!.string()
+                        }"
+                    )
+                }
             }
-            Log.e(
-                "SplashViewModel",
-                "checkTokenResponse status: ${checkTokenResponse.code()}\ncheckTokenResponse message: ${checkTokenResponse.errorBody()!!.string()}"
-            )
-        }
+        )
     }
 }

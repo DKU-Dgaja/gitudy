@@ -48,8 +48,22 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studyCommentBoardTitle" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/commentList"
+    <TextView
+        android:id="@+id/isNoCommentLayout"
+        style="@style/B3_2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="@string/study_comment_recommand"
+        android:textColor="@color/GS_400"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/commentSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="60dp"
@@ -57,7 +71,13 @@
         app:layout_constraintBottom_toTopOf="@+id/newCommentBox"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/studyCommentBoardTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/studyCommentBoardTitle">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/commentList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
         android:id="@+id/newCommentBox"

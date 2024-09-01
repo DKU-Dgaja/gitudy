@@ -1,5 +1,10 @@
 package com.takseha.presentation.ui.feed
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,19 +13,25 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyApplyInfoBinding
+import com.takseha.presentation.databinding.LayoutSnackbarDescBinding
+import com.takseha.presentation.databinding.LayoutSnackbarGreyBinding
+import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import com.takseha.presentation.viewmodel.feed.StudyMainInfoState
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -28,6 +39,8 @@ class StudyApplyInfoFragment : Fragment() {
     private var _binding: FragmentStudyApplyInfoBinding? = null
     private val binding get() = _binding!!
     private val viewModel: StudyApplyViewModel by activityViewModels()
+    private var studyInfoId: Int = 0
+    private var studyImgColor: String = "0"
     private val colorList = listOf(
         R.color.BG_10,
         R.color.BG_9,
@@ -43,6 +56,13 @@ class StudyApplyInfoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
+        lifecycleScope.launch {
+            launch { viewModel.getStudyInfo(studyInfoId) }
+            launch { viewModel.getStudyRank(studyInfoId) }
+            launch { viewModel.checkBookmarkStatus(studyInfoId) }
+        }
     }
 
     override fun onCreateView(
@@ -55,24 +75,40 @@ class StudyApplyInfoFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0) ?: 0
-        val studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
 
         requireActivity().window.statusBarColor = ContextCompat.getColor(
             requireContext(),
-            colorList[studyImgColor!!.toIntOrNull() ?: 0]
+            colorList[studyImgColor.toIntOrNull() ?: 0]
         )
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getStudyInfo(studyInfoId)
             viewModel.uiState.collectLatest {
-                setStudyInfo(studyInfoId, studyImgColor, it)
+                setStudyInfo(studyImgColor, it)
             }
         }
 
         with(binding) {
+            studyApplySwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    launch { viewModel.getStudyInfo(studyInfoId) }
+                    launch { viewModel.getStudyRank(studyInfoId) }
+                    launch { viewModel.checkBookmarkStatus(studyInfoId) }
+                    studyApplySwipeRefreshLayout.isRefreshing = false
+                }
+            }
             backBtn.setOnClickListener {
                 requireActivity().finish()
+            }
+            studyGithubLink.setOnClickListener {
+                val textToCopy = studyGithubLinkText.text
+                val clipboard = requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("label", textToCopy)
+                clipboard.setPrimaryClip(clip)
+
+                copyOkImg.visibility = VISIBLE
+                copyOkImg.postDelayed({
+                    copyOkImg.visibility = GONE
+                }, 2000)
             }
             studyEnterBtn.setOnClickListener {
                 it.findNavController()
@@ -83,10 +119,7 @@ class StudyApplyInfoFragment : Fragment() {
             }
             bookmarkBtn.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.apply {
-                        setBookmarkStatus(studyInfoId)
-                        getStudyInfo(studyInfoId)
-                    }
+                    viewModel.setBookmarkStatus(studyInfoId)
                 }
             }
             // TODO: 스터디 공유 기능 추후 구현
@@ -95,8 +128,16 @@ class StudyApplyInfoFragment : Fragment() {
         }
     }
 
+    override fun onResume() {
+        super.onResume()
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch { viewModel.getStudyInfo(studyInfoId) }
+            launch { viewModel.getStudyRank(studyInfoId) }
+            launch { viewModel.checkBookmarkStatus(studyInfoId) }
+        }
+    }
+
     private fun setStudyInfo(
-        studyInfoId: Int,
         studyImgColor: String,
         studyMainInfoState: StudyMainInfoState
     ) {
@@ -105,6 +146,13 @@ class StudyApplyInfoFragment : Fragment() {
         with(binding) {
             val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
             studyImg.setImageResource(studyImgSrc)
+            if (studyInfo.currentMember == studyInfo.maximumMember) {
+                studyEnterBtn.isEnabled = false
+                studyEnterBtn.text = "모집 완료"
+            } else {
+                studyEnterBtn.isEnabled = true
+                studyEnterBtn.text = "스터디 신청하기"
+            }
             if (studyInfo.isWaiting) {
                 applyCancelBtn.visibility = VISIBLE
                 studyEnterBtn.visibility = GONE
@@ -122,7 +170,7 @@ class StudyApplyInfoFragment : Fragment() {
             teamRankFullText.text = getString(
                 R.string.study_team_rank_full,
                 studyMainInfoState.rank,
-                studyInfo.lastCommitDay
+                studyInfo.lastCommitDay ?: "없음"
             )
             studyGithubLinkText.text = getString(
                 R.string.study_github_link,

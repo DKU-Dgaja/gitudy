@@ -3,19 +3,18 @@ package com.takseha.presentation.viewmodel.profile
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.mystudy.SocialInfo
 import com.takseha.data.dto.profile.Bookmark
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
+import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class ProfileHomeViewModel : ViewModel() {
+class ProfileHomeViewModel : BaseViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
     private var gitudyBookmarksRepository = GitudyBookmarksRepository()
 
@@ -29,102 +28,124 @@ class ProfileHomeViewModel : ViewModel() {
     val bookmarkCursorIdxRes: LiveData<Long?>
         get() = _bookmarkCursorIdxRes
 
-    init {
-        loadInitialData()
-    }
-
-    private fun loadInitialData() = viewModelScope.launch {
-        try {
-            getUserProfileInfo()
-        } catch (e: Exception) {
-            Log.e("ProfileHomeViewModel", "Failed to load initial data", e)
-        }
-    }
-
     suspend fun getUserProfileInfo() {
-        val userProfileInfoResponse = gitudyAuthRepository.getUserInfoUpdatePage()
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.getUserInfoUpdatePage() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val userProfileInfo = response.body()!!
 
-        if (userProfileInfoResponse.isSuccessful) {
-            val userProfileInfo = userProfileInfoResponse.body()!!
-            val userGithubId = getUserInfo()?.githubId ?: ""
-            val userPushAlarmYn = getUserInfo()?.pushAlarmYn ?: false
-            _userUiState.update {
-                it.copy(
-                    name = userProfileInfo.name,
-                    githubId = userGithubId,
-                    pushAlarmYn = userPushAlarmYn,
-                    profileImageUrl = userProfileInfo.profileImageUrl,
-                    profilePublicYn = userProfileInfo.profilePublicYn,
-                    socialInfo = userProfileInfo.socialInfo
-                )
-            }
-        } else {
-            Log.e(
-                "ProfileHomeViewModel",
-                "userProfileInfoResponse status: ${userProfileInfoResponse.code()}\nuserProfileInfoResponse message: ${userProfileInfoResponse.errorBody()?.string()}"
-            )
-        }
-    }
-
-    private suspend fun getUserInfo(): UserInfoResponse? {
-        val userGithubIdResponse = gitudyAuthRepository.getUserInfo()
-
-        if (userGithubIdResponse.isSuccessful) {
-            return userGithubIdResponse.body()!!
-        } else {
-            Log.e(
-                "ProfileHomeViewModel",
-                "userGithubIdResponse status: ${userGithubIdResponse.code()}\nuserGithubIdResponse message: ${userGithubIdResponse.errorBody()?.string()}"
-            )
-        }
-        return null
-    }
-
-    suspend fun getBookmarks(cursorIdx: Long?, limit: Long) {
-        val bookmarksResponse = gitudyBookmarksRepository.getBookmarks(
-            cursorIdx,
-            limit
-        )
-        if (bookmarksResponse.isSuccessful) {
-            val bookmarksInfo = bookmarksResponse.body()!!
-
-            _bookmarkCursorIdxRes.value = bookmarksInfo.cursorIdx
-
-            if (bookmarksInfo.bookmarkInfoList.isEmpty()) {
-                _bookmarksState.update {
-                    it.copy(
-                        bookmarksInfo = bookmarksInfo.bookmarkInfoList,
-                        isBookmarksEmpty = true,
+                    _userUiState.update {
+                        it.copy(
+                            name = userProfileInfo.name,
+                            profileImageUrl = userProfileInfo.profileImageUrl,
+                            profilePublicYn = userProfileInfo.profilePublicYn,
+                            socialInfo = userProfileInfo.socialInfo
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "ProfileHomeViewModel",
+                        "userProfileInfoResponse status: ${response.code()}, userProfileInfoResponse error message: ${
+                            response.errorBody()?.string()
+                        }"
                     )
                 }
-            } else {
-                _bookmarksState.update { it.copy(
-                    bookmarksInfo = bookmarksInfo.bookmarkInfoList,
-                    isBookmarksEmpty = false
-                ) }
             }
-        } else {
-            Log.e(
-                "ProfileHomeViewModel",
-                "bookmarksResponse status: ${bookmarksResponse.code()}\nbookmarksResponse message: ${bookmarksResponse.message()}"
-            )
-        }
+        )
     }
 
-    fun setBookmarkStatus(studyInfoId: Int) = viewModelScope.launch {
-        val setBookmarkResponse = gitudyBookmarksRepository.setBookmarkStatus(
-            studyInfoId
-        )
 
-        if (setBookmarkResponse.isSuccessful) {
-            getBookmarks(null, 3)
-            Log.d("ProfileHomeViewModel", setBookmarkResponse.code().toString())
-        } else {
-            Log.e(
-                "ProfileHomeViewModel",
-                "setBookmarkResponse status: ${setBookmarkResponse.code()}\nsetBookmarkResponse message: ${setBookmarkResponse.errorBody()?.string()}"
-            )
-        }
+    suspend fun getUserInfo() {
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.getUserInfo() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val userGithubInfo = response.body()!!
+                    val userGithubId = userGithubInfo.githubId
+                    val userPushAlarmYn = userGithubInfo.pushAlarmYn
+
+                    _userUiState.update {
+                        it.copy(
+                            githubId = userGithubId,
+                            pushAlarmYn = userPushAlarmYn,
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "ProfileHomeViewModel",
+                        "userGithubInfoResponse status: ${response.code()}, userGithubInfoResponse error message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
+        )
+    }
+
+
+    suspend fun getBookmarks(cursorIdx: Long?, limit: Long) {
+        safeApiCall(
+            apiCall = {
+                gitudyBookmarksRepository.getBookmarks(
+                    cursorIdx,
+                    limit
+                )
+            },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val bookmarksInfo = response.body()!!
+
+                    _bookmarkCursorIdxRes.value = bookmarksInfo.cursorIdx
+
+                    if (bookmarksInfo.bookmarkInfoList.isEmpty()) {
+                        _bookmarksState.update {
+                            it.copy(
+                                bookmarksInfo = bookmarksInfo.bookmarkInfoList,
+                                isBookmarksEmpty = true,
+                            )
+                        }
+                    } else {
+                        _bookmarksState.update {
+                            it.copy(
+                                bookmarksInfo = bookmarksInfo.bookmarkInfoList,
+                                isBookmarksEmpty = false
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(
+                        "ProfileHomeViewModel",
+                        "bookmarksResponse status: ${response.code()}\nbookmarksResponse message: ${response.message()}"
+                    )
+                }
+            }
+        )
+    }
+
+    suspend fun setBookmarkStatus(studyInfoId: Int, cursorIdx: Long?, limit: Long) {
+        safeApiCall(
+            apiCall = {
+                gitudyBookmarksRepository.setBookmarkStatus(
+                    studyInfoId
+                )
+            },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    viewModelScope.launch {
+                        getBookmarks(cursorIdx, limit)
+                    }
+                    Log.d("ProfileHomeViewModel", response.code().toString())
+                } else {
+                    Log.e(
+                        "ProfileHomeViewModel",
+                        "setBookmarkResponse status: ${response.code()}\nsetBookmarkResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
+        )
     }
 }
 

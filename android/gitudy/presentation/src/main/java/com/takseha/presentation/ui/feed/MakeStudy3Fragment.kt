@@ -45,15 +45,17 @@ class MakeStudy3Fragment : Fragment() {
 
         viewNewStudyDetail()
         with(binding) {
-            makeStudyBtn.setOnClickListener {
-                viewModel.makeNewStudy()
-                it.findNavController()
-                    .navigate(R.id.action_makeStudy3Fragment_to_newStudyFragment)
-            }
+            setStudyImg(studyCnt)
             exitBtn.setOnClickListener {
                 requireActivity().finish()
             }
-            setStudyImg(studyCnt)
+            makeStudyBtn.setOnClickListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    viewModel.makeNewStudy()
+                    it.findNavController()
+                        .navigate(R.id.action_makeStudy3Fragment_to_newStudyFragment)
+                }
+            }
         }
     }
 

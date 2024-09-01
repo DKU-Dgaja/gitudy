@@ -20,6 +20,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityProfileEditBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
+import com.takseha.presentation.ui.common.SnackBarHelper
 import com.takseha.presentation.viewmodel.profile.ProfileEditViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -27,6 +28,7 @@ import kotlinx.coroutines.launch
 class ProfileEditActivity : AppCompatActivity() {
     private lateinit var binding: ActivityProfileEditBinding
     private val viewModel: ProfileEditViewModel by viewModels()
+    private lateinit var snackBarHelper: SnackBarHelper
     private val maxLength = 10
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -35,8 +37,20 @@ class ProfileEditActivity : AppCompatActivity() {
         setContentView(R.layout.activity_profile_edit)
         setBinding()
 
+        snackBarHelper = SnackBarHelper(this)
         lifecycleScope.launch {
-            viewModel.getUserProfileInfo()
+            viewModel.snackbarMessage.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        viewModel.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
+
+        viewModel.getUserProfileInfo()
+        lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 setUserInfo(it)
             }

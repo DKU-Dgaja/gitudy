@@ -1,10 +1,13 @@
 package com.takseha.presentation.ui.common
 
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
+import android.view.View
+import android.view.inputmethod.InputMethodManager
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.LayoutDialogSetBinding
 
@@ -27,6 +30,19 @@ class CustomSetDialog(context: Context) {
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
     }
 
+    fun setCancelBtnText(text: String) {
+        binding.cancelBtn.text = text
+    }
+
+    fun setCancelBtnTextColor(textColor: Int) {
+        binding.cancelBtn.setTextColor(textColor)
+
+    }
+
+    fun setConfirmBtnText(text: String) {
+        binding.confirmBtn.text = text
+    }
+
     fun setAlertText(text: String) {
         binding.alertText.text = text
     }
@@ -34,6 +50,7 @@ class CustomSetDialog(context: Context) {
     fun setOnCancelClickListener(listener: () -> Unit) {
         binding.cancelBtn.setOnClickListener {
             listener()
+            clearFocusFromActivityRoot()
             dialog.dismiss()
         }
     }
@@ -41,8 +58,16 @@ class CustomSetDialog(context: Context) {
     fun setOnConfirmClickListener(listener: () -> Unit) {
         binding.confirmBtn.setOnClickListener {
             listener()
+            clearFocusFromActivityRoot()
             dialog.dismiss()
         }
+    }
+
+    private fun clearFocusFromActivityRoot() {
+        val imm = binding.root.context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(binding.root.windowToken, 0) // 키보드 숨기기
+        val activityRootView = (binding.root.context as? Activity)?.window?.decorView?.findViewById<View>(android.R.id.content)
+        activityRootView?.clearFocus()
     }
 
     fun show() {

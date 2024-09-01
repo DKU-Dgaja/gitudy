@@ -2,7 +2,6 @@ package com.takseha.presentation.ui.feed
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -32,6 +31,10 @@ class FeedHomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        lifecycleScope.launch {
+            launch { viewModel.getFeedList(null, 50, "createdDateTime") }
+            launch { viewModel.getStudyCount() }
+        }
     }
 
     override fun onCreateView(
@@ -48,28 +51,38 @@ class FeedHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 with(binding) {
-                    if (it.studyCnt == null) {
+                    feedCnt.text = if (it.studyCnt == null) "" else it.studyCnt.toString()
+
+                    if (it.isFeedEmpty == null) {
                         loadingImg.visibility = VISIBLE
-                        feedCnt.text = ""
                     } else {
                         loadingImg.visibility = GONE
-                        feedCnt.text = it.studyCnt.toString()
-                    }
-                    if (!it.isFeedEmpty) {
-                        isNoStudyLayout.visibility = GONE
-                    } else {
-                        isNoStudyLayout.visibility = VISIBLE
+                        if (!it.isFeedEmpty!!) {
+                            isNoStudyLayout.visibility = GONE
+                        } else {
+                            isNoStudyLayout.visibility = VISIBLE
+                        }
                     }
                     setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
                 }
             }
         }
-        binding.makeNewStudyBtn.setOnClickListener {
-            val intent = Intent(requireContext(), MakeStudyActivity::class.java)
-            intent.putExtra("studyCnt", viewModel.uiState.value.studyCnt)
-            startActivity(intent)
+        with(binding) {
+            feedSwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    launch { viewModel.getFeedList(null, 50, "createdDateTime") }
+                    launch { viewModel.getStudyCount() }
+                    feedSwipeRefreshLayout.isRefreshing = false
+                }
+            }
+            makeNewStudyBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MakeStudyActivity::class.java)
+                intent.putExtra("studyCnt", viewModel.uiState.value.studyCnt)
+                startActivity(intent)
+            }
         }
     }
+
 
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
@@ -77,8 +90,8 @@ class FeedHomeFragment : Fragment() {
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getFeedList(null, 10, "createdDateTime")
-            Log.d("FeedHomeFragment", viewModel.uiState.value.toString())
+            launch { viewModel.getFeedList(null, 50, "createdDateTime") }
+            launch { viewModel.getStudyCount() }
         }
     }
 
@@ -87,7 +100,8 @@ class FeedHomeFragment : Fragment() {
         studyCategoryMappingMap: Map<Int, List<String>>
     ) {
         with(binding) {
-            val feedRVAdapter = FeedRVAdapter(requireContext(), studyList, studyCategoryMappingMap)
+            val feedRVAdapter =
+                FeedRVAdapter(requireContext(), studyList, studyCategoryMappingMap)
 
             feedList.adapter = feedRVAdapter
             feedList.layoutManager = LinearLayoutManager(requireContext())

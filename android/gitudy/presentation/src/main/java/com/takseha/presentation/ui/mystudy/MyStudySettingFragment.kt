@@ -26,6 +26,9 @@ class MyStudySettingFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
     }
 
     override fun onCreateView(
@@ -38,17 +41,15 @@ class MyStudySettingFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
-        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
-        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
-
         with(binding) {
             if (isLeader!!) {
                 studyQuitBtn.visibility = GONE
+                studyApplyMemberManageBtn.visibility = VISIBLE
                 studyEndBtn.visibility = VISIBLE
                 memberSettingBtn.visibility = VISIBLE
             } else {
                 studyQuitBtn.visibility = VISIBLE
+                studyApplyMemberManageBtn.visibility = GONE
                 studyEndBtn.visibility = GONE
                 memberSettingBtn.visibility = GONE
             }
@@ -60,6 +61,12 @@ class MyStudySettingFragment : Fragment() {
             }
             memberSettingBtn.setOnClickListener {
                 it.findNavController().navigate(R.id.action_myStudySettingFragment_to_myStudySettingMemberFragment)
+            }
+            studyApplyMemberManageBtn.setOnClickListener {
+                val bundle = Bundle().apply {
+                    putInt("studyInfoId", studyInfoId)
+                }
+                it.findNavController().navigate(R.id.action_myStudySettingFragment_to_studyApplyMemberListFragment, bundle)
             }
             studyQuitBtn.setOnClickListener {
                 it.findNavController().navigate(R.id.action_myStudySettingFragment_to_quitStudyFragment)
@@ -74,8 +81,8 @@ class MyStudySettingFragment : Fragment() {
         val customCheckDialog = CustomCheckDialog(requireContext())
         customCheckDialog.setAlertText(getString(R.string.study_end_alert_title))
         customCheckDialog.setAlertDetailText(getString(R.string.study_end_alert_detail))
-        customCheckDialog.setCancelBtnText(getString(R.string.alert_logout_cancel))
-        customCheckDialog.setConfirmBtnText(getString(R.string.alert_delete_account_confirm))
+        customCheckDialog.setCancelBtnText("취소")
+        customCheckDialog.setConfirmBtnText("종료하기")
         customCheckDialog.setOnConfirmClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
             }

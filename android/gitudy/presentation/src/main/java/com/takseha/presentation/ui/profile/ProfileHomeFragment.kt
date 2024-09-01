@@ -31,6 +31,11 @@ class ProfileHomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        lifecycleScope.launch {
+            launch { viewModel.getUserProfileInfo() }
+            launch { viewModel.getUserInfo() }
+            launch { viewModel.getBookmarks(null, 3) }
+        }
     }
 
     override fun onCreateView(
@@ -45,24 +50,12 @@ class ProfileHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getBookmarks(null, 3)
             viewModel.userUiState.collectLatest { userUiState ->
                 setUserInfo(userUiState)
-
                 with(binding) {
-                    editBtn.setOnClickListener {
-                        val intent = Intent(requireContext(), ProfileEditActivity::class.java)
-                        startActivity(intent)
-                    }
-
                     settingBtn.setOnClickListener {
                         val intent = Intent(requireContext(), SettingActivity::class.java)
                         intent.putExtra("pushAlarmYn", userUiState.pushAlarmYn)
-                        startActivity(intent)
-                    }
-
-                    alarmBtn.setOnClickListener {
-                        val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
                         startActivity(intent)
                     }
                 }
@@ -77,23 +70,31 @@ class ProfileHomeFragment : Fragment() {
                     binding.isNoBookmarkLayout.visibility = View.VISIBLE
                 }
                 setBookmarkList(bookmarksState.bookmarksInfo)
-                binding.bookmarkMoreBtn.setOnClickListener {
-                    val intent = Intent(requireContext(), BookmarksActivity::class.java)
-                    startActivity(intent)
-                }
+            }
+        }
+
+        with(binding) {
+            editBtn.setOnClickListener {
+                val intent = Intent(requireContext(), ProfileEditActivity::class.java)
+                startActivity(intent)
+            }
+            alarmBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
+                startActivity(intent)
+            }
+            binding.bookmarkMoreBtn.setOnClickListener {
+                val intent = Intent(requireContext(), BookmarksActivity::class.java)
+                startActivity(intent)
             }
         }
     }
 
     override fun onResume() {
         super.onResume()
-        setViewModel()
-    }
-
-    private fun setViewModel() {
-        viewLifecycleOwner.lifecycleScope.launch {
-            viewModel.getUserProfileInfo()  // 호출을 코루틴 내에서 수행
-            viewModel.getBookmarks(null, 3)
+        lifecycleScope.launch {
+            launch { viewModel.getUserProfileInfo() }
+            launch { viewModel.getUserInfo() }
+            launch { viewModel.getBookmarks(null, 3) }
         }
     }
 
@@ -153,7 +154,7 @@ class ProfileHomeFragment : Fragment() {
 
             override fun bookmarkClick(view: View, position: Int) {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId)
+                    viewModel.setBookmarkStatus(bookmarks[position].studyInfoId, null, 3)
                 }
             }
         }

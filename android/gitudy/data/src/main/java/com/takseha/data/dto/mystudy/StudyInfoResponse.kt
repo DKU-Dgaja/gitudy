@@ -16,7 +16,7 @@ data class StudyInfoResponse(
     @SerializedName("info")
     val info: String = "",
     @SerializedName("last_commit_day")
-    val lastCommitDay: String = "",
+    val lastCommitDay: String? = "",
     @SerializedName("maximum_member")
     val maximumMember: Int = 0,
     @SerializedName("modified_date_time")

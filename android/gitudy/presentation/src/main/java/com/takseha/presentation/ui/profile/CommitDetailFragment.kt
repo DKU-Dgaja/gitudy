@@ -1,41 +1,43 @@
 package com.takseha.presentation.ui.profile
 
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.bumptech.glide.Glide
 import com.takseha.data.dto.mystudy.Commit
+import com.takseha.data.dto.mystudy.CommitStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentCommitDetailBinding
+import com.takseha.presentation.ui.common.CustomSetDialog
+import com.takseha.presentation.viewmodel.mystudy.CommitDetailViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class CommitDetailFragment : Fragment() {
     private var _binding : FragmentCommitDetailBinding? = null
     private val binding get() = _binding!!
-
-    companion object {
-        private const val ARG_COMMIT = "commit"
-
-        fun newInstance(commit: Commit): CommitDetailFragment {
-            val fragment = CommitDetailFragment()
-            val args = Bundle()
-            args.putSerializable(ARG_COMMIT, commit)
-            fragment.arguments = args
-            return fragment
-        }
-    }
-
+    private val viewModel: CommitDetailViewModel by activityViewModels()
+    private var studyInfoId: Int = 0
+    private var isLeader: Boolean? = null
     private var commit: Commit? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         arguments?.let {
-            commit = it.getSerializable(ARG_COMMIT) as Commit?
+            commit = it.getSerializable("commit") as Commit?
         }
+        viewModel.getRepositoryInfo(studyInfoId)
     }
 
     override fun onCreateView(
@@ -48,26 +50,99 @@ class CommitDetailFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND_BLACK)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.repositoryInfoState.collectLatest { repositoryInfo ->
+                with(binding) {
+                    if (isLeader!!) {
+                        if (commit?.status != CommitStatus.COMMIT_APPROVAL && commit?.status != CommitStatus.COMMIT_REJECTION) {
+                            commitManageBtn.visibility = VISIBLE
+                        } else {
 
-        with(binding) {
-            commitTitle.text = commit?.message
-            Glide.with(this@CommitDetailFragment)
-                .load(commit?.profileImageUrl)
-                .error(R.drawable.logo_profile_default)
-                .into(profileImg)
-            nickname.text = commit?.name
-            githubLinkBtn.setOnClickListener {
-//                val bundle = Bundle().apply {
-//                    putSerializable("githubUrl", commit.)
-//                }
-//                Log.d("ToDoFragment", bundle.toString())
-//                it.findNavController().navigate(R.id.action_toDoFragment_to_commitDetailFragment, bundle)
-            }
-            backBtn.setOnClickListener {
-                it.findNavController().popBackStack()
+                        }
+                    } else {
+                        commitManageBtn.visibility = GONE
+                    }
+
+                    commitTitle.text = commit?.message
+                    commitInfo.text = getString(R.string.study_to_do_commit_info, commit?.name, commit?.commitDate,)
+                    when (commit?.status) {
+                        CommitStatus.COMMIT_APPROVAL -> {
+                            commitStatus.text = "승인완료"
+                            commitStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_BLUE))
+                        }
+                        CommitStatus.COMMIT_DELETE -> {
+                            commitStatus.text = "커밋삭제"
+                            commitStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.GS_500))
+                        }
+                        CommitStatus.COMMIT_REJECTION -> {
+                            commitStatus.text = "커밋반려"
+                            commitStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_RED))
+                        }
+                        CommitStatus.COMMIT_WAITING -> {
+                            commitStatus.text = "승인대기"
+                            commitStatus.setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_GREEN))
+                        }
+                        null -> commitStatus.text = "승인완료"
+                    }
+                    Glide.with(this@CommitDetailFragment)
+                        .load(commit?.profileImageUrl)
+                        .error(R.drawable.logo_profile_default)
+                        .into(profileImg)
+                    nickname.text = commit?.name
+                    githubLinkBtn.setOnClickListener {
+                        val githubUrl = getString(R.string.commit_github_url, repositoryInfo.owner, repositoryInfo.name, commit?.commitSha)
+                        val bundle = Bundle().apply {
+                            putString("githubUrl", githubUrl)
+                        }
+                        it.findNavController().navigate(R.id.action_commitDetailFragment_to_commitWebViewFragment, bundle)
+                    }
+                    backBtn.setOnClickListener {
+                        it.findNavController().popBackStack()
+                    }
+                    commitManageBtn.setOnClickListener {
+                        showCommitManageDialog(studyInfoId, commit!!.id)
+                    }
+                    postBtn.setOnClickListener {
+
+                    }
+                }
             }
         }
+    }
+
+    private fun showCommitManageDialog(studyInfoId: Int, commitId: Int) {
+        val customSetDialog = CustomSetDialog(requireContext())
+        customSetDialog.setAlertText(getString(R.string.commit_approve))
+        customSetDialog.setConfirmBtnText("승인")
+        customSetDialog.setCancelBtnText("반려")
+        customSetDialog.setCancelBtnTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_RED))
+        customSetDialog.setOnConfirmClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.approveCommit(studyInfoId, commitId)
+                with(binding) {
+                    commitManageBtn.visibility = GONE
+                    commitStateText.text = "승인완료"
+                    commitCheckedImg.visibility = VISIBLE
+                    commitStatus.apply {
+                        text = "승인완료"
+                        setTextColor(ContextCompat.getColor(requireContext(), R.color.BASIC_BLUE))
+                    }
+                }
+            }
+        }
+        customSetDialog.setOnCancelClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.rejectCommit(studyInfoId, "", commitId)
+                with(binding) {
+                    commitManageBtn.visibility = GONE
+                    commitStateText.text = "커밋반려"
+                    commitCheckedImg.visibility = VISIBLE
+                    commitStatus.text = "커밋반려"
+                }
+            }
+        }
+        customSetDialog.show()
     }
 
     override fun onDestroyView() {

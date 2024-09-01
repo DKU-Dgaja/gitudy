@@ -8,10 +8,11 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.auth.login.RoleStatus
 import com.takseha.data.token.TokenManager
+import com.takseha.presentation.viewmodel.common.BaseApplicationViewModel
 import kotlinx.coroutines.launch
 
 // viewModel에서 context 참조 필요한 경우 AndroidViewModel(application) 상속!
-class LoginWebViewViewModel(application: Application) : AndroidViewModel(application) {
+class LoginWebViewViewModel(application: Application) : BaseApplicationViewModel(application) {
     private lateinit var tokenManager: TokenManager
 
     private var _role = MutableLiveData<RoleStatus>()
@@ -20,14 +21,16 @@ class LoginWebViewViewModel(application: Application) : AndroidViewModel(applica
 
     fun saveAllTokens(platformType: String, code: String, state: String) = viewModelScope.launch {
         tokenManager = TokenManager(getApplication())
-
-        val tokenResponse = tokenManager.getLoginTokens(platformType, code, state)
-
-        if (tokenResponse != null) {
-            _role.value = tokenResponse.role
-            Log.d("LoginWebViewViewModel", "access token: ${tokenResponse.accessToken}\nrefresh token: ${tokenResponse.refreshToken}\nrole: ${role.value}")
-        } else {
-            Log.e("LoginWebViewViewModel", "login token 생성 실패")
-        }
+        safeApiCall(
+            apiCall = { tokenManager.getLoginTokens(platformType, code, state) },
+            onSuccess = { response ->
+                if (response != null) {
+                    _role.value = response.role
+                    Log.d("LoginWebViewViewModel", "access token: ${response.accessToken}\nrefresh token: ${response.refreshToken}\nrole: ${role.value}")
+                } else {
+                    Log.e("LoginWebViewViewModel", "login token 생성 실패")
+                }
+            }
+        )
     }
 }

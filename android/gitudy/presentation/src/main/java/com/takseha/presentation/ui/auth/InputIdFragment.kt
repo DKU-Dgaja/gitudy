@@ -27,6 +27,8 @@ class InputIdFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
     }
 
     override fun onCreateView(
@@ -47,7 +49,8 @@ class InputIdFragment : Fragment() {
                     start: Int,
                     count: Int,
                     after: Int
-                ) {}
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val githubIdLength = inputIdEditText.length()
@@ -67,7 +70,6 @@ class InputIdFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     var githubId = inputIdEditText.text.toString()
                     viewModel.checkGithubId(githubId)
-
                     val isCorrectId = viewModel.isCorrectId.value
                     Log.e("InputIdFragment", isCorrectId.toString())
                     if (isCorrectId == true) {
@@ -77,7 +79,8 @@ class InputIdFragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.GS_500
-                                ))
+                                )
+                            )
                         }
                         isIdOkBtn.visibility = GONE
                         validationCheckedImg.visibility = VISIBLE
@@ -89,7 +92,8 @@ class InputIdFragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
                         confirmBtn.isEnabled = false
                     }
@@ -104,7 +108,6 @@ class InputIdFragment : Fragment() {
                         setFCMToken(fcmToken)
                         getRegisterTokens()
                     }
-                    Log.d("InputIdFragment", viewModel.registerInfoState.value.toString())
                     view.findNavController()
                         .navigate(R.id.action_inputIdFragment_to_loginCompleteFragment)
                 }

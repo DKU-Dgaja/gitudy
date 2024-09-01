@@ -17,6 +17,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentUpdateTodoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
@@ -196,8 +197,10 @@ class UpdateTodoFragment : Fragment() {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.to_do_update))
         customSetDialog.setOnConfirmClickListener {
-            viewModel.updateTodo(studyInfoId, todoId, title, todoLink, detail, todoDate)
-            view?.findNavController()?.popBackStack()
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.updateTodo(studyInfoId, todoId, title, todoLink, detail, todoDate)
+                findNavController().popBackStack()
+            }
         }
         customSetDialog.show()
     }

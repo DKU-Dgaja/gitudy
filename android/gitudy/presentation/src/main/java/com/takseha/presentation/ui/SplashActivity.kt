@@ -1,5 +1,6 @@
 package com.takseha.presentation.ui
 
+import SplashViewModel
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
@@ -14,13 +15,16 @@ import com.takseha.data.sharedPreferences.SPKey
 import com.takseha.presentation.R
 import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.ui.auth.LoginActivity
+import com.takseha.presentation.ui.common.SnackBarHelper
 import com.takseha.presentation.ui.home.MainHomeActivity
-import com.takseha.presentation.viewmodel.auth.SplashViewModel
+import com.takseha.presentation.viewmodel.common.BaseViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
     private val viewModel: SplashViewModel by viewModels()
     private lateinit var prefs: SP
+    private lateinit var snackBarHelper: SnackBarHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,15 +32,28 @@ class SplashActivity : AppCompatActivity() {
         prefs = SP(baseContext)
         window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
 
+        snackBarHelper = SnackBarHelper(this)
+        lifecycleScope.launch {
+            viewModel.snackbarMessage.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        viewModel.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
+
         lifecycleScope.launch {
             viewModel.checkAvailableToken()
             val fcmToken = MyFirebaseMessagingService.getFirebaseToken().toString()
             Log.d("SplashActivity", "access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\nrefresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}\nfcm token: $fcmToken")
-        }
-
-        viewModel.availableTokenCheck.observe(this@SplashActivity) {
-            setMainHome(it)
-            Log.d("SplashActivity", it.toString())
+            viewModel.availableTokenCheck.collectLatest {
+                if (it != null) {
+                    setMainHome(it)
+                    Log.d("SplashActivity", it.toString())
+                }
+            }
         }
     }
 

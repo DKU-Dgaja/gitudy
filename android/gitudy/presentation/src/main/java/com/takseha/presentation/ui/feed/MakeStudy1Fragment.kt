@@ -28,8 +28,10 @@ class MakeStudy1Fragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MakeStudyViewModel by activityViewModels()
     private var categories = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getAllCategory()
     }
 
     override fun onCreateView(
@@ -43,7 +45,6 @@ class MakeStudy1Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getAllCategory()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categoryState.collectLatest {
                 setCategoryList(it)

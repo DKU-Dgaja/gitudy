@@ -6,17 +6,23 @@ import android.net.UrlQuerySanitizer
 import android.os.Bundle
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.takseha.data.dto.auth.login.LoginRequest
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityLoginWebviewBinding
+import com.takseha.presentation.ui.common.SnackBarHelper
 import com.takseha.presentation.viewmodel.auth.LoginWebViewViewModel
+import com.takseha.presentation.viewmodel.common.BaseApplicationViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class LoginWebViewActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginWebviewBinding
-    private lateinit var viewModel: LoginWebViewViewModel
+    private val viewModel: LoginWebViewViewModel by viewModels()
+    private lateinit var snackBarHelper: SnackBarHelper
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,7 +30,17 @@ class LoginWebViewActivity : AppCompatActivity() {
         window.statusBarColor = ContextCompat.getColor(this, R.color.WHITE)
         setBinding()
 
-        viewModel = ViewModelProvider(this)[LoginWebViewViewModel::class.java]
+        snackBarHelper = SnackBarHelper(this)
+        lifecycleScope.launch {
+            (viewModel as? BaseApplicationViewModel)?.snackbarMessage?.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        (viewModel as? BaseApplicationViewModel)?.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
 
         binding.loginWebView.run {
             webViewClient = LoginWebViewClient()

@@ -55,7 +55,7 @@ class DetailCommentListRVAdapter(val context: Context, val commentList: List<Stu
 
         holder.writerName.text = commentList[position].userInfo.name
         val localDateTime = LocalDateTime.parse(commentList[position].commentSetDate)
-        holder.date.text = UTCToKoreanTimeConverter().convertToKoreaDate(localDateTime)
+        holder.date.text = UTCToKoreanTimeConverter().convertToKoreaTime(localDateTime)
         holder.content.text = commentList[position].content
 
         if (commentList[position].isMyComment) {
