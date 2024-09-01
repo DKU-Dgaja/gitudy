@@ -5,11 +5,16 @@
     <TextView
         android:id="@+id/categoryName"
         style="@style/B6_2"
-        android:layout_width="90dp"
-        android:layout_height="36dp"
-        android:background="@drawable/box_non_stroke_r8"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box_non_stroke_r8_no_size"
         android:backgroundTint="#F4F5F5"
         android:gravity="center"
-        android:layout_marginBottom="5dp"
+        android:layout_marginBottom="13dp"
+        android:layout_marginEnd="12dp"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="9dp"
+        android:paddingBottom="9dp"
         android:textColor="@color/GS_400" />
 </layout>

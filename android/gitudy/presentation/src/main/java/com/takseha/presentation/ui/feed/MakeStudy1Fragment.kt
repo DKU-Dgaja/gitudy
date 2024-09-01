@@ -14,7 +14,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.takseha.data.dto.feed.Category
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.AllCategoryRVAdapter
@@ -69,9 +69,11 @@ class MakeStudy1Fragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(s: Editable?) {
-                    titleTextLength.text = getString(R.string.text_length, studyNameEditText.text.length, maxLength)
+                    titleTextLength.text =
+                        getString(R.string.text_length, studyNameEditText.text.length, maxLength)
                     title = studyNameEditText.text.toString()
-                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
+                    nextBtn.isEnabled =
+                        title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                 }
             })
             studyDetailEditText.addTextChangedListener(object : TextWatcher {
@@ -87,7 +89,8 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     detail = studyDetailEditText.text.toString()
-                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
+                    nextBtn.isEnabled =
+                        title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                 }
             })
             studyGithubLinkEditText.addTextChangedListener(object : TextWatcher {
@@ -107,7 +110,8 @@ class MakeStudy1Fragment : Fragment() {
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.GS_400
-                            ))
+                            )
+                        )
                     }
                     validationCheckedImg.visibility = GONE
                     isValidNameBtn.visibility = VISIBLE
@@ -139,23 +143,28 @@ class MakeStudy1Fragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
+
                         2 -> repoDesc.apply {
                             text = "영문, 숫자, ., -, _ 만 입력해주세요"
                             setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
+
                         3 -> repoDesc.apply {
                             text = "., -, _ 로 끝나지 않는 이름을 입력해주세요"
                             setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
                     }
                 } else {
@@ -168,6 +177,7 @@ class MakeStudy1Fragment : Fragment() {
                                     repoDesc.visibility = GONE
                                     waitImg.visibility = VISIBLE
                                 }
+
                                 true -> {
                                     repoDesc.visibility = VISIBLE
                                     waitImg.visibility = GONE
@@ -177,12 +187,15 @@ class MakeStudy1Fragment : Fragment() {
                                             ContextCompat.getColor(
                                                 requireContext(),
                                                 R.color.BASIC_GREEN
-                                            ))
+                                            )
+                                        )
                                     }
                                     validationCheckedImg.visibility = VISIBLE
                                     isValidNameBtn.visibility = GONE
-                                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
+                                    nextBtn.isEnabled =
+                                        title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                                 }
+
                                 false -> {
                                     repoDesc.visibility = VISIBLE
                                     waitImg.visibility = GONE
@@ -192,7 +205,8 @@ class MakeStudy1Fragment : Fragment() {
                                             ContextCompat.getColor(
                                                 requireContext(),
                                                 R.color.BASIC_RED
-                                            ))
+                                            )
+                                        )
                                     }
                                     nextBtn.isEnabled = false
                                 }
@@ -205,7 +219,9 @@ class MakeStudy1Fragment : Fragment() {
             // TODO : edittext 키보드 위로 올라가도록 하는 기능 구현
             // TODO : 카테고리 status도 state에 저장하는 기능 구현
             nextBtn.setOnClickListener {
-                val categoryIdList = (categoryListRecyclerView.adapter as? AllCategoryRVAdapter)?.getSelectedItems() ?: emptyList()
+                val categoryIdList =
+                    (categoryListRecyclerView.adapter as? AllCategoryRVAdapter)?.getSelectedItems()
+                        ?: emptyList()
                 viewModel.setStudyIntro(title, detail, githubRepo, categoryIdList)
                 val bundle = Bundle().apply {
                     putStringArrayList("categories", categories)
@@ -224,13 +240,17 @@ class MakeStudy1Fragment : Fragment() {
             val allCategoryRVAdapter = AllCategoryRVAdapter(requireContext(), categoryList)
 
             categoryListRecyclerView.adapter = allCategoryRVAdapter
-            categoryListRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+            categoryListRecyclerView.layoutManager =
+                StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL)
 
             clickCategoryItem(allCategoryRVAdapter, categoryList)
         }
     }
 
-    private fun clickCategoryItem(allCategoryRVAdapter: AllCategoryRVAdapter, categoryList: List<Category>) {
+    private fun clickCategoryItem(
+        allCategoryRVAdapter: AllCategoryRVAdapter,
+        categoryList: List<Category>
+    ) {
         allCategoryRVAdapter.itemClick = object : AllCategoryRVAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
                 categories.add(categoryList[position].name)

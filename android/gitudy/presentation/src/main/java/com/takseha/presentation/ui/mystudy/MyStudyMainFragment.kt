@@ -120,17 +120,12 @@ class MyStudyMainFragment : Fragment() {
                 view.findNavController()
                     .navigate(R.id.action_myStudyMainFragment_to_myStudySettingFragment, bundle)
             }
-            studyGithubLink.setOnClickListener {
+            copyBtn.setOnClickListener {
                 val textToCopy = studyGithubLinkText.text
                 val clipboard =
                     requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
                 val clip = ClipData.newPlainText("label", textToCopy)
                 clipboard.setPrimaryClip(clip)
-
-                copyOkImg.visibility = VISIBLE
-                copyOkImg.postDelayed({
-                    copyOkImg.visibility = GONE
-                }, 2000)
             }
             todoMoreBtn.setOnClickListener {
                 view.findNavController()
