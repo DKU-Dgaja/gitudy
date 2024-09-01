@@ -75,6 +75,11 @@ class StudyApplyMemberListFragment : Fragment() {
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.WHITE)
         viewModel.getStudyApplyMemberList(studyInfoId, null, 50)
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.uiState.collectLatest {
+                Log.d("StudyApplyMemberProfileViewModel", it.toString())
+            }
+        }
     }
 
     private fun setStudyApplyMemberList(studyApplyMemberList: List<StudyApplyMember>) {
