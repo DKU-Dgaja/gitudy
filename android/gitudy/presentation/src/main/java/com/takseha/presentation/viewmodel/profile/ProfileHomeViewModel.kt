@@ -4,13 +4,11 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.mystudy.SocialInfo
 import com.takseha.data.dto.profile.Bookmark
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
 import com.takseha.presentation.viewmodel.common.BaseViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -30,29 +28,16 @@ class ProfileHomeViewModel : BaseViewModel() {
     val bookmarkCursorIdxRes: LiveData<Long?>
         get() = _bookmarkCursorIdxRes
 
-    fun getUserProfileInfo() = viewModelScope.launch {
+    suspend fun getUserProfileInfo() {
         safeApiCall(
-            apiCall = {
-                val userProfileInfoResponse = async { gitudyAuthRepository.getUserInfoUpdatePage() }
-                val userGithubInfoResponse = async { gitudyAuthRepository.getUserInfo() }
-
-                Pair(
-                    userProfileInfoResponse.await(),
-                    userGithubInfoResponse.await()
-                )
-            },
-            onSuccess = { (userProfileInfoResponse, userGithubInfoResponse) ->
-                if (userProfileInfoResponse.isSuccessful && userGithubInfoResponse.isSuccessful) {
-                    val userProfileInfo = userProfileInfoResponse.body()!!
-                    val userGithubInfo = userGithubInfoResponse.body()!!
-                    val userGithubId = userGithubInfo.githubId
-                    val userPushAlarmYn = userGithubInfo.pushAlarmYn
+            apiCall = { gitudyAuthRepository.getUserInfoUpdatePage() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val userProfileInfo = response.body()!!
 
                     _userUiState.update {
                         it.copy(
                             name = userProfileInfo.name,
-                            githubId = userGithubId,
-                            pushAlarmYn = userPushAlarmYn,
                             profileImageUrl = userProfileInfo.profileImageUrl,
                             profilePublicYn = userProfileInfo.profilePublicYn,
                             socialInfo = userProfileInfo.socialInfo
@@ -61,8 +46,8 @@ class ProfileHomeViewModel : BaseViewModel() {
                 } else {
                     Log.e(
                         "ProfileHomeViewModel",
-                        "userProfileInfoResponse status: ${userProfileInfoResponse.code()}, userProfileInfoResponse error message: ${
-                            userProfileInfoResponse.errorBody()?.string()
+                        "userProfileInfoResponse status: ${response.code()}, userProfileInfoResponse error message: ${
+                            response.errorBody()?.string()
                         }"
                     )
                 }
@@ -71,34 +56,35 @@ class ProfileHomeViewModel : BaseViewModel() {
     }
 
 
-    private suspend fun getUserInfo(): UserInfoResponse? {
-        return try {
-            val response = gitudyAuthRepository.getUserInfo()
-            if (response.isSuccessful) {
-                Log.d(
-                    "ProfileHomeViewModel",
-                    "userGithubIdResponse status: ${response.code()}\nuserGithubIdResponse message: ${
-                        response.errorBody()?.string()
-                    }"
-                )
-                response.body()
-            } else {
-                Log.e(
-                    "ProfileHomeViewModel",
-                    "userGithubIdResponse status: ${response.code()}\nuserGithubIdResponse message: ${
-                        response.errorBody()?.string()
-                    }"
-                )
-                null
+    suspend fun getUserInfo() {
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.getUserInfo() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val userGithubInfo = response.body()!!
+                    val userGithubId = userGithubInfo.githubId
+                    val userPushAlarmYn = userGithubInfo.pushAlarmYn
+
+                    _userUiState.update {
+                        it.copy(
+                            githubId = userGithubId,
+                            pushAlarmYn = userPushAlarmYn,
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "ProfileHomeViewModel",
+                        "userGithubInfoResponse status: ${response.code()}, userGithubInfoResponse error message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("ProfileHomeViewModel", "Error fetching getUserInfo()", e)
-            null
-        }
+        )
     }
 
 
-    fun getBookmarks(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+    suspend fun getBookmarks(cursorIdx: Long?, limit: Long) {
         safeApiCall(
             apiCall = {
                 gitudyBookmarksRepository.getBookmarks(
@@ -137,7 +123,7 @@ class ProfileHomeViewModel : BaseViewModel() {
         )
     }
 
-    suspend fun setBookmarkStatus(studyInfoId: Int) {
+    suspend fun setBookmarkStatus(studyInfoId: Int, cursorIdx: Long?, limit: Long) {
         safeApiCall(
             apiCall = {
                 gitudyBookmarksRepository.setBookmarkStatus(
@@ -146,7 +132,9 @@ class ProfileHomeViewModel : BaseViewModel() {
             },
             onSuccess = { response ->
                 if (response.isSuccessful) {
-                    getBookmarks(null, 3)
+                    viewModelScope.launch {
+                        getBookmarks(cursorIdx, limit)
+                    }
                     Log.d("ProfileHomeViewModel", response.code().toString())
                 } else {
                     Log.e(

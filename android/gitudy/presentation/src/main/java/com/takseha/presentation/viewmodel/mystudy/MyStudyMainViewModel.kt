@@ -29,61 +29,30 @@ class MyStudyMainViewModel() : BaseViewModel() {
     private val _commentState = MutableStateFlow<List<StudyComment>>(emptyList())
     val commentState = _commentState.asStateFlow()
 
-    fun getMyStudyInfo(studyInfoId: Int) = viewModelScope.launch {
+    suspend fun getMyStudyInfo(studyInfoId: Int) {
         safeApiCall(
-            apiCall = {
-                val myStudyInfoResponse = async { gitudyStudyRepository.getStudyInfo(studyInfoId) }
-                val urgentTodoResponse = async { gitudyStudyRepository.getTodoProgress(studyInfoId) }
-                val rankAndScoreResponse = async { gitudyStudyRepository.getStudyRank(studyInfoId) }
-                val studyMemberListResponse = async { gitudyMemberRepository.getStudyMemberList(studyInfoId, true) }
-                val convention = null // convention 값은 null
-
-                Quintuple(
-                    myStudyInfoResponse.await(),
-                    urgentTodoResponse.await(),
-                    rankAndScoreResponse.await(),
-                    studyMemberListResponse.await(),
-                    convention
-                )
-            },
-            onSuccess = { (
-                              myStudyInfoResponse,
-                              urgentTodoResponse,
-                              rankAndScoreResponse,
-                              studyMemberListResponse,
-                              convention
-                          ) ->
-                if (myStudyInfoResponse.isSuccessful
-                    && urgentTodoResponse.isSuccessful
-                    && rankAndScoreResponse.isSuccessful
-                    && studyMemberListResponse.isSuccessful) {
-                    val myStudyInfo = myStudyInfoResponse.body()!!
-                    val urgentTodo = urgentTodoResponse.body()!!.todo
-                    val rankAndScore = rankAndScoreResponse.body()!!
-                    val studyMemberList = studyMemberListResponse.body()!!
+            apiCall = { gitudyStudyRepository.getStudyInfo(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val myStudyInfo = response.body()!!
 
                     _myStudyState.update {
                         it.copy(
                             myStudyInfo = myStudyInfo,
-                            todoInfo = urgentTodo,
-                            conventionInfo = convention,
-                            studyMemberListInfo = studyMemberList,
-                            rankAndScore = rankAndScore,
-                            isUrgentTodo = urgentTodo != null
+                            conventionInfo = null
                         )
                     }
-                    Log.d("MyStudyMainViewModel", "_myStudyState: ${_myStudyState.value}")
                 } else {
                     Log.e(
                         "MyStudyMainViewModel",
-                        "myStudyInfoResponse status: ${myStudyInfoResponse.code()}\nmyStudyInfoResponse message: ${myStudyInfoResponse.errorBody()?.string()}"
+                        "myStudyInfoResponse status: ${response.code()}\nmyStudyInfoResponse message: ${response.errorBody()?.string()}"
                     )
                 }
             }
         )
     }
 
-    fun getStudyComments(studyInfoId: Int, limit: Long) = viewModelScope.launch {
+    suspend fun getStudyComments(studyInfoId: Int, limit: Long) {
         safeApiCall(
             apiCall = { gitudyStudyRepository.getStudyComments(studyInfoId, null, limit) },
             onSuccess = { response ->
@@ -101,26 +70,34 @@ class MyStudyMainViewModel() : BaseViewModel() {
         )
     }
 
-    private suspend fun getUrgentTodo(studyInfoId: Int): Todo? {
-        return try {
-            val response = gitudyStudyRepository.getTodoProgress(
-                studyInfoId
-            )
-            if (response.isSuccessful) {
-                response.body()?.todo
-            } else {
-                Log.e(
-                    "MyStudyMainViewModel",
-                    "urgentTodoResponse status: ${response.code()}\nurgentTodoResponse message: ${
-                        response.errorBody()?.string()
-                    }"
-                )
-                null
+    suspend fun getUrgentTodo(studyInfoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getTodoProgress(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val urgentTodo = response.body()!!.todo
+
+                    if (urgentTodo != null) {
+                        _myStudyState.update {
+                            it.copy(
+                                todoInfo = urgentTodo
+                            )
+                        }
+                    } else {
+                        _myStudyState.update {
+                            it.copy(
+                                isUrgentTodo = false
+                            )
+                        }
+                    }
+                } else {
+                    Log.e(
+                        "MyStudyMainViewModel",
+                        "urgentTodoResponse status: ${response.code()}\nurgentTodoResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("MyStudyMainViewModel", "Error fetching getUserInfo()", e)
-            null
-        }
+        )
     }
 
     private suspend fun getConvention(studyInfoId: Int): StudyConvention? {
@@ -151,44 +128,48 @@ class MyStudyMainViewModel() : BaseViewModel() {
         return null
     }
 
-    private suspend fun getStudyMemberList(studyInfoId: Int): List<StudyMember> {
-        return try {
-            var response =  gitudyMemberRepository.getStudyMemberList(studyInfoId, true)
-            if (response.isSuccessful) {
-                response.body()!!
-            } else {
-                Log.e(
-                    "MyStudyMainViewModel",
-                    "studyMemberListResponse status: ${response.code()}\nstudyMemberListResponse message: ${
-                        response.errorBody()?.string()
-                    }"
-                )
-                listOf()
+    suspend fun getStudyMemberList(studyInfoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyMemberRepository.getStudyMemberList(studyInfoId, true) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val studyMemberList = response.body()!!
+
+                    _myStudyState.update {
+                        it.copy(
+                            studyMemberListInfo = studyMemberList
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "MyStudyMainViewModel",
+                        "studyMemberListResponse status: ${response.code()}\nstudyMemberListResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("ProfileHomeViewModel", "Error fetching getUserInfo()", e)
-            listOf()
-        }
+        )
     }
 
-    private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
-        return try {
-            val response = gitudyStudyRepository.getStudyRank(studyInfoId)
-            if (response.isSuccessful) {
-                response.body()!!
-            } else {
-                Log.e(
-                    "MyStudyMainViewModel",
-                    "studyRankResponse status: ${response.code()}\nstudyRankResponse message: ${
-                        response.errorBody()?.string()
-                    }"
-                )
-                null
+    suspend fun getStudyRankAndScore(studyInfoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getStudyRank(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val studyRankAndScore = response.body()!!
+
+                    _myStudyState.update {
+                        it.copy(
+                            rankAndScore = studyRankAndScore
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "MyStudyMainViewModel",
+                        "studyRankAndScoreResponse status: ${response.code()}\nstudyRankAndScoreResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("MyStudyMainViewModel", "Error fetching getUserInfo()", e)
-            null
-        }
+        )
     }
 
     suspend fun makeStudyComment(studyInfoId: Int, content: String, limit: Long) {
@@ -196,7 +177,9 @@ class MyStudyMainViewModel() : BaseViewModel() {
             apiCall = { gitudyStudyRepository.makeStudyComment(studyInfoId, content) },
             onSuccess = { response ->
                 if (response.isSuccessful) {
-                    getStudyComments(studyInfoId, limit)
+                    viewModelScope.launch {
+                        getStudyComments(studyInfoId, limit)
+                    }
                     Log.d("MyStudyMainViewModel", response.code().toString())
                 } else {
                     Log.e(

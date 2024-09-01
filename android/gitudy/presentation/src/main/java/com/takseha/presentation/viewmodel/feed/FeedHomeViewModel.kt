@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
@@ -29,44 +28,43 @@ class FeedHomeViewModel : BaseViewModel() {
     val cursorIdxRes: LiveData<Long?>
         get() = _cursorIdxRes
 
-    fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) = viewModelScope.launch {
+    suspend fun getFeedList(cursorIdx: Long?, limit: Long, sortBy: String) = viewModelScope.launch {
         safeApiCall(
             apiCall = {
-                val feedListResponseDeferred = async { gitudyStudyRepository.getStudyList(cursorIdx, limit, sortBy, myStudy = false) }
-                val studyCountResponseDeferred = async { gitudyStudyRepository.getStudyCount(false) }
-
-                Pair(feedListResponseDeferred.await(), studyCountResponseDeferred.await())
+                gitudyStudyRepository.getStudyList(
+                    cursorIdx,
+                    limit,
+                    sortBy,
+                    myStudy = false
+                )
             },
-            onSuccess = { (feedListResponse, studyCountResponse) ->
-                if (feedListResponse.isSuccessful && studyCountResponse.isSuccessful) {
-                    val feedStudyListInfo = feedListResponse.body()!!
-                    val studyCnt = studyCountResponse.body()!!.count
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val feedStudyListInfo = response.body()!!
                     _cursorIdxRes.value = feedStudyListInfo.cursorIdx
 
                     if (feedStudyListInfo.studyInfoList.isEmpty()) {
                         _uiState.update {
                             it.copy(
-                                isFeedEmpty = true,
-                                studyCnt = studyCnt
+                                isFeedEmpty = true
                             )
                         }
                     } else {
                         viewModelScope.launch {
-                            // 비동기 작업을 직접 수행
-                            val studiesInfoWithBookmarkStatus = feedStudyListInfo.studyInfoList.map { study ->
-                                val bookmarkStatus = checkBookmarkStatus(study.id)
-                                val rank = getStudyRank(study.id)?.ranking ?: 0
-                                StudyInfoWithBookmarkStatus(
-                                    studyInfo = study,
-                                    rank = rank,
-                                    isMyBookmark = bookmarkStatus
-                                )
-                            }
+                            val studiesInfoWithBookmarkStatus =
+                                feedStudyListInfo.studyInfoList.map { study ->
+                                    val bookmarkStatus = async { checkBookmarkStatus(study.id) }
+                                    val rank = async { getStudyRank(study.id)?.ranking ?: 0 }
+                                    StudyInfoWithBookmarkStatus(
+                                        studyInfo = study,
+                                        rank = rank.await(),
+                                        isMyBookmark = bookmarkStatus.await()
+                                    )
+                                }
                             _uiState.update {
                                 it.copy(
                                     studyInfoList = studiesInfoWithBookmarkStatus,
                                     studyCategoryMappingMap = feedStudyListInfo.studyCategoryMappingMap,
-                                    studyCnt = studyCnt,
                                     isFeedEmpty = false
                                 )
                             }
@@ -75,7 +73,9 @@ class FeedHomeViewModel : BaseViewModel() {
                 } else {
                     Log.e(
                         "FeedHomeViewModel",
-                        "feedListResponse status: ${feedListResponse.code()}\nfeedListResponse message: ${feedListResponse.errorBody()?.string()}"
+                        "feedListResponse status: ${response.code()}\nfeedListResponse message: ${
+                            response.errorBody()?.string()
+                        }"
                     )
                 }
             }
@@ -132,6 +132,9 @@ class FeedHomeViewModel : BaseViewModel() {
             },
             onSuccess = { response ->
                 if (response.isSuccessful) {
+                    viewModelScope.launch {
+                        checkBookmarkStatus(studyInfoId)
+                    }
                     Log.d("FeedHomeViewModel", response.code().toString())
                 } else {
                     Log.e(
@@ -145,22 +148,27 @@ class FeedHomeViewModel : BaseViewModel() {
         )
     }
 
-    private suspend fun getStudyCount(): StudyCountResponse? {
-        return try {
-            val response = gitudyStudyRepository.getStudyCount(false)
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e(
-                    "MainHomeViewModel",
-                    "studyCntResponse status: ${response.code()}\nstudyCntResponse message: ${response.message()}"
-                )
-                null
+    suspend fun getStudyCount() {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getStudyCount(false) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val studyCnt = response.body()!!.count
+                    _uiState.update {
+                        it.copy(
+                            studyCnt = studyCnt
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "FeedHomeViewModel",
+                        "studyCountResponse status: ${response.code()}\nstudyCountResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("MainHomeViewModel", "Error fetching getUserInfo()", e)
-            null
-        }
+        )
     }
 }
 
@@ -168,7 +176,7 @@ data class FeedHomeUiState(
     var studyInfoList: List<StudyInfoWithBookmarkStatus> = listOf(),
     var studyCategoryMappingMap: Map<Int, List<String>> = mapOf(),
     var studyCnt: Int? = null,
-    var isFeedEmpty: Boolean = false
+    var isFeedEmpty: Boolean? = null
 )
 
 data class StudyInfoWithBookmarkStatus(

@@ -26,83 +26,70 @@ class StudyApplyViewModel : BaseViewModel() {
     private val _isApplySucceed = MutableStateFlow<Boolean?>(null)
     val isApplySucceed = _isApplySucceed.asStateFlow()
 
-    fun getStudyInfo(studyInfoId: Int) = viewModelScope.launch {
+    suspend fun getStudyInfo(studyInfoId: Int) {
         safeApiCall(
-            apiCall = {
-                val studyInfoResponse = async { gitudyStudyRepository.getStudyInfo(studyInfoId) }
-                val studyRankResponse = async { gitudyStudyRepository.getStudyRank(studyInfoId) }
-                val bookmarkStatusResponse = async { gitudyBookmarksRepository.checkBookmarkStatus(
-                    studyInfoId
-                ) }
-
-                // Triple로 세 가지 결과를 반환
-                Triple(
-                    studyInfoResponse.await(),
-                    studyRankResponse.await(),
-                    bookmarkStatusResponse.await()
-                )
-            },
-            onSuccess = { (studyInfoResponse, studyRankResponse, bookmarkStatusResponse) ->
-                if (studyInfoResponse.isSuccessful && studyRankResponse.isSuccessful && bookmarkStatusResponse.isSuccessful) {
-                    val studyInfo = studyInfoResponse.body()!!
-                    val studyRank = studyRankResponse.body()!!.ranking
-                    val bookmarkStatus = bookmarkStatusResponse.body()!!.myBookmark
+            apiCall = { gitudyStudyRepository.getStudyInfo(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val studyInfo = response.body()!!
 
                     _uiState.update {
                         it.copy(
-                            studyInfo = studyInfo,
-                            rank = studyRank,
-                            isMyBookmark = bookmarkStatus
+                            studyInfo = studyInfo
                         )
                     }
                 } else {
                     Log.e(
                         "StudyApplyViewModel",
-                        "studyInfoResponse status: ${studyInfoResponse.code()}\nstudyInfoResponse message: ${studyInfoResponse.errorBody()?.string()}"
+                        "studyInfoResponse status: ${response.code()}\nstudyInfoResponse message: ${response.errorBody()?.string()}"
                     )
                 }
             }
         )
     }
 
-    private suspend fun getStudyRank(studyInfoId: Int): StudyRankResponse? {
-        return try {
-            val response = gitudyStudyRepository.getStudyRank(studyInfoId)
-            if (response.isSuccessful) {
-                response.body()!!
-            } else {
-                Log.e(
-                    "StudyApplyViewModel",
-                    "studyRankResponse status: ${response.code()}\nstudyRankResponse message: ${
-                        response.errorBody()?.string()
-                    }"
-                )
-                null
+    suspend fun getStudyRank(studyInfoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getStudyRank(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val studyRank = response.body()!!.ranking
+
+                    _uiState.update {
+                        it.copy(
+                            rank = studyRank
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "StudyApplyViewModel",
+                        "studyRankResponse status: ${response.code()}\nstudyRankResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("StudyApplyViewModel", "Error fetching getUserInfo()", e)
-            null
-        }
+        )
     }
 
-    private suspend fun checkBookmarkStatus(studyInfoId: Int): Boolean {
-        return try {
-            val response = gitudyBookmarksRepository.checkBookmarkStatus(
-                studyInfoId
-            )
-            if (response.isSuccessful) {
-                response.body()!!.myBookmark
-            } else {
-                Log.e(
-                    "StudyApplyViewModel",
-                    "bookmarkStatusResponse status: ${response.code()}\nbookmarkStatusResponse message: ${response.message()}"
-                )
-                false
+    suspend fun checkBookmarkStatus(studyInfoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyBookmarksRepository.checkBookmarkStatus(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val bookmarkStatus = response.body()!!.myBookmark
+
+                    _uiState.update {
+                        it.copy(
+                            isMyBookmark = bookmarkStatus
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "StudyApplyViewModel",
+                        "bookmarkStatusResponse status: ${response.code()}\nbookmarkStatusResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("StudyApplyViewModel", "Error fetching getUserInfo()", e)
-            false
-        }
+        )
     }
 
     suspend fun setBookmarkStatus(studyInfoId: Int) {
@@ -114,6 +101,9 @@ class StudyApplyViewModel : BaseViewModel() {
             },
             onSuccess = { response ->
                 if (response.isSuccessful) {
+                    viewModelScope.launch {
+                        checkBookmarkStatus(studyInfoId)
+                    }
                     Log.d("StudyApplyViewModel", response.code().toString())
                 } else {
                     Log.e(

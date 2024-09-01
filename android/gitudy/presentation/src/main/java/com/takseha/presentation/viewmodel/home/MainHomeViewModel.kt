@@ -92,44 +92,28 @@ class MainHomeViewModel : BaseViewModel() {
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
         safeApiCall(
-            apiCall = {
-                val myStudyListResponse = async {
-                    gitudyStudyRepository.getStudyList(
-                        cursorIdx,
-                        limit,
-                        sortBy = "createdDateTime",
-                        myStudy = true
-                    )
-                }
-                val studyCntResponse = async { gitudyStudyRepository.getStudyCount(true) }
-
-                // Pair로 두 가지 결과를 반환
-                Pair(
-                    myStudyListResponse.await(),
-                    studyCntResponse.await()
-                )
-            },
-            onSuccess = { (myStudyListResponse, studyCntResponse) ->
-                if (myStudyListResponse.isSuccessful && studyCntResponse.isSuccessful) {
-                    val myStudyListInfo = myStudyListResponse.body()!!
-                    val studyCnt = studyCntResponse.body()!!.count
-
+            apiCall = { gitudyStudyRepository.getStudyList(
+                    cursorIdx,
+                    limit,
+                    sortBy = "createdDateTime",
+                    myStudy = true
+                ) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val myStudyListInfo = response.body()!!
                     _cursorIdxRes.value = myStudyListInfo.cursorIdx
-                    Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
 
                     val studies = myStudyListInfo.studyInfoList
                     if (studies.isEmpty()) {
                         _myStudyState.update {
                             it.copy(
-                                isMyStudiesEmpty = true,
-                                studyCnt = studyCnt
+                                isMyStudiesEmpty = true
                             )
                         }
                     } else {
                         viewModelScope.launch {
-                            // 비동기적으로 urgentTodo를 가져온 후 리스트를 업데이트
                             val studiesWithTodo = studies.map { study ->
-                                val urgentTodo = async { getUrgentTodoProgress(study.id) }.await()
+                                val urgentTodo = getUrgentTodoProgress(study.id)
                                 MyStudyWithTodo(
                                     study,
                                     urgentTodo
@@ -138,7 +122,6 @@ class MainHomeViewModel : BaseViewModel() {
                             _myStudyState.update {
                                 it.copy(
                                     myStudiesWithTodo = studiesWithTodo,
-                                    studyCnt = studyCnt,
                                     isMyStudiesEmpty = false
                                 )
                             }
@@ -147,8 +130,8 @@ class MainHomeViewModel : BaseViewModel() {
                 } else {
                     Log.e(
                         "MainHomeViewModel",
-                        "myStudyListResponse status: ${myStudyListResponse.code()}\nmyStudyListResponse message: ${
-                            myStudyListResponse.errorBody()?.string()
+                        "myStudyListResponse status: ${response.code()}\nmyStudyListResponse message: ${
+                            response.errorBody()?.string()
                         }"
                     )
                 }
@@ -179,24 +162,28 @@ class MainHomeViewModel : BaseViewModel() {
        }
     }
 
-    private suspend fun getStudyCount(): StudyCountResponse? {
-        return try {
-            val response = gitudyStudyRepository.getStudyCount(true)
-            if (response.isSuccessful) {
-                response.body()
-            } else {
-                Log.e(
-                    "MainHomeViewModel",
-                    "studyCntResponse status: ${response.code()}\nstudyCntResponse message: ${
-                        response.errorBody()?.string()
-                    }"
-                )
-                null
+    suspend fun getStudyCount() {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getStudyCount(true) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val studyCnt = response.body()!!.count
+
+                    _myStudyState.update {
+                        it.copy(
+                            studyCnt = studyCnt
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "MainHomeViewModel",
+                        "studyCntResponse status: ${response.code()}\nstudyCntResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
             }
-        } catch (e: Exception) {
-            Log.e("MainHomeViewModel", "Error fetching getUserInfo()", e)
-            null
-        }
+        )
     }
 
     private data class ProgressInfo(val score: Int, val imgSrc: Int, val max: Int = 15)
