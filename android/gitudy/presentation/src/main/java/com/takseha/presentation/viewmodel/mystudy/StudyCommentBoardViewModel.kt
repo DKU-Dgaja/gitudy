@@ -13,7 +13,7 @@ import kotlinx.coroutines.launch
 class StudyCommentBoardViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
 
-    private val _commentState = MutableStateFlow<List<StudyComment>>(emptyList())
+    private val _commentState = MutableStateFlow<List<StudyComment>?>(null)
     val commentState = _commentState.asStateFlow()
 
     fun getStudyComments(studyInfoId: Int, limit: Long) = viewModelScope.launch {

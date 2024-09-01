@@ -8,6 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.ContextCompat
@@ -53,7 +55,14 @@ class StudyCommentBoardFragment : Fragment() {
         // TODO: limit 무한스크롤 관련 구현
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.commentState.collectLatest {
-                setStudyComments(it)
+                if (it != null) {
+                    if (it.isEmpty()) {
+                        binding.isNoCommentLayout.visibility = VISIBLE
+                    } else {
+                        binding.isNoCommentLayout.visibility = GONE
+                    }
+                    setStudyComments(it)
+                }
             }
         }
         with(binding) {

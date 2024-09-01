@@ -72,6 +72,7 @@
     <string name="quit_study">탈퇴하기</string>
     <string name="study_comment_title">응원 한마디</string>
     <string name="study_comment_description">멤버들에게 응원의 한마디를 남겨보세요!</string>
+    <string name="study_comment_recommand">첫번째 글을 작성해보세요 :)</string>
     <string name="study_comment_update">해당 글을\n수정하시겠습니까?</string>
     <string name="study_comment_delete">해당 글을\n삭제하시겠습니까?</string>
     <string name="study_approve_member_apply">해당 멤버의 등록을\n수락하시겠습니까?</string>
