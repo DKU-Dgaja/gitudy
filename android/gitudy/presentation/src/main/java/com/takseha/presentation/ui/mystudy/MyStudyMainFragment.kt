@@ -88,7 +88,6 @@ class MyStudyMainFragment : Fragment() {
         return binding.root
     }
 
-    // TODO: todo link 버튼 눌렀을 때 이동하는 기능 구현
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -124,7 +123,7 @@ class MyStudyMainFragment : Fragment() {
                 val textToCopy = studyGithubLinkText.text
                 val clipboard =
                     requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("label", textToCopy)
+                val clip = ClipData.newPlainText("githubLink", textToCopy)
                 clipboard.setPrimaryClip(clip)
             }
             todoMoreBtn.setOnClickListener {
@@ -241,6 +240,13 @@ class MyStudyMainFragment : Fragment() {
     private fun setUrgentTodoInfo(todoInfo: Todo?) {
         with(binding) {
             if (todoInfo != null) {
+                todoLinkBtn.setOnClickListener {
+                    val textToCopy = todoInfo.todoLink
+                    val clipboard =
+                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("todoLink", textToCopy)
+                    clipboard.setPrimaryClip(clip)
+                }
                 todoDetailTitle.text = todoInfo.title
                 todoDetailText.text = todoInfo.detail
                 todoTime.text = todoInfo.todoDate

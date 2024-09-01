@@ -305,6 +305,7 @@
                                     android:textColor="@color/GS_700" />
 
                                 <ImageView
+                                    android:id="@+id/todoLinkBtn"
                                     android:layout_width="14dp"
                                     android:layout_height="14dp"
                                     android:src="@drawable/ic_link"

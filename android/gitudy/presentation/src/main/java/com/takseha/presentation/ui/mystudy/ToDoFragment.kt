@@ -1,5 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -116,7 +119,11 @@ class ToDoFragment : Fragment() {
             }
 
             override fun onLinkClick(view: View, position: Int) {
-                TODO("Not yet implemented")
+                val textToCopy = todoList[position].todoLink
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("todoLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
             }
         }
     }
