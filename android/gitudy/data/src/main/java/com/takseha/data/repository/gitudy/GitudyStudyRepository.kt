@@ -1,9 +1,10 @@
 package com.takseha.data.repository.gitudy
 
-import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.api.gitudy.GitudyStudyService
+import com.takseha.data.api.gitudy.RetrofitInstance
 import com.takseha.data.dto.feed.CheckRepoNameRequest
 import com.takseha.data.dto.feed.MakeStudyRequest
+import com.takseha.data.dto.mystudy.CommentRequest
 import com.takseha.data.dto.mystudy.MakeTodoRequest
 import com.takseha.data.dto.mystudy.SetConventionRequest
 import com.takseha.data.dto.mystudy.UpdateStudyInfoRequest
@@ -90,14 +91,14 @@ class GitudyStudyRepository {
 
     suspend fun makeStudyComment(
         studyInfoId: Int,
-        content: String
-    ) = client.makeStudyComment(studyInfoId, content)
+        request: CommentRequest
+    ) = client.makeStudyComment(studyInfoId, request)
 
     suspend fun updateStudyComment(
         studyInfoId: Int,
         studyCommentId: Int,
-        content: String
-    ) = client.updateStudyComment(studyInfoId, studyCommentId, content)
+        request: CommentRequest
+    ) = client.updateStudyComment(studyInfoId, studyCommentId, request)
 
     suspend fun updateStudyInfo(
         studyInfoId: Int,
