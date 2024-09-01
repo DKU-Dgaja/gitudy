@@ -37,40 +37,40 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <CheckBox
-        android:id="@+id/commitWithTodoCheckBtn"
-        android:layout_width="22dp"
-        android:layout_height="22dp"
-        android:layout_marginLeft="22dp"
-        android:layout_marginTop="22dp"
-        android:background="@drawable/selector_ic_check_sq_checked"
-        android:button="@null"
-        android:checked="true"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+<!--    <CheckBox-->
+<!--        android:id="@+id/commitWithTodoCheckBtn"-->
+<!--        android:layout_width="22dp"-->
+<!--        android:layout_height="22dp"-->
+<!--        android:layout_marginLeft="22dp"-->
+<!--        android:layout_marginTop="22dp"-->
+<!--        android:background="@drawable/selector_ic_check_sq_checked"-->
+<!--        android:button="@null"-->
+<!--        android:checked="true"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />-->
 
-    <TextView
-        style="@style/B6_1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="4dp"
-        android:layout_marginTop="22dp"
-        android:text="커밋 히스토리 함께 보기"
-        android:textColor="@color/GS_800"
-        app:layout_constraintStart_toEndOf="@+id/commitWithTodoCheckBtn"
-        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+<!--    <TextView-->
+<!--        style="@style/B6_1"-->
+<!--        android:layout_width="wrap_content"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginLeft="4dp"-->
+<!--        android:layout_marginTop="22dp"-->
+<!--        android:text="커밋 히스토리 함께 보기"-->
+<!--        android:textColor="@color/GS_800"-->
+<!--        app:layout_constraintStart_toEndOf="@+id/commitWithTodoCheckBtn"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/memberList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="22dp"
-        android:layout_marginTop="31dp"
+        android:layout_marginTop="30dp"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commitWithTodoCheckBtn" />
+        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
 
     <LinearLayout
         android:id="@+id/isNoTodoLayout"

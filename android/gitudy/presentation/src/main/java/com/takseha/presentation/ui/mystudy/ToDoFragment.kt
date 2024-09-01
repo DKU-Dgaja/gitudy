@@ -64,11 +64,11 @@ class ToDoFragment : Fragment() {
                     setTodoList(it.todoListInfo)
                 }
                 // TODO: 커밋 히스토리 함께 보기 설정
-                if (binding.commitWithTodoCheckBtn.isChecked) {
-
-                } else {
-
-                }
+//                if (binding.commitWithTodoCheckBtn.isChecked) {
+//
+//                } else {
+//
+//                }
             }
         }
 
