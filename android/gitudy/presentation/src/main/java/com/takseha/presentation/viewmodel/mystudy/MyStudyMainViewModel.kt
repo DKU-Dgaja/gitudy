@@ -80,6 +80,7 @@ class MyStudyMainViewModel() : BaseViewModel() {
                     if (urgentTodo != null) {
                         _myStudyState.update {
                             it.copy(
+                                isUrgentTodo = true,
                                 todoInfo = urgentTodo
                             )
                         }
