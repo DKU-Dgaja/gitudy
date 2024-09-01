@@ -28,6 +28,7 @@ class MakeStudy1Fragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MakeStudyViewModel by activityViewModels()
     private var categories = ArrayList<String>()
+    private val maxLength = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,6 +69,7 @@ class MakeStudy1Fragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(s: Editable?) {
+                    titleTextLength.text = getString(R.string.text_length, studyNameEditText.text.length, maxLength)
                     title = studyNameEditText.text.toString()
                     nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                 }
