@@ -89,7 +89,7 @@ class FeedRVAdapter(
         holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].rank,
             studyInfoList[position].studyInfo.lastCommitDay ?: "없음"
         )
-        holder.teamScore.text = studyInfoList[position].studyInfo.score.toString()
+        holder.teamScore.text = context.getString(R.string.study_score, studyInfoList[position].studyInfo.score)
         holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].studyInfo.createdDateTime))
         holder.currentMember.text = studyInfoList[position].studyInfo.currentMember.toString()
         holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].studyInfo.maximumMember)

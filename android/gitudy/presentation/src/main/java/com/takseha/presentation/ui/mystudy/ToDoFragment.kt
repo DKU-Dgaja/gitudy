@@ -15,7 +15,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.Todo
@@ -90,6 +89,7 @@ class ToDoFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         viewModel.getTodoList(studyInfoId)
     }
 

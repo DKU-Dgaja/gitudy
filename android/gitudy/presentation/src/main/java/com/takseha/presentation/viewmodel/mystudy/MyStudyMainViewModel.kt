@@ -3,8 +3,10 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyRankResponse
+import com.takseha.data.dto.mystudy.CommentRequest
 import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
@@ -174,8 +176,9 @@ class MyStudyMainViewModel() : BaseViewModel() {
     }
 
     suspend fun makeStudyComment(studyInfoId: Int, content: String, limit: Long) {
+        val request = CommentRequest(content)
         safeApiCall(
-            apiCall = { gitudyStudyRepository.makeStudyComment(studyInfoId, content) },
+            apiCall = { gitudyStudyRepository.makeStudyComment(studyInfoId, request) },
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     viewModelScope.launch {
