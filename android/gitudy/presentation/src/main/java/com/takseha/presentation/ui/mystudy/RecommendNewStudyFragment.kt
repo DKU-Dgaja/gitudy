@@ -32,6 +32,7 @@ class RecommendNewStudyFragment : Fragment() {
             makeStudyBtn.setOnClickListener {
                 val intent = Intent(requireContext(), MakeStudyActivity::class.java)
                 startActivity(intent)
+                requireActivity().finish()
             }
             noThanksBtn.setOnClickListener { requireActivity().finish() }
         }

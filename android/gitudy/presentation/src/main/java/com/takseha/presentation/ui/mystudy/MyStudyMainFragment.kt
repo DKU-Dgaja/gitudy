@@ -312,6 +312,7 @@ class MyStudyMainFragment : Fragment() {
             StudyStatus.STUDY_PRIVATE -> getString(R.string.study_lock)
             StudyStatus.STUDY_PUBLIC -> getString(R.string.study_unlock)
             StudyStatus.STUDY_DELETED -> getString(R.string.study_deleted)
+            else -> getString(R.string.study_inactive)
         }
     }
 

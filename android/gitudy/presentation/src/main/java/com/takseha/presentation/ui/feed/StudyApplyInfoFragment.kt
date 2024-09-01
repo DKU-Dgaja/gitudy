@@ -203,9 +203,10 @@ class StudyApplyInfoFragment : Fragment() {
 
     private fun setStudyStatus(status: StudyStatus): String {
         return when (status) {
-            StudyStatus.STUDY_PRIVATE -> requireContext().getString(R.string.study_lock)
-            StudyStatus.STUDY_PUBLIC -> requireContext().getString(R.string.study_unlock)
-            StudyStatus.STUDY_DELETED -> requireContext().getString(R.string.study_deleted)
+            StudyStatus.STUDY_PRIVATE -> getString(R.string.study_lock)
+            StudyStatus.STUDY_PUBLIC -> getString(R.string.study_unlock)
+            StudyStatus.STUDY_DELETED -> getString(R.string.study_deleted)
+            else -> getString(R.string.study_inactive)
         }
     }
 

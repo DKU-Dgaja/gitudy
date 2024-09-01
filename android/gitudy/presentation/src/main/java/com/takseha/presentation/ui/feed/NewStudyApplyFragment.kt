@@ -6,6 +6,7 @@ import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.OnBackPressedCallback
 import androidx.fragment.app.Fragment
 import com.takseha.presentation.R
 
@@ -23,5 +24,14 @@ class NewStudyApplyFragment : Fragment() {
         }, 2000)
 
         return inflater.inflate(R.layout.fragment_new_study_apply, container, false)
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        // 뒤로가기 금지
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
     }
 }

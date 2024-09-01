@@ -1,6 +1,7 @@
 package com.takseha.presentation.ui.home
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -28,16 +29,17 @@ class MainHomeActivity : AppCompatActivity() {
     private val profileHomeViewModel: ProfileHomeViewModel by viewModels()
     private lateinit var snackBarHelper: SnackBarHelper
 
-    private val callback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            super.handleOnBackCancelled()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_home)
-        setInit()
+
+        // 뒤로가기 금지
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
+
+        setBinding()
         setMainFragmentView(savedInstanceState)
 
         snackBarHelper = SnackBarHelper(this)
@@ -75,18 +77,10 @@ class MainHomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun setInit() {
-        setBinding()
-        setNoBackPressed()
-    }
-
     private fun setBinding() {
         binding = ActivityMainHomeBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-    }
-    private fun setNoBackPressed() {
-        this.onBackPressedDispatcher.addCallback(this, callback)
     }
     private fun setMainFragmentView(savedInstanceState: Bundle?) {
         with(binding) {

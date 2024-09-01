@@ -3,6 +3,7 @@ package com.takseha.presentation.ui.auth
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import com.takseha.data.dto.auth.login.RoleStatus
@@ -18,6 +19,12 @@ class SocialLoginCompleteActivity : AppCompatActivity() {
         setContentView(R.layout.activity_social_login_complete)
         window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
+
+        // 뒤로가기 금지
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
 
         binding.confirmBtn.setOnClickListener {
             val role = intent.getStringExtra("role").toString()
