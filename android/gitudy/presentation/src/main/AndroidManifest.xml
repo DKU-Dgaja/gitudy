@@ -33,9 +33,6 @@
             android:exported="false"
             android:windowSoftInputMode="adjustPan" />
         <activity
-            android:name=".ui.mystudy.MemberStudySettingActivity"
-            android:exported="false" />
-        <activity
             android:name=".ui.mystudy.MyStudyMainActivity"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />

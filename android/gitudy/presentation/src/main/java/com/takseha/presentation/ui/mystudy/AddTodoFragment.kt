@@ -8,6 +8,8 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.annotation.RequiresApi
@@ -21,6 +23,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentAddTodoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -167,9 +170,25 @@ class AddTodoFragment : Fragment() {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.to_do_add))
         customSetDialog.setOnConfirmClickListener {
+            with(binding) {
+                loadingIndicator.visibility = VISIBLE
+                backBtn.isEnabled = false
+                applyBtn.isEnabled = false
+            }
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
-                findNavController().popBackStack()
+                viewModel.responseState.collectLatest {
+                    if (it != null) {
+                        with(binding) {
+                            loadingIndicator.visibility = GONE
+                            backBtn.isEnabled = true
+                        }
+                        if (it) {
+                            findNavController().popBackStack()
+                        }
+                        // TODO: todo 생성 실패 시 로직 구현!
+                    }
+                }
             }
         }
         customSetDialog.show()
