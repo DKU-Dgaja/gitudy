@@ -27,18 +27,19 @@ interface GitudyCommitsService {
 
     @GET("/commits/{commitId}/comments")
     suspend fun getCommitComments(
-        @Path("commitId") commitId: Int
+        @Path("commitId") commitId: Int,
+        @Query("studyInfoId") studyInfoId: Int
     ): Response<CommitCommentListResponse>
 
     @POST("/commits/{commitId}/comments")
     suspend fun makeCommitComment(
-        @Path("studyInfoId") studyInfoId: Int,
+        @Path("commitId") commitId: Int,
         @Body request: CommitCommentRequest
     ): Response<Void>
 
     @DELETE("/commits/{commitId}/comments/{commentId}")
     suspend fun deleteCommitComment(
-        @Path("studyInfoId") studyInfoId: Int,
-        @Path("studyCommentId") studyCommentId: Int
+        @Path("commitId") commitId: Int,
+        @Path("commentId") commentId: Int
     ): Response<Void>
 }

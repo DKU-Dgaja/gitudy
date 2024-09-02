@@ -7,7 +7,6 @@
     android:clipToPadding="false"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
-    android:paddingBottom="30dp"
     tools:context=".ui.mystudy.StudyCommentBoardFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -67,8 +66,8 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="60dp"
-        android:layout_marginBottom="20dp"
-        app:layout_constraintBottom_toTopOf="@+id/newCommentBox"
+        android:layout_marginBottom="90dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studyCommentBoardTitle">
@@ -76,25 +75,36 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/commentList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="wrap_content" />
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
     <LinearLayout
-        android:id="@+id/newCommentBox"
-        android:layout_width="290dp"
+        android:id="@+id/messageLayout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/box_non_stroke_r8"
-        android:backgroundTint="#F3F5F7"
-        android:gravity="center_horizontal"
-        android:paddingLeft="16dp"
+        android:elevation="5dp"
+        android:gravity="bottom"
+        android:orientation="horizontal"
         android:paddingTop="10dp"
-        android:paddingRight="16dp"
+        android:paddingBottom="20dp"
+        android:background="@drawable/faded_edge"
         app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
 
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent">
+        <LinearLayout
+            android:id="@+id/newCommentBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/box_non_stroke_r8"
+            android:backgroundTint="#F3F5F7"
+            android:gravity="center_horizontal"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="16dp"
+            app:layout_constraintBottom_toBottomOf="parent">
 
             <EditText
                 android:id="@+id/newCommentBody"
@@ -105,20 +115,26 @@
                 android:hint="메세지 남기기"
                 android:paddingBottom="10dp"
                 android:textColor="@color/GS_900"
-                android:textColorHint="@color/GS_500" />
-        </ScrollView>
+                android:textColorHint="@color/GS_500"
+                android:maxLines="2"
+                android:scrollbars="vertical"
+                android:overScrollMode="always"
+                android:inputType="textMultiLine"
+                android:imeOptions="actionDone"
+                android:gravity="top|start"
+                android:scrollHorizontally="false"
+                android:focusableInTouchMode="true" />
+        </LinearLayout>
 
+        <Button
+            android:id="@+id/postBtn"
+            style="@style/B6_2"
+            android:layout_width="69dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/selector_btn_r8_enable"
+            android:enabled="false"
+            android:text="@string/post"
+            android:textColor="@drawable/selector_text_color_enable" />
     </LinearLayout>
-
-    <Button
-        android:id="@+id/postBtn"
-        style="@style/B6_2"
-        android:layout_width="69dp"
-        android:layout_height="38dp"
-        android:background="@drawable/selector_btn_r8_enable"
-        android:enabled="false"
-        android:text="@string/post"
-        android:textColor="@drawable/selector_text_color_enable"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

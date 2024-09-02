@@ -1,5 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -83,6 +86,28 @@ class StudyApplyMemberProfileFragment : Fragment() {
                 profileInfo.socialInfo!!.linkedInLink
             }
             messageContent.text = profileInfo?.signGreeting
+
+            githubLinkBtn.setOnClickListener {
+                val textToCopy = profileInfo?.socialInfo?.githubLink ?: ""
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("githubLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
+            }
+            blogLinkBtn.setOnClickListener {
+                val textToCopy = profileInfo?.socialInfo?.blogLink ?: ""
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("blogLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
+            }
+            linkedinLinkBtn.setOnClickListener {
+                val textToCopy = profileInfo?.socialInfo?.linkedInLink ?: ""
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("linkedinLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
+            }
         }
     }
 

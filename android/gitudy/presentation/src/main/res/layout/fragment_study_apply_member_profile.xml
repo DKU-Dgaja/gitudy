@@ -84,7 +84,7 @@
                         android:layout_marginRight="16dp"
                         android:background="@drawable/circle_non_stroke"
                         android:clipToOutline="true"
-                        android:src="@drawable/character_bebe_over_130" />
+                        android:src="@drawable/logo_profile_default" />
 
                     <LinearLayout
                         android:layout_width="wrap_content"
@@ -97,7 +97,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginBottom="4dp"
-                            android:text="@string/nickname"
                             android:textColor="@color/BLACK" />
 
                         <TextView
@@ -105,7 +104,6 @@
                             style="@style/B6_2"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/github_id"
                             android:textColor="@color/GS_400" />
                     </LinearLayout>
                 </LinearLayout>
@@ -148,7 +146,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="6dp"
-                        android:text="@string/profile_github_link"
                         android:textColor="#7A808D"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/githubLinkBtn"
@@ -203,7 +200,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="6dp"
-                        android:text="@string/profile_blog_link"
                         android:textColor="#7A808D"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/blogLinkBtn"
@@ -258,7 +254,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="6dp"
-                        android:text="@string/profile_github_link"
                         android:textColor="#7A808D"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toStartOf="@+id/linkedinLinkBtn"
@@ -302,7 +297,6 @@
                 android:paddingTop="20dp"
                 android:paddingRight="18dp"
                 android:paddingBottom="20dp"
-                android:text="안녕하세요"
                 android:textColor="@color/BLACK"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/messageTitle" />

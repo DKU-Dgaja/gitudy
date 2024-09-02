@@ -18,7 +18,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.takseha.data.dto.mystudy.StudyComment
+import com.takseha.data.dto.mystudy.Comment
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.DetailCommentListRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyCommentBoardBinding
@@ -105,7 +105,7 @@ class StudyCommentBoardFragment : Fragment() {
         }
     }
 
-    private fun setStudyComments(comments: List<StudyComment>) {
+    private fun setStudyComments(comments: List<Comment>) {
         with(binding) {
             val commentDetailListRVAdapter = DetailCommentListRVAdapter(requireContext(), comments)
             commentList.adapter = commentDetailListRVAdapter
@@ -116,7 +116,7 @@ class StudyCommentBoardFragment : Fragment() {
     }
 
     // TODO: 수정 시 메세지 입력 창 같이 떠오르는 현상 없애고, edittext가 자판 위로 오도록 처리
-    private fun clickStudyCommentItem(commentDetailListRVAdapter: DetailCommentListRVAdapter, commentList: List<StudyComment>) {
+    private fun clickStudyCommentItem(commentDetailListRVAdapter: DetailCommentListRVAdapter, commentList: List<Comment>) {
         commentDetailListRVAdapter.onClickListener = object : DetailCommentListRVAdapter.OnClickListener {
             override fun onDeleteClick(view: View, position: Int) {
                 showDeleteCommentDialog(commentList[position].studyInfoId, commentList[position].id)

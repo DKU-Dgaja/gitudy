@@ -7,7 +7,6 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -21,11 +20,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.StudyComment
+import com.takseha.data.dto.mystudy.Comment
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
@@ -34,10 +32,7 @@ import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyMainBinding
-import com.takseha.presentation.databinding.LayoutSnackbarDescBinding
-import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -192,7 +187,14 @@ class MyStudyMainFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.commentState.collectLatest {
-                setStudyComments(it)
+                if (it != null) {
+                    if (it.isEmpty()) {
+                        binding.isNoCommentLayout.visibility = VISIBLE
+                    } else {
+                        binding.isNoCommentLayout.visibility = GONE
+                    }
+                    setStudyComments(it)
+                }
             }
         }
     }
@@ -317,7 +319,7 @@ class MyStudyMainFragment : Fragment() {
         }
     }
 
-    private fun setStudyComments(comments: List<StudyComment>) {
+    private fun setStudyComments(comments: List<Comment>) {
         with(binding) {
             val commentListRVAdapter = CommentListRVAdapter(requireContext(), comments)
             commentList.adapter = commentListRVAdapter

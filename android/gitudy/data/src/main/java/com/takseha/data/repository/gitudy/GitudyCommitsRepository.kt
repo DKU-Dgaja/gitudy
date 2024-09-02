@@ -28,16 +28,17 @@ class GitudyCommitsRepository {
     ) = client.rejectCommit(commitId, studyInfoId, request)
 
     suspend fun getCommitComments(
-        commitId: Int
-    ) = client.getCommitComments(commitId)
+        commitId: Int,
+        studyInfoId: Int
+    ) = client.getCommitComments(commitId, studyInfoId)
 
     suspend fun makeCommitComment(
-        studyInfoId: Int,
+        commitId: Int,
         request: CommitCommentRequest
-    ) = client.makeCommitComment(studyInfoId, request)
+    ) = client.makeCommitComment(commitId, request)
 
     suspend fun deleteCommitComment(
-        studyInfoId: Int,
-        studyCommentId: Int
-    ) = client.deleteCommitComment(studyInfoId, studyCommentId)
+        commitId: Int,
+        commentId: Int
+    ) = client.deleteCommitComment(commitId, commentId)
 }

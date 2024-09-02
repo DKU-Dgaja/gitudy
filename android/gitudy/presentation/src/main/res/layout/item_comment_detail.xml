@@ -59,7 +59,7 @@
             android:layout_width="250dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
-            android:paddingTop="16dp"
+            android:paddingTop="10dp"
             android:paddingBottom="16dp"
             android:textColor="@color/GS_600"
             app:layout_constraintBottom_toTopOf="@+id/likeBtn"
@@ -71,7 +71,7 @@
             android:layout_width="20dp"
             android:layout_height="42dp"
             android:layout_marginLeft="10dp"
-            android:paddingBottom="22dp"
+            android:paddingBottom="10dp"
             android:src="@drawable/ic_thumbs_up"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profileImg" />
@@ -81,7 +81,7 @@
             android:layout_width="18dp"
             android:layout_height="42dp"
             android:layout_marginLeft="8dp"
-            android:paddingBottom="22dp"
+            android:paddingBottom="10dp"
             android:src="@drawable/ic_heart"
             app:layout_constraintStart_toEndOf="@+id/likeBtn"
             app:layout_constraintTop_toBottomOf="@+id/contentText" />
