@@ -28,6 +28,7 @@ import java.util.Map;
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -239,7 +240,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         doNothing().when(studyCommitService).rejectCommit(anyLong(), anyString());
 
         // when
-        mockMvc.perform(get("/commits/" + commitId + "/reject")
+        mockMvc.perform(post("/commits/" + commitId + "/reject")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
                         .content(objectMapper.writeValueAsString(request))
@@ -265,7 +266,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         // when
-        mockMvc.perform(get("/commits/" + commitId + "/reject")
+        mockMvc.perform(post("/commits/" + commitId + "/reject")
                         .contentType(MediaType.APPLICATION_JSON)
                         .param("studyInfoId", "1")
                         .content(objectMapper.writeValueAsString(request))
