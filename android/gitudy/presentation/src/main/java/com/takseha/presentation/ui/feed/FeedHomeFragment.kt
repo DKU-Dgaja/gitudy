@@ -30,7 +30,7 @@ class FeedHomeFragment : Fragment() {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
-        sortStatus = "createdDateTime"
+        sortStatus = "score"
 
         lifecycleScope.launch {
             launch { viewModel.getFeedList(null, 50, sortStatus) }

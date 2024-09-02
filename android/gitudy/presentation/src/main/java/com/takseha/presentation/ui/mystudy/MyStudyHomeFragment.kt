@@ -30,7 +30,7 @@ class MyStudyHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
-        sortStatus = "createdDateTime"
+        sortStatus = "score"
 
         lifecycleScope.launch {
             launch { viewModel.getMyStudyList(null, 50, sortStatus) }
