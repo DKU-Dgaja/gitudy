@@ -115,12 +115,10 @@ class CommitCommentControllerTest extends MockTestConfig {
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
-                        .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
+                        .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").studyInfoId(1L).build())))
 
                 // then
                 .andExpect(status().isOk());
-
-
     }
 
     @Test
@@ -162,7 +160,7 @@ class CommitCommentControllerTest extends MockTestConfig {
         mockMvc.perform(post("/commits/" + commitId + "/comments")
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
-                        .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
+                        .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").studyInfoId(1L).build())))
 
                 // then
                 .andExpect(status().isBadRequest())
