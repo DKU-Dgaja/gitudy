@@ -90,12 +90,12 @@ class MainHomeViewModel : BaseViewModel() {
         }
     }
 
-    fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+    fun getMyStudyList(cursorIdx: Long?, limit: Long, sortBy: String) = viewModelScope.launch {
         safeApiCall(
             apiCall = { gitudyStudyRepository.getStudyList(
                     cursorIdx,
                     limit,
-                    sortBy = "createdDateTime",
+                    sortBy = sortBy,
                     myStudy = true
                 ) },
             onSuccess = { response ->

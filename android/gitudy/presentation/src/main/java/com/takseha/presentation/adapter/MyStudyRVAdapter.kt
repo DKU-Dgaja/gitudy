@@ -84,8 +84,14 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
             holder.todoTime.visibility = VISIBLE
             holder.todoTitle.text = urgentTodo.todo!!.title
             holder.todoTime.text = urgentTodo.todo!!.todoDate
+
+            // TODO: StudyInfo에 내가 커밋 완료했는지 여부 나타내는 필드 추가한 후!! 아래 기능 구현!!
             if (urgentTodo.completeMemberCount == urgentTodo.totalMemberCount) {
                 holder.todoCheck.text = "완료"
+                holder.todoCheck.setTextColor(ContextCompat.getColor(
+                    context,
+                    R.color.BASIC_BLUE
+                ))
             } else {
                 holder.todoCheck.text = "미완료"
                 if (urgentTodo.todo?.todoDate == LocalDate.now().toString()) {

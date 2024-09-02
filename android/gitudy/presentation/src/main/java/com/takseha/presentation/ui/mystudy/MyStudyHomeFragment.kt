@@ -20,17 +20,20 @@ import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-// TODO: 정렬 버튼 선택 시 정렬 기준 변경, 활동 중인 스터디만 보기 기능 구현(studyStatus 보고 종료된 스터디 제외시키기)
+// TODO: 활동 중인 스터디만 보기 기능 구현(studyStatus 보고 종료된 스터디 제외시키기)
 class MyStudyHomeFragment : Fragment() {
     private var _binding: FragmentMyStudyHomeBinding? = null
     private val binding get() = _binding!!
     private val viewModel: MainHomeViewModel by activityViewModels()
+    private lateinit var sortStatus: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        sortStatus = "createdDateTime"
+
         lifecycleScope.launch {
-            launch { viewModel.getMyStudyList(null, 50) }
+            launch { viewModel.getMyStudyList(null, 50, sortStatus) }
             launch { viewModel.getStudyCount() }
         }
     }
@@ -56,11 +59,29 @@ class MyStudyHomeFragment : Fragment() {
                 setMyStudyList(it.myStudiesWithTodo)
             }
         }
-        binding.myStudySwipeRefreshLayout.setOnRefreshListener {
-            viewLifecycleOwner.lifecycleScope.launch {
-                launch { viewModel.getMyStudyList(null, 50) }
-                launch { viewModel.getStudyCount() }
-                binding.myStudySwipeRefreshLayout.isRefreshing = false
+        // 정렬: 최신순, 랭킹순
+        with(binding) {
+            sortBtn.setOnClickListener {
+                var standard: String
+                if (sortStatus == "createdDateTime") {
+                    standard = "score"
+                    sortBtnText.text = "랭킹순"
+                } else {
+                    standard = "createdDateTime"
+                    sortBtnText.text = "최신순"
+                }
+                sortStatus = standard
+                viewLifecycleOwner.lifecycleScope.launch {
+                    launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+                    launch { viewModel.getStudyCount() }
+                }
+            }
+            myStudySwipeRefreshLayout.setOnRefreshListener {
+                viewLifecycleOwner.lifecycleScope.launch {
+                    launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+                    launch { viewModel.getStudyCount() }
+                    myStudySwipeRefreshLayout.isRefreshing = false
+                }
             }
         }
     }
@@ -69,7 +90,7 @@ class MyStudyHomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            launch { viewModel.getMyStudyList(null, 50) }
+            launch { viewModel.getMyStudyList(null, 50, sortStatus) }
             launch { viewModel.getStudyCount() }
         }
     }
