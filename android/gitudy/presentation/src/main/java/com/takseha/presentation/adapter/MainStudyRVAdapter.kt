@@ -4,19 +4,18 @@ import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemMainStudyBinding
-import com.takseha.presentation.databinding.ItemMystudyBinding
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import java.time.LocalDate
 
-class MainStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWithTodo>) : RecyclerView.Adapter<MainStudyRVAdapter.ViewHolder>() {
+class MainStudyRVAdapter(val context: Context, val studyInfoList: List<MyStudyWithTodo>) :
+    RecyclerView.Adapter<MainStudyRVAdapter.ViewHolder>() {
     interface ItemClick {
         fun onClick(view: View, position: Int)
     }
@@ -26,15 +25,14 @@ class MainStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudy
     class ViewHolder(val binding: ItemMainStudyBinding) : RecyclerView.ViewHolder(binding.root) {
         val studyImg = binding.studyImg
         val studyName = binding.studyName
-        val noTodoAlarm = binding.noTodoAlarm
         val todoTitle = binding.todoDetailTitle
         val todoCheck = binding.todoCheckText
-        val todoTimeText = binding.todoTimeText
         val todoTime = binding.todoTime
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val binding = ItemMainStudyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        val binding =
+            ItemMainStudyBinding.inflate(LayoutInflater.from(parent.context), parent, false)
 
         return ViewHolder(binding)
     }
@@ -45,7 +43,7 @@ class MainStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudy
 
         // 클릭 이벤트 처리
         if (itemClick != null) {
-            holder?.itemView?.setOnClickListener { v ->
+            holder.itemView.setOnClickListener { v ->
                 itemClick!!.onClick(v, position)
             }
         }
@@ -59,41 +57,29 @@ class MainStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudy
 
         holder.studyImg.setImageResource(studyImage)
         holder.studyName.text = studyInfo.topic
+        holder.todoTitle.text = urgentTodo.todo!!.title
+        holder.todoTime.text = urgentTodo.todo!!.todoDate
 
-        if (urgentTodo.todo == null) {
-            holder.noTodoAlarm.visibility = VISIBLE
-            holder.todoTitle.visibility = GONE
-            holder.todoCheck.visibility = GONE
-            holder.todoTimeText.visibility = GONE
-            holder.todoTime.visibility = GONE
-        } else {
-            holder.noTodoAlarm.visibility = GONE
-            holder.todoTitle.visibility = VISIBLE
-            holder.todoCheck.visibility = VISIBLE
-            holder.todoTimeText.visibility = VISIBLE
-            holder.todoTime.visibility = VISIBLE
-            holder.todoTitle.text = urgentTodo.todo!!.title
-            holder.todoTime.text = urgentTodo.todo!!.todoDate
-
-            // TODO: StudyInfo에 내가 커밋 완료했는지 여부 나타내는 필드 추가한 후!! 아래 기능 구현!!
-            if (urgentTodo.completeMemberCount == urgentTodo.totalMemberCount) {
-                holder.todoCheck.text = "완료"
-                holder.todoCheck.setTextColor(ContextCompat.getColor(
+        if (urgentTodo.myStatus == TodoStatus.TODO_COMPLETE) {
+            holder.todoCheck.text = "완료"
+            holder.todoCheck.setTextColor(
+                ContextCompat.getColor(
                     context,
                     R.color.BASIC_BLUE
-                ))
-            } else {
-                holder.todoCheck.text = "미완료"
-                if (urgentTodo.todo?.todoDate == LocalDate.now().toString()) {
-                    holder.todoTime.setTextColor(
-                        ContextCompat.getColor(
-                            context,
-                            R.color.BASIC_RED
-                        )
+                )
+            )
+        } else {
+            holder.todoCheck.text = "미완료"
+            if (urgentTodo.todo?.todoDate == LocalDate.now().toString()) {
+                holder.todoTime.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.BASIC_RED
                     )
-                }
+                )
             }
         }
+
     }
 
     private fun setStudyImg(currentIdx: Int): Int {

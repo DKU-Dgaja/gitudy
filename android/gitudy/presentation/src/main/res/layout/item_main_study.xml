@@ -25,19 +25,6 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <TextView
-                android:id="@+id/noTodoAlarm"
-                style="@style/B6_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="4dp"
-                android:text="@string/study_to_do_empty"
-                android:textColor="@color/BASIC_RED"
-                android:visibility="gone"
-                app:layout_constraintStart_toEndOf="@+id/studyImg"
-                app:layout_constraintTop_toTopOf="parent" />
-
             <LinearLayout
                 android:id="@+id/todoDetailLayout"
                 android:layout_width="wrap_content"

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemMystudyBinding
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
@@ -85,13 +86,14 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
             holder.todoTitle.text = urgentTodo.todo!!.title
             holder.todoTime.text = urgentTodo.todo!!.todoDate
 
-            // TODO: StudyInfo에 내가 커밋 완료했는지 여부 나타내는 필드 추가한 후!! 아래 기능 구현!!
-            if (urgentTodo.completeMemberCount == urgentTodo.totalMemberCount) {
+            if (urgentTodo.myStatus == TodoStatus.TODO_COMPLETE) {
                 holder.todoCheck.text = "완료"
-                holder.todoCheck.setTextColor(ContextCompat.getColor(
-                    context,
-                    R.color.BASIC_BLUE
-                ))
+                holder.todoCheck.setTextColor(
+                    ContextCompat.getColor(
+                        context,
+                        R.color.BASIC_BLUE
+                    )
+                )
             } else {
                 holder.todoCheck.text = "미완료"
                 if (urgentTodo.todo?.todoDate == LocalDate.now().toString()) {
