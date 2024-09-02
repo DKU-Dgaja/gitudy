@@ -332,4 +332,14 @@ public class StudyInfoService {
             throw new GithubApiException(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS);
         }
     }
+    @Transactional
+    public boolean closeStudy(Long studyInfoId) {
+        // 스터디 조회 예외처리
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
+
+        // 스터디 상태정보 변경
+        studyInfo.updateInactiveStudy();
+
+        return true;
+    }
 }
