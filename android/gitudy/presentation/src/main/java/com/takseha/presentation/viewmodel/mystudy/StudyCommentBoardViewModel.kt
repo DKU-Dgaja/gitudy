@@ -1,10 +1,9 @@
 package com.takseha.presentation.viewmodel.mystudy
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.takseha.data.dto.mystudy.Comment
 import com.takseha.data.dto.mystudy.CommentRequest
-import com.takseha.data.dto.mystudy.StudyComment
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +13,7 @@ import kotlinx.coroutines.launch
 class StudyCommentBoardViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
 
-    private val _commentState = MutableStateFlow<List<StudyComment>?>(null)
+    private val _commentState = MutableStateFlow<List<Comment>?>(null)
     val commentState = _commentState.asStateFlow()
 
     fun getStudyComments(studyInfoId: Int, limit: Long) = viewModelScope.launch {
@@ -26,7 +25,7 @@ class StudyCommentBoardViewModel : BaseViewModel() {
                 } else {
                     Log.e(
                         "StudyCommentBoardViewModel",
-                        "studyCommentListResponse status: ${response.code()}\nstudyCommentListResponse message: ${response.message()}"
+                        "studyCommentListResponse status: ${response.code()}\nstudyCommentListResponse message: ${response.errorBody()?.string()}"
                     )
                 }
             }
@@ -45,7 +44,7 @@ class StudyCommentBoardViewModel : BaseViewModel() {
                 } else {
                     Log.e(
                         "StudyCommentBoardViewModel",
-                        "newStudyCommentResponse status: ${response.code()}\nnewStudyCommentResponse message: ${response.message()}"
+                        "newStudyCommentResponse status: ${response.code()}\nnewStudyCommentResponse message: ${response.errorBody()?.string()}"
                     )
                 }
             }
