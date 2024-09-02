@@ -69,8 +69,8 @@ class FcmControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(token)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -90,8 +90,8 @@ class FcmControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(fcmSingleTokenRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -111,8 +111,8 @@ class FcmControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(fcmMultiTokenRequest)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
 }

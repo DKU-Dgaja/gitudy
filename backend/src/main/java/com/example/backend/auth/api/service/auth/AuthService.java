@@ -28,6 +28,7 @@ import com.example.backend.domain.define.fcm.FcmToken;
 import com.example.backend.domain.define.fcm.repository.FcmTokenRepository;
 import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.service.github.GithubApiTokenService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
@@ -87,7 +88,9 @@ public class AuthService {
                 });
 
         // 깃허브 api 토큰 저장
+        log.info("로그인 후 받은 토큰을 저장하는 중.. (userId: {})", findUser.getId());
         githubApiTokenService.saveToken(loginResponse.getGithubApiToken(), findUser.getId());
+        log.info("로그인 후 받은 토큰 저장 완료 (userId: {})", findUser.getId());
 
         // JWT 토큰 생성
         JwtToken jwtToken = generateJwtToken(findUser);
@@ -186,7 +189,7 @@ public class AuthService {
 
         // fcmToken 저장
         FcmToken fcmToken = FcmToken.builder()
-                .userId(user.getId())
+                .userId(findUser.getId())
                 .fcmToken(request.getFcmToken())
                 .build();
         fcmTokenRepository.save(fcmToken);
@@ -208,7 +211,7 @@ public class AuthService {
     }
 
     @Transactional
-    public void userDelete(String userName) {
+    public void userDelete(String userName, MessageRequest request) {
         String[] platformIdAndPlatformType = extractFromSubject(userName);
         String platformId = platformIdAndPlatformType[0];
         String platformType = platformIdAndPlatformType[1];
@@ -218,6 +221,7 @@ public class AuthService {
         });
 
         try {
+            user.reason(request.getMessage());
             user.deleteUser();
             log.info(">>>> {} Info is Deleted.", user.getName());
         } catch (IllegalArgumentException e) {

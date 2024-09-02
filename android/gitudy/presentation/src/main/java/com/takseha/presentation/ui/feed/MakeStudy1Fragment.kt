@@ -1,6 +1,5 @@
 package com.takseha.presentation.ui.feed
 
-import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -16,15 +15,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.Category
-import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.AllCategoryRVAdapter
-import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.FragmentMakeStudy1Binding
-import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -33,8 +27,11 @@ class MakeStudy1Fragment : Fragment() {
     private var _binding: FragmentMakeStudy1Binding? = null
     private val binding get() = _binding!!
     private val viewModel: MakeStudyViewModel by activityViewModels()
+    private var categories = ArrayList<String>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        viewModel.getAllCategory()
     }
 
     override fun onCreateView(
@@ -48,7 +45,6 @@ class MakeStudy1Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.getAllCategory()
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categoryState.collectLatest {
                 setCategoryList(it)
@@ -73,7 +69,7 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     title = studyNameEditText.text.toString()
-                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty() && !isValidNameBtn.isEnabled
+                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                 }
             })
             studyDetailEditText.addTextChangedListener(object : TextWatcher {
@@ -89,7 +85,7 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     detail = studyDetailEditText.text.toString()
-                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty() && !isValidNameBtn.isEnabled
+                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                 }
             })
             studyGithubLinkEditText.addTextChangedListener(object : TextWatcher {
@@ -111,6 +107,8 @@ class MakeStudy1Fragment : Fragment() {
                                 R.color.GS_400
                             ))
                     }
+                    validationCheckedImg.visibility = GONE
+                    isValidNameBtn.visibility = VISIBLE
                     nextBtn.isEnabled = false    // 확인 버튼 초기화
                     isValidNameBtn.isEnabled = repoNameLength > 0
                 }
@@ -163,34 +161,39 @@ class MakeStudy1Fragment : Fragment() {
                         viewModel.checkValidRepoName(githubRepo)
                         viewModel.isValidRepoName.collectLatest {
                             Log.e("MakeStudy1Fragment", it.toString())
-                            if (it == null) {
-                                repoDesc.visibility = GONE
-                                waitImg.visibility = VISIBLE
-                            } else if (it == true) {
-                                repoDesc.visibility = VISIBLE
-                                waitImg.visibility = GONE
-                                repoDesc.apply {
-                                    text = "생성 가능한 레포지토리 이름이에요"
-                                    setTextColor(
-                                        ContextCompat.getColor(
-                                            requireContext(),
-                                            R.color.BASIC_GREEN
-                                        ))
+                            when (it) {
+                                null -> {
+                                    repoDesc.visibility = GONE
+                                    waitImg.visibility = VISIBLE
                                 }
-                                isValidNameBtn.isEnabled = false
-                                nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && githubRepo.isNotEmpty()
-                            } else if (it == false) {
-                                repoDesc.visibility = VISIBLE
-                                waitImg.visibility = GONE
-                                repoDesc.apply {
-                                    text = "동일한 레포지토리 이름이 존재해요"
-                                    setTextColor(
-                                        ContextCompat.getColor(
-                                            requireContext(),
-                                            R.color.BASIC_RED
-                                        ))
+                                true -> {
+                                    repoDesc.visibility = VISIBLE
+                                    waitImg.visibility = GONE
+                                    repoDesc.apply {
+                                        text = "생성 가능한 레포지토리 이름이에요"
+                                        setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.BASIC_GREEN
+                                            ))
+                                    }
+                                    validationCheckedImg.visibility = VISIBLE
+                                    isValidNameBtn.visibility = GONE
+                                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                                 }
-                                nextBtn.isEnabled = false
+                                false -> {
+                                    repoDesc.visibility = VISIBLE
+                                    waitImg.visibility = GONE
+                                    repoDesc.apply {
+                                        text = "동일한 레포지토리 이름이 존재해요"
+                                        setTextColor(
+                                            ContextCompat.getColor(
+                                                requireContext(),
+                                                R.color.BASIC_RED
+                                            ))
+                                    }
+                                    nextBtn.isEnabled = false
+                                }
                             }
                         }
                     }
@@ -202,9 +205,11 @@ class MakeStudy1Fragment : Fragment() {
             nextBtn.setOnClickListener {
                 val categoryIdList = (categoryListRecyclerView.adapter as? AllCategoryRVAdapter)?.getSelectedItems() ?: emptyList()
                 viewModel.setStudyIntro(title, detail, githubRepo, categoryIdList)
-                Log.d("MakeStudy1Fragment", viewModel.newStudyInfoState.value.toString())
+                val bundle = Bundle().apply {
+                    putStringArrayList("categories", categories)
+                }
                 it.findNavController()
-                    .navigate(R.id.action_makeStudy1Fragment_to_makeStudy2Fragment)
+                    .navigate(R.id.action_makeStudy1Fragment_to_makeStudy2Fragment, bundle)
             }
             exitBtn.setOnClickListener {
                 requireActivity().finish()
@@ -226,6 +231,7 @@ class MakeStudy1Fragment : Fragment() {
     private fun clickCategoryItem(allCategoryRVAdapter: AllCategoryRVAdapter, categoryList: List<Category>) {
         allCategoryRVAdapter.itemClick = object : AllCategoryRVAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
+                categories.add(categoryList[position].name)
             }
         }
     }

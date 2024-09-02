@@ -6,8 +6,8 @@ import com.takseha.data.BuildConfig
 import com.takseha.data.api.gitudy.GitudyAuthService
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.TokenResponse
-import com.takseha.data.dto.auth.login.ReissueTokenResponse
 import com.takseha.data.dto.auth.register.RegisterRequest
+import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.sharedPreferences.SP
 import com.takseha.data.sharedPreferences.SPKey
 import kotlinx.coroutines.Dispatchers
@@ -25,13 +25,13 @@ class TokenManager(context: Context) {
 
 
     var accessToken: String?
-        get() = prefs.loadPref(SPKey.ACCESS_TOKEN, "0")
+        get() = prefs.loadPref(SPKey.ACCESS_TOKEN, "")
         set(value) {
             prefs.savePref(SPKey.ACCESS_TOKEN, value!!)
         }
 
     var refreshToken: String?
-        get() = prefs.loadPref(SPKey.REFRESH_TOKEN, "0")
+        get() = prefs.loadPref(SPKey.REFRESH_TOKEN, "")
         set(value) {
             prefs.savePref(SPKey.REFRESH_TOKEN, value!!)
         }
@@ -88,7 +88,7 @@ class TokenManager(context: Context) {
                     null
                 }
             } catch (e: Exception) {
-                Log.e("TokenManager", e.message.toString())
+                Log.e("TokenManager", "register error: ${e.message}")
                 null
             }
         }
@@ -116,7 +116,7 @@ class TokenManager(context: Context) {
         }
     }
 
-    suspend fun logout() {
+    suspend fun logout(): Boolean {
         return withContext(Dispatchers.IO) {
             try {
                 val token = "Bearer $accessToken"
@@ -126,13 +126,36 @@ class TokenManager(context: Context) {
                     accessToken = ""
                     refreshToken = ""
                     Log.d("TokenManager", "logout response status: ${response.code()}")
+                    true
                 } else {
                     Log.e("TokenManager", "logout response status: ${response.code()}\nlogout response message:${response.errorBody()!!.string()}")
-                    null
+                    false
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                null
+                false
+            }
+        }
+    }
+
+    suspend fun deleteUserAccount(messageRequest: MessageRequest): Boolean {
+        return withContext(Dispatchers.IO) {
+            try {
+                val token = "Bearer $accessToken"
+                val response = loginApi.deleteUserAccount(token, messageRequest)
+
+                if (response.isSuccessful) {
+                    accessToken = ""
+                    refreshToken = ""
+                    Log.d("TokenManager", "deleteUserAccount response status: ${response.code()}")
+                    true
+                } else {
+                    Log.e("TokenManager", "deleteUserAccount response status: ${response.code()}\ndeleteUserAccount response message:${response.errorBody()!!.string()}")
+                    false
+                }
+            } catch (e: Exception) {
+                Log.e("TokenManager", e.message.toString())
+                false
             }
         }
     }

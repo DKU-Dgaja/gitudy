@@ -20,9 +20,11 @@ public class CommitInfoResponse {
     private CommitStatus status;  // 커밋 상태
     private String rejectionReason; // 커밋 거절 이유
     private LikeCount likeCount;  // 커밋 좋아요 수
+    private String name;          // 커밋 사용자 이름
+    private String profileImageUrl;  // 커밋 사용자 프로필 이미지
 
     @Builder
-    public CommitInfoResponse(Long id, Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason, LikeCount likeCount) {
+    public CommitInfoResponse(Long id, Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason, LikeCount likeCount, String name, String profileImageUrl) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.studyTodoId = studyTodoId;
@@ -33,9 +35,11 @@ public class CommitInfoResponse {
         this.status = status;
         this.rejectionReason = rejectionReason;
         this.likeCount = likeCount;
+        this.name = name;
+        this.profileImageUrl = profileImageUrl;
     }
 
-    public static CommitInfoResponse of(StudyCommit commit) {
+    public static CommitInfoResponse of(StudyCommit commit, String name, String profileImageUrl) {
         return CommitInfoResponse.builder()
                 .id(commit.getId())
                 .studyInfoId(commit.getStudyInfoId())
@@ -47,6 +51,9 @@ public class CommitInfoResponse {
                 .status(commit.getStatus())
                 .rejectionReason(commit.getRejectionReason())
                 .likeCount(commit.getLikeCount())
+                .name(name)
+                .profileImageUrl(profileImageUrl)
                 .build();
     }
+
 }

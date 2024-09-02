@@ -28,7 +28,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="11dp"
-            android:text="소셜 로그인이 완료되었어요!"
+            android:text="깃허브 로그인이 완료되었어요!\n\n깃터디 활동이\n로그인 계정과 연동돼요"
             android:textColor="@color/GS_900" />
     </LinearLayout>
 

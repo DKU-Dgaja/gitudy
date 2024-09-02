@@ -3,11 +3,9 @@ package com.takseha.presentation.adapter
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.takseha.presentation.databinding.ItemCategoryBinding
 import com.takseha.presentation.databinding.ItemCategoryInStudyBinding
 
 class CategoryInStudyRVAdapter(val context : Context, val categoryList: List<String>) : RecyclerView.Adapter<CategoryInStudyRVAdapter.ViewHolder>() {

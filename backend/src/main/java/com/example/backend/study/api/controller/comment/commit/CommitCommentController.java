@@ -29,7 +29,8 @@ public class CommitCommentController {
     private final StudyMemberService studyMemberService;
     private final AuthService authService;
 
-    @ApiResponse(responseCode = "200", description = "커밋 댓글 리스트 조회 성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CommitCommentInfoResponse.class))))    @GetMapping("/{commitId}/comments")
+    @ApiResponse(responseCode = "200", description = "커밋 댓글 리스트 조회 성공", content = @Content(array = @ArraySchema(schema = @Schema(implementation = CommitCommentInfoResponse.class))))
+    @GetMapping("/{commitId}/comments")
     public ResponseEntity<List<CommitCommentInfoResponse>> commitCommentList(@AuthenticationPrincipal User user,
                                                                              @RequestParam(name = "studyInfoId") Long studyInfoId,
                                                                              @PathVariable(name = "commitId") Long commitId) {

@@ -4,6 +4,8 @@ package com.example.backend.study.api.service.todo;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
+import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.commit.repository.StudyCommitRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.info.StudyInfo;
@@ -84,7 +86,10 @@ public class StudyTodoService {
         List<Long> isPushAlarmYUserIds = userService.findIsPushAlarmYsByIdsOrThrowException(activeMemberUserIds);
 
         // 투두에 해당하는 폴더를 스터디 레포지토리에 생성
+        log.info("투두 폴더를 레포지토리에 생성하기 전 토큰 조회 중.. (userId: {})", studyInfo.getUserId());
         GithubApiToken token = githubApiTokenService.getToken(studyInfo.getUserId());
+        log.info("투두 폴더를 레포지토리에 생성하기 전 토큰 조회 완료 (userId: {})", studyInfo.getUserId());
+
         githubApiService.createTodoFolder(token.githubApiToken(), studyTodo, studyInfo.getRepositoryInfo());
 
         // 알림 비동기처리
@@ -265,9 +270,19 @@ public class StudyTodoService {
     }
 
     public List<CommitInfoResponse> selectTodoCommits(Long todoId) {
+        // 커밋 목록 조회
+        List<StudyCommit> commits = studyCommitRepository.findByStudyTodoIdOrderByCommitDateDesc(todoId);
 
-        return studyCommitRepository.findByStudyTodoIdOrderByCommitDateDesc(todoId).stream()
-                .map(CommitInfoResponse::of)
-                .toList();
+        // 커밋의 사용자 이름을 포함한 응답 리스트 생성
+        return commits.stream()
+                .map(commit -> {
+                    // 커밋의 사용자 정보 조회
+                    User user = userService.findUserByIdOrThrowException(commit.getUserId());
+                    String userName = user.getName();
+                    String profileImageUrl = user.getProfileImageUrl();
+                    // 사용자 이름을 포함한 CommitInfoResponse 객체 생성
+                    return CommitInfoResponse.of(commit, userName, profileImageUrl);
+                })
+                .collect(Collectors.toList());
     }
 }

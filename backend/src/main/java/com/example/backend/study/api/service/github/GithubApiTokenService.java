@@ -28,9 +28,14 @@ public class GithubApiTokenService {
     @Transactional
     public GithubApiToken saveToken(String githubApiToken, Long userId) {
         // 저장하기 전 이미 토큰이 존재하는지 확인 후 삭제
+        log.info("토큰을 저장하기 전에 기존 토큰의 삭제를 시도합니다. (userId: {})", userId);
         deleteToken(userId);
+        log.info("기존 토큰의 삭제를 완료하였습니다. 이제 토큰 저장을 시도합니다. (userId: {})", userId);
 
-        return githubApiTokenRepository.save(new GithubApiToken(githubApiToken, userId));
+        GithubApiToken savedToken = githubApiTokenRepository.save(new GithubApiToken(githubApiToken, userId));
+        log.info("사용자의 토큰을 저장했습니다. (userId: {})", userId);
+
+        return savedToken;
     }
 
     // 사용자의 토큰 삭제 로직

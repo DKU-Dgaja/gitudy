@@ -71,7 +71,7 @@ public class StudyTodoRepositoryTest extends TestConfig {
             // 각 To do에 Commit 2개씩 저장
             IntStream.rangeClosed(1, 2).forEach(ci -> {
                 studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(
-                        1L,
+                        user.getId(),
                         study.getId(),
                         studyTodo.getId(),
                         "CommitSHA" + td + ci

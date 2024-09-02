@@ -9,9 +9,10 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.CommitStatus
-import com.takseha.data.dto.mystudy.LikeCount
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCommitBinding
+import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
+import java.time.LocalDateTime
 
 class CommitListRVAdapter(val context : Context, val commitList : List<Commit>, val onClickListener: ToDoListRVAdapter.OnClickListener) : RecyclerView.Adapter<CommitListRVAdapter.ViewHolder>() {
 
@@ -40,7 +41,7 @@ class CommitListRVAdapter(val context : Context, val commitList : List<Commit>, 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.commitTitle.text = commitList[position].message
-        holder.commitInfo.text = context.getString(R.string.study_to_do_commit_info, commitList[position].rejectionReason, commitList[position].commitDate)
+        holder.commitInfo.text = context.getString(R.string.study_to_do_commit_info, commitList[position].name, commitList[position].commitDate)
         when (commitList[position].status) {
             CommitStatus.COMMIT_APPROVAL -> holder.commitStatus.text = "승인완료"
             CommitStatus.COMMIT_DELETE -> {

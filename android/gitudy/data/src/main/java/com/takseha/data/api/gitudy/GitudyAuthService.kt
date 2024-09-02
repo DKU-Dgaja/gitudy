@@ -1,10 +1,14 @@
 package com.takseha.data.api.gitudy
 
 import com.takseha.data.dto.auth.auth.UserInfoResponse
+import com.takseha.data.dto.auth.auth.UserInfoUpdatePageResponse
+import com.takseha.data.dto.auth.auth.UserInfoUpdateRequest
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
-import com.takseha.data.dto.auth.login.TokenResponse
 import com.takseha.data.dto.auth.login.ReissueTokenResponse
+import com.takseha.data.dto.auth.login.TokenResponse
+import com.takseha.data.dto.auth.register.CheckNicknameRequest
 import com.takseha.data.dto.auth.register.RegisterRequest
+import com.takseha.data.dto.feed.MessageRequest
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
@@ -40,12 +44,32 @@ interface GitudyAuthService {
         @Header("Authorization") token: String
     ): Response<Void>
 
+    @POST("/auth/delete")
+    suspend fun deleteUserAccount(
+        @Header("Authorization") token: String,
+        @Body request: MessageRequest
+    ): Response<Void>
+
     @POST("/auth/check-nickname")
     suspend fun checkCorrectNickname(
-        @Body request: String
+        @Body request: CheckNicknameRequest
     ): Response<Void>
 
     @GET("/auth/info")
     suspend fun getUserInfo(
     ): Response<UserInfoResponse>
+
+    @GET("/auth/update")
+    suspend fun getUserInfoUpdatePage(
+    ): Response<UserInfoUpdatePageResponse>
+
+    @GET("/auth/update/pushAlarmYn/{pushAlarmEnable}")
+    suspend fun updatePushAlarmYn(
+        @Path("pushAlarmEnable") pushAlarmEnable: Boolean
+    ): Response<Void>
+
+    @POST("/auth/update")
+    suspend fun updateUserInfo(
+        @Body request: UserInfoUpdateRequest
+    ): Response<Void>
 }

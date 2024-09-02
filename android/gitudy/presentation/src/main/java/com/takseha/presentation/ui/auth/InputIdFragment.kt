@@ -4,11 +4,13 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
@@ -25,6 +27,8 @@ class InputIdFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
     }
 
     override fun onCreateView(
@@ -45,11 +49,14 @@ class InputIdFragment : Fragment() {
                     start: Int,
                     count: Int,
                     after: Int
-                ) {}
+                ) {
+                }
 
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                     val githubIdLength = inputIdEditText.length()
 
+                    isIdOkBtn.visibility = VISIBLE
+                    validationCheckedImg.visibility = GONE
                     idCheckText.text = ""   // text 초기화
                     confirmBtn.isEnabled = false    // 확인 버튼 초기화
 
@@ -63,7 +70,6 @@ class InputIdFragment : Fragment() {
                 viewLifecycleOwner.lifecycleScope.launch {
                     var githubId = inputIdEditText.text.toString()
                     viewModel.checkGithubId(githubId)
-
                     val isCorrectId = viewModel.isCorrectId.value
                     Log.e("InputIdFragment", isCorrectId.toString())
                     if (isCorrectId == true) {
@@ -73,8 +79,11 @@ class InputIdFragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.GS_500
-                                ))
+                                )
+                            )
                         }
+                        isIdOkBtn.visibility = GONE
+                        validationCheckedImg.visibility = VISIBLE
                         confirmBtn.isEnabled = true
                     } else {
                         idCheckText.apply {
@@ -83,7 +92,8 @@ class InputIdFragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
                         confirmBtn.isEnabled = false
                     }
@@ -98,7 +108,6 @@ class InputIdFragment : Fragment() {
                         setFCMToken(fcmToken)
                         getRegisterTokens()
                     }
-                    Log.d("InputIdFragment", viewModel.registerInfoState.value.toString())
                     view.findNavController()
                         .navigate(R.id.action_inputIdFragment_to_loginCompleteFragment)
                 }

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="BACKGROUND">#F9F9FA</color>
+    <color name="BACKGROUND_BLACK">#80000000</color>
     <color name="TRANSPARENT">@android:color/transparent</color>
     <color name="BLACK">#000000</color>
     <color name="WHITE">#FFFFFF</color>
@@ -18,4 +19,14 @@
     <color name="BASIC_GREEN">#31DA7E</color>
     <color name="BASIC_GRADIENT_TOP">#36F28B</color>
     <color name="BASIC_GRADIENT_BOTTOM">#77C6FD</color>
+    <color name="BG_1">#7DA9FE</color>
+    <color name="BG_2">#B1E8A8</color>
+    <color name="BG_3">#8E59FF</color>
+    <color name="BG_4">#6ECFBC</color>
+    <color name="BG_5">#FFDE89</color>
+    <color name="BG_6">#C9B1FF</color>
+    <color name="BG_7">#8EA1FF</color>
+    <color name="BG_8">#FF80A9</color>
+    <color name="BG_9">#FC6C66</color>
+    <color name="BG_10">#667A92</color>
 </resources>

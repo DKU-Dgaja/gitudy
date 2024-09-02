@@ -16,7 +16,7 @@ data class StudyInfoResponse(
     @SerializedName("info")
     val info: String = "",
     @SerializedName("last_commit_day")
-    val lastCommitDay: String = "",
+    val lastCommitDay: String? = "",
     @SerializedName("maximum_member")
     val maximumMember: Int = 0,
     @SerializedName("modified_date_time")
@@ -24,7 +24,7 @@ data class StudyInfoResponse(
     @SerializedName("period_type")
     val periodType: StudyPeriodStatus = StudyPeriodStatus.STUDY_PERIOD_WEEK,
     @SerializedName("profile_image_url")
-    val profileImageUrl: String = "#ffffff",
+    val profileImageUrl: String = "-1",
     @SerializedName("score")
     val score: Int = 0,
     @SerializedName("status")
@@ -35,6 +35,8 @@ data class StudyInfoResponse(
     val userId: Int = 0,
     @SerializedName("is_leader")
     val isLeader: Boolean = false,
+    @SerializedName("is_waiting")
+    val isWaiting: Boolean = false,
     @SerializedName("repository_info")
     val githubLinkInfo: RepositoryInfo = RepositoryInfo()
 )

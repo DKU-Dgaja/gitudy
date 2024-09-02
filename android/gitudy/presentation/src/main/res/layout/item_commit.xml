@@ -40,7 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="4dp"
             android:layout_marginTop="6dp"
-            android:text="승인완료"
+            android:text=""
             android:textColor="@color/BASIC_BLUE"
             app:layout_constraintStart_toEndOf="@+id/commitInfo"
             app:layout_constraintTop_toBottomOf="@+id/commitTitle" />

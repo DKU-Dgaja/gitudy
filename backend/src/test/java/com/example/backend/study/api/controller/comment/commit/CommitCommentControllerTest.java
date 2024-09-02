@@ -69,8 +69,8 @@ class CommitCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray()) 
-                .andDo(print());
+                .andExpect(jsonPath("$").isArray());
+
 
     }
 
@@ -94,8 +94,8 @@ class CommitCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.AUTH_NOT_FOUND.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.AUTH_NOT_FOUND.getText()));
+
 
     }
 
@@ -118,8 +118,8 @@ class CommitCommentControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(AddCommitCommentRequest.builder().content("test").build())))
 
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
 
     }
 
@@ -143,8 +143,8 @@ class CommitCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
+
     }
 
     @Test
@@ -166,8 +166,8 @@ class CommitCommentControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.STUDY_NOT_MEMBER.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.STUDY_NOT_MEMBER.getText()));
+
 
     }
 

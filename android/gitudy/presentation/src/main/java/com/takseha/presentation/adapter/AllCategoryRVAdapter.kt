@@ -13,7 +13,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.feed.Category
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCategoryAllBinding
-import com.takseha.presentation.databinding.ItemCategoryBinding
 
 class AllCategoryRVAdapter(
     private val context: Context,

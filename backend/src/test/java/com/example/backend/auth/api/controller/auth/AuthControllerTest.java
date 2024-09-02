@@ -21,6 +21,7 @@ import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
+import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -89,8 +90,7 @@ class AuthControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -143,8 +143,7 @@ class AuthControllerTest extends MockTestConfig {
 
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.access_token").value(extendedAtk))
-                .andExpect(jsonPath("$.refresh_token").value(extendedRtk))
-                .andDo(print());
+                .andExpect(jsonPath("$.refresh_token").value(extendedRtk));
     }
 
     @Test
@@ -161,12 +160,17 @@ class AuthControllerTest extends MockTestConfig {
                 .build()
         );
 
-        doNothing().when(authService).userDelete(any(String.class));
+        MessageRequest request = MessageRequest.builder()
+                .message("reason")
+                .build();
+
+        doNothing().when(authService).userDelete(any(String.class), any(MessageRequest.class));
 
         // when
         mockMvc.perform(post("/auth/delete")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(request)))
                 // then
                 .andExpect(status().isOk());
 
@@ -234,8 +238,7 @@ class AuthControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
-                .andExpect(status().isForbidden())
-                .andDo(print());
+                .andExpect(status().isForbidden());
 
     }
 
@@ -261,8 +264,7 @@ class AuthControllerTest extends MockTestConfig {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(savedUser.getName()))
-                .andExpect(jsonPath("$.profile_image_url").value(savedUser.getProfileImageUrl()))
-                .andDo(print());
+                .andExpect(jsonPath("$.profile_image_url").value(savedUser.getProfileImageUrl()));
 
     }
 
@@ -283,9 +285,37 @@ class AuthControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()));
 
+    }
+
+    @Test
+    void 사용자_정보_수정_성공_테스트_링크_null일_경우() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+
+        UserUpdateRequest updateRequest = UserUpdateRequest.builder()
+                .name(savedUser.getName())
+                .profileImageUrl(savedUser.getProfileImageUrl())
+                .profilePublicYn(false)
+                .socialInfo(SocialInfo.builder()
+                        .blogLink("https://test.tistory.com/").build())
+                .build();
+        // when
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
+
+        // then
+        mockMvc.perform(post("/auth/update")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                        .content(objectMapper.writeValueAsString(updateRequest)))
+
+                // then
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -301,9 +331,11 @@ class AuthControllerTest extends MockTestConfig {
                 .profileImageUrl(savedUser.getProfileImageUrl())
                 .profilePublicYn(false)
                 .socialInfo(SocialInfo.builder()
-                        .blogLink("test@naver.com").build())
+                        .githubLink("https://github.com/test")
+                        .blogLink("https://test.tistory.com/")
+                        .linkedInLink("https://test.tistory.com/")
+                        .build())
                 .build();
-
         // when
         when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
@@ -315,8 +347,7 @@ class AuthControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(updateRequest)))
 
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -349,42 +380,9 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()));
     }
 
-    @Test
-    void 사용자_정보_수정_유효성_검사_실패_테스트() throws Exception {
-        // given
-        String expectedError = "socialInfo: Invalid social link";
-
-        User savedUser = userRepository.save(generateAuthUser());
-
-        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
-        String accessToken = jwtService.generateAccessToken(map, savedUser);
-
-        UserUpdateRequest updateRequest = UserUpdateRequest.builder()
-                .name(savedUser.getName())
-                .profileImageUrl(savedUser.getProfileImageUrl())
-                .profilePublicYn(false)
-                .socialInfo(SocialInfo.builder()
-                        .blogLink("Invalid Link").build())
-                .build();
-
-        // when
-        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
-
-        // then
-        mockMvc.perform(post("/auth/update")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
-                        .content(objectMapper.writeValueAsString(updateRequest)))
-
-                // then
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
-    }
 
     @Test
     void 푸시_알림_여부_수정_성공_테스트() throws Exception {
@@ -404,8 +402,7 @@ class AuthControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
 
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -425,8 +422,7 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()));
     }
 
     @Test
@@ -442,8 +438,7 @@ class AuthControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 // then
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -463,8 +458,7 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
     }
 
     @Test
@@ -484,8 +478,7 @@ class AuthControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
     }
 
 }

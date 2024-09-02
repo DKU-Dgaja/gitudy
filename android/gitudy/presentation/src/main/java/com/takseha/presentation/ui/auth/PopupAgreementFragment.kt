@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.flowWithLifecycle
@@ -14,8 +15,11 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentPopupAgreementBinding
+import com.takseha.presentation.ui.common.SnackBarHelper
 import com.takseha.presentation.viewmodel.auth.PopupAgreementIntent
 import com.takseha.presentation.viewmodel.auth.PopupAgreementViewModel
+import com.takseha.presentation.viewmodel.common.BaseApplicationViewModel
+import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -24,10 +28,11 @@ import kotlinx.coroutines.launch
 class PopupAgreementFragment : Fragment() {
     private var _binding : FragmentPopupAgreementBinding? = null
     private val binding get() = _binding!!
-    private lateinit var viewModel: PopupAgreementViewModel
+    private val viewModel: PopupAgreementViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
     }
 
     override fun onCreateView(
@@ -40,18 +45,9 @@ class PopupAgreementFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(this)[PopupAgreementViewModel::class.java]
-
         view.setBackgroundColor(Color.argb(0x80,0x27,0x29,0x2E))
-        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
-
-//        Handler(Looper.getMainLooper()).postDelayed({
-//            view.setBackgroundColor(Color.argb(0x80,0x27,0x29,0x2E))
-//            requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
-//        }, 100)
 
         collectFlows()
-
 
         with(binding) {
             exitBtn.setOnClickListener {

@@ -39,50 +39,50 @@
             app:layout_constraintStart_toEndOf="@+id/feedTitle"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <CheckBox
-            android:id="@+id/enableStudyCheckBtn"
-            android:layout_width="22dp"
-            android:layout_height="22dp"
-            android:layout_marginTop="18dp"
-            android:background="@drawable/selector_ic_check_sq_checked"
-            android:button="@null"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/feedTitle" />
+<!--        <CheckBox-->
+<!--            android:id="@+id/enableStudyCheckBtn"-->
+<!--            android:layout_width="22dp"-->
+<!--            android:layout_height="22dp"-->
+<!--            android:layout_marginTop="18dp"-->
+<!--            android:background="@drawable/selector_ic_check_sq_checked"-->
+<!--            android:button="@null"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/feedTitle" />-->
 
-        <TextView
-            style="@style/B6_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="4dp"
-            android:layout_marginTop="19dp"
-            android:text="참여 가능한 스터디만 보기"
-            android:textColor="@color/GS_800"
-            app:layout_constraintStart_toEndOf="@+id/enableStudyCheckBtn"
-            app:layout_constraintTop_toBottomOf="@id/feedTitle" />
+<!--        <TextView-->
+<!--            style="@style/B6_1"-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="4dp"-->
+<!--            android:layout_marginTop="19dp"-->
+<!--            android:text="참여 가능한 스터디만 보기"-->
+<!--            android:textColor="@color/GS_800"-->
+<!--            app:layout_constraintStart_toEndOf="@+id/enableStudyCheckBtn"-->
+<!--            app:layout_constraintTop_toBottomOf="@id/feedTitle" />-->
 
-        <LinearLayout
-            android:id="@+id/sortBtn"
-            android:layout_width="64dp"
-            android:layout_height="28dp"
-            android:layout_marginTop="16dp"
-            android:background="@drawable/box_stroke_300_r12"
-            android:gravity="center"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/feedTitle">
+<!--        <LinearLayout-->
+<!--            android:id="@+id/sortBtn"-->
+<!--            android:layout_width="64dp"-->
+<!--            android:layout_height="28dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:background="@drawable/box_stroke_300_r12"-->
+<!--            android:gravity="center"-->
+<!--            app:layout_constraintEnd_toEndOf="parent"-->
+<!--            app:layout_constraintTop_toBottomOf="@+id/feedTitle">-->
 
-            <ImageView
-                android:layout_width="12dp"
-                android:layout_height="12dp"
-                android:layout_marginRight="4dp"
-                android:src="@drawable/ic_sort" />
+<!--            <ImageView-->
+<!--                android:layout_width="12dp"-->
+<!--                android:layout_height="12dp"-->
+<!--                android:layout_marginRight="4dp"-->
+<!--                android:src="@drawable/ic_sort" />-->
 
-            <TextView
-                style="@style/B7_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="정렬"
-                android:textColor="@color/GS_800" />
-        </LinearLayout>
+<!--            <TextView-->
+<!--                style="@style/B7_2"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="정렬"-->
+<!--                android:textColor="@color/GS_800" />-->
+<!--        </LinearLayout>-->
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -114,13 +114,40 @@
             android:textColor="@color/GS_400" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/feedList"
+    <ImageView
+        android:id="@+id/loadingImg"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_wait"
+        app:layout_constraintBottom_toBottomOf="@+id/feedSwipeRefreshLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/feedSwipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout"/>
+        app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout">
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/feedList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+    <ImageView
+        android:id="@+id/makeNewStudyBtn"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="128dp"
+        android:background="@drawable/circle_non_stroke"
+        android:elevation="5dp"
+        android:padding="9dp"
+        android:src="@drawable/ic_make_study"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

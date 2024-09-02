@@ -1,60 +1,87 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
+import com.takseha.presentation.databinding.FragmentQuitStudyBinding
+import com.takseha.presentation.ui.common.CustomCheckDialog
+import com.takseha.presentation.viewmodel.mystudy.MyStudySettingViewModel
+import kotlinx.coroutines.launch
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [QuitStudyFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class QuitStudyFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private var _binding: FragmentQuitStudyBinding? = null
+    private val binding get() = _binding!!
+    private val viewModel: MyStudySettingViewModel by activityViewModels()
+    private var studyInfoId: Int = 0
+    private lateinit var message: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
+        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_quit_study, container, false)
+        _binding = FragmentQuitStudyBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
-    companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment QuitStudyFragment.
-         */
-        // TODO: Rename and change types and number of parameters
-        @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            QuitStudyFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        with(binding) {
+            backBtn.setOnClickListener {
+                it.findNavController().popBackStack()
             }
+            deleteReasonSelectRadioGroup.setOnCheckedChangeListener { _, checkedId ->
+                quitStudyBtn.isEnabled = true
+                newReasonEditText.visibility = if (checkedId == reason4CheckBtn.id) VISIBLE else GONE
+            }
+            quitStudyBtn.setOnClickListener {
+                message = setMessage()
+                showDeleteAccountDialog(message)
+            }
+        }
+    }
+
+    private fun setMessage(): String {
+        return with(binding) {
+            when {
+                reason1CheckBtn.isChecked -> getString(R.string.study_quit_reason1)
+                reason2CheckBtn.isChecked -> getString(R.string.study_quit_reason2)
+                reason3CheckBtn.isChecked -> getString(R.string.study_quit_reason3)
+                else -> newReasonEditText.text.toString()
+            }
+        }
+    }
+
+    private fun showDeleteAccountDialog(message: String) {
+        val customCheckDialog = CustomCheckDialog(requireContext())
+        customCheckDialog.setAlertText(getString(R.string.study_quit_alert_title))
+        customCheckDialog.setAlertDetailText(getString(R.string.study_quit_alert_detail))
+        customCheckDialog.setCancelBtnText(getString(R.string.alert_logout_cancel))
+        customCheckDialog.setConfirmBtnText(getString(R.string.alert_delete_account_confirm))
+        customCheckDialog.setOnConfirmClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.withdrawStudy(studyInfoId)
+                findNavController().navigate(R.id.action_quitStudyFragment_to_studyQuitCompleteFragment)
+            }
+        }
+        customCheckDialog.show()
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

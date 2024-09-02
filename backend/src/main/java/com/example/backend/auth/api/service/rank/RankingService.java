@@ -54,13 +54,16 @@ public class RankingService {
         Double score = zSetOps.score(USER_RANKING_KEY, user.getId());
         if (score == null) {
             score = (double) user.getScore();
-            saveUserScore(user.getId(), score.intValue());
+            saveUserScore(user.getId(), score);
         }
         Long ranking = zSetOps.reverseRank(USER_RANKING_KEY, user.getId());
         if (ranking == null) {
-            return new UserRankingResponse(score.intValue(), 0L); // 랭킹이 없으면 0 반환
+            return new UserRankingResponse(score, 0L); // 랭킹이 없으면 0 반환
         }
-        return new UserRankingResponse(score.intValue(), ranking + 1);
+        return UserRankingResponse.builder()
+                .ranking(ranking + 1)
+                .score(score)
+                .build();
     }
 
     // 어플리케이션 로드 시점에 Cache Warming 작업
@@ -97,16 +100,19 @@ public class RankingService {
     public StudyRankingResponse getStudyRankings(StudyInfo studyInfo) {
 
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
-        Double score = zSetOps.score(STUDY_RANKING_KEY, studyInfo.getScore());
+        Double score = zSetOps.score(STUDY_RANKING_KEY, studyInfo.getId());
         if (score == null) {
             score = (double) studyInfo.getScore();
-            saveStudyScore(studyInfo.getId(), score.intValue());
+            saveStudyScore(studyInfo.getId(), score);
         }
 
         Long ranking = zSetOps.reverseRank(STUDY_RANKING_KEY, studyInfo.getId());
         if (ranking == null) {
-            return new StudyRankingResponse(score.intValue(), 0L);
+            return new StudyRankingResponse(score, 0L);
         }
-        return new StudyRankingResponse(score.intValue(), ranking + 1);
+        return StudyRankingResponse.builder()
+                .ranking(ranking + 1)
+                .score(score)
+                .build();
     }
 }

@@ -1,11 +1,9 @@
 package com.takseha.data.token
 
-import android.util.Log
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Request
 import okhttp3.Response
-import okhttp3.ResponseBody
 
 class TokenInterceptor(
     private val tokenManager: TokenManager
@@ -13,13 +11,24 @@ class TokenInterceptor(
     override fun intercept(chain: Interceptor.Chain): Response {
         var request = chain.request()
         request = addTokenToRequest(request, tokenManager.accessToken)
-        val response = chain.proceed(request)
+        val response: Response
+
+        try {
+            response = chain.proceed(request)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            throw e
+        }
+
         if (response.code() == 401 || response.code() == 403) {
             synchronized(this) {
                 val isReissueSucceed = runBlocking { tokenManager.reissueTokens() }
                 if (isReissueSucceed) {
                     request = addTokenToRequest(request, tokenManager.accessToken)
+                    response.close()
                     return chain.proceed(request)
+                } else {
+                    return response
                 }
             }
         }

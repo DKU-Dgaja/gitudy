@@ -3,20 +3,13 @@ package com.takseha.presentation.adapter
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
-import android.view.View.GONE
-import android.view.View.VISIBLE
 import android.view.ViewGroup
-import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.takseha.data.dto.home.Notice
-import com.takseha.data.dto.mystudy.StudyComment
-import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemAlertBinding
-import com.takseha.presentation.databinding.ItemCommentDetailBinding
+import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -43,8 +36,8 @@ class NoticeListRVAdapter(val context: Context, val noticeList: List<Notice>) :
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.date.text =
-            getCreatedDate(noticeList[position].localDateTime)
+        val localDateTime = LocalDateTime.parse(noticeList[position].localDateTime)
+        holder.date.text = UTCToKoreanTimeConverter().convertToKoreaTime(localDateTime)
         holder.title.text = noticeList[position].title
         holder.content.text = noticeList[position].message
 
@@ -54,14 +47,6 @@ class NoticeListRVAdapter(val context: Context, val noticeList: List<Notice>) :
                 onClickListener!!.onClick(v, position)
             }
         }
-    }
-
-    @RequiresApi(Build.VERSION_CODES.O)
-    private fun getCreatedDate(date: String): String {
-        val dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm", Locale.getDefault())
-        val localDateTime = LocalDateTime.parse(date)
-
-        return localDateTime.format(dateFormat)
     }
 
     override fun getItemCount(): Int {

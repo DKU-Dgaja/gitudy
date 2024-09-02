@@ -93,8 +93,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -122,8 +122,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
+
     }
 
     @Test
@@ -151,8 +151,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
+
     }
 
     @Test
@@ -178,8 +178,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -210,8 +210,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
+
     }
 
     @Test
@@ -242,8 +242,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(expectedError));
+
     }
 
     @Test
@@ -271,8 +271,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.CATEGORY_NOT_FOUND.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.CATEGORY_NOT_FOUND.getText()));
+
     }
 
     @Test
@@ -294,8 +294,8 @@ class CategoryControllerTest extends MockTestConfig {
         mockMvc.perform(delete("/category/" + studyCategory.getId())
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
-                .andExpect(status().isOk())
-                .andDo(print());
+                .andExpect(status().isOk());
+
     }
 
     @Test
@@ -320,8 +320,8 @@ class CategoryControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()));
+
     }
 
     @Test
@@ -349,8 +349,8 @@ class CategoryControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.category_response_list").isNotEmpty())
-                .andDo(print());
+                .andExpect(jsonPath("$.category_response_list").isNotEmpty());
+
     }
 
     @Test
@@ -376,8 +376,8 @@ class CategoryControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.UNAUTHORIZED_AUTHORITY.getText()));
+
     }
 
     @Test
@@ -399,8 +399,8 @@ class CategoryControllerTest extends MockTestConfig {
 
                 // then
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""))
-                .andDo(print());
+                .andExpect(jsonPath("$.message").value("400 BAD_REQUEST \"Validation failure\""));
+
     }
 
     @Test
@@ -423,8 +423,8 @@ class CategoryControllerTest extends MockTestConfig {
                 // then
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].id").value(categoryId))
-                .andExpect(jsonPath("$[0].name").value(categoryName))
-                .andDo(print());
+                .andExpect(jsonPath("$[0].name").value(categoryName));
+
 
     }
 }

@@ -1,0 +1,339 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/BACKGROUND_BLACK"
+    tools:context=".ui.mystudy.StudyApplyMemberProfileFragment">
+
+    <ProgressBar
+        android:id="@+id/loadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="5dp"
+        android:indeterminateTint="@color/GS_400"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/studyApplyAlertProfile"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="100dp"
+        android:layout_marginBottom="-20dp"
+        app:cardCornerRadius="16dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:elevation="50dp"
+            android:paddingLeft="22dp"
+            android:paddingRight="22dp"
+            android:paddingBottom="68dp">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/titleBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="30dp"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    style="@style/B3_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="스터디 가입 신청"
+                    android:textColor="@color/GS_800"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/exitBtn"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_exit"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <LinearLayout
+                android:id="@+id/profileBody"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="45dp"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@+id/titleBox">
+
+                <LinearLayout
+                    android:id="@+id/profileTitleLayout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/profileImg"
+                        android:layout_width="55dp"
+                        android:layout_height="55dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/circle_non_stroke"
+                        android:clipToOutline="true"
+                        android:src="@drawable/character_bebe_over_130" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/nickname"
+                            style="@style/B3_1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="4dp"
+                            android:text="@string/nickname"
+                            android:textColor="@color/BLACK" />
+
+                        <TextView
+                            android:id="@+id/githubId"
+                            style="@style/B6_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/github_id"
+                            android:textColor="@color/GS_400" />
+                    </LinearLayout>
+                </LinearLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="32dp"
+                    android:background="@drawable/box_non_stroke_r8"
+                    android:backgroundTint="#F7FAFC"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="18dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="18dp"
+                    tools:ignore="UseAppTint">
+
+                    <ImageView
+                        android:id="@+id/githubImg"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/logo_github"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        style="@style/B6_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="깃허브"
+                        android:textColor="@color/GS_600"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/githubImg"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/githubLink"
+                        style="@style/B6_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="6dp"
+                        android:text="@string/profile_github_link"
+                        android:textColor="#7A808D"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/githubLinkBtn"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/githubLinkBtn"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_link"
+                        android:tint="#7A808D"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/box_non_stroke_r8"
+                    android:backgroundTint="#F7FAFC"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="18dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="18dp"
+                    tools:ignore="UseAppTint">
+
+                    <ImageView
+                        android:id="@+id/blogImg"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/logo_blog"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        style="@style/B6_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="블로그"
+                        android:textColor="@color/GS_600"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/blogImg"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/blogLink"
+                        style="@style/B6_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="6dp"
+                        android:text="@string/profile_blog_link"
+                        android:textColor="#7A808D"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/blogLinkBtn"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/blogLinkBtn"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_link"
+                        android:tint="#7A808D"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="18dp"
+                    android:background="@drawable/box_non_stroke_r8"
+                    android:backgroundTint="#F7FAFC"
+                    android:paddingLeft="16dp"
+                    android:paddingTop="18dp"
+                    android:paddingRight="16dp"
+                    android:paddingBottom="18dp"
+                    tools:ignore="UseAppTint">
+
+                    <ImageView
+                        android:id="@+id/linkedinImg"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/logo_linkedin"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        style="@style/B6_1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginLeft="8dp"
+                        android:text="링크드인"
+                        android:textColor="@color/GS_600"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/linkedinImg"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/linkedInLink"
+                        style="@style/B6_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="6dp"
+                        android:text="@string/profile_github_link"
+                        android:textColor="#7A808D"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toStartOf="@+id/linkedinLinkBtn"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <ImageView
+                        android:id="@+id/linkedinLinkBtn"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/ic_link"
+                        android:tint="#7A808D"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+                </androidx.constraintlayout.widget.ConstraintLayout>
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/messageTitle"
+                style="@style/B3_1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="40dp"
+                android:fontFamily="@font/pretendard_semibold"
+                android:text="팀장에게 한마디"
+                android:textColor="@color/GS_800"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/profileBody" />
+
+            <TextView
+                android:id="@+id/messageContent"
+                style="@style/B6_2"
+                android:layout_width="match_parent"
+                android:layout_height="130dp"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/box_non_stroke_r8"
+                android:backgroundTint="#F3F5F7"
+                android:fontFamily="@font/pretendard_semibold"
+                android:overScrollMode="always"
+                android:paddingLeft="18dp"
+                android:paddingTop="20dp"
+                android:paddingRight="18dp"
+                android:paddingBottom="20dp"
+                android:text="안녕하세요"
+                android:textColor="@color/BLACK"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/messageTitle" />
+
+            <Button
+                android:id="@+id/cancelBtn"
+                style="@style/B5_1"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_non_stroke_r8"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                android:text="거절"
+                android:textColor="@color/GS_800"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <Button
+                android:id="@+id/applyBtn"
+                style="@style/B5_1"
+                android:layout_width="170dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/box_non_stroke_r8"
+                android:backgroundTint="@color/BLACK"
+                android:paddingTop="18dp"
+                android:paddingBottom="18dp"
+                android:text="수락"
+                android:textColor="@color/WHITE"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -47,99 +47,49 @@
         android:textColor="@color/GS_700"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle" />
-
-    <LinearLayout
-        android:id="@+id/commitCntSelectBox"
+    <RadioGroup
+        android:id="@+id/commitCntSelectRadioGroup"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="91dp"
+        android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle">
 
-        <RadioGroup
-            android:id="@+id/commitCntSelectRadioGroup"
+        <RadioButton
+            android:id="@+id/everydayCheck"
+            style="@style/B4_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/feed_rule_everyday"
+            android:textColor="@color/GS_700" />
 
-            <RadioButton
-                android:id="@+id/everydayCheck"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/selector_radio_clicked"
-                android:button="@null" />
-
-            <RadioButton
-                android:id="@+id/oneDayCheck"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/selector_radio_clicked"
-                android:button="@null" />
-
-            <RadioButton
-                android:id="@+id/freeCheck"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/selector_radio_clicked"
-                android:button="@null" />
-        </RadioGroup>
-
-        <LinearLayout
+        <RadioButton
+            android:id="@+id/oneDayCheck"
+            style="@style/B4_2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/feed_rule_week"
+            android:textColor="@color/GS_700" />
 
-            <LinearLayout
-                android:id="@+id/everydayBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:gravity="center">
+        <RadioButton
+            android:id="@+id/freeCheck"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/feed_rule_free"
+            android:textColor="@color/GS_700" />
+    </RadioGroup>
 
-                <TextView
-                    style="@style/B4_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="주 7회(매일)"
-                    android:textColor="@color/BLACK" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/oneBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:gravity="center">
-
-                <TextView
-                    style="@style/B4_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="주 1회"
-                    android:textColor="@color/BLACK" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/FreeBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-                <TextView
-                    style="@style/B4_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="자유"
-                    android:textColor="@color/BLACK" />
-            </LinearLayout>
-        </LinearLayout>
-    </LinearLayout>
 
     <TextView
         style="@style/B3_1"
@@ -149,16 +99,17 @@
         android:text="모집 방법"
         android:textColor="@color/GS_700"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commitCntSelectBox" />
+        app:layout_constraintTop_toBottomOf="@+id/commitCntSelectRadioGroup" />
 
     <LinearLayout
         android:id="@+id/isStudyOpenLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="113dp"
+        android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/commitCntSelectBox">
+        app:layout_constraintTop_toBottomOf="@+id/commitCntSelectRadioGroup">
 
         <RadioGroup
             android:id="@+id/isStudyOpenRadioGroup"
@@ -167,79 +118,50 @@
             android:orientation="vertical"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/commitCntSelectBox">
+            app:layout_constraintTop_toBottomOf="@+id/commitCntSelectRadioGroup">
 
             <RadioButton
                 android:id="@+id/publicCheck"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:layout_marginBottom="20dp"
-                android:background="@drawable/selector_radio_clicked"
-                android:button="@null" />
+                style="@style/B4_2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:button="@drawable/selector_radio_checked"
+                android:drawablePadding="8dp"
+                android:text="공개 스터디"
+                android:textColor="@color/GS_700" />
 
-            <RadioButton
-                android:id="@+id/privateCheck"
-                android:layout_width="28dp"
-                android:layout_height="28dp"
-                android:layout_marginRight="8dp"
-                android:background="@drawable/selector_radio_clicked"
-                android:button="@null" />
+<!--            <RadioButton-->
+<!--                android:id="@+id/privateCheck"-->
+<!--                style="@style/B4_2"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:button="@drawable/selector_radio_checked"-->
+<!--                android:drawablePadding="8dp"-->
+<!--                android:text="비밀 스터디"-->
+<!--                android:textColor="@color/GS_700" />-->
         </RadioGroup>
-
         <LinearLayout
+            android:layout_gravity="center_vertical"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_marginStart="4dp"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:id="@+id/openStudyBtn"
+            <TextView
+                style="@style/B6_3"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="24dp"
-                android:gravity="center">
+                android:text="깃터디 회원 누구나 입장 가능"
+                android:textColor="@color/GS_500" />
 
-                <TextView
-                    style="@style/B4_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="12dp"
-                    android:text="전체 공개"
-                    android:textColor="@color/BLACK" />
-
-                <TextView
-                    style="@style/B6_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="깃터디 회원 누구나 입장 가능"
-                    android:textColor="@color/GS_500" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/closeStudyBtn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-                <TextView
-                    style="@style/B4_2"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="12dp"
-                    android:text="비밀 스터디"
-                    android:textColor="@color/BLACK" />
-
-                <TextView
-                    style="@style/B6_3"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="초대 코드가 있는 사람만 입장 가능"
-                    android:textColor="@color/GS_500" />
+<!--            <TextView-->
+<!--                style="@style/B6_3"-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="초대 코드가 있는 사람만 입장 가능"-->
+<!--                android:textColor="@color/GS_500" />-->
             </LinearLayout>
         </LinearLayout>
-
-    </LinearLayout>
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"

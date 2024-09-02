@@ -1,9 +1,11 @@
 package com.example.backend.domain.define.study.todo.repository;
 
+import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
+import com.example.backend.study.api.service.user.UserService;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMap
 @RequiredArgsConstructor
 public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
     private final JPAQueryFactory queryFactory;
+    private final UserService userService;
 
     @Override
     public List<StudyTodoWithCommitsResponse> findStudyTodoListByStudyInfoId_CursorPaging(Long studyInfoId, Long cursorIdx, Long limit) {
@@ -52,8 +55,18 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
 
         // StudyCommit을 StudyTodo ID로 그룹화
         Map<Long, List<CommitInfoResponse>> commitMap = commits.stream()
-                .map(CommitInfoResponse::of)
-                .collect(Collectors.groupingBy(CommitInfoResponse::getStudyTodoId));
+                .collect(Collectors.groupingBy(
+                        StudyCommit::getStudyTodoId,
+                        Collectors.mapping(
+                                commit -> {
+                                    // 사용자 이름 조회
+                                    User user = userService.findUserByIdOrThrowException(commit.getUserId());
+                                    String name = user.getName();
+                                    String profileImageUrl = user.getProfileImageUrl();
+                                    return CommitInfoResponse.of(commit, name, profileImageUrl);
+                                },
+                                Collectors.toList())
+                ));
 
         // StudyTodo와 커밋 리스트를 조합하여 StudyTodoWithCommitsResponse 리스트를 생성
         List<StudyTodoWithCommitsResponse> responses = todos.stream()

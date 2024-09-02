@@ -1,16 +1,32 @@
 package com.takseha.presentation.ui.home
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityMainHomeBinding
+import com.takseha.presentation.ui.common.SnackBarHelper
 import com.takseha.presentation.ui.feed.FeedHomeFragment
 import com.takseha.presentation.ui.mystudy.MyStudyHomeFragment
 import com.takseha.presentation.ui.profile.ProfileHomeFragment
+import com.takseha.presentation.viewmodel.common.BaseViewModel
+import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
+import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
+import com.takseha.presentation.viewmodel.home.MainHomeAlertViewModel
+import com.takseha.presentation.viewmodel.home.MainHomeViewModel
+import com.takseha.presentation.viewmodel.profile.ProfileHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.launch
 
 class MainHomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainHomeBinding
+    private val mainHomeViewModel: MainHomeViewModel by viewModels()
+    private val feedHomeViewModel: FeedHomeViewModel by viewModels()
+    private val profileHomeViewModel: ProfileHomeViewModel by viewModels()
+    private lateinit var snackBarHelper: SnackBarHelper
 
     private val callback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -23,6 +39,40 @@ class MainHomeActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main_home)
         setInit()
         setMainFragmentView(savedInstanceState)
+
+        snackBarHelper = SnackBarHelper(this)
+        lifecycleScope.launch {
+            mainHomeViewModel.snackbarMessage.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        mainHomeViewModel.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            feedHomeViewModel.snackbarMessage.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        feedHomeViewModel.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            profileHomeViewModel.snackbarMessage.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        profileHomeViewModel.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
     }
 
     private fun setInit() {

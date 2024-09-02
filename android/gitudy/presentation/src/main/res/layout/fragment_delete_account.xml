@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipChildren="false"
+    android:clipToPadding="false"
+    android:paddingStart="22dp"
+    android:paddingEnd="22dp"
+    android:paddingBottom="48dp"
+    tools:context=".ui.profile.DeleteAccountFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/deleteAccountTitleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backBtn"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/ic_arrow_back"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            style="@style/B3_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="회원 탈퇴"
+            android:textColor="@color/BLACK"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <TextView
+        android:id="@+id/deleteDetailText"
+        style="@style/B2_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:text="탈퇴하려는 이유가 궁금해요"
+        android:textColor="@color/BLACK"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deleteAccountTitleLayout" />
+
+    <RadioGroup
+        android:id="@+id/deleteReasonSelectRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="48dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/deleteDetailText">
+
+        <RadioButton
+            android:id="@+id/reason1CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/profile_delete_account_reason1"
+            android:textColor="@color/GS_700" />
+
+        <RadioButton
+            android:id="@+id/reason2CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/profile_delete_account_reason2"
+            android:textColor="@color/GS_700" />
+
+        <RadioButton
+            android:id="@+id/reason3CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/profile_delete_account_reason3"
+            android:textColor="@color/GS_700" />
+
+        <RadioButton
+            android:id="@+id/reason4CheckBtn"
+            style="@style/B4_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:button="@drawable/selector_radio_checked"
+            android:drawablePadding="8dp"
+            android:text="@string/profile_delete_account_reason4"
+            android:textColor="@color/GS_700" />
+    </RadioGroup>
+
+    <EditText
+        android:id="@+id/newReasonEditText"
+        style="@style/B6_2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box_non_stroke_r8"
+        android:backgroundTint="#F3F5F7"
+        android:hint="기타 탈퇴 이유를 입력해주세요"
+        android:paddingStart="14dp"
+        android:paddingTop="20dp"
+        android:paddingEnd="14dp"
+        android:paddingBottom="20dp"
+        android:textColor="@color/GS_700"
+        android:textColorHint="@color/GS_500"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@+id/deleteReasonSelectRadioGroup" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <Button
+            android:id="@+id/cancelBtn"
+            style="@style/B5_1"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_marginRight="16dp"
+            android:layout_weight="1"
+            android:background="@drawable/square_r8_non_stroke"
+            android:backgroundTint="@color/BLACK"
+            android:clipToPadding="false"
+            android:text="@string/cancel"
+            android:textColor="@color/WHITE" />
+
+        <Button
+            android:id="@+id/deleteAccountBtn"
+            style="@style/B5_1"
+            android:layout_width="0dp"
+            android:layout_height="55dp"
+            android:layout_weight="1"
+            android:background="@drawable/selector_btn_r8_enable"
+            android:enabled="false"
+            android:text="탈퇴하기"
+            android:textColor="@drawable/selector_text_color_enable" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

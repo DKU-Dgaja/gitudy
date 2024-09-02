@@ -1,6 +1,5 @@
 package com.example.backend.domain.define.study.commit.repository;
 
-import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 import com.querydsl.core.types.Projections;
@@ -12,6 +11,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
+import static com.example.backend.domain.define.account.user.QUser.user;
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
 
 @Slf4j
@@ -19,7 +19,6 @@ import static com.example.backend.domain.define.study.commit.QStudyCommit.studyC
 @RequiredArgsConstructor
 public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
     private final JPAQueryFactory queryFactory;
-    private final UserRepository userRepository;
 
     @Override
     public List<CommitInfoResponse> findStudyCommitListByUserId_CursorPaging(Long userId, Long studyId, Long cursorIdx, Long limit) {
@@ -35,8 +34,11 @@ public class StudyCommitRepositoryImpl implements StudyCommitRepositoryCustom {
                         studyCommit.commitDate,
                         studyCommit.status,
                         studyCommit.rejectionReason,
-                        studyCommit.likeCount))
+                        studyCommit.likeCount,
+                        user.name,
+                        user.profileImageUrl))
                 .from(studyCommit)
+                .leftJoin(user).on(studyCommit.userId.eq(user.id))
                 .where(studyCommit.userId.eq(userId))
                 .orderBy(studyCommit.id.desc());
 

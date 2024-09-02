@@ -2,41 +2,45 @@ package com.takseha.presentation.viewmodel.auth
 
 import android.app.Application
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.takseha.data.token.TokenManager
+import com.takseha.presentation.viewmodel.common.BaseApplicationViewModel
+import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.launch
 
-class LoginViewModel(application: Application) : AndroidViewModel(application) {
+class LoginViewModel(application: Application) : BaseApplicationViewModel(application) {
     private lateinit var tokenManager: TokenManager
 
     private var _loginPageUrl = MutableLiveData<String>()
-    val loginPageUrl : LiveData<String>
+    val loginPageUrl: LiveData<String>
         get() = _loginPageUrl
 
     fun startLogin(platformType: String) = viewModelScope.launch {
         tokenManager = TokenManager(getApplication())
+        safeApiCall(
+            apiCall = { tokenManager.getLoginPages() },
+            onSuccess = { response ->
+                if (response != null) {
+                    _loginPageUrl.value = when (platformType) {
+                        "KAKAO" -> response.filter { it.platformType == "KAKAO" }
+                            .joinToString("") { it.url }
 
-        val loginPageInfoList = tokenManager.getLoginPages()
+                        "GOOGLE" -> response.filter { it.platformType == "GOOGLE" }
+                            .joinToString("") { it.url }
 
-        if (loginPageInfoList != null) {
-            _loginPageUrl.value = when (platformType) {
-                "KAKAO" -> loginPageInfoList.filter { it.platformType == "KAKAO" }
-                    .joinToString("") { it.url }
+                        "GITHUB" -> response.filter { it.platformType == "GITHUB" }
+                            .joinToString("") { it.url }
 
-                "GOOGLE" -> loginPageInfoList.filter { it.platformType == "GOOGLE" }
-                    .joinToString("") { it.url }
-
-                "GITHUB" -> loginPageInfoList.filter { it.platformType == "GITHUB" }
-                    .joinToString("") { it.url }
-
-                else -> null
+                        else -> null
+                    }
+                    Log.d("LoginViewModel", "url: ${loginPageUrl.value}")
+                } else {
+                    Log.e("LoginViewModel", "loginPageInfoList is null")
+                }
             }
-            Log.d("LoginViewModel", "url: ${loginPageUrl.value}")
-        } else {
-            Log.e("LoginViewModel", "loginPageInfoList is null")
-        }
+        )
     }
 }

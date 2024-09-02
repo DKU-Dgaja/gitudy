@@ -52,8 +52,7 @@ class WebhookControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(WebhookPayload.builder().build())))
 
                 // then
-                .andExpect(status().isCreated())
-                .andDo(print());
+                .andExpect(status().isCreated());
 
     }
 
@@ -77,8 +76,7 @@ class WebhookControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(payload)))
 
                 // then
-                .andExpect(status().isBadRequest())
-                .andDo(print());
+                .andExpect(status().isBadRequest());
 
     }
 }

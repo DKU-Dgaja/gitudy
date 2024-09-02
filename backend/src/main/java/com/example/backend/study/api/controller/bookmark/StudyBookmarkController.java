@@ -4,6 +4,7 @@ import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.bookmark.response.BookmarkInfoListAndCursorIdxResponse;
+import com.example.backend.study.api.controller.bookmark.response.IsMyBookmarkResponse;
 import com.example.backend.study.api.service.bookmark.StudyBookmarkService;
 import com.example.backend.study.api.service.bookmark.response.BookmarkInfoResponse;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -56,5 +57,15 @@ public class StudyBookmarkController {
         studyBookmarkService.handleBookmark(userInfo.getUserId(), studyInfoId);
 
         return ResponseEntity.ok().build();
+    }
+
+    // 마이 북마크인지 조회
+    @ApiResponse(responseCode = "200", description = "마이 북마크인지 조회 성공", content = @Content(schema = @Schema(implementation =
+            IsMyBookmarkResponse.class)))
+    @GetMapping("study/{studyInfoId}/my-bookmark")
+    public ResponseEntity<IsMyBookmarkResponse> getIsMyBookmark(@AuthenticationPrincipal User user,
+                                                                @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        UserInfoResponse userInfo = authService.findUserInfo(user);
+        return ResponseEntity.ok().body(studyBookmarkService.getIsMyBookMark(userInfo.getUserId(), studyInfoId));
     }
 }

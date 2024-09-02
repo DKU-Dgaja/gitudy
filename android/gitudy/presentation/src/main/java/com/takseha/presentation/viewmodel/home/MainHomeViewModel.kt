@@ -11,14 +11,15 @@ import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.R
+import com.takseha.presentation.viewmodel.common.BaseViewModel
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.io.Serializable
 
-class MainHomeViewModel : ViewModel() {
+class MainHomeViewModel : BaseViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
     private var gitudyStudyRepository = GitudyStudyRepository()
 
@@ -33,158 +34,159 @@ class MainHomeViewModel : ViewModel() {
     val cursorIdxRes: LiveData<Long?>
         get() = _cursorIdxRes
 
-    suspend fun getUserInfo() {
-        val userInfoResponse = gitudyAuthRepository.getUserInfo()
-
-        if (userInfoResponse.isSuccessful) {
-            val userInfo = userInfoResponse.body()!!
-            _uiState.update {
-                it.copy(
-                    name = userInfo.name,
-                    score = userInfo.score,
-                    githubId = userInfo.githubId,
-                    profileImgUrl = userInfo.profileImageUrl,
-                    rank = userInfo.rank
-                )
+    fun getUserInfo() = viewModelScope.launch {
+        safeApiCall(
+            apiCall = { gitudyAuthRepository.getUserInfo() },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val userInfo = response.body()!!
+                    _uiState.update {
+                        it.copy(
+                            name = userInfo.name,
+                            score = userInfo.score,
+                            githubId = userInfo.githubId,
+                            profileImgUrl = userInfo.profileImageUrl,
+                            rank = userInfo.rank
+                        )
+                    }
+                    updateProgressInfo()
+                } else {
+                    Log.e(
+                        "MainHomeViewModel",
+                        "userInfoResponse status: ${response.code()}\nuserInfoResponse message: ${response.message()}"
+                    )
+                }
             }
-            getProgressInfo(uiState)
-        } else {
-            Log.e(
-                "MainHomeViewModel",
-                "userInfoResponse status: ${userInfoResponse.code()}\nuserInfoResponse message: ${userInfoResponse.message()}"
-            )
-        }
+        )
     }
 
-    private fun getProgressInfo(state: StateFlow<MainHomeUserInfoUiState>) {
-        when (state.value.score) {
-            in 0..15 -> _uiState.update { it.copy(progressScore = it.score) }
-            in 16..30 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 15,
-                    characterImgSrc = R.drawable.character_bebe_to_30
-                )
-            }
+    private fun updateProgressInfo() {
+        val uiStateValue = uiState.value
+        val progressInfo = when (uiStateValue.score) {
+            in 0..15 -> ProgressInfo(uiStateValue.score, R.drawable.character_bebe_to_15)
+            in 16..30 -> ProgressInfo(uiStateValue.score - 15, R.drawable.character_bebe_to_30, 15)
+            in 31..50 -> ProgressInfo(uiStateValue.score - 30, R.drawable.character_bebe_to_50, 20)
+            in 51..70 -> ProgressInfo(uiStateValue.score - 50, R.drawable.character_bebe_to_70, 20)
+            in 71..100 -> ProgressInfo(
+                uiStateValue.score - 70,
+                R.drawable.character_bebe_to_100,
+                30
+            )
 
-            in 31..50 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 30,
-                    progressMax = 20,
-                    characterImgSrc = R.drawable.character_bebe_to_50
-                )
-            }
+            in 101..130 -> ProgressInfo(
+                uiStateValue.score - 100,
+                R.drawable.character_bebe_to_130,
+                30
+            )
 
-            in 51..70 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 50,
-                    progressMax = 20,
-                    characterImgSrc = R.drawable.character_bebe_to_70
-                )
-            }
-
-            in 71..100 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 70,
-                    progressMax = 30,
-                    characterImgSrc = R.drawable.character_bebe_to_100
-                )
-            }
-
-            in 101..130 -> _uiState.update {
-                it.copy(
-                    progressScore = it.score - 100,
-                    progressMax = 30,
-                    characterImgSrc = R.drawable.character_bebe_to_130
-                )
-            }
-
-            else -> _uiState.update {
-                it.copy(
-                    progressScore = 1,
-                    progressMax = 1,
-                    characterImgSrc = R.drawable.character_bebe_to_130
-                )
-            }
+            else -> ProgressInfo(1, R.drawable.character_bebe_to_130, 1)
+        }
+        _uiState.update {
+            it.copy(
+                progressScore = progressInfo.score,
+                progressMax = progressInfo.max,
+                characterImgSrc = progressInfo.imgSrc
+            )
         }
     }
 
     fun getMyStudyList(cursorIdx: Long?, limit: Long) = viewModelScope.launch {
-        val myStudyListResponse = gitudyStudyRepository.getStudyList(
-            cursorIdx,
-            limit,
-            sortBy = "createdDateTime",
-            myStudy = true
-        )
-        val studyCnt = getStudyCount()?.count ?: -1
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getStudyList(
+                    cursorIdx,
+                    limit,
+                    sortBy = "createdDateTime",
+                    myStudy = true
+                ) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val myStudyListInfo = response.body()!!
+                    _cursorIdxRes.value = myStudyListInfo.cursorIdx
 
-        if (myStudyListResponse.isSuccessful) {
-            val myStudyListInfo = myStudyListResponse.body()!!
-
-            _cursorIdxRes.value = myStudyListInfo.cursorIdx
-            Log.d("MainHomeViewModel", "cursorIdx: ${_cursorIdxRes.value}")
-
-            val studies = myStudyListInfo.studyInfoList
-            if (studies.isEmpty()) {
-                _myStudyState.update {
-                    it.copy(
-                        isMyStudiesEmpty = true,
-                        studyCnt = studyCnt
-                    )
-                }
-            } else {
-                val studiesWithTodo = studies.map { study ->
-                    val urgentTodo = getUrgentTodoProgress(study.id)
-                    MyStudyWithTodo(
-                        study,
-                        urgentTodo
-                    )
-                }
-                _myStudyState.update {
-                    it.copy(
-                        myStudiesWithTodo = studiesWithTodo,
-                        studyCnt = studyCnt,
-                        isMyStudiesEmpty = false
+                    val studies = myStudyListInfo.studyInfoList
+                    if (studies.isEmpty()) {
+                        _myStudyState.update {
+                            it.copy(
+                                isMyStudiesEmpty = true
+                            )
+                        }
+                    } else {
+                        viewModelScope.launch {
+                            val studiesWithTodo = studies.map { study ->
+                                val urgentTodo = getUrgentTodoProgress(study.id)
+                                MyStudyWithTodo(
+                                    study,
+                                    urgentTodo
+                                )
+                            }
+                            _myStudyState.update {
+                                it.copy(
+                                    myStudiesWithTodo = studiesWithTodo,
+                                    isMyStudiesEmpty = false
+                                )
+                            }
+                        }
+                    }
+                } else {
+                    Log.e(
+                        "MainHomeViewModel",
+                        "myStudyListResponse status: ${response.code()}\nmyStudyListResponse message: ${
+                            response.errorBody()?.string()
+                        }"
                     )
                 }
             }
-            Log.d("MainHomeViewModel", myStudyState.value.toString())
-        } else {
-            Log.e(
-                "MainHomeViewModel",
-                "myStudyListResponse status: ${myStudyListResponse.code()}\nmyStudyListResponse message: ${myStudyListResponse.message()}"
-            )
-        }
+        )
     }
+
 
     private suspend fun getUrgentTodoProgress(studyInfoId: Int): TodoProgressResponse? {
-        val urgentTodoResponse = gitudyStudyRepository.getTodoProgress(
-            studyInfoId
+       return try {
+           val response = gitudyStudyRepository.getTodoProgress(
+               studyInfoId
+           )
+           if (response.isSuccessful) {
+               response.body()
+           } else {
+               Log.e(
+                   "MainHomeViewModel",
+                   "urgentTodoResponse status: ${response.code()}\nurgentTodoResponse message: ${
+                       response.errorBody()?.string()
+                   }"
+               )
+                null
+           }
+       } catch (e: Exception) {
+           Log.e("MainHomeViewModel", "Error fetching getUserInfo()", e)
+           null
+       }
+    }
+
+    suspend fun getStudyCount() {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.getStudyCount(true) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val studyCnt = response.body()!!.count
+
+                    _myStudyState.update {
+                        it.copy(
+                            studyCnt = studyCnt
+                        )
+                    }
+                } else {
+                    Log.e(
+                        "MainHomeViewModel",
+                        "studyCntResponse status: ${response.code()}\nstudyCntResponse message: ${
+                            response.errorBody()?.string()
+                        }"
+                    )
+                }
+            }
         )
-
-        if (urgentTodoResponse.isSuccessful) {
-            return urgentTodoResponse.body()
-        } else {
-            Log.e(
-                "MainHomeViewModel",
-                "urgentTodoResponse status: ${urgentTodoResponse.code()}\nurgentTodoResponse message: ${urgentTodoResponse.message()}"
-            )
-        }
-        return null
     }
 
-    private suspend fun getStudyCount(): StudyCountResponse? {
-        val studyCntResponse = gitudyStudyRepository.getStudyCount(true)
-
-        if (studyCntResponse.isSuccessful) {
-            return studyCntResponse.body()
-        } else {
-            Log.e(
-                "MainHomeViewModel",
-                "studyCntResponse status: ${studyCntResponse.code()}\nstudyCntResponse message: ${studyCntResponse.message()}"
-            )
-        }
-        return null
-    }
+    private data class ProgressInfo(val score: Int, val imgSrc: Int, val max: Int = 15)
 }
 
 data class MyStudyWithTodo(

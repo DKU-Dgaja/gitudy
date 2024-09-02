@@ -40,7 +40,7 @@ public class TodoUpdateListener {
             fcmService.sendMessageMultiDevice(FcmMultiTokenRequest.builder()
                     .tokens(tokens)
                     .title("[" + event.getStudyTopic() + "] TO-DO 업데이트")
-                    .message("TO-DO가 업데이트 되었습니다. 지금 확인해보세요!")
+                    .message("TO-DO가 업데이트 되었습니다.\n지금 확인해보세요!")
                     .build());
         }
     }

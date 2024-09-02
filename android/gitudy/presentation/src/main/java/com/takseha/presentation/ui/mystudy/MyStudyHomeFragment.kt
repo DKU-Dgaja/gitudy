@@ -2,9 +2,10 @@ package com.takseha.presentation.ui.mystudy
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -14,7 +15,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
-import com.takseha.presentation.ui.feed.MakeStudyActivity
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.flow.collectLatest
@@ -29,6 +29,10 @@ class MyStudyHomeFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        lifecycleScope.launch {
+            launch { viewModel.getMyStudyList(null, 50) }
+            launch { viewModel.getStudyCount() }
+        }
     }
 
     override fun onCreateView(
@@ -36,26 +40,27 @@ class MyStudyHomeFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentMyStudyHomeBinding.inflate(inflater, container, false)
-
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        with(binding) {
-            makeNewStudyBtn.setOnClickListener {
-                startActivity(Intent(activity, MakeStudyActivity::class.java))
-            }
-        }
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
                 binding.myStudyCnt.text = it.studyCnt.toString()
                 if (!it.isMyStudiesEmpty) {
-                    binding.isNoStudyLayout.visibility = View.GONE
-                    setMyStudyList(it.myStudiesWithTodo)
+                    binding.isNoStudyLayout.visibility = GONE
                 } else {
-                    binding.isNoStudyLayout.visibility = View.VISIBLE
+                    binding.isNoStudyLayout.visibility = VISIBLE
                 }
+                setMyStudyList(it.myStudiesWithTodo)
+            }
+        }
+        binding.myStudySwipeRefreshLayout.setOnRefreshListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                launch { viewModel.getMyStudyList(null, 50) }
+                launch { viewModel.getStudyCount() }
+                binding.myStudySwipeRefreshLayout.isRefreshing = false
             }
         }
     }
@@ -63,7 +68,10 @@ class MyStudyHomeFragment : Fragment() {
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
-        viewModel.getMyStudyList(null, 7)
+        viewLifecycleOwner.lifecycleScope.launch {
+            launch { viewModel.getMyStudyList(null, 50) }
+            launch { viewModel.getStudyCount() }
+        }
     }
 
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
@@ -82,6 +90,7 @@ class MyStudyHomeFragment : Fragment() {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
+                intent.putExtra("isLeader", studyList[position].studyInfo.isLeader)
                 intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
                 startActivity(intent)
             }

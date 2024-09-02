@@ -26,7 +26,6 @@ public class CommitCommentRepositoryImpl implements CommitCommentRepositoryCusto
                         commitComment.userId,
                         commitComment.content,
                         commitComment.createdDateTime,
-                        commitComment.modifiedDateTime,
                         Projections.constructor(UserInfoResponse.class,
                                 user.id,
                                 user.role,

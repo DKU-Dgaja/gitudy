@@ -36,7 +36,7 @@ public class StudyApplyListener {
             fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
                     .token(fcmToken.getFcmToken())
                     .title("[" + event.getStudyTopic() + "] 스터디 가입 신청")
-                    .message("새로운 스터디 가입 신청자가 있습니다. 가입 목록 확인 후 , 수락해주세요!")
+                    .message("새로운 스터디 가입 신청자가 있습니다.\n가입 목록 확인 후, 수락해주세요!")
                     .build());
         }
 

@@ -75,12 +75,13 @@ class StudyCommitServiceTest extends TestConfig {
 
         Set<Integer> usedValues = new HashSet<>();
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, 1L, usedValues);
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, user.getId(), 1L, 1L, usedValues);
         studyCommitRepository.saveAll(commitList);
 
         // when
         List<CommitInfoResponse> commitInfoList = studyCommitService
-                .selectUserCommitList(1L, null, cursorIdx, LIMIT);
+                .selectUserCommitList(user.getId(), null, cursorIdx, LIMIT);
 //        System.out.println("cursorIdx = " + cursorIdx);
 //        System.out.println("LIMIT = " + LIMIT);
 //
@@ -99,11 +100,12 @@ class StudyCommitServiceTest extends TestConfig {
         // given
         Set<Integer> usedValues = new HashSet<>();
 
-        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, 1L, 1L, 1L, usedValues);
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        List<StudyCommit> commitList = createDefaultStudyCommitList(DATA_SIZE, user.getId(), 1L, 1L, usedValues);
         studyCommitRepository.saveAll(commitList);
 
         // when
-        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(1L, null, null, LIMIT);
+        List<CommitInfoResponse> commitInfoList = studyCommitService.selectUserCommitList(user.getId(), null, null, LIMIT);
 //        List<CommitInfoResponse> content = commitInfoPage.getContent();
 //        for (CommitInfoResponse c : content) {
 //            System.out.println("c.getId() = " + c.getId());
@@ -116,11 +118,11 @@ class StudyCommitServiceTest extends TestConfig {
     void 커밋_상세_조회_성공_테스트() {
         // given
         Long studyId = 1L;
-        Long userId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
         Long studyTodoId = 1L;
         String commitSha = "123";
 
-        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(userId, studyId, studyTodoId, commitSha));
+        StudyCommit savedCommit = studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), studyId, studyTodoId, commitSha));
 
         // when
         CommitInfoResponse commitInfoResponse = studyCommitService.getCommitDetailsById(savedCommit.getId());
@@ -216,12 +218,12 @@ class StudyCommitServiceTest extends TestConfig {
     void 대기중인_커밋_리스트_조회_테스트() {
         // given
         Long studyId = 1L;
-        Long userId = 1L;
+        User user = userRepository.save(UserFixture.generateAuthUser());
         Long studyTodoId = 1L;
         Set<Integer> usedValues = new HashSet<>();
 
-        List<StudyCommit> waitingCommits = StudyCommitFixture.createWaitingStudyCommitList(15, userId, studyId, studyTodoId, usedValues);
-        List<StudyCommit> commits = StudyCommitFixture.createDefaultStudyCommitList(10, userId, studyId, studyTodoId, usedValues);
+        List<StudyCommit> waitingCommits = StudyCommitFixture.createWaitingStudyCommitList(15, user.getId(), studyId, studyTodoId, usedValues);
+        List<StudyCommit> commits = StudyCommitFixture.createDefaultStudyCommitList(10, user.getId(), studyId, studyTodoId, usedValues);
 
         studyCommitRepository.saveAll(waitingCommits);
         studyCommitRepository.saveAll(commits);

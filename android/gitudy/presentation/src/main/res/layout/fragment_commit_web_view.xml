@@ -4,29 +4,37 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#8027292E"
+    android:background="@color/BACKGROUND_BLACK"
     tools:context=".ui.profile.CommitWebViewFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="890dp"
+        android:layout_height="860dp"
+        android:layout_marginBottom="-20dp"
         android:elevation="50dp"
         app:cardCornerRadius="16dp"
-        android:layout_marginBottom="-20dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <ImageView
+                android:id="@+id/exitBtn"
+                android:layout_width="32dp"
+                android:layout_height="32dp"
+                android:layout_marginStart="22dp"
+                android:layout_marginTop="20dp"
+                android:src="@drawable/ic_exit" />
 
             <WebView
                 android:id="@+id/commitWebView"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+                android:layout_marginTop="10dp"
+                android:layout_weight="1" />
+        </LinearLayout>
 
     </androidx.cardview.widget.CardView>
 

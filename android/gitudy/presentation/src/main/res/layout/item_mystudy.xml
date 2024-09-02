@@ -16,20 +16,12 @@
             android:paddingRight="20dp"
             android:paddingBottom="20dp">
 
-            <androidx.cardview.widget.CardView
+            <ImageView
                 android:id="@+id/studyImg"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
-                app:cardCornerRadius="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
-
-                <ImageView
-                    android:layout_width="42dp"
-                    android:layout_height="48dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/ic_git_white" />
-            </androidx.cardview.widget.CardView>
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/studyName"

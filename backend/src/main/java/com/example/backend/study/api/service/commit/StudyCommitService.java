@@ -45,7 +45,10 @@ public class StudyCommitService {
         // 커밋 조회 예외처리
         StudyCommit commit = findStudyCommitByIdOrThrowException(commitId);
 
-        return CommitInfoResponse.of(commit);
+        // 사용자 이름 조회
+        User user = userService.findUserByIdOrThrowException(commit.getUserId());
+
+        return CommitInfoResponse.of(commit, user.getName(), user.getProfileImageUrl());
     }
 
     public List<CommitInfoResponse> selectUserCommitList(Long userId, Long studyId, Long cursorIdx, Long limit) {
@@ -129,7 +132,13 @@ public class StudyCommitService {
     public List<CommitInfoResponse> selectWaitingCommit(Long studyInfoId) {
         return studyCommitRepository.findStudyCommitListByStudyInfoIdAndStatus(studyInfoId, CommitStatus.COMMIT_WAITING)
                 .stream()
-                .map(CommitInfoResponse::of)
+                .map(commit -> {
+                    // 사용자 이름 조회
+                    User user = userService.findUserByIdOrThrowException(commit.getUserId());
+                    String userName = user.getName();
+                    String profileImageUrl = user.getProfileImageUrl();
+                    return CommitInfoResponse.of(commit, userName, profileImageUrl);
+                })
                 .toList();
     }
 }
