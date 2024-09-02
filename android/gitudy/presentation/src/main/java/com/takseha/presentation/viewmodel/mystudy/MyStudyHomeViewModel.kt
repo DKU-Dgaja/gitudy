@@ -24,7 +24,7 @@ import java.io.Serializable
 class MyStudyHomeViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
 
-    private val _myStudyState = MutableStateFlow(MainHomeMyStudyUiState())
+    private val _myStudyState = MutableStateFlow(MyStudyHomeUiState())
     val myStudyState = _myStudyState.asStateFlow()
 
     // stateflow로 바꾸는 거도 고민해보기~ 초기값 null 설정 가정
@@ -128,3 +128,9 @@ class MyStudyHomeViewModel : BaseViewModel() {
         )
     }
 }
+
+data class MyStudyHomeUiState(
+    var myStudiesWithTodo: List<MyStudyWithTodo> = listOf(),
+    var studyCnt: Int = 0,
+    var isMyStudiesEmpty: Boolean? = null
+)

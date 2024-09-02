@@ -114,6 +114,16 @@
             android:textColor="@color/GS_400" />
     </LinearLayout>
 
+    <ImageView
+        android:id="@+id/loadingImg"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:src="@drawable/ic_wait"
+        app:layout_constraintBottom_toBottomOf="@+id/myStudySwipeRefreshLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:id="@+id/myStudySwipeRefreshLayout"
         android:layout_width="match_parent"

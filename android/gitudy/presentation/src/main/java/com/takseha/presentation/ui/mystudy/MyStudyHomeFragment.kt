@@ -30,7 +30,8 @@ class MyStudyHomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
         sortStatus = "score"
 
         lifecycleScope.launch {
@@ -52,12 +53,18 @@ class MyStudyHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
                 binding.myStudyCnt.text = it.studyCnt.toString()
-                if (!it.isMyStudiesEmpty) {
-                    binding.isNoStudyLayout.visibility = GONE
+
+                if (it.isMyStudiesEmpty == null) {
+                    binding.loadingImg.visibility = VISIBLE
                 } else {
-                    binding.isNoStudyLayout.visibility = VISIBLE
+                    binding.loadingImg.visibility = GONE
+                    if (!it.isMyStudiesEmpty!!) {
+                        binding.isNoStudyLayout.visibility = GONE
+                    } else {
+                        binding.isNoStudyLayout.visibility = VISIBLE
+                    }
+                    setMyStudyList(it.myStudiesWithTodo)
                 }
-                setMyStudyList(it.myStudiesWithTodo)
             }
         }
         // 정렬: 최신순, 랭킹순
@@ -107,7 +114,10 @@ class MyStudyHomeFragment : Fragment() {
         }
     }
 
-    private fun clickMyStudyItem(myStudyRVAdapter: MyStudyRVAdapter, studyList: List<MyStudyWithTodo>) {
+    private fun clickMyStudyItem(
+        myStudyRVAdapter: MyStudyRVAdapter,
+        studyList: List<MyStudyWithTodo>
+    ) {
         myStudyRVAdapter.itemClick = object : MyStudyRVAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
