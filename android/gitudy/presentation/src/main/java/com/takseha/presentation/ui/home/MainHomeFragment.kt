@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.presentation.R
+import com.takseha.presentation.adapter.MainStudyRVAdapter
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
@@ -38,7 +39,7 @@ class MainHomeFragment : Fragment() {
         requireActivity().window.statusBarColor = Color.argb(0xFF, 0x1B, 0x1B, 0x25)
         lifecycleScope.launch {
             launch { viewModel.getUserInfo() }
-            launch { viewModel.getMyStudyList(null, 10) }
+            launch { viewModel.getMyStudyList(null, 10, "createdDateTime") }
         }
     }
 
@@ -86,18 +87,35 @@ class MainHomeFragment : Fragment() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
             launch { viewModel.getUserInfo() }
-            launch { viewModel.getMyStudyList(null, 10) }
+            launch { viewModel.getMyStudyList(null, 10, "createdDateTime") }
         }
     }
 
+    // TODO: 미완료인 경우만 홈화면에 스터디 표시, 추후 수정 필요
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
-        with(binding) {
-            val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), studyList)
+        val uncompletedStudyList: ArrayList<MyStudyWithTodo> = arrayListOf()
+        for (study in studyList) {
+            if ((study.urgentTodo?.completeMemberCount ?: -1) != (study.urgentTodo?.totalMemberCount
+                    ?: -1)
+            ) uncompletedStudyList.add(study)
+        }
 
-            myStudyList.adapter = myStudyRVAdapter
+//        with(binding) {
+//            val myStudyRVAdapter = MyStudyRVAdapter(requireContext(), uncompletedStudyList)
+//
+//            myStudyList.adapter = myStudyRVAdapter
+//            myStudyList.layoutManager = LinearLayoutManager(requireContext())
+//
+//            clickMyStudyItem(myStudyRVAdapter, studyList)
+//        }
+
+        with(binding) {
+            val mainStudyRVAdapter = MainStudyRVAdapter(requireContext(), uncompletedStudyList)
+
+            myStudyList.adapter = mainStudyRVAdapter
             myStudyList.layoutManager = LinearLayoutManager(requireContext())
 
-            clickMyStudyItem(myStudyRVAdapter, studyList)
+            clickMyStudyItem(mainStudyRVAdapter, studyList)
         }
     }
 
@@ -116,10 +134,10 @@ class MainHomeFragment : Fragment() {
     }
 
     private fun clickMyStudyItem(
-        myStudyRVAdapter: MyStudyRVAdapter,
+        mainStudyRVAdapter: MainStudyRVAdapter,
         studyList: List<MyStudyWithTodo>
     ) {
-        myStudyRVAdapter.itemClick = object : MyStudyRVAdapter.ItemClick {
+        mainStudyRVAdapter.itemClick = object : MainStudyRVAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
@@ -129,6 +147,21 @@ class MainHomeFragment : Fragment() {
             }
         }
     }
+
+//    private fun clickMyStudyItem(
+//        myStudyRVAdapter: MyStudyRVAdapter,
+//        studyList: List<MyStudyWithTodo>
+//    ) {
+//        myStudyRVAdapter.itemClick = object : MyStudyRVAdapter.ItemClick {
+//            override fun onClick(view: View, position: Int) {
+//                val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
+//                intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
+//                intent.putExtra("isLeader", studyList[position].studyInfo.isLeader)
+//                intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
+//                startActivity(intent)
+//            }
+//        }
+//    }
 
     override fun onDestroyView() {
         super.onDestroyView()
