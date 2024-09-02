@@ -120,6 +120,10 @@ public class StudyInfo extends BaseEntity {
         this.status = StudyStatus.STUDY_DELETED;
     }
 
+    public void updateInactiveStudy() {
+        this.status = StudyStatus.STUDY_INACTIVE;
+    }
+
     // 스터디원 증/감
     public void updateCurrentMember(int num) {
         this.currentMember += num;
