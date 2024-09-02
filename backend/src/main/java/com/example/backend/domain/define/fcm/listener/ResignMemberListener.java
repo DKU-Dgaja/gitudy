@@ -32,8 +32,8 @@ public class ResignMemberListener {
 
             fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
                     .token(fcmToken.getFcmToken())
-                    .title("알림")
-                    .message(event.getStudyInfoTopic() + " 스터디에서 강퇴 되었습니다.")
+                    .title("[" + event.getStudyInfoTopic() + "] 스터디 강퇴")
+                    .message("스터디에서 강퇴당했습니다.😞\n다른 스터디에서 열심히 활동해보세요!")
                     .build());
         }
     }
