@@ -29,9 +29,8 @@ class ProfileEditViewModel : BaseViewModel() {
     private val _uiState = MutableStateFlow(UserInfoUpdatePageResponse())
     val uiState = _uiState.asStateFlow()
 
-    private var _isCorrectName = MutableLiveData<Boolean>()
-    val isCorrectName : LiveData<Boolean>
-        get() = _isCorrectName
+    private val _isCorrectName = MutableStateFlow<Boolean?>(null)
+    val isCorrectName = _isCorrectName.asStateFlow()
 
     fun getUserProfileInfo() =viewModelScope.launch {
         safeApiCall(

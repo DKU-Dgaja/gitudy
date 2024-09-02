@@ -116,16 +116,18 @@ class ProfileEditActivity : AppCompatActivity() {
                 lifecycleScope.launch {
                     var name = nicknameEditText.text.toString()
                     viewModel.checkNickname(name)
+                    viewModel.isCorrectName.collectLatest {
+                        if (it != null) {
+                            if (it) {
+                                nicknameValidationCheckBtn.visibility = GONE
+                                validationCheckedImg.visibility = VISIBLE
 
-                    val isCorrectName = viewModel.isCorrectName.value
-                    if (isCorrectName == true) {
-                        nicknameValidationCheckBtn.visibility = GONE
-                        validationCheckedImg.visibility = VISIBLE
-
-                        applyBtn.isEnabled = isApplyEnable()
-                    } else {
-                        alertText.text = getString(R.string.alert_name_not_ok)
-                        applyBtn.isEnabled = false
+                                applyBtn.isEnabled = isApplyEnable()
+                            } else {
+                                alertText.text = getString(R.string.alert_name_not_ok)
+                                applyBtn.isEnabled = false
+                            }
+                        }
                     }
                 }
             }
