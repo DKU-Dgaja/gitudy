@@ -82,7 +82,11 @@ class ProfileHomeFragment : Fragment() {
                 val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
                 startActivity(intent)
             }
-            binding.bookmarkMoreBtn.setOnClickListener {
+            commitMoreBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MyCommitActivity::class.java)
+                startActivity(intent)
+            }
+            bookmarkMoreBtn.setOnClickListener {
                 val intent = Intent(requireContext(), BookmarksActivity::class.java)
                 startActivity(intent)
             }

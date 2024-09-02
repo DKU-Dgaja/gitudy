@@ -39,7 +39,7 @@ class MainHomeFragment : Fragment() {
         requireActivity().window.statusBarColor = Color.argb(0xFF, 0x1B, 0x1B, 0x25)
         lifecycleScope.launch {
             launch { viewModel.getUserInfo() }
-            launch { viewModel.getMyStudyList(null, 10, "createdDateTime") }
+            launch { viewModel.getMyStudyList(null, 10, "score") }
         }
     }
 
@@ -87,7 +87,7 @@ class MainHomeFragment : Fragment() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
             launch { viewModel.getUserInfo() }
-            launch { viewModel.getMyStudyList(null, 10, "createdDateTime") }
+            launch { viewModel.getMyStudyList(null, 10, "score") }
         }
     }
 
