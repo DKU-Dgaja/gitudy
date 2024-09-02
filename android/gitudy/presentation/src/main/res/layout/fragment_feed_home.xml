@@ -81,7 +81,7 @@
                 style="@style/B7_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="최신순"
+                android:text="랭킹순"
                 android:textColor="@color/GS_800" />
         </LinearLayout>
 

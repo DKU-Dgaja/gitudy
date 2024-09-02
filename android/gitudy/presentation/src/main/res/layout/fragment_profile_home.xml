@@ -104,6 +104,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 app:cardCornerRadius="8dp"
+                app:cardElevation="0.5dp"
                 app:layout_constraintTop_toBottomOf="@+id/profileTitleLayout">
 
                 <LinearLayout
@@ -272,13 +273,15 @@
                 android:layout_marginTop="30dp"
                 android:background="@color/WHITE"
                 app:cardCornerRadius="10dp"
+                app:cardElevation="0.5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider1">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
+                    android:minHeight="180dp"
                     android:paddingLeft="12dp"
                     android:paddingTop="22dp"
                     android:paddingRight="12dp"
@@ -331,13 +334,26 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/commitListTitle" />
 
-                    <androidx.recyclerview.widget.RecyclerView
-                        android:id="@+id/commitList"
-                        android:layout_width="match_parent"
+                    <TextView
+                        android:id="@+id/somedayWillBeDone"
+                        style="@style/B6_2"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22dp"
-                        android:background="@color/WHITE"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/setting_later"
+                        android:textColor="@color/GS_400"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/commitListTitle" />
+
+                    <!--                    <androidx.recyclerview.widget.RecyclerView-->
+                    <!--                        android:id="@+id/commitList"-->
+                    <!--                        android:layout_width="match_parent"-->
+                    <!--                        android:layout_height="wrap_content"-->
+                    <!--                        android:layout_marginTop="22dp"-->
+                    <!--                        android:background="@color/WHITE"-->
+                    <!--                        app:layout_constraintTop_toBottomOf="@+id/commitListTitle" />-->
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -349,6 +365,7 @@
                 android:layout_marginTop="30dp"
                 android:background="@color/WHITE"
                 app:cardCornerRadius="10dp"
+                app:cardElevation="0.5dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/commitListLayout">
@@ -356,6 +373,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:minHeight="180dp"
                     android:paddingLeft="12dp"
                     android:paddingTop="22dp"
                     android:paddingRight="12dp"
@@ -405,6 +423,7 @@
                         android:text="@string/profile_no_saved_study"
                         android:textColor="@color/GS_400"
                         android:visibility="gone"
+                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/myStudyTitle" />
