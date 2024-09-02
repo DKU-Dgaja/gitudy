@@ -104,7 +104,8 @@ public class StudyCommitService {
                 .userId(commit.getUserId())
                 .studyInfoId(commit.getStudyInfoId())
                 .studyTopic(studyInfo.getTopic())
-                .studyTodoTopic(studyTodo.getTitle()));
+                .studyTodoTopic(studyTodo.getTitle())
+                .build());
     }
 
     @Transactional
@@ -126,7 +127,8 @@ public class StudyCommitService {
                 .userId(commit.getUserId())
                 .studyInfoId(commit.getStudyInfoId())
                 .studyTopic(studyInfo.getTopic())
-                .studyTodoTopic(studyTodo.getTitle()));
+                .studyTodoTopic(studyTodo.getTitle())
+                .build());
     }
 
     public List<CommitInfoResponse> selectWaitingCommit(Long studyInfoId) {

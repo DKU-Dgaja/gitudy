@@ -32,7 +32,7 @@ public class CommitRegisterListener {
             fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
                     .token(fcmToken.getFcmToken())
                     .title("[" + event.getStudyTopic() + "] 커밋 등록")
-                    .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대해 " + event.getName() + "님이 커밋하였습니다.\n커밋을 확인하고 승인/반려해주세요!")
+                    .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대해 " + event.getName() + "님이 커밋하였습니다.\n커밋을 확인하고 리뷰를 작성해주세요!")
                     .build());
         }
     }

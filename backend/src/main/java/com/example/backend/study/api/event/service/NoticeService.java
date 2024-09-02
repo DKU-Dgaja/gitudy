@@ -100,8 +100,8 @@ public class NoticeService {
         Notice notice = Notice.builder()
                 .userId(event.getResignMemberId())
                 .studyInfoId(event.getStudyInfoId())
-                .title("[" + event.getStudyInfoTopic() + "] 스터디 알림")
-                .message("[" + event.getStudyInfoTopic() + "]에서 강퇴 되었습니다.")
+                .title("[" + event.getStudyInfoTopic() + "] 스터디 강퇴")
+                .message("스터디에서 강퇴당했습니다.😞\n다른 스터디에서 열심히 활동해보세요!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
@@ -113,8 +113,8 @@ public class NoticeService {
         Notice notice = Notice.builder()
                 .userId(event.getStudyLeaderId())
                 .studyInfoId(event.getStudyInfoId())
-                .title("[" + event.getStudyInfoTopic() + "] 스터디 알림")
-                .message(event.getWithdrawalMemberName() + "님이 탈퇴 하셨습니다.")
+                .title("[" + event.getStudyInfoTopic() + "] 팀원 스터디 탈퇴")
+                .message(event.getWithdrawalMemberName() + "님이 탈퇴하였습니다.🥲\n앞으로의 스터디도 화이팅!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
@@ -216,7 +216,7 @@ public class NoticeService {
                 .userId(event.getUserId())
                 .studyInfoId(event.getStudyInfoId())
                 .title("[" + event.getStudyTopic() + "] 커밋 등록")
-                .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대해 " + event.getName() + "님이 커밋하였습니다.\n커밋을 확인하고 승인/반려해주세요!")
+                .message("TO-DO [" + event.getStudyTodoTopic() + "]에 대해 " + event.getName() + "님이 커밋하였습니다.\n커밋을 확인하고 리뷰를 작성해주세요!")
                 .localDateTime(LocalDateTime.now())
                 .build();
         noticeRepository.save(notice);
