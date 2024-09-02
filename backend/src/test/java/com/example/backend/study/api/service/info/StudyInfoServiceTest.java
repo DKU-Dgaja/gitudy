@@ -891,4 +891,35 @@ class StudyInfoServiceTest extends MockTestConfig {
 
         studyInfoService.checkDuplicateRepoName(UserInfoResponse.of(user), newName);
     }
+
+    @Test
+    void 스터디_종료_성공_테스트() {
+        // given
+
+        // 유저생성
+        User leaderUser = userRepository.save(UserFixture.generateAuthUserByPlatformId("a"));
+        User user1 = userRepository.save(UserFixture.generateAuthUserByPlatformId("b"));
+        User user2 = userRepository.save(UserFixture.generateAuthUserByPlatformId("c"));
+        User user3 = userRepository.save(UserFixture.generateAuthUserByPlatformId("d"));
+
+        // 스터디 생성
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(leaderUser.getId()));
+
+        // 스터디 멤버 생성
+        List<StudyMember> studyMembers = new ArrayList<>();
+        studyMembers.add(StudyMemberFixture.createStudyMemberLeader(leaderUser.getId(), studyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user1.getId(), studyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user2.getId(), studyInfo.getId()));
+        studyMembers.add(StudyMemberFixture.createDefaultStudyMember(user3.getId(), studyInfo.getId()));
+        studyMemberRepository.saveAll(studyMembers);
+
+        // when
+        studyInfoService.closeStudy(studyInfo.getId());
+
+
+        // then
+        // 스터디의 상태는 STUDY_INACTIVE이다.
+        assertEquals(studyInfoRepository.findById(studyInfo.getId()).get().getStatus(), StudyStatus.STUDY_INACTIVE);
+
+    }
 }
