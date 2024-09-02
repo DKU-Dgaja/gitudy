@@ -65,7 +65,7 @@ public class CommitCommentController {
                                                     @Valid @RequestBody AddCommitCommentRequest request) {
 
         // 활동중인 스터디원인지 판단
-        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, request.getStudyInfoId());
 
         // 댓글 수정
         commitCommentService.updateCommitComment(userInfo.getUserId(), commentId, request);
@@ -80,8 +80,7 @@ public class CommitCommentController {
                                                     @PathVariable(name = "commitId") Long commitId,
                                                     @PathVariable(name = "commentId") Long commentId) {
 
-        // 활동중인 스터디원인지 판단
-        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
+        UserInfoResponse userInfo = authService.findUserInfo(user);
 
         // 댓글 삭제
         commitCommentService.deleteCommitComment(userInfo.getUserId(), commentId);

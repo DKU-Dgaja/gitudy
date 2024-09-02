@@ -2,17 +2,20 @@ package com.example.backend.study.api.controller.comment.commit;
 
 import com.example.backend.MockTestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.api.service.jwt.JwtService;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
 import com.example.backend.common.exception.member.MemberException;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.study.api.controller.comment.commit.request.AddCommitCommentRequest;
 import com.example.backend.study.api.controller.comment.commit.response.CommitCommentInfoResponse;
 import com.example.backend.study.api.service.comment.commit.CommitCommentService;
 import com.example.backend.study.api.service.member.StudyMemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -24,16 +27,20 @@ import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SuppressWarnings("NonAsciiCharacters")
-class CommitCommentControllerTest extends MockTestConfig {
+class
+CommitCommentControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
@@ -42,6 +49,9 @@ class CommitCommentControllerTest extends MockTestConfig {
 
     @MockBean
     private StudyMemberService studyMemberService;
+
+    @MockBean
+    private AuthService authService;
 
     @Autowired
     private JwtService jwtService;
@@ -167,6 +177,55 @@ class CommitCommentControllerTest extends MockTestConfig {
                 .andExpect(jsonPath("$.message").value(ExceptionMessage.STUDY_NOT_MEMBER.getText()));
 
 
+    }
+
+    @Test
+    void 커밋_댓글_수정_요청_성공_테스트() throws Exception {
+        // given
+        User user = generateAuthUser();
+        Long commitId = 1L;
+        Long commentId = 1L;
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+            .thenReturn(UserInfoResponse.of(user));
+
+        doNothing().when(commitCommentService).updateCommitComment(anyLong(), anyLong(), any(AddCommitCommentRequest.class));
+
+        // when
+        mockMvc.perform(patch("/commits/" + commitId + "/comments/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, createAuthorizationHeader(accessToken))
+                .content(objectMapper.writeValueAsString(
+                    AddCommitCommentRequest.builder().content("test").studyInfoId(1L).build())))
+
+            // then
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    void 커밋_댓글_삭제_요청_성공_테스트() throws Exception {
+        // given
+        User user = generateAuthUser();
+        Long commitId = 1L;
+        Long commentId = 1L;
+
+        Map<String, String> map = TokenUtil.createTokenMap(user);
+        String accessToken = jwtService.generateAccessToken(map, user);
+
+        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+
+        doNothing().when(commitCommentService).deleteCommitComment(anyLong(), anyLong());
+
+        // when
+        mockMvc.perform(delete("/commits/" + commitId + "/comments/" + commentId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+            // then
+            .andExpect(status().isOk());
     }
 
 }
