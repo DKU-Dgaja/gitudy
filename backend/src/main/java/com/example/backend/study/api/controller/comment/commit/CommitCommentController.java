@@ -48,7 +48,7 @@ public class CommitCommentController {
                                                  @Valid @RequestBody AddCommitCommentRequest request) {
 
         // 댓글을 달 수 있는 권한이 있는지 확인 (활동중인 스터디원인지 판단)
-        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, commitId);
+        UserInfoResponse userInfo = studyMemberService.isValidateStudyMember(user, request.getStudyInfoId());
 
         // 댓글 등록
         commitCommentService.addCommitComment(userInfo.getUserId(), commitId, request);
