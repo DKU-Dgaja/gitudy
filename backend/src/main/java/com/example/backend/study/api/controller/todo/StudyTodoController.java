@@ -1,5 +1,6 @@
 package com.example.backend.study.api.controller.todo;
 
+import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.study.api.controller.todo.request.StudyTodoRequest;
 import com.example.backend.study.api.controller.todo.request.StudyTodoUpdateRequest;
@@ -122,9 +123,9 @@ public class StudyTodoController {
                                                                            @PathVariable(name = "studyInfoId") Long studyInfoId) {
 
         // 스터디 멤버인지 검증
-        studyMemberService.isValidateStudyMember(user, studyInfoId);
+        UserInfoResponse findUser = studyMemberService.isValidateStudyMember(user, studyInfoId);
 
-        return ResponseEntity.ok().body(studyTodoService.readStudyTodoProgress(studyInfoId));
+        return ResponseEntity.ok().body(studyTodoService.readStudyTodoProgress(findUser.getUserId(), studyInfoId));
     }
 
     // Todo별 커밋 리스트 조회

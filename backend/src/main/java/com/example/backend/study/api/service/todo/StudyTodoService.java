@@ -1,6 +1,8 @@
 package com.example.backend.study.api.service.todo;
 
 
+import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
+
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;
@@ -250,7 +252,7 @@ public class StudyTodoService {
     }
 
     @Transactional
-    public StudyTodoProgressResponse readStudyTodoProgress(Long studyInfoId) {
+    public StudyTodoProgressResponse readStudyTodoProgress(Long userId, Long studyInfoId) {
         // 해당 스터디에서 활동중인 스터디원 인원수
         int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
 
@@ -260,11 +262,20 @@ public class StudyTodoService {
                     // 투두 완료 멤버 인원 수
                     int completeMemberCount = studyTodoMappingRepository.findCompleteTodoMappingCountByTodoId(todo.getId());
 
+                    // 자신의 투두 완료 여부 확인
+                    StudyTodoMapping findTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(
+                        todo.getId(), userId).orElseThrow(() -> {
+                        log.warn(">>>> {} <<<<",
+                            ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND.getText());
+                        throw new TodoException(ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
+                    });
+
                     return StudyTodoProgressResponse.builder()
-                            .todo(StudyTodoResponse.of(todo))
-                            .totalMemberCount(memberCount)
-                            .completeMemberCount(completeMemberCount)
-                            .build();
+                        .todo(StudyTodoResponse.of(todo))
+                        .totalMemberCount(memberCount)
+                        .completeMemberCount(completeMemberCount)
+                        .myStatus(findTodoMapping.getStatus())
+                        .build();
                 })
                 .orElseGet(StudyTodoProgressResponse::empty);
     }
