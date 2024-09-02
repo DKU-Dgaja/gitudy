@@ -17,6 +17,7 @@ import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
+import com.takseha.presentation.viewmodel.mystudy.MyStudyHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -24,7 +25,7 @@ import kotlinx.coroutines.launch
 class MyStudyHomeFragment : Fragment() {
     private var _binding: FragmentMyStudyHomeBinding? = null
     private val binding get() = _binding!!
-    private val viewModel: MainHomeViewModel by activityViewModels()
+    private val viewModel: MyStudyHomeViewModel by activityViewModels()
     private lateinit var sortStatus: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
