@@ -61,6 +61,15 @@ public class StudyTodoFixture {
                 .build();
     }
 
+    // 테스트용 미완료된 studyTodoMapping 생성
+    public static StudyTodoMapping createInCompleteStudyTodoMapping(Long todoId, Long userId) {
+        return StudyTodoMapping.builder()
+            .todoId(todoId)
+            .userId(userId)
+            .status(StudyTodoStatus.TODO_INCOMPLETE)
+            .build();
+    }
+
     // 테스트용 To do 등록
     public static StudyTodoRequest generateStudyTodoRequest() {
         return StudyTodoRequest.builder()
