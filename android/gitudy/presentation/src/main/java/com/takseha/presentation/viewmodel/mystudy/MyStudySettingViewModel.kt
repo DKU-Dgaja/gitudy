@@ -40,4 +40,17 @@ class MyStudySettingViewModel: BaseViewModel() {
             }
         )
     }
+
+    suspend fun endStudy(studyInfoId: Int) {
+        safeApiCall(
+            apiCall = { gitudyStudyRepository.endStudy(studyInfoId) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    Log.d("MyStudySettingViewModel", response.code().toString())
+                } else {
+                    Log.e("MyStudySettingViewModel", "endStudyResponse status: ${response.code()}\nendStudyResponse message: ${response.errorBody()?.string()}")
+                }
+            }
+        )
+    }
 }

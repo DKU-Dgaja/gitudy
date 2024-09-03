@@ -47,11 +47,13 @@ class MyStudySettingFragment : Fragment() {
                 studyQuitBtn.visibility = GONE
                 studyApplyMemberManageBtn.visibility = VISIBLE
                 studyEndBtn.visibility = VISIBLE
+                studyDeleteBtn.visibility = VISIBLE
                 memberSettingBtn.visibility = VISIBLE
             } else {
                 studyQuitBtn.visibility = VISIBLE
                 studyApplyMemberManageBtn.visibility = GONE
                 studyEndBtn.visibility = GONE
+                studyDeleteBtn.visibility = GONE
                 memberSettingBtn.visibility = GONE
             }
             backBtn.setOnClickListener {
@@ -72,13 +74,16 @@ class MyStudySettingFragment : Fragment() {
             studyQuitBtn.setOnClickListener {
                 it.findNavController().navigate(R.id.action_myStudySettingFragment_to_quitStudyFragment)
             }
+            studyDeleteBtn.setOnClickListener {
+                showStudyDeleteDialog(studyInfoId)
+            }
             studyEndBtn.setOnClickListener {
                 showStudyEndDialog(studyInfoId)
             }
         }
     }
 
-    private fun showStudyEndDialog(studyInfoId: Int) {
+    private fun showStudyDeleteDialog(studyInfoId: Int) {
         val customCheckDialog = CustomCheckDialog(requireContext())
         customCheckDialog.setAlertText(getString(R.string.study_delete_alert_title))
         customCheckDialog.setAlertDetailText(getString(R.string.study_delete_alert_detail))
@@ -87,6 +92,21 @@ class MyStudySettingFragment : Fragment() {
         customCheckDialog.setOnConfirmClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.deleteStudy(studyInfoId)
+                requireActivity().finish()
+            }
+        }
+        customCheckDialog.show()
+    }
+
+    private fun showStudyEndDialog(studyInfoId: Int) {
+        val customCheckDialog = CustomCheckDialog(requireContext())
+        customCheckDialog.setAlertText(getString(R.string.study_end_alert_title))
+        customCheckDialog.setAlertDetailText(getString(R.string.study_end_alert_detail))
+        customCheckDialog.setCancelBtnText("취소")
+        customCheckDialog.setConfirmBtnText("종료하기")
+        customCheckDialog.setOnConfirmClickListener {
+            viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.endStudy(studyInfoId)
                 requireActivity().finish()
             }
         }

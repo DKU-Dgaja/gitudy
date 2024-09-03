@@ -101,6 +101,11 @@ interface GitudyStudyService {
         @Path("studyInfoId") studyInfoId: Int
     ): Response<Void>
 
+    @DELETE("/study/{studyInfoId}/close")
+    suspend fun endStudy(
+        @Path("studyInfoId") studyInfoId: Int
+    ): Response<Void>
+
     @POST("/study/{studyInfoId}/convention")
     suspend fun setConvention(
         @Path("studyInfoId") studyInfoId: Int,
