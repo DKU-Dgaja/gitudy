@@ -3,6 +3,7 @@ package com.example.backend.auth.api.service.rank;
 import com.example.backend.MockTestConfig;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.study.api.service.info.StudyInfoService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,9 @@ public class RankingServiceTest extends MockTestConfig {
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;
+
+    @Autowired
+    private StudyInfoService studyInfoService;
 
     private Random random = new Random();
     private static final String USER_RANKING_KEY = "user_ranking";
@@ -175,5 +179,88 @@ public class RankingServiceTest extends MockTestConfig {
 
         assertEquals(response5.getRanking(), 6);
         assertEquals(response5.getScore(), 20);
+    }*/
+/*
+
+
+    @Test
+    void 스터디_score_정렬_같은점수시_studyInfoId_순으로_재정렬_테스트() {
+        //given
+        User user = UserFixture.generateAuthUser();
+        userRepository.save(user);
+        User user2 = UserFixture.generateKaKaoUser();
+        userRepository.save(user2);
+
+        StudyInfo studyInfo1 = studyInfoRepository.save(StudyInfoFixture.createPublicStudyInfoScore(1L, 530));
+        StudyInfo studyInfo2 = studyInfoRepository.save(StudyInfoFixture.createPublicStudyInfoScore(2L, 2));
+        StudyInfo studyInfo3 = studyInfoRepository.save(StudyInfoFixture.createPublicStudyInfoScore(3L, 2));
+        StudyInfo studyInfo4 = studyInfoRepository.save(StudyInfoFixture.createPublicStudyInfoScore(4L, 1200));
+        StudyInfo studyInfo5 = studyInfoRepository.save(StudyInfoFixture.createPublicStudyInfoScore(5L, 2));
+        StudyInfo studyInfo6 = studyInfoRepository.save(StudyInfoFixture.createPublicStudyInfoScore(6L, 2));
+
+
+
+        rankingService.saveStudyScore(studyInfo1.getId(), studyInfo1.getScore());
+        rankingService.saveStudyScore(studyInfo2.getId(), studyInfo2.getScore());
+        rankingService.saveStudyScore(studyInfo3.getId(), studyInfo3.getScore());
+        rankingService.saveStudyScore(studyInfo4.getId(), studyInfo4.getScore());
+        rankingService.saveStudyScore(studyInfo5.getId(), studyInfo5.getScore());
+        rankingService.saveStudyScore(studyInfo6.getId(), studyInfo6.getScore());
+
+
+
+        // when
+        StudyInfoListAndCursorIdxResponse response1 = studyInfoService.selectStudyInfoList(user2.getId()
+                , null
+                , 10L
+                , "score"
+                , false);
+
+        StudyRankingResponse si1 = rankingService.getStudyRankings(studyInfo1);
+        StudyRankingResponse si2 = rankingService.getStudyRankings(studyInfo2);
+        StudyRankingResponse si3 = rankingService.getStudyRankings(studyInfo3);
+        StudyRankingResponse si4 = rankingService.getStudyRankings(studyInfo4);
+        StudyRankingResponse si5 = rankingService.getStudyRankings(studyInfo5);
+        StudyRankingResponse si6 = rankingService.getStudyRankings(studyInfo6);
+
+
+        // then
+        assertEquals(response1.getStudyInfoList().get(0).getId(), studyInfo4.getId());
+        assertEquals(response1.getStudyInfoList().get(1).getId(), studyInfo1.getId());
+        assertEquals(response1.getStudyInfoList().get(2).getId(), studyInfo6.getId());
+        assertEquals(response1.getStudyInfoList().get(3).getId(), studyInfo5.getId());
+        assertEquals(response1.getStudyInfoList().get(4).getId(), studyInfo3.getId());
+        assertEquals(response1.getStudyInfoList().get(5).getId(), studyInfo2.getId());
+
+
+        assertEquals(si1.getRanking(), 2);
+        assertEquals(si1.getScore(), 530);
+
+        assertEquals(si2.getRanking(), 6);
+        assertEquals(si2.getScore(), 2);
+
+        assertEquals(si3.getRanking(), 5);
+        assertEquals(si3.getScore(), 2);
+
+        assertEquals(si4.getRanking(), 1);
+        assertEquals(si4.getScore(), 1200);
+
+        assertEquals(si5.getRanking(), 4);
+        assertEquals(si5.getScore(), 2);
+
+        assertEquals(si6.getRanking(), 3);
+        assertEquals(si6.getScore(), 2);
+
+
+        // when
+        studyInfoService.deleteStudy(studyInfo6.getId());
+
+        rankingService.updateStudyRanking(); // 레디스 캐시 초기화
+
+        StudyRankingResponse si55 = rankingService.getStudyRankings(studyInfo5);
+
+        // then
+        assertEquals(si55.getRanking(), 3);
+        assertEquals(si55.getScore(), 2);
     }*/
 }
