@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.service.rank.RankingService;
 import com.example.backend.auth.api.service.rank.event.StudyScoreSaveEvent;
 import com.example.backend.auth.api.service.rank.event.UserScoreUpdateEvent;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -59,6 +60,7 @@ public class StudyInfoService {
     private final GithubApiService githubApiService;
     private final GithubApiTokenService githubApiTokenService;
     private final ApplicationEventPublisher eventPublisher;
+    private final RankingService rankingService;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
@@ -127,6 +129,9 @@ public class StudyInfoService {
 
         // 스터디 멤버 상태정보 변경
         updateWithdrawalStudyMember(studyInfoId);
+
+        // 랭킹 스코어 삭제
+        rankingService.deleteStudyScore(studyInfo.getId());
 
         return true;
     }

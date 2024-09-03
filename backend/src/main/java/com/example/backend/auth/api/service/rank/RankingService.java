@@ -4,8 +4,10 @@ package com.example.backend.auth.api.service.rank;
 import com.example.backend.auth.api.service.rank.response.StudyRankingResponse;
 import com.example.backend.auth.api.service.rank.response.UserRankingResponse;
 import com.example.backend.domain.define.account.user.User;
+import com.example.backend.domain.define.account.user.constant.UserRole;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -66,12 +68,21 @@ public class RankingService {
                 .build();
     }
 
+    // 유저 점수 삭제
+    public void deleteUserScore(Long userId) {
+        ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        zSetOps.remove(USER_RANKING_KEY, userId);
+    }
+
     // 어플리케이션 로드 시점에 Cache Warming 작업
     public void updateUserRanking() {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        // USER 역할인 사용자만 필터링하여 랭킹에 추가
         List<User> users = userRepository.findAll();
         for (User user : users) {
-            zSetOps.add(USER_RANKING_KEY, user.getId(), user.getScore());
+            if (user.getRole() == UserRole.USER) {
+                zSetOps.add(USER_RANKING_KEY, user.getId(), user.getScore());
+            }
         }
     }
 
@@ -79,7 +90,14 @@ public class RankingService {
     public void updateStudyRanking() {
         ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
         List<StudyInfo> studyInfos = studyInfoRepository.findAll();
-        for (StudyInfo studyInfo : studyInfos) {
+
+        // STUDY_DELETED 상태를 가진 스터디 제외
+        List<StudyInfo> filteredStudyInfos = studyInfos.stream()
+                .filter(studyInfo -> !StudyStatus.STUDY_DELETED.equals(studyInfo.getStatus()))
+                .toList();
+
+        // 필터링된 스터디 정보를 Redis에 업데이트
+        for (StudyInfo studyInfo : filteredStudyInfos) {
             zSetOps.add(STUDY_RANKING_KEY, studyInfo.getId(), studyInfo.getScore());
         }
     }
@@ -114,5 +132,11 @@ public class RankingService {
                 .ranking(ranking + 1)
                 .score(score)
                 .build();
+    }
+
+    // 스터디 점수 삭제
+    public void deleteStudyScore(Long studyInfoId) {
+        ZSetOperations<String, Object> zSetOps = redisTemplate.opsForZSet();
+        zSetOps.remove(STUDY_RANKING_KEY, studyInfoId);
     }
 }

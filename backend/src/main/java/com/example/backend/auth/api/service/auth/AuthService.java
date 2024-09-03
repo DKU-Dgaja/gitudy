@@ -223,6 +223,8 @@ public class AuthService {
         try {
             user.reason(request.getMessage());
             user.deleteUser();
+            // 랭킹 스코어 삭제
+            rankingService.deleteUserScore(user.getId());
             log.info(">>>> {} Info is Deleted.", user.getName());
         } catch (IllegalArgumentException e) {
             log.error(">>>> ID = {} : 계정 삭제에 실패했습니다.", user.getId());
