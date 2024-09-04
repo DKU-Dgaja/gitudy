@@ -132,7 +132,7 @@ public class AuthController {
     public ResponseEntity<Void> userDelete(@AuthenticationPrincipal User user,
                                            @Valid @RequestBody MessageRequest request) {
 
-        authService.userDelete(user.getUsername(), request);
+        authService.userDelete(user, request.getMessage());
 
         return ResponseEntity.ok().build();
     }
