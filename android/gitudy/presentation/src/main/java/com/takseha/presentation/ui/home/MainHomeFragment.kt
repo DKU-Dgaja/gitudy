@@ -131,6 +131,7 @@ class MainHomeFragment : Fragment() {
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
                 intent.putExtra("isLeader", studyList[position].studyInfo.isLeader)
                 intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
+                intent.putExtra("studyStatus", studyList[position].studyInfo.status)
                 startActivity(intent)
             }
         }
