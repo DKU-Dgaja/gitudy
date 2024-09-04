@@ -223,6 +223,9 @@ public class AuthService {
         // 사용자가 참여하던 스터디에서 활동 종료
         studyManagementService.inactiveUserFromAllStudies(findUser.getId());
 
+        // 깃허브 토큰 삭제
+        githubApiTokenService.deleteToken(findUser.getId());
+
         // 사용자 탈퇴 및 개인 정보 삭제
         findUser.withdrawal(reason);
         log.info(">>>> 회원 탈퇴가 완료되었습니다. user id: {}", findUser.getId());
