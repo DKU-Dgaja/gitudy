@@ -18,6 +18,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.Comment
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.DetailCommentListRVAdapter
@@ -32,12 +33,14 @@ class StudyCommentBoardFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: StudyCommentBoardViewModel by activityViewModels()
     private var studyInfoId: Int = 0
+    private var studyStatus: StudyStatus? = null
     private var comment = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         viewModel.getStudyComments(studyInfoId, 10)
     }
 
@@ -66,16 +69,18 @@ class StudyCommentBoardFragment : Fragment() {
             }
         }
         with(binding) {
+            if (studyStatus == StudyStatus.STUDY_INACTIVE) messageLayout.visibility = GONE
+
             commentSwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.getStudyComments(studyInfoId, 50)
                     commentSwipeRefreshLayout.isRefreshing = false
                 }
             }
-
                 backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
             }
+
             newCommentBody.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,

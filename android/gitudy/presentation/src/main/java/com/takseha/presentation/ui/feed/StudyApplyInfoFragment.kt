@@ -41,6 +41,7 @@ class StudyApplyInfoFragment : Fragment() {
     private val viewModel: StudyApplyViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var studyImgColor: String = "0"
+    private var studyStatus: StudyStatus? = null
     private val colorList = listOf(
         R.color.BG_10,
         R.color.BG_9,
@@ -58,6 +59,7 @@ class StudyApplyInfoFragment : Fragment() {
         super.onCreate(savedInstanceState)
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         lifecycleScope.launch {
             launch { viewModel.getStudyInfo(studyInfoId) }
             launch { viewModel.getStudyRank(studyInfoId) }
@@ -76,10 +78,17 @@ class StudyApplyInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        requireActivity().window.statusBarColor = ContextCompat.getColor(
-            requireContext(),
-            colorList[studyImgColor.toIntOrNull() ?: 0]
-        )
+        if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+            requireActivity().window.statusBarColor = ContextCompat.getColor(
+                requireContext(),
+                colorList[studyImgColor.toIntOrNull() ?: 0]
+            )
+        } else {
+            requireActivity().window.statusBarColor = ContextCompat.getColor(
+                requireContext(),
+                R.color.GS_300
+            )
+        }
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
@@ -144,21 +153,29 @@ class StudyApplyInfoFragment : Fragment() {
         val studyInfo = studyMainInfoState.studyInfo
 
         with(binding) {
-            val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
-            studyImg.setImageResource(studyImgSrc)
-            if (studyInfo.currentMember == studyInfo.maximumMember) {
+            if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+                val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
+                studyImg.setImageResource(studyImgSrc)
+                studyEndTag.visibility = GONE
+                if (studyInfo.currentMember == studyInfo.maximumMember) {
+                    studyEnterBtn.isEnabled = false
+                    studyEnterBtn.text = "모집 완료"
+                } else {
+                    studyEnterBtn.isEnabled = true
+                    studyEnterBtn.text = "스터디 신청하기"
+                }
+                if (studyInfo.isWaiting) {
+                    applyCancelBtn.visibility = VISIBLE
+                    studyEnterBtn.visibility = GONE
+                } else {
+                    applyCancelBtn.visibility = GONE
+                    studyEnterBtn.visibility = VISIBLE
+                }
+            } else {
+                studyImg.setImageResource(R.drawable.bg_mystudy_full_default)
+                studyEndTag.visibility = VISIBLE
                 studyEnterBtn.isEnabled = false
-                studyEnterBtn.text = "모집 완료"
-            } else {
-                studyEnterBtn.isEnabled = true
-                studyEnterBtn.text = "스터디 신청하기"
-            }
-            if (studyInfo.isWaiting) {
-                applyCancelBtn.visibility = VISIBLE
-                studyEnterBtn.visibility = GONE
-            } else {
-                applyCancelBtn.visibility = GONE
-                studyEnterBtn.visibility = VISIBLE
+                studyEnterBtn.text = "활동 종료"
             }
             studyName.text = studyInfo.topic
             studyDetail.text = studyInfo.info

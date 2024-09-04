@@ -16,6 +16,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
@@ -32,12 +33,14 @@ class ToDoFragment : Fragment() {
     private val viewModel: TodoViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
+    private var studyStatus: StudyStatus? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = requireActivity().intent?.getIntExtra("studyInfoId", 0) ?: 0
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         viewModel.getTodoList(studyInfoId)
     }
 
@@ -72,6 +75,8 @@ class ToDoFragment : Fragment() {
         }
 
         with(binding) {
+            if (studyStatus == StudyStatus.STUDY_INACTIVE) addTodoBtn.visibility = GONE
+
             todoSwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.getTodoList(studyInfoId)

@@ -10,6 +10,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemMystudyBinding
@@ -36,6 +37,7 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
         val todoCheckNum = binding.todoCheckNum
         val totalNum = binding.totalNum
         val progressBar = binding.progressBar
+        val studyEndTag = binding.studyEndTag
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -60,16 +62,30 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
     private fun setStudyInfo(holder: ViewHolder, position: Int) {
         val studyInfo = studyInfoList[position].studyInfo
         val urgentTodo = studyInfoList[position].urgentTodo!!
-        val studyImage = setStudyImg(studyInfo.profileImageUrl.toIntOrNull() ?: 0)
 
-        holder.studyImg.setImageResource(studyImage)
+        if (studyInfo.status != StudyStatus.STUDY_INACTIVE) {
+            val studyImage = setStudyImg(studyInfo.profileImageUrl.toIntOrNull() ?: 0)
+            holder.studyImg.setImageResource(studyImage)
+            holder.leaderTag.visibility = if (studyInfo.isLeader) VISIBLE else GONE
+            holder.studyEndTag.visibility = GONE
+            holder.todoCheckNum.text = "${urgentTodo.completeMemberCount ?: 0}/"
+            holder.totalNum.text = studyInfo.currentMember.toString()
+            holder.progressBar.progress = urgentTodo.completeMemberCount ?: 0
+            holder.progressBar.max = studyInfo.currentMember
+        } else {
+            holder.studyImg.setImageResource(R.drawable.bg_mystudy_small_default)
+            holder.leaderTag.visibility = GONE
+            holder.studyEndTag.visibility = VISIBLE
+            holder.todoCheckNum.text = "0/"
+            holder.totalNum.text = studyInfo.currentMember.toString()
+            holder.progressBar.progress = 0
+            holder.progressBar.max = studyInfo.currentMember
+            holder.noTodoAlarm.setTextColor(R.color.GS_300)
+            holder.studyName.setTextColor(R.color.GS_300)
+            holder.teamScore.setTextColor(R.color.GS_300)
+        }
         holder.studyName.text = studyInfo.topic
-        holder.leaderTag.visibility = if (studyInfo.isLeader) VISIBLE else GONE
         holder.teamScore.text = "${studyInfo.score}점"
-        holder.todoCheckNum.text = "${urgentTodo.completeMemberCount ?: 0}/"
-        holder.totalNum.text = studyInfo.currentMember.toString()
-        holder.progressBar.progress = urgentTodo.completeMemberCount ?: 0
-        holder.progressBar.max = studyInfo.currentMember
 
         if (urgentTodo.todo == null) {
             holder.noTodoAlarm.visibility = VISIBLE

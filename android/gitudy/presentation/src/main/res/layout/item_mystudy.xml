@@ -31,7 +31,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="2dp"
-                android:text="단국알고깃터디"
                 android:textColor="@color/GS_800"
                 app:layout_constraintStart_toEndOf="@+id/studyImg"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -50,7 +49,25 @@
                 android:paddingRight="3dp"
                 android:text="팀장"
                 android:textColor="@color/WHITE"
-                android:visibility="visible"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/studyName"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/studyEndTag"
+                style="@style/B7_2"
+                android:layout_width="40dp"
+                android:layout_height="22dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/box_non_stroke_r24"
+                android:backgroundTint="@color/GS_300"
+                android:gravity="center"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="종료"
+                android:textColor="@color/GS_500"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/studyName"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -61,7 +78,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="6dp"
-                android:text="@string/study_score"
                 android:textColor="@color/BLACK"
                 app:layout_constraintStart_toEndOf="@+id/studyImg"
                 app:layout_constraintTop_toBottomOf="@+id/studyName" />
@@ -117,7 +133,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
-                    android:text="@string/study_to_do"
                     android:textColor="@color/GS_700" />
 
 
@@ -140,7 +155,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="4dp"
-                        android:text="@string/to_do_deadline_date"
                         android:textColor="@color/GS_600" />
                 </LinearLayout>
             </LinearLayout>
@@ -151,7 +165,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:text="미완료"
                 android:textColor="@color/GS_400"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
@@ -174,7 +187,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="19dp"
-                android:text="%d"
                 android:textColor="@color/GS_500"
                 app:layout_constraintEnd_toStartOf="@+id/totalNum"
                 app:layout_constraintTop_toBottomOf="@+id/todoImg" />
@@ -185,7 +197,6 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="19dp"
-                android:text="@string/study_to_do_check"
                 android:textColor="@color/GS_500"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/todoImg" />

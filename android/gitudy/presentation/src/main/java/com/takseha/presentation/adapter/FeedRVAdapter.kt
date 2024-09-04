@@ -1,16 +1,21 @@
 package com.takseha.presentation.adapter
 
 import android.content.Context
+import android.content.res.ColorStateList
+import android.graphics.Color
 import android.os.Build
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.takseha.data.dto.feed.StudyPeriodStatus
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.feed.UserInfo
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemFeedBinding
@@ -45,6 +50,7 @@ class FeedRVAdapter(
         val memberList: RecyclerView = binding.memberList
         val currentMember = binding.currentCnt
         val totalMember = binding.totalCnt
+        val studyEndTag = binding.studyEndTag
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -81,18 +87,28 @@ class FeedRVAdapter(
 
     @RequiresApi(Build.VERSION_CODES.O)
     private fun bindFull(holder: ViewHolder, position: Int) {
-        val studyImage = setStudyImg(studyInfoList[position].studyInfo.profileImageUrl.toIntOrNull() ?: 0)
+        val studyInfo = studyInfoList[position].studyInfo
 
-        holder.studyImg.setImageResource(studyImage)
-        holder.studyName.text = studyInfoList[position].studyInfo.topic
-        holder.commitRule.text = setCommitRule(studyInfoList[position].studyInfo.periodType)
+        if (studyInfo.status != StudyStatus.STUDY_INACTIVE) {
+            val studyImage = setStudyImg(studyInfo.profileImageUrl.toIntOrNull() ?: 0)
+            holder.studyImg.setImageResource(studyImage)
+            holder.studyEndTag.visibility = GONE
+            holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].studyInfo.createdDateTime))
+        } else {
+            holder.studyImg.setImageResource(R.drawable.bg_feed_full_default)
+            holder.teamScore.setBackgroundTintList(ColorStateList.valueOf(Color.parseColor("#40F2F6FA")))
+            holder.teamScore.setTextColor(ContextCompat.getColor(context, R.color.WHITE))
+            holder.studyEndTag.visibility = VISIBLE
+            holder.totalDayCnt.text = "-"
+        }
+        holder.studyName.text = studyInfo.topic
+        holder.commitRule.text = setCommitRule(studyInfo.periodType)
         holder.teamInfo.text = context.getString(R.string.study_team_rank_full, studyInfoList[position].rank,
-            studyInfoList[position].studyInfo.lastCommitDay ?: "없음"
+            studyInfo.lastCommitDay ?: "없음"
         )
-        holder.teamScore.text = context.getString(R.string.study_score, studyInfoList[position].studyInfo.score)
-        holder.totalDayCnt.text = context.getString(R.string.study_total_day_cnt, calculateTotalDayCnt(studyInfoList[position].studyInfo.createdDateTime))
-        holder.currentMember.text = studyInfoList[position].studyInfo.currentMember.toString()
-        holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfoList[position].studyInfo.maximumMember)
+        holder.teamScore.text = context.getString(R.string.study_score, studyInfo.score)
+        holder.currentMember.text = studyInfo.currentMember.toString()
+        holder.totalMember.text = context.getString(R.string.study_member_rv, studyInfo.maximumMember)
         if (studyInfoList[position].isMyBookmark) {
             holder.bookmarkBtn.setImageResource(R.drawable.ic_feed_save_green)
         } else {

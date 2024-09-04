@@ -135,6 +135,7 @@ class FeedHomeFragment : Fragment() {
                 val intent = Intent(requireContext(), StudyApplyActivity::class.java)
                 intent.putExtra("studyInfoId", studyList[position].studyInfo.id)
                 intent.putExtra("studyImgColor", studyList[position].studyInfo.profileImageUrl)
+                intent.putExtra("studyStatus", studyList[position].studyInfo.status)
                 startActivity(intent)
             }
 

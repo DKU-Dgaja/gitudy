@@ -20,6 +20,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.Comment
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.CommitStatus
@@ -38,12 +39,14 @@ class CommitDetailFragment : Fragment() {
     private val viewModel: CommitDetailViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
+    private var studyStatus: StudyStatus? = null
     private var commit: Commit? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         arguments?.let {
             commit = it.getSerializable("commit") as Commit?
         }
@@ -69,11 +72,11 @@ class CommitDetailFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.repositoryInfoState.collectLatest { repositoryInfo ->
                 with(binding) {
-                    if (isLeader!!) {
+                    if (studyStatus == StudyStatus.STUDY_INACTIVE) messageLayout.visibility = GONE
+
+                    if (isLeader!! && studyStatus != StudyStatus.STUDY_INACTIVE) {
                         if (commit?.status != CommitStatus.COMMIT_APPROVAL && commit?.status != CommitStatus.COMMIT_REJECTION) {
                             commitManageBtn.visibility = VISIBLE
-                        } else {
-
                         }
                     } else {
                         commitManageBtn.visibility = GONE

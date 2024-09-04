@@ -21,7 +21,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="207dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/bg_mystudy_full_1"
+                android:src="@drawable/bg_mystudy_full_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -81,6 +81,24 @@
                     android:paddingRight="3dp"
                     android:text="팀장"
                     android:textColor="@color/WHITE"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toEndOf="@+id/studyName"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/studyEndTag"
+                    style="@style/B6_2"
+                    android:layout_width="48dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/box_non_stroke_r24"
+                    android:backgroundTint="@color/GS_300"
+                    android:gravity="center"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:text="종료"
+                    android:textColor="@color/GS_500"
                     android:visibility="gone"
                     app:layout_constraintStart_toEndOf="@+id/studyName"
                     app:layout_constraintTop_toTopOf="parent" />

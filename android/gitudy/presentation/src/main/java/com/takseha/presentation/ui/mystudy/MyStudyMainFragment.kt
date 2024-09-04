@@ -43,6 +43,7 @@ class MyStudyMainFragment : Fragment() {
     private val viewModel: MyStudyMainViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
+    private var studyStatus: StudyStatus? = null
     private lateinit var studyImgColor: String
     private val colorList = listOf(
         R.color.BG_10,
@@ -62,10 +63,7 @@ class MyStudyMainFragment : Fragment() {
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
-        requireActivity().window.statusBarColor = ContextCompat.getColor(
-            requireContext(),
-            colorList[studyImgColor.toIntOrNull() ?: 0]
-        )
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         lifecycleScope.launch {
             launch { viewModel.getMyStudyInfo(studyInfoId) }
             launch { viewModel.getUrgentTodo(studyInfoId) }
@@ -88,12 +86,25 @@ class MyStudyMainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         var comment = ""
 
+        if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+            requireActivity().window.statusBarColor = ContextCompat.getColor(
+                requireContext(),
+                colorList[studyImgColor.toIntOrNull() ?: 0]
+            )
+        } else {
+            requireActivity().window.statusBarColor = ContextCompat.getColor(
+                requireContext(),
+                R.color.GS_300
+            )
+        }
+
         observeViewModel()
 
         with(binding) {
             val bundle = Bundle().apply {
                 putInt("studyInfoId", studyInfoId)
                 putBoolean("isLeader", isLeader!!)
+                putSerializable("studyStatus", studyStatus)
             }
 
             myStudyMainSwipeRefreshLayout.setOnRefreshListener {
@@ -203,10 +214,6 @@ class MyStudyMainFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        requireActivity().window.statusBarColor = ContextCompat.getColor(
-            requireContext(),
-            colorList[studyImgColor.toIntOrNull() ?: 0]
-        )
         viewLifecycleOwner.lifecycleScope.launch {
             launch { viewModel.getMyStudyInfo(studyInfoId) }
             launch { viewModel.getUrgentTodo(studyInfoId) }
@@ -220,12 +227,23 @@ class MyStudyMainFragment : Fragment() {
         studyImgColor: String,
         myStudyInfo: StudyInfoResponse
     ) {
-        val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
-
         with(binding) {
-            studyImg.setImageResource(studyImgSrc)
+            if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+                val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
+                studyImg.setImageResource(studyImgSrc)
+                studyEndTag.visibility = GONE
+                leaderTag.visibility = if (isLeader!!) VISIBLE else GONE
+                newCommentLayout.visibility = VISIBLE
+                settingBtn.visibility = VISIBLE
+            } else {
+                studyImg.setImageResource(R.drawable.bg_mystudy_full_default)
+                leaderTag.visibility = GONE
+                studyEndTag.visibility = VISIBLE
+                newCommentLayout.visibility = GONE
+                noTodoAlarm.setTextColor(R.color.GS_300)
+                settingBtn.visibility = GONE
+            }
             studyName.text = myStudyInfo.topic
-            leaderTag.visibility = if (myStudyInfo.isLeader) VISIBLE else GONE
             studyRule.text = setCommitRule(myStudyInfo.periodType)
             studyInfo.text = myStudyInfo.info
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
@@ -281,7 +299,8 @@ class MyStudyMainFragment : Fragment() {
 
     private fun setStudyRank(rankAndScore: StudyRankResponse) {
         with(binding) {
-            studyRankText.text = getString(R.string.study_team_rank, rankAndScore.score, rankAndScore.ranking)
+            studyRankText.text =
+                getString(R.string.study_team_rank, rankAndScore.score, rankAndScore.ranking)
         }
     }
 
