@@ -7,10 +7,18 @@ import com.takseha.data.dto.feed.MessageRequest
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.data.token.TokenManager
 import com.takseha.presentation.viewmodel.common.BaseApplicationViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 
 class SettingHomeViewModel(application: Application) : BaseApplicationViewModel(application) {
     private lateinit var gitudyAuthRepository: GitudyAuthRepository
     private lateinit var tokenManager: TokenManager
+
+    private val _logoutResponseState = MutableStateFlow<Boolean?>(null)
+    val logoutResponseState = _logoutResponseState.asStateFlow()
+
+    private val _deleteResponseState = MutableStateFlow<Boolean?>(null)
+    val deleteResponseState = _deleteResponseState.asStateFlow()
 
     suspend fun updatePushAlarmYn(pushAlarmEnable: Boolean) {
         gitudyAuthRepository = GitudyAuthRepository()
@@ -35,8 +43,10 @@ class SettingHomeViewModel(application: Application) : BaseApplicationViewModel(
             apiCall = { tokenManager.logout() },
             onSuccess = { response ->
                 if (response) {
+                    _logoutResponseState.value = true
                     Log.d("SettingHomeViewModel", "logout 성공!\naccess token: ${tokenManager.accessToken}\nrefresh token: ${tokenManager.refreshToken}")
                 } else {
+                    _logoutResponseState.value = false
                     Log.e("SettingHomeViewModel", "logout 실패!")
                 }
             }
@@ -50,8 +60,10 @@ class SettingHomeViewModel(application: Application) : BaseApplicationViewModel(
             apiCall = { tokenManager.deleteUserAccount(request) },
             onSuccess = { response ->
                 if (response) {
+                    _deleteResponseState.value = true
                     Log.d("SettingHomeViewModel", "deleteAccount 성공!\naccess token: ${tokenManager.accessToken}\nrefresh token: ${tokenManager.refreshToken}")
                 } else {
+                    _deleteResponseState.value = false
                     Log.e("SettingHomeViewModel", "deleteAccount 실패!")
                 }
             }

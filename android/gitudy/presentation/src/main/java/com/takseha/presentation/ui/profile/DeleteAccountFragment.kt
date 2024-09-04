@@ -6,6 +6,7 @@ import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,6 +16,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentDeleteAccountBinding
 import com.takseha.presentation.ui.common.CustomCheckDialog
 import com.takseha.presentation.viewmodel.profile.SettingHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class DeleteAccountFragment : Fragment() {
@@ -75,9 +77,27 @@ class DeleteAccountFragment : Fragment() {
         customCheckDialog.setCancelBtnText(getString(R.string.alert_logout_cancel))
         customCheckDialog.setConfirmBtnText(getString(R.string.alert_delete_account_confirm))
         customCheckDialog.setOnConfirmClickListener {
+            with(binding) {
+                loadingIndicator.visibility = VISIBLE
+                requireActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            }
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.deleteUserAccount(message)
-                findNavController().navigate(R.id.action_deleteAccountFragment_to_deleteAccountCompleteFragment)
+                viewModel.deleteResponseState.collectLatest {
+                    if (it != null) {
+                        with(binding) {
+                            loadingIndicator.visibility = GONE
+                            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        }
+                        if (it) {
+                            findNavController().navigate(R.id.action_deleteAccountFragment_to_deleteAccountCompleteFragment)
+                        }
+                        // TODO: todo 생성 실패 시 로직 구현!
+                    }
+                }
             }
         }
         customCheckDialog.show()

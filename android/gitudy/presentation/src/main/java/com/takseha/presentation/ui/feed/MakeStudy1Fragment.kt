@@ -169,7 +169,9 @@ class MakeStudy1Fragment : Fragment() {
                     }
                 } else {
                     viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.resetCorrectRepoName()
                         viewModel.checkValidRepoName(githubRepo)
+
                         viewModel.isValidRepoName.collectLatest {
                             Log.e("MakeStudy1Fragment", it.toString())
                             when (it) {
@@ -208,6 +210,7 @@ class MakeStudy1Fragment : Fragment() {
                                             )
                                         )
                                     }
+                                    validationCheckedImg.visibility = GONE
                                     nextBtn.isEnabled = false
                                 }
                             }

@@ -3,7 +3,10 @@ package com.takseha.presentation.ui.profile
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.view.WindowManager
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -13,6 +16,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentSettingHomeBinding
 import com.takseha.presentation.ui.common.CustomCheckDialog
 import com.takseha.presentation.viewmodel.profile.SettingHomeViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SettingHomeFragment : Fragment() {
@@ -71,9 +75,27 @@ class SettingHomeFragment : Fragment() {
         customCheckDialog.setCancelBtnText(getString(R.string.alert_logout_cancel))
         customCheckDialog.setConfirmBtnText(getString(R.string.alert_logout_confirm))
         customCheckDialog.setOnConfirmClickListener {
+            with(binding) {
+                loadingIndicator.visibility = VISIBLE
+                requireActivity().window.setFlags(
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE,
+                    WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE
+                )
+            }
             viewLifecycleOwner.lifecycleScope.launch {
                 viewModel.logout()
-                findNavController().navigate(R.id.action_settingHomeFragment_to_logoutCompleteFragment)
+                viewModel.logoutResponseState.collectLatest {
+                    if (it != null) {
+                        with(binding) {
+                            loadingIndicator.visibility = GONE
+                            requireActivity().window.clearFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCHABLE)
+                        }
+                        if (it) {
+                            findNavController().navigate(R.id.action_settingHomeFragment_to_logoutCompleteFragment)
+                        }
+                        // TODO: todo 생성 실패 시 로직 구현!
+                    }
+                }
             }
         }
         customCheckDialog.show()

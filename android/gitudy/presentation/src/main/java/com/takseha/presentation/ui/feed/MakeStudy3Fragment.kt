@@ -3,11 +3,14 @@ package com.takseha.presentation.ui.feed
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyPeriodStatus
@@ -50,10 +53,26 @@ class MakeStudy3Fragment : Fragment() {
                 requireActivity().finish()
             }
             makeStudyBtn.setOnClickListener {
+                with(binding) {
+                    loadingIndicator.visibility = VISIBLE
+                    exitBtn.isEnabled = false
+                    makeStudyBtn.isEnabled = false
+                }
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.makeNewStudy()
-                    it.findNavController()
-                        .navigate(R.id.action_makeStudy3Fragment_to_newStudyFragment)
+                    viewModel.responseState.collectLatest {
+                        if (it != null) {
+                            with(binding) {
+                                loadingIndicator.visibility = GONE
+                                exitBtn.isEnabled = true
+                            }
+                            if (it) {
+                                findNavController()
+                                    .navigate(R.id.action_makeStudy3Fragment_to_newStudyFragment)
+                            }
+                            // TODO: todo 생성 실패 시 로직 구현!
+                        }
+                    }
                 }
             }
         }
