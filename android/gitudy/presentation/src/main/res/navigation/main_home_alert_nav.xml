@@ -24,7 +24,8 @@
         tools:layout="@layout/fragment_study_apply_member_list" >
         <action
             android:id="@+id/action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment"
-            app:destination="@id/studyApplyMemberProfileFragment" />
+            app:destination="@id/studyApplyMemberProfileFragment"
+            app:enterAnim="@anim/vertical_enter" />
     </fragment>
     <fragment
         android:id="@+id/studyApplyMemberProfileFragment"
