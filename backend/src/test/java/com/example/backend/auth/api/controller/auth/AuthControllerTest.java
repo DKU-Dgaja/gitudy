@@ -164,7 +164,7 @@ class AuthControllerTest extends MockTestConfig {
                 .message("reason")
                 .build();
 
-        doNothing().when(authService).userDelete(any(String.class), any(MessageRequest.class));
+        doNothing().when(authService).userDelete(any(User.class), any(String.class));
 
         // when
         mockMvc.perform(post("/auth/delete")

@@ -221,32 +221,22 @@ class AuthServiceTest extends MockTestConfig {
     @DisplayName("존재하지 않는 userName으로 계정삭제를 진행할 수 없다.")
     void isNotProcessingWhenUserNameIsNotExist() {
         // given
-        String invalidUserName = "1234_KAKAO";
+        User notSavedUser = generateAuthUser();
 
         // when
-        assertThrows(AuthException.class,
-                () -> authService.userDelete(invalidUserName, MessageRequest.builder()
-                        .message("reason").build()));
+        UserException e = assertThrows(UserException.class, () -> authService.userDelete(notSavedUser, "reason"));
+        assertEquals(ExceptionMessage.USER_NOT_FOUND.getText(), e.getMessage());
     }
 
     @Test
     @DisplayName("존재하는 계정의 userName으로 계정삭제를 진행할 수 있다.")
     void successProcessingWhenUserNameIsExistInDB() {
-        String platformId = "1234";
-        String platformType = "KAKAO";
         // given
-        User user = User.builder()
-                .platformId(platformId)
-                .platformType(UserPlatformType.valueOf(platformType))
-                .name("김민수")
-                .profileImageUrl("google.co.kr")
-                .role(USER)
-                .build();
-        userRepository.save(user);
+        User user = userRepository.save(generateAuthUser());
 
         // when
-        authService.userDelete(platformId + "_" + platformType, MessageRequest.builder().message("reason").build());
-        User deletedUser = userRepository.findByPlatformIdAndPlatformType(user.getPlatformId(), user.getPlatformType()).orElse(null);
+        authService.userDelete(user, "reason");
+        User deletedUser = userRepository.findById(user.getId()).get();
 
         // then
         assertThat(deletedUser.getRole()).isEqualTo(UserRole.WITHDRAW);
