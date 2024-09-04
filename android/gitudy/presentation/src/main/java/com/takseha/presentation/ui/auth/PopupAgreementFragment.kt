@@ -32,7 +32,6 @@ class PopupAgreementFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
     }
 
     override fun onCreateView(
@@ -45,6 +44,7 @@ class PopupAgreementFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
         view.setBackgroundColor(Color.argb(0x80,0x27,0x29,0x2E))
 
         collectFlows()
@@ -77,10 +77,6 @@ class PopupAgreementFragment : Fragment() {
             detailBtn2.setOnClickListener {
                 it.findNavController().navigate(R.id.action_popupFragment_to_popupDetail2Fragment)
             }
-            detailBtn3.setOnClickListener {
-                it.findNavController().navigate(R.id.action_popupFragment_to_popupDetail3Fragment)
-            }
-
             confirmBtn.setOnClickListener {
                 var action = PopupAgreementFragmentDirections.actionPopupFragmentToInputNicknameFragment(pushAlarmYnBtn.isChecked)
                 it.findNavController().navigate(action)

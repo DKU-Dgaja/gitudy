@@ -16,13 +16,13 @@ class PopupDetail3Fragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =  ContextCompat.getColor(requireContext(), R.color.WHITE)
     }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        requireActivity().window.statusBarColor =  ContextCompat.getColor(requireContext(), R.color.WHITE)
         _binding = FragmentPopupDetail3Binding.inflate(inflater, container, false)
         return binding.root
     }
