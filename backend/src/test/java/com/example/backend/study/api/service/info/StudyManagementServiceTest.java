@@ -57,9 +57,9 @@ class StudyManagementServiceTest extends TestConfig {
         List<StudyInfo> allByUserId = studyInfoRepository.findAllByUserId(savedUser.getId());
 
         // then
-        assertTrue(allByUserId.size() == 5);
-        for (int i = 0; i < allByUserId.size(); i++) {
-            assertTrue(allByUserId.get(i).getStatus() == StudyStatus.STUDY_INACTIVE);
+        assertEquals(5, allByUserId.size());
+        for (StudyInfo studyInfo : allByUserId) {
+            assertSame(studyInfo.getStatus(), StudyStatus.STUDY_INACTIVE);
         }
     }
 

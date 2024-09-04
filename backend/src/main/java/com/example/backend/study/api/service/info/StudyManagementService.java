@@ -1,11 +1,7 @@
 package com.example.backend.study.api.service.info;
 
-import com.example.backend.domain.define.study.github.GithubApiToken;
-import com.example.backend.domain.define.study.info.constant.RepositoryInfo;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
-import com.example.backend.study.api.service.github.GithubApiService;
-import com.example.backend.study.api.service.github.GithubApiTokenService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

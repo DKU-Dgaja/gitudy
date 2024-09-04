@@ -1,8 +1,6 @@
 package com.example.backend.study.api.service.todo;
 
 
-import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
-
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.study.StudyInfoException;
 import com.example.backend.common.exception.todo.TodoException;

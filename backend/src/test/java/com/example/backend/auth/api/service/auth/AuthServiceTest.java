@@ -23,7 +23,14 @@ import com.example.backend.domain.define.refreshToken.RefreshToken;
 import com.example.backend.domain.define.refreshToken.repository.RefreshTokenRepository;
 import com.example.backend.domain.define.study.github.GithubApiToken;
 import com.example.backend.domain.define.study.github.repository.GithubApiTokenRepository;
-import com.example.backend.study.api.controller.member.request.MessageRequest;
+import com.example.backend.domain.define.study.info.StudyInfo;
+import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
+import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
+import com.example.backend.domain.define.study.member.StudyMember;
+import com.example.backend.domain.define.study.member.StudyMemberFixture;
+import com.example.backend.domain.define.study.member.constant.StudyMemberStatus;
+import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
@@ -32,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
@@ -66,11 +74,19 @@ class AuthServiceTest extends MockTestConfig {
     @Autowired
     private GithubApiTokenRepository githubApiTokenRepository;
 
+    @Autowired
+    private StudyInfoRepository studyInfoRepository;
+
+    @Autowired
+    private StudyMemberRepository studyMemberRepository;
+
     @AfterEach
     void tearDown() {
         githubApiTokenRepository.deleteAll();
         userRepository.deleteAllInBatch();
         githubApiTokenRepository.deleteAll();
+        studyInfoRepository.deleteAllInBatch();
+        studyMemberRepository.deleteAllInBatch();
     }
 
     @Test
@@ -417,6 +433,32 @@ class AuthServiceTest extends MockTestConfig {
         // then
         Optional<RefreshToken> deletedRefreshToken = refreshTokenRepository.findBySubject(savedUser.getUsername());
         assertFalse(deletedRefreshToken.isPresent());
+    }
+
+    @Test
+    void 회원_탈퇴_최종_테스트() {
+        // given
+        User userA = userRepository.save(UserFixture.generateAuthUser());
+        User userB = userRepository.save(UserFixture.generateAuthJusung());
+
+        // 탈퇴 회원의 스터디
+        StudyInfo studyA = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(userA.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), studyA.getId()));
+
+        // 탈퇴 회원이 참여중인 스터디
+        StudyInfo studyB = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(userB.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userA.getId(), studyB.getId()));
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(userB.getId(), studyB.getId()));
+
+        // when
+        authService.userDelete(userA, "때리칠게요.");
+        List<StudyInfo> allByUserId = studyInfoRepository.findAllByUserId(userA.getId());
+        StudyMember member = studyMemberRepository.findByStudyInfoIdAndUserId(studyB.getId(), userA.getId()).get();
+
+        // then
+        assertSame(allByUserId.get(0).getStatus(), StudyStatus.STUDY_INACTIVE);
+        assertSame(StudyMemberStatus.STUDY_WITHDRAWAL, member.getStatus());
+
     }
 
 }
