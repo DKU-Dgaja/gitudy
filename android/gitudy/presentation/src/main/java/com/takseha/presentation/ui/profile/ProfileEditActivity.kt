@@ -115,6 +115,8 @@ class ProfileEditActivity : AppCompatActivity() {
             nicknameValidationCheckBtn.setOnClickListener {
                 lifecycleScope.launch {
                     var name = nicknameEditText.text.toString()
+
+                    viewModel.resetCorrectName()
                     viewModel.checkNickname(name)
                     viewModel.isCorrectName.collectLatest {
                         if (it != null) {
@@ -125,6 +127,7 @@ class ProfileEditActivity : AppCompatActivity() {
                                 applyBtn.isEnabled = isApplyEnable()
                             } else {
                                 alertText.text = getString(R.string.alert_name_not_ok)
+                                validationCheckedImg.visibility = GONE
                                 applyBtn.isEnabled = false
                             }
                         }

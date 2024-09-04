@@ -72,6 +72,10 @@ class ProfileEditViewModel : BaseViewModel() {
         )
     }
 
+    fun resetCorrectName() {
+        _isCorrectName.value = null
+    }
+
     suspend fun updateUserInfo(name: String, profileImageUrl: String, socialInfo: SocialInfo?, profilePublicYn: Boolean) {
         val request = UserInfoUpdateRequest(
             name = name,

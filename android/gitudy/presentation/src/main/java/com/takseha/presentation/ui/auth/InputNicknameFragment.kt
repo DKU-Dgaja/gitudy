@@ -20,6 +20,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputNicknameBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.viewmodel.auth.RegisterViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class InputNicknameFragment : Fragment() {
@@ -30,8 +31,6 @@ class InputNicknameFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
     }
 
     override fun onCreateView(
@@ -44,6 +43,8 @@ class InputNicknameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
 
         // registerInfoState 업데이트
         val args: InputNicknameFragmentArgs by navArgs()
@@ -116,33 +117,32 @@ class InputNicknameFragment : Fragment() {
             isNameOkBtn.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     var name = inputNicknameEditText.text.toString()
+
+                    viewModel.resetCorrectName()
                     viewModel.checkNickname(name)
-                    val isCorrectName = viewModel.isCorrectName.value
-                    Log.e("InputNicknameFragment", isCorrectName.toString())
-                    if (isCorrectName == true) {
-                        nicknameLengthWithMax.apply {
-                            text = getString(R.string.alert_name_ok)
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.GS_500
-                                )
-                            )
+                    viewModel.isCorrectName.collect {
+                        if (it != null) {
+                            if (it) {
+                                nicknameLengthWithMax.apply {
+                                    text = getString(R.string.alert_name_ok)
+                                    setTextColor(
+                                        ContextCompat.getColor(requireContext(), R.color.GS_500)
+                                    )
+                                }
+                                isNameOkBtn.visibility = GONE
+                                validationCheckedImg.visibility = VISIBLE
+                                confirmBtn.isEnabled = true
+                            } else {
+                                nicknameLengthWithMax.apply {
+                                    text = getString(R.string.alert_name_not_ok)
+                                    setTextColor(
+                                        ContextCompat.getColor(requireContext(), R.color.BASIC_RED)
+                                    )
+                                }
+                                validationCheckedImg.visibility = GONE
+                                confirmBtn.isEnabled = false
+                            }
                         }
-                        isNameOkBtn.visibility = GONE
-                        validationCheckedImg.visibility = VISIBLE
-                        confirmBtn.isEnabled = true
-                    } else {
-                        nicknameLengthWithMax.apply {
-                            text = getString(R.string.alert_name_not_ok)
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.BASIC_RED
-                                )
-                            )
-                        }
-                        confirmBtn.isEnabled = false
                     }
                 }
             }

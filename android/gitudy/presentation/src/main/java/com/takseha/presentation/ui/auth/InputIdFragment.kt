@@ -18,6 +18,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputIdBinding
 import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.viewmodel.auth.RegisterViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class InputIdFragment : Fragment() {
@@ -27,8 +28,6 @@ class InputIdFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
     }
 
     override fun onCreateView(
@@ -41,6 +40,8 @@ class InputIdFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
 
         with(binding) {
             inputIdEditText.addTextChangedListener(object : TextWatcher {
@@ -69,33 +70,38 @@ class InputIdFragment : Fragment() {
             isIdOkBtn.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     var githubId = inputIdEditText.text.toString()
+
+                    viewModel.resetCorrectId()
                     viewModel.checkGithubId(githubId)
-                    val isCorrectId = viewModel.isCorrectId.value
-                    Log.e("InputIdFragment", isCorrectId.toString())
-                    if (isCorrectId == true) {
-                        idCheckText.apply {
-                            text = getString(R.string.alert_id_ok)
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.GS_500
-                                )
-                            )
+                    viewModel.isCorrectId.collectLatest {
+                        if (it != null) {
+                            if (it) {
+                                idCheckText.apply {
+                                    text = getString(R.string.alert_id_ok)
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.GS_500
+                                        )
+                                    )
+                                }
+                                isIdOkBtn.visibility = GONE
+                                validationCheckedImg.visibility = VISIBLE
+                                confirmBtn.isEnabled = true
+                            } else {
+                                idCheckText.apply {
+                                    text = getString(R.string.alert_id_not_ok)
+                                    setTextColor(
+                                        ContextCompat.getColor(
+                                            requireContext(),
+                                            R.color.BASIC_RED
+                                        )
+                                    )
+                                }
+                                validationCheckedImg.visibility = GONE
+                                confirmBtn.isEnabled = false
+                            }
                         }
-                        isIdOkBtn.visibility = GONE
-                        validationCheckedImg.visibility = VISIBLE
-                        confirmBtn.isEnabled = true
-                    } else {
-                        idCheckText.apply {
-                            text = getString(R.string.alert_id_not_ok)
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.BASIC_RED
-                                )
-                            )
-                        }
-                        confirmBtn.isEnabled = false
                     }
                 }
             }
