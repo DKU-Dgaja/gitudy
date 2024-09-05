@@ -113,6 +113,7 @@ class AuthServiceTest extends MockTestConfig {
         // then
         assertThat(user).isNotNull();
         assertThat(user.getRole().name()).isEqualTo(UserRole.UNAUTH.name());
+        assertThat(user.getGithubId()).isEqualTo(oAuthResponse.getName());
 
         // githubApiToken 생성 검증
         assertThat(githubApiToken.githubApiToken()).isEqualTo(token);
@@ -172,7 +173,6 @@ class AuthServiceTest extends MockTestConfig {
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
-        String githubId = "test@github.com";
 
         // UNAUTH 사용자 저장
         User unauthUser = userRepository.save(User.builder()
@@ -185,7 +185,6 @@ class AuthServiceTest extends MockTestConfig {
 
         // 회원가입 요청 생성
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
-                .githubId(githubId)
                 .name(name)
                 .pushAlarmYn(true)
                 .fcmToken("token")
@@ -209,7 +208,6 @@ class AuthServiceTest extends MockTestConfig {
         String platformId = "1234";
         String name = "testUser";
         String profileImageUrl = "https://example.com/profile.jpg";
-        String githubId = "test@github.com";
 
         User user = User.builder()
                 .platformId(platformId)
@@ -224,7 +222,6 @@ class AuthServiceTest extends MockTestConfig {
         // 회원가입 요청 생성
         AuthServiceRegisterRequest request = AuthServiceRegisterRequest.builder()
                 .name(name)
-                .githubId(githubId)
                 .build();
 
         // then
