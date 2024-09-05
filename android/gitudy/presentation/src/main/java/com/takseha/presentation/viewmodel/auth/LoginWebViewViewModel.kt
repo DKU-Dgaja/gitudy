@@ -34,7 +34,7 @@ class LoginWebViewViewModel(application: Application) : BaseApplicationViewModel
                     Log.e("LoginWebViewViewModel", "Exception: ${it.message}")
                 } ?: run {
                     response?.let {
-                        Log.e("LoginWebViewViewModel", "회원탈퇴 실패!")
+                        Log.e("LoginWebViewViewModel", "HTTP Error: $it")
                     }
                 }
             }

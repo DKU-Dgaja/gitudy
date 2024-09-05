@@ -37,8 +37,15 @@ class LoginViewModel(application: Application) : BaseApplicationViewModel(applic
                         else -> null
                     }
                     Log.d("LoginViewModel", "url: ${loginPageUrl.value}")
-                } else {
-                    Log.e("LoginViewModel", "loginPageInfoList is null")
+                }
+            },
+            onError = { e, response ->
+                e?.let {
+                    Log.e("LoginViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("LoginViewModel", "HTTP Error: $it")
+                    }
                 }
             }
         )

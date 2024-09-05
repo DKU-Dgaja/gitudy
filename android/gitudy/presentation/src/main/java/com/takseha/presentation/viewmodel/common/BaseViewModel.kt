@@ -20,7 +20,7 @@ abstract class BaseViewModel : ViewModel() {
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
         apiCall: suspend () -> T,
         onSuccess: (T) -> Unit,
-        onError: (Exception?, T?) -> Unit = { e, response ->
+        onError: (Exception?, Response<*>?) -> Unit = { e, response ->
             if (e != null) {
                 _snackbarMessage.value = "네트워크 연결을 확인해주세요"
             } else {

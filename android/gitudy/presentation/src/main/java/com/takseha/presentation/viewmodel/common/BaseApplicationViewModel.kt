@@ -22,7 +22,7 @@ abstract class BaseApplicationViewModel(application: Application) : AndroidViewM
         dispatcher: CoroutineDispatcher = Dispatchers.IO,
         apiCall: suspend () -> T,
         onSuccess: (T) -> Unit,
-        onError: (Exception?, T?) -> Unit = { e, response ->
+        onError: (Exception?, Any?) -> Unit = { e, response ->
             if (e != null) {
                 _snackbarMessage.value = "네트워크 연결을 확인해주세요"
             } else {

@@ -47,7 +47,7 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
                     Log.e("RegisterViewModel", "Exception: ${it.message}")
                 } ?: run {
                     response?.let {
-                        Log.e("RegisterViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                        Log.e("RegisterViewModel", "HTTP Error: $it")
                     }
                 }
             }
@@ -74,7 +74,7 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
                     Log.e("RegisterViewModel", "Exception: ${it.message}")
                 } ?: run {
                     response?.let {
-                        Log.e("RegisterViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                        Log.e("RegisterViewModel", "HTTP Error: $it")
                     }
                 }
             }
