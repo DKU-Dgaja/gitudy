@@ -138,6 +138,7 @@
     <string name="profile_delete_account_reason2">오류가 많아요</string>
     <string name="profile_delete_account_reason3">앱 이용이 불편해요</string>
     <string name="profile_delete_account_reason4">기타</string>
+    <string name="profile_problem_solve_detail">이메일로 문제를 알려주세요\n빠르게 해결해드릴게요!</string>
     <string name="alert_logout_title">로그아웃을 하시겠습니까?</string>
     <string name="alert_logout_detail">로그아웃 시\n 참여 스터디 알림을 받지 못해요</string>
     <string name="alert_delete_account_title">회원 탈퇴를 하시겠습니까?</string>
