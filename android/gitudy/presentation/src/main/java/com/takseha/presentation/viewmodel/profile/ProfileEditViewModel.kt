@@ -63,10 +63,16 @@ class ProfileEditViewModel : BaseViewModel() {
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     _isCorrectName.value = true
-                } else {
-                    _isCorrectName.value = false
-                    Log.e("ProfileEditViewModel", "correctNameResponse status: ${response.code()}\ncorrectNameResponse message: ${response.errorBody()?.string()}")
-
+                }
+            },
+            onError = { e, response ->
+                _isCorrectName.value = false
+                e?.let {
+                    Log.e("ProfileEditViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("ProfileEditViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )

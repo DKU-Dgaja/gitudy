@@ -84,9 +84,16 @@ class MakeStudyViewModel() : BaseViewModel()  {
                 if (response.isSuccessful) {
                     _responseState.value = true
                     Log.d("MakeStudyViewModel", response.code().toString())
-                } else {
-                    _responseState.value = false
-                    Log.e("MakeStudyViewModel", "newStudyResponse status: ${response.code()}\nnewStudyResponse message: ${response.errorBody()?.string()}")
+                }
+            },
+            onError = { e, response ->
+                _responseState.value = false
+                e?.let {
+                    Log.e("MakeStudyViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("MakeStudyViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )

@@ -45,9 +45,16 @@ class SettingHomeViewModel(application: Application) : BaseApplicationViewModel(
                 if (response) {
                     _logoutResponseState.value = true
                     Log.d("SettingHomeViewModel", "logout 성공!\naccess token: ${tokenManager.accessToken}\nrefresh token: ${tokenManager.refreshToken}")
-                } else {
-                    _logoutResponseState.value = false
-                    Log.e("SettingHomeViewModel", "logout 실패!")
+                }
+            },
+            onError = { e, response ->
+                _logoutResponseState.value = false
+                e?.let {
+                    Log.e("SettingHomeViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("SettingHomeViewModel", "logout 실패!")
+                    }
                 }
             }
         )
@@ -62,9 +69,16 @@ class SettingHomeViewModel(application: Application) : BaseApplicationViewModel(
                 if (response) {
                     _deleteResponseState.value = true
                     Log.d("SettingHomeViewModel", "deleteAccount 성공!\naccess token: ${tokenManager.accessToken}\nrefresh token: ${tokenManager.refreshToken}")
-                } else {
-                    _deleteResponseState.value = false
-                    Log.e("SettingHomeViewModel", "deleteAccount 실패!")
+                }
+            },
+            onError = { e, response ->
+                _deleteResponseState.value = false
+                e?.let {
+                    Log.e("SettingHomeViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("SettingHomeViewModel", "회원탈퇴 실패!")
+                    }
                 }
             }
         )
