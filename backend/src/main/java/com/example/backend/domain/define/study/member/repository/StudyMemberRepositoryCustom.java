@@ -34,4 +34,7 @@ public interface StudyMemberRepositoryCustom {
 
     // GitHubId와 StudyInfoId를 통해 사용자가 해당 스터디의 활동중인 멤버인지 판별한다.
     boolean existsStudyMemberByGithubIdAndStudyInfoId(String githubId, Long studyInfoId);
+
+    // userId에 해당하는 스터디 멤버 상태를 전부 비활성화 시킨다.
+    void inActiveFromAllStudiesByUserId(Long userId);
 }

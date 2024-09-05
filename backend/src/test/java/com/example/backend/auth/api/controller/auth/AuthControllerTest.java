@@ -41,7 +41,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -164,7 +163,7 @@ class AuthControllerTest extends MockTestConfig {
                 .message("reason")
                 .build();
 
-        doNothing().when(authService).userDelete(any(String.class), any(MessageRequest.class));
+        doNothing().when(authService).userDelete(any(User.class), any(String.class));
 
         // when
         mockMvc.perform(post("/auth/delete")
