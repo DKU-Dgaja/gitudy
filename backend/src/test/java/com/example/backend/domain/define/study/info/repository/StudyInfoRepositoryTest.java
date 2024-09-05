@@ -6,6 +6,7 @@ import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.StudyInfo;
 import com.example.backend.domain.define.study.info.StudyInfoFixture;
+import com.example.backend.domain.define.study.info.constant.StudyStatus;
 import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.study.api.controller.info.response.StudyInfoListResponse;
@@ -322,5 +323,26 @@ class StudyInfoRepositoryTest extends TestConfig {
 
         // then
         assertTrue(findStudy.isEmpty());
+    }
+
+    @Test
+    void 유저_아이디에_해당하는_회원의_스터디_전부_비활성화() {
+        // given
+        User savedUser = userRepository.save(UserFixture.generateAuthUser());
+        studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+        studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(savedUser.getId()));
+
+        // when
+        studyInfoRepository.closeStudiesOwnedByUserId(savedUser.getId());
+        List<StudyInfo> allByUserId = studyInfoRepository.findAllByUserId(savedUser.getId());
+
+        // then
+        assertTrue(allByUserId.size() == 5);
+        for (int i = 0; i < allByUserId.size(); i++) {
+            assertTrue(allByUserId.get(i).getStatus() == StudyStatus.STUDY_INACTIVE);
+        }
     }
 }

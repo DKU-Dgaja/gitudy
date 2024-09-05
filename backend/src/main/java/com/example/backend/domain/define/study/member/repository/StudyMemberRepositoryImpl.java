@@ -13,6 +13,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -168,5 +169,16 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                         .and(studyMember.studyInfoId.eq(studyInfoId))
                         .and(studyMember.status.eq(StudyMemberStatus.STUDY_ACTIVE)))
                 .fetchFirst() != null;
+    }
+
+    @Override
+    @Transactional
+    public void inActiveFromAllStudiesByUserId(Long userId) {
+        queryFactory.update(studyMember)
+                .set(studyMember.status, StudyMemberStatus.STUDY_WITHDRAWAL)
+                .where(studyMember.userId.eq(userId)
+                        .and(studyMember.status.ne(StudyMemberStatus.STUDY_WITHDRAWAL)))
+                .execute();
+
     }
 }

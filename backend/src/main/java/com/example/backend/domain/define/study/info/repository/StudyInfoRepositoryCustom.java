@@ -16,4 +16,7 @@ public interface StudyInfoRepositoryCustom {
 
     // 레포지토리 정보를 통해 스터디 조회
     Optional<StudyInfo> findByRepositoryFullName(String owner, String repositoryName);
+
+    // 해당 아이디가 스터디장인 스터디 전부 활동 종료
+    void closeStudiesOwnedByUserId(Long userId);
 }
