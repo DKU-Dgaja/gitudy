@@ -7,7 +7,7 @@
     android:background="@color/BACKGROUND"
     tools:context=".ui.profile.ProfileHomeFragment">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -281,7 +281,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:minHeight="180dp"
+                    android:minHeight="120dp"
                     android:paddingLeft="12dp"
                     android:paddingTop="22dp"
                     android:paddingRight="12dp"
@@ -334,26 +334,14 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/commitListTitle" />
 
-                    <TextView
-                        android:id="@+id/somedayWillBeDone"
-                        style="@style/B6_2"
-                        android:layout_width="wrap_content"
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/commitList"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="12dp"
-                        android:text="@string/setting_later"
-                        android:textColor="@color/GS_400"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/WHITE"
+                        android:nestedScrollingEnabled="false"
                         app:layout_constraintTop_toBottomOf="@+id/commitListTitle" />
-
-                    <!--                    <androidx.recyclerview.widget.RecyclerView-->
-                    <!--                        android:id="@+id/commitList"-->
-                    <!--                        android:layout_width="match_parent"-->
-                    <!--                        android:layout_height="wrap_content"-->
-                    <!--                        android:layout_marginTop="22dp"-->
-                    <!--                        android:background="@color/WHITE"-->
-                    <!--                        app:layout_constraintTop_toBottomOf="@+id/commitListTitle" />-->
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
@@ -373,7 +361,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:minHeight="180dp"
+                    android:minHeight="120dp"
                     android:paddingLeft="12dp"
                     android:paddingTop="22dp"
                     android:paddingRight="12dp"
@@ -432,8 +420,9 @@
                         android:id="@+id/bookmarkList"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="22dp"
+                        android:layout_marginTop="8dp"
                         android:background="@color/WHITE"
+                        android:nestedScrollingEnabled="false"
                         app:layout_constraintTop_toBottomOf="@+id/myStudyTitle" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
@@ -441,5 +430,5 @@
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.constraintlayout.widget.ConstraintLayout>

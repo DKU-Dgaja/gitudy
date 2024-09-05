@@ -18,7 +18,7 @@ class GitudyCommitsRepository {
     private val client = RetrofitInstance.getInstance().create(GitudyCommitsService::class.java)
 
     suspend fun getMyCommitList(
-        studyInfoId: Int,
+        studyInfoId: Int?,
         cursorIdx: Long?,
         limit: Long
     ) = client.getMyCommitList(studyInfoId, cursorIdx, limit)

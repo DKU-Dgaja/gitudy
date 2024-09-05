@@ -157,7 +157,7 @@ class ProfileHomeViewModel : BaseViewModel() {
         )
     }
 
-    fun getMyCommitLists(studyInfoId: Int, cursorIdx: Long?, limit: Long) = viewModelScope.launch {
+    fun getMyCommitLists(studyInfoId: Int?, cursorIdx: Long?, limit: Long) = viewModelScope.launch {
         safeApiCall(
             apiCall = { gitudyCommitsRepository.getMyCommitList(studyInfoId, cursorIdx, limit) },
             onSuccess = { response ->
@@ -238,4 +238,14 @@ data class ProfileInfoUiState(
 data class BookmarksUiState(
     var bookmarksInfo: List<Bookmark> = listOf(),
     var isBookmarksEmpty: Boolean = false
+)
+
+data class StudyNameAndRepoState(
+    val studyName: String = "",
+    val studyRepo: RepositoryInfo? = null,
+)
+
+data class CommitListWithStudyNameState(
+    val commitList: List<CommitWithStudyName> = listOf(),
+    val isMyCommitEmpty: Boolean = false
 )

@@ -3,6 +3,8 @@ package com.takseha.presentation.adapter
 import android.content.Context
 import android.os.Build
 import android.view.LayoutInflater
+import android.view.View
+import android.view.View.GONE
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -13,10 +15,16 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemMyCommitBinding
 
 class MyCommitListRVAdapter(val context : Context, val commitList : List<CommitWithStudyName>) : RecyclerView.Adapter<MyCommitListRVAdapter.ViewHolder>() {
+    interface OnClickListener {
+        fun onClick(view: View, position: Int)
+    }
+    var onClickListener: OnClickListener? = null
+
     class ViewHolder(val binding: ItemMyCommitBinding) : RecyclerView.ViewHolder(binding.root) {
         var commitTitle = binding.commitTitle
         var commitInfo = binding.commitInfo
         var commitStatus = binding.commitStatus
+        val divider = binding.divider1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -27,6 +35,7 @@ class MyCommitListRVAdapter(val context : Context, val commitList : List<CommitW
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+        if (position == itemCount - 1) holder.divider.visibility = GONE
         holder.commitTitle.text = commitList[position].commit?.message
         holder.commitInfo.text = context.getString(R.string.study_to_do_commit_info, commitList[position].studyName, commitList[position].commit?.commitDate)
         when (commitList[position].commit?.status) {
@@ -44,6 +53,12 @@ class MyCommitListRVAdapter(val context : Context, val commitList : List<CommitW
                 holder.commitStatus.setTextColor(ContextCompat.getColor(context, R.color.BASIC_GREEN))
             }
             else -> ""
+        }
+
+        if (onClickListener != null) {
+            holder.itemView.setOnClickListener { v ->
+                onClickListener!!.onClick(v, position)
+            }
         }
     }
 

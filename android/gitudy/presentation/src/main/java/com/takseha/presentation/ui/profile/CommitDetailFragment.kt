@@ -40,22 +40,20 @@ class CommitDetailFragment : Fragment() {
     private var _binding : FragmentCommitDetailBinding? = null
     private val binding get() = _binding!!
     private val viewModel: CommitDetailViewModel by activityViewModels()
-    private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
     private var studyStatus: StudyStatus? = null
     private var commit: Commit? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         arguments?.let {
             commit = it.getSerializable("commit") as Commit?
         }
         lifecycleScope.launch {
-            launch { viewModel.getRepositoryInfo(studyInfoId) }
-            launch { viewModel.getCommitComments(commit?.id ?: 0, studyInfoId) }
+            launch { viewModel.getRepositoryInfo(commit?.studyInfoId ?: 0) }
+            launch { viewModel.getCommitComments(commit?.id ?: 0, commit?.studyInfoId ?: 0) }
         }
     }
 
@@ -118,13 +116,14 @@ class CommitDetailFragment : Fragment() {
                         val bundle = Bundle().apply {
                             putString("githubUrl", githubUrl)
                         }
+                        Log.d("CommitDetailFragment", bundle.toString())
                         it.findNavController().navigate(R.id.action_commitDetailFragment_to_commitWebViewFragment, bundle)
                     }
                     backBtn.setOnClickListener {
                         it.findNavController().popBackStack()
                     }
                     commitManageBtn.setOnClickListener {
-                        showCommitManageDialog(studyInfoId, commit!!.id)
+                        showCommitManageDialog(commit?.studyInfoId ?: 0, commit!!.id)
                     }
                     thumbBtn.setOnClickListener {
                         shakeBtn(it)
@@ -152,8 +151,8 @@ class CommitDetailFragment : Fragment() {
                     })
                     postBtn.setOnClickListener {
                         viewLifecycleOwner.lifecycleScope.launch {
-                            viewModel.makeCommitComment(commit?.id ?: 0, studyInfoId, comment)
-                            Log.d("CommitDetailFragment", "${commit?.id}, $studyInfoId")
+                            viewModel.makeCommitComment(commit?.id ?: 0, commit?.studyInfoId ?: 0, comment)
+                            Log.d("CommitDetailFragment", "${commit?.id}, ${commit?.studyInfoId ?: 0}")
                             newCommentBody.setText("")
                             val imm =
                                 requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -250,7 +249,7 @@ class CommitDetailFragment : Fragment() {
         customSetDialog.setAlertText(getString(R.string.study_comment_delete))
         customSetDialog.setOnConfirmClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.deleteCommitComment(commit?.id ?: 0, commentId, studyInfoId)
+                viewModel.deleteCommitComment(commit?.id ?: 0, commentId, commit?.studyInfoId ?: 0)
             }
         }
         customSetDialog.show()

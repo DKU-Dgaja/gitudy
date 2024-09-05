@@ -38,12 +38,13 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <LinearLayout
-        android:id="@+id/customerServiceAlertText"
+        android:id="@+id/isNoCommitLayout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:gravity="center"
         android:orientation="vertical"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -60,10 +61,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="@string/setting_later"
+            android:text="@string/profile_no_commit_list"
             android:textColor="@color/GS_400" />
     </LinearLayout>
-
 
     <!--    <LinearLayout-->
     <!--        android:id="@+id/filterLayout"-->

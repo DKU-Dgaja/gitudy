@@ -16,7 +16,7 @@ import retrofit2.http.Query
 interface GitudyCommitsService {
     @GET("/commits")
     suspend fun getMyCommitList(
-        @Query("studyInfoId") studyInfoId: Int,
+        @Query("studyInfoId") studyInfoId: Int?,
         @Query("cursorIdx") cursorIdx: Long?,
         @Query("limit") limit: Long
     ): Response<MyCommitListResponse>

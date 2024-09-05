@@ -40,7 +40,7 @@ class BookmarksActivity : AppCompatActivity() {
         }
 
         lifecycleScope.launch {
-            viewModel.getBookmarks(null, 10)
+            viewModel.getBookmarks(null, 50)
             viewModel.bookmarksState.collectLatest {
                 if (!it.isBookmarksEmpty) {
                     binding.isNoBookmarkLayout.visibility = View.GONE
