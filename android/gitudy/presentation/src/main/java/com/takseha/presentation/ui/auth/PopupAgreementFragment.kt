@@ -44,8 +44,8 @@ class PopupAgreementFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
         view.setBackgroundColor(Color.argb(0x80,0x27,0x29,0x2E))
+        requireActivity().window.statusBarColor = Color.argb(0x80,0x27,0x29,0x2E)
 
         collectFlows()
 

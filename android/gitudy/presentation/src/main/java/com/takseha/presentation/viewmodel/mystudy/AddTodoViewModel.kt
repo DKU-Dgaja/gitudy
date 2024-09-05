@@ -24,9 +24,16 @@ class AddTodoViewModel: BaseViewModel() {
                 if (response.isSuccessful) {
                     _responseState.value = true
                     Log.d("AddTodoViewModel", response.code().toString())
-                } else {
-                    _responseState.value = false
-                    Log.e("AddTodoViewModel", "newTodoResponse status: ${response.code()}\nnewTodoResponse message: ${response.errorBody()?.string()}")
+                }
+            },
+            onError = { e, response ->
+                _responseState.value = false
+                e?.let {
+                    Log.e("AddTodoViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("AddTodoViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )

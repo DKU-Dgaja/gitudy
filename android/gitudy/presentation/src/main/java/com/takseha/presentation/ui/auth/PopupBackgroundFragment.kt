@@ -26,6 +26,6 @@ class PopupBackgroundFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         Handler(Looper.getMainLooper()).postDelayed({
             view.findNavController().navigate(R.id.action_popupBackgroundFragment_to_popupFragment)
-        }, 300)
+        }, 200)
     }
 }

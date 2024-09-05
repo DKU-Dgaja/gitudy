@@ -31,7 +31,7 @@
         <activity
             android:name=".ui.feed.StudyApplyActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.mystudy.MyStudyMainActivity"
             android:exported="false"
@@ -48,7 +48,7 @@
         <activity
             android:name=".ui.profile.ProfileEditActivity"
             android:exported="false"
-            android:windowSoftInputMode="adjustPan" />
+            android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".ui.auth.PopupAgreementActivity"
             android:exported="false"

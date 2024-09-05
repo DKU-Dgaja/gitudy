@@ -30,7 +30,8 @@
             app:destination="@id/addTodoFragment" />
         <action
             android:id="@+id/action_toDoFragment_to_commitDetailFragment"
-            app:destination="@id/commitDetailFragment" />
+            app:destination="@id/commitDetailFragment"
+            app:enterAnim="@anim/vertical_enter" />
     </fragment>
     <fragment
         android:id="@+id/myStudySettingFragment"

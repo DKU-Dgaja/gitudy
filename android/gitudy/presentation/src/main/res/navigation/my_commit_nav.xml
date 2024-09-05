@@ -12,7 +12,8 @@
         tools:layout="@layout/fragment_my_commit" >
         <action
             android:id="@+id/action_myCommitFragment_to_commitDetailFragment"
-            app:destination="@id/commitDetailFragment" />
+            app:destination="@id/commitDetailFragment"
+            app:enterAnim="@anim/vertical_enter" />
     </fragment>
     <fragment
         android:id="@+id/commitDetailFragment"

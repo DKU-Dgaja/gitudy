@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/BACKGROUND_BLACK"
     tools:context=".ui.mystudy.StudyApplyMemberProfileFragment">
 
     <ProgressBar
@@ -12,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:elevation="5dp"
+        android:elevation="50dp"
         android:indeterminateTint="@color/GS_400"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -25,6 +24,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="100dp"
+        app:cardElevation="30dp"
         android:layout_marginBottom="-20dp"
         app:cardCornerRadius="16dp">
 

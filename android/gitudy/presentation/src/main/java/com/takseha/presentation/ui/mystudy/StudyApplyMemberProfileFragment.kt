@@ -32,7 +32,7 @@ class StudyApplyMemberProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND_BLACK)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = arguments?.getInt("studyInfoId") ?: 0
         profileInfo = arguments?.getSerializable("memberProfile") as StudyApplyMember
     }
