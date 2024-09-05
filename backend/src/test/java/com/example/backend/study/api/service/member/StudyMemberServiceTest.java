@@ -489,10 +489,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
-        MemberException em = assertThrows(MemberException.class, () -> {
+        MemberException exception = assertThrows(MemberException.class, () -> {
             studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
-        assertEquals(ExceptionMessage.STUDY_RESIGNED_MEMBER.getText(), em.getMessage());
+        assertEquals(ExceptionMessage.STUDY_REAPPLY_MEMBER.getText(), exception.getMessage());
 
     }
 
@@ -518,17 +518,17 @@ public class StudyMemberServiceTest extends MockTestConfig {
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
-        MemberException em = assertThrows(MemberException.class, () -> {
+        MemberException exception = assertThrows(MemberException.class, () -> {
             studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
 
-        assertEquals(ExceptionMessage.STUDY_WAITING_MEMBER.getText(), em.getMessage());
+        assertEquals(ExceptionMessage.STUDY_REAPPLY_MEMBER.getText(), exception.getMessage());
 
     }
 
     @Test
     @DisplayName("비공개 스터디 가입 신청- 참여코드가 맞는 경우")
-    public void applyStudyMember_privateStudy_joinCode_match() throws FirebaseMessagingException {
+    public void applyStudyMember_privateStudy_joinCode_match() {
         // given
         String joinCode = "joinCode";
 
@@ -610,8 +610,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
 
     @Test
-    @DisplayName("이전에 탈퇴한 멤버가 가입 신청 테스트")
-    public void applyStudyMember_withdrawal() throws FirebaseMessagingException {
+    @DisplayName("이전에 탈퇴한 멤버가 가입 신청 불가 테스트")
+    public void applyStudyMember_withdrawal() {
         // given
         String joinCode = null;
 
@@ -630,16 +630,17 @@ public class StudyMemberServiceTest extends MockTestConfig {
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
-        Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
+        MemberException exception = assertThrows(MemberException.class, () -> {
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
+        });
 
         // then
-        assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
+        assertEquals("스터디 재가입이 불가능한 멤버입니다.", exception.getMessage());
     }
 
     @Test
     @DisplayName("이전에 승인 거부된 멤버가 가입 신청 테스트")
-    public void applyStudyMember_refused() throws FirebaseMessagingException {
+    public void applyStudyMember_refused() {
         // given
         String joinCode = null;
 

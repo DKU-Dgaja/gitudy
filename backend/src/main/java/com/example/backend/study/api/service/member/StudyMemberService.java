@@ -38,6 +38,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import static com.example.backend.domain.define.study.member.constant.StudyMemberStatus.STUDY_WAITING;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -177,40 +179,29 @@ public class StudyMemberService {
                 throw new MemberException(ExceptionMessage.STUDY_JOIN_CODE_FAIL);
             }
         }
-        // 스터디 멤버인지확인
-        if (studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
-            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_ALREADY_MEMBER);
-            throw new MemberException(ExceptionMessage.STUDY_ALREADY_MEMBER);
+
+        User findUser = userService.findUserByIdOrThrowException(user.getUserId());
+
+        // ACTIVE, WAITING, WITHDRAWAL, RESIGNED 상태는 재가입 불가
+        if (studyMemberRepository.isMemberStatusByUserIdAndStudyInfoId(findUser.getId(), studyInfo.getId())) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_REAPPLY_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_REAPPLY_MEMBER);
         }
 
-        // 스터디 가입 신청후 이미 대기중인 멤버인지 확인
-        if (studyMemberRepository.isWaitingStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
-            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_WAITING_MEMBER);
-            throw new MemberException(ExceptionMessage.STUDY_WAITING_MEMBER);
-        }
-
-        // 강퇴되었던 멤버인지 확인
-        if (studyMemberRepository.isResignedStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
-            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_RESIGNED_MEMBER);
-            throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
-        }
-
-
-        // 탈퇴한 멤버인지 확인, 승인 거부된 유저인지 확인
-        Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
-        if (existingMember.isPresent()) {
-            if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
-                existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경
-                existingMember.get().updateSignGreeting(messageRequest.getMessage()); // 가입인사 수정
-            }
-
-        } else {
-            // '스터디 승인 대기중인 유저' 로 생성
+        // 승인 거부된 유저인지 확인
+        Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), findUser.getId());
+        if (existingMember.isEmpty()) {
+            // 신규 가입자 StudyMember 생성
             studyMemberRepository.save(StudyMember.builder()
-                    .studyInfoId(studyInfoId)
-                    .userId(user.getUserId())
+                    .studyInfoId(studyInfo.getId())
+                    .userId(findUser.getId())
+                    .status(STUDY_WAITING)
                     .signGreeting(messageRequest.getMessage())
                     .build());
+
+        } else { // 스터디장이 승인 거부 했던 멤버
+            existingMember.get().updateStudyMemberStatus(STUDY_WAITING);
+            existingMember.get().updateSignGreeting(messageRequest.getMessage());
         }
 
         User leader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
@@ -391,7 +382,7 @@ public class StudyMemberService {
     // 대기중인 스터디원인지 확인 메서드
     private void checkMemberStatusWaiting(StudyMember studyMember) {
 
-        if (studyMember.getStatus() != StudyMemberStatus.STUDY_WAITING) {
+        if (studyMember.getStatus() != STUDY_WAITING) {
             log.warn(">>>> {} : {} <<<<", studyMember.getUserId(), ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
             throw new MemberException(ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
         }

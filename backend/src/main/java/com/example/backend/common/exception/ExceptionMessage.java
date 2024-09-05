@@ -63,6 +63,7 @@ public enum ExceptionMessage {
     // StudyMemberException
     USER_NOT_STUDY_MEMBER("해당 스터디원을 찾을 수 없습니다."),
     STUDY_ALREADY_MEMBER("이미 해당 스터디의 멤버 입니다."),
+    STUDY_REAPPLY_MEMBER("스터디 재가입이 불가능한 멤버입니다."),
     STUDY_RESIGNED_MEMBER("이미 강퇴당한 스터디 입니다."),
     STUDY_WAITING_MEMBER("이미 가입신청 완료하여 승인 대기중인 스터디 입니다."),
     STUDY_WAITING_NOT_MEMBER("해당 스터디에 가입 대기중인 유저가 아닙니다."),
