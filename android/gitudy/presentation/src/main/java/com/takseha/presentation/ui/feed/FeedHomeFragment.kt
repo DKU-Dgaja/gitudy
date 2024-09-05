@@ -12,11 +12,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.FragmentFeedHomeBinding
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
+import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -64,7 +66,14 @@ class FeedHomeFragment : Fragment() {
                             isNoStudyLayout.visibility = VISIBLE
                         }
                     }
-                    setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
+                    updateStudyList(it.studyInfoList, it.studyCategoryMappingMap)
+                    binding.enableStudyCheckBtn.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            updateStudyList(it.studyInfoList, it.studyCategoryMappingMap)
+                        } else {
+                            setFeedList(it.studyInfoList, it.studyCategoryMappingMap)
+                        }
+                    }
                 }
             }
         }
@@ -145,6 +154,14 @@ class FeedHomeFragment : Fragment() {
                 }
             }
         }
+    }
+
+    private fun updateStudyList(
+        studyList: List<StudyInfoWithBookmarkStatus>,
+        studyCategoryMappingMap: Map<Int, List<String>>
+    ) {
+        val activeStudyList = studyList.filter { it.studyInfo.status != StudyStatus.STUDY_INACTIVE }
+        setFeedList(activeStudyList, studyCategoryMappingMap)
     }
 
     override fun onDestroyView() {

@@ -39,26 +39,27 @@
             app:layout_constraintStart_toEndOf="@+id/feedTitle"
             app:layout_constraintTop_toTopOf="parent" />
 
-<!--        <CheckBox-->
-<!--            android:id="@+id/enableStudyCheckBtn"-->
-<!--            android:layout_width="22dp"-->
-<!--            android:layout_height="22dp"-->
-<!--            android:layout_marginTop="18dp"-->
-<!--            android:background="@drawable/selector_ic_check_sq_checked"-->
-<!--            android:button="@null"-->
-<!--            app:layout_constraintStart_toStartOf="parent"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/feedTitle" />-->
+        <CheckBox
+            android:id="@+id/enableStudyCheckBtn"
+            android:layout_width="22dp"
+            android:layout_height="22dp"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/selector_ic_check_sq_checked"
+            android:button="@null"
+            android:checked="true"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/feedTitle" />
 
-<!--        <TextView-->
-<!--            style="@style/B6_1"-->
-<!--            android:layout_width="wrap_content"-->
-<!--            android:layout_height="wrap_content"-->
-<!--            android:layout_marginLeft="4dp"-->
-<!--            android:layout_marginTop="19dp"-->
-<!--            android:text="참여 가능한 스터디만 보기"-->
-<!--            android:textColor="@color/GS_800"-->
-<!--            app:layout_constraintStart_toEndOf="@+id/enableStudyCheckBtn"-->
-<!--            app:layout_constraintTop_toBottomOf="@id/feedTitle" />-->
+        <TextView
+            style="@style/B6_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginTop="19dp"
+            android:text="활동 중인 스터디만 보기"
+            android:textColor="@color/GS_800"
+            app:layout_constraintStart_toEndOf="@+id/enableStudyCheckBtn"
+            app:layout_constraintTop_toBottomOf="@id/feedTitle" />
 
         <LinearLayout
             android:id="@+id/sortBtn"
@@ -133,6 +134,7 @@
         android:layout_marginBottom="100dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/feedTitleLayout">
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/feedList"
             android:layout_width="match_parent"

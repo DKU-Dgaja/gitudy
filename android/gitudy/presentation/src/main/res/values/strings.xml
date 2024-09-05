@@ -84,7 +84,7 @@
     <string name="study_quit_reason2">더 이상 스터디가 필요하지 않아요</string>
     <string name="study_quit_reason3">팀원들과 맞지 않아 불편해요</string>
     <string name="study_quit_alert_title">스터디를 탈퇴하시겠습니까?</string>
-    <string name="study_quit_alert_detail">스터디 활동 기록은 남아있어요</string>
+    <string name="study_quit_alert_detail">스터디 활동 기록은 남아있어요\n* 추후 재가입은 불가해요</string>
     <string name="study_end_alert_title">스터디를 종료하시겠습니까?</string>
     <string name="study_end_alert_detail">스터디의 모든 활동이 종료돼요\n(활동 기록은 볼 수 있어요)</string>
     <string name="study_delete_alert_title">스터디를 삭제하시겠습니까?</string>

@@ -93,10 +93,11 @@ class MainHomeFragment : Fragment() {
     }
 
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
-        val uncompletedStudyList: ArrayList<MyStudyWithTodo> = arrayListOf()
-        for (study in studyList) {
-            if (study.urgentTodo?.myStatus != TodoStatus.TODO_COMPLETE && study.urgentTodo?.todo != null) uncompletedStudyList.add(study)
+        // 필터를 사용하여 조건에 맞는 항목만 걸러냅니다.
+        val uncompletedStudyList = studyList.filter { study ->
+            study.urgentTodo?.myStatus != TodoStatus.TODO_COMPLETE && study.urgentTodo?.todo != null
         }
+
         with(binding) {
             val mainStudyRVAdapter = MainStudyRVAdapter(requireContext(), uncompletedStudyList)
 
@@ -106,6 +107,7 @@ class MainHomeFragment : Fragment() {
             clickMyStudyItem(mainStudyRVAdapter, uncompletedStudyList)
         }
     }
+
 
     private fun setUserInfo(
         userInfo: MainHomeUserInfoUiState

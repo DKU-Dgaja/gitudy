@@ -12,6 +12,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
@@ -63,7 +64,14 @@ class MyStudyHomeFragment : Fragment() {
                     } else {
                         binding.isNoStudyLayout.visibility = VISIBLE
                     }
-                    setMyStudyList(it.myStudiesWithTodo)
+                    updateStudyList(it.myStudiesWithTodo)
+                    binding.enableStudyCheckBtn.setOnCheckedChangeListener { _, isChecked ->
+                        if (isChecked) {
+                            updateStudyList(it.myStudiesWithTodo)
+                        } else {
+                            setMyStudyList(it.myStudiesWithTodo)
+                        }
+                    }
                 }
             }
         }
@@ -128,6 +136,11 @@ class MyStudyHomeFragment : Fragment() {
                 startActivity(intent)
             }
         }
+    }
+
+    private fun updateStudyList(studyList: List<MyStudyWithTodo>) {
+        val activeStudyList = studyList.filter { it.studyInfo.status != StudyStatus.STUDY_INACTIVE }
+        setMyStudyList(activeStudyList)
     }
 
     override fun onDestroyView() {
