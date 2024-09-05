@@ -39,9 +39,16 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     _isCorrectId.value = true
-                } else {
-                    _isCorrectId.value = false
-                    Log.e("RegisterViewModel", "githubResponse status: ${response.code()}\ngithubResponse message: ${response.message()}")
+                }
+            },
+            onError = { e, response ->
+                _isCorrectId.value = false
+                e?.let {
+                    Log.e("RegisterViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("RegisterViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )
@@ -59,9 +66,16 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     _isCorrectName.value = true
-                } else {
-                    _isCorrectName.value = false
-                    Log.e("RegisterViewModel", "correctNameResponse status: ${response.code()}\ncorrectNameResponse message: ${response.message()}")
+                }
+            },
+            onError = { e, response ->
+                _isCorrectName.value = false
+                e?.let {
+                    Log.e("RegisterViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("RegisterViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )
