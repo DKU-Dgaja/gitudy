@@ -45,7 +45,7 @@ abstract class BaseApplicationViewModel(application: Application) : AndroidViewM
                             }
                         }
                     } else {
-                        onError(null, result)
+                        onSuccess(result)
                     }
                 }
             } catch (e: Exception) {

@@ -43,7 +43,7 @@ abstract class BaseViewModel : ViewModel() {
                             }
                         }
                     } else {
-                        onError(null, result)
+                        onSuccess(result)
                     }
                 }
             } catch (e: Exception) {
