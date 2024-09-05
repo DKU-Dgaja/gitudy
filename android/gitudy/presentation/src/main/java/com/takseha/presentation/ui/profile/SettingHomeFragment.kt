@@ -57,6 +57,9 @@ class SettingHomeFragment : Fragment() {
                     }
                 }
             }
+            personalInfoTermBtn.setOnClickListener {
+                it.findNavController().navigate(R.id.action_settingHomeFragment_to_personalInfoTermFragment)
+            }
 
             deleteAccountLayout.setOnClickListener {
                 it.findNavController().navigate(R.id.action_settingHomeFragment_to_deleteAccountFragment)
