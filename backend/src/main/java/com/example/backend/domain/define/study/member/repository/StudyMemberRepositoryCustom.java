@@ -37,4 +37,7 @@ public interface StudyMemberRepositoryCustom {
 
     // userId에 해당하는 스터디 멤버 상태를 전부 비활성화 시킨다.
     void inActiveFromAllStudiesByUserId(Long userId);
+
+    // ACTIVE, WAITING, WITHDRAWAL, RESIGNED 상태는 재가입이 불가하다.
+    public boolean isMemberStatusByUserIdAndStudyInfoId(Long userId, Long studyInfoId);
 }

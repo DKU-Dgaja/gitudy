@@ -181,4 +181,14 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                 .execute();
 
     }
+
+    @Override
+    public boolean isMemberStatusByUserIdAndStudyInfoId(Long userId, Long studyInfoId) {
+        return queryFactory.selectOne()
+                .from(studyMember)
+                .where(studyMember.userId.eq(userId)
+                        .and(studyMember.studyInfoId.eq(studyInfoId))  // 가입 불가능한 상태 제외
+                        .and(studyMember.status.in(StudyMemberStatus.STUDY_ACTIVE, StudyMemberStatus.STUDY_WAITING, StudyMemberStatus.STUDY_WITHDRAWAL, StudyMemberStatus.STUDY_RESIGNED)))
+                .fetchFirst() != null;
+    }
 }
