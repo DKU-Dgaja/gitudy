@@ -1,22 +1,20 @@
 package com.example.backend.domain.define.study.todo.repository;
 
-import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
 import com.example.backend.study.api.service.user.UserService;
-import com.querydsl.jpa.impl.JPAQuery;
+import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.example.backend.domain.define.account.user.QUser.user;
 import static com.example.backend.domain.define.study.commit.QStudyCommit.studyCommit;
 import static com.example.backend.domain.define.study.todo.info.QStudyTodo.studyTodo;
 import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMapping.studyTodoMapping;
@@ -30,50 +28,42 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
     @Override
     public List<StudyTodoWithCommitsResponse> findStudyTodoListByStudyInfoId_CursorPaging(Long studyInfoId, Long cursorIdx, Long limit) {
 
-        // StudyTodo 기본 정보만 가져오는 쿼리
-        JPAQuery<StudyTodo> todoQuery = queryFactory
+        // StudyTodo 조회
+        List<StudyTodo> todos = queryFactory
                 .selectFrom(studyTodo)
                 .where(studyTodo.studyInfoId.eq(studyInfoId))
-                .orderBy(studyTodo.id.desc());
-
-        // cursorIdx가 null이 아닐 때 해당 ID 이하의 데이터를 조회
-        if (cursorIdx != null) {
-            todoQuery = todoQuery.where(studyTodo.id.lt(cursorIdx));
-        }
-
-        // 정해진 limit만큼 데이터를 가져온다
-        List<StudyTodo> todos = todoQuery.limit(limit).fetch();
+                .where(cursorIdx != null ? studyTodo.id.lt(cursorIdx) : null)
+                .orderBy(studyTodo.id.desc())
+                .limit(limit)
+                .fetch();
 
         // StudyTodo의 ID 리스트를 가져온다
         List<Long> todoIds = todos.stream().map(StudyTodo::getId).collect(Collectors.toList());
 
-        // StudyCommit 리스트를 가져오는 쿼리
-        List<StudyCommit> commits = queryFactory
-                .selectFrom(studyCommit)
+        // StudyCommit 리스트 조회 (User 정보 포함)
+        List<Tuple> commitResults = queryFactory
+                .select(studyCommit, user.name, user.profileImageUrl)
+                .from(studyCommit)
+                .join(user).on(user.id.eq(studyCommit.userId))
                 .where(studyCommit.studyTodoId.in(todoIds))
                 .fetch();
 
         // StudyCommit을 StudyTodo ID로 그룹화
-        Map<Long, List<CommitInfoResponse>> commitMap = commits.stream()
-                .collect(Collectors.groupingBy(
-                        StudyCommit::getStudyTodoId,
-                        Collectors.mapping(
-                                commit -> {
-                                    // 사용자 이름 조회
-                                    User user = userService.findUserByIdOrThrowException(commit.getUserId());
-                                    String name = user.getName();
-                                    String profileImageUrl = user.getProfileImageUrl();
-                                    return CommitInfoResponse.of(commit, name, profileImageUrl);
-                                },
-                                Collectors.toList())
-                ));
+        Map<Long, List<CommitInfoResponse>> commitMap = new HashMap<>();
+
+        for (Tuple tuple : commitResults) {
+            StudyCommit commit = tuple.get(studyCommit);
+            String username = tuple.get(user.name);
+            String profileImageUrl = tuple.get(user.profileImageUrl);
+
+            commitMap.computeIfAbsent(commit.getStudyTodoId(), k -> new ArrayList<>())
+                    .add(CommitInfoResponse.of(commit, username, profileImageUrl));
+        }
 
         // StudyTodo와 커밋 리스트를 조합하여 StudyTodoWithCommitsResponse 리스트를 생성
-        List<StudyTodoWithCommitsResponse> responses = todos.stream()
-                .map(todo -> StudyTodoWithCommitsResponse.of(todo, commitMap.getOrDefault(todo.getId(), List.of())))
+        return todos.stream()
+                .map(todo -> StudyTodoWithCommitsResponse.of(todo, commitMap.getOrDefault(todo.getId(), new ArrayList<>())))
                 .collect(Collectors.toList());
-
-        return responses;
     }
 
 
