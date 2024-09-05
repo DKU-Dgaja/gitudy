@@ -5,12 +5,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
+import androidx.fragment.app.activityViewModels
 import com.takseha.presentation.databinding.FragmentMyCommitBinding
+import com.takseha.presentation.viewmodel.profile.MyCommitViewModel
 
 class MyCommitFragment : Fragment() {
     private var _binding: FragmentMyCommitBinding? = null
     private val binding get() = _binding!!
+    private val viewModel: MyCommitViewModel by activityViewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
