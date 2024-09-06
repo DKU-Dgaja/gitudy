@@ -6,7 +6,7 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="24dp">
+        android:paddingTop="20dp">
 
         <ImageView
             android:id="@+id/profileImg"
@@ -51,51 +51,31 @@
             android:layout_height="25dp"
             android:src="@drawable/ic_more"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="@+id/writerInfo"
+            android:layout_marginEnd="10dp" />
 
         <TextView
             android:id="@+id/contentText"
-            style="B6_1"
+            style="@style/B6_1"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="10dp"
-            android:layout_marginEnd="10dp"
-            android:paddingTop="10dp"
-            android:paddingBottom="16dp"
+            android:layout_marginEnd="40dp"
             android:textColor="@color/GS_600"
-            app:layout_constraintBottom_toTopOf="@+id/likeBtn"
-            app:layout_constraintEnd_toStartOf="@+id/moreBtn"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@+id/profileImg"
             app:layout_constraintTop_toBottomOf="@+id/writerInfo" />
-
-        <ImageView
-            android:id="@+id/likeBtn"
-            android:layout_width="20dp"
-            android:layout_height="42dp"
-            android:layout_marginLeft="10dp"
-            android:paddingBottom="10dp"
-            android:src="@drawable/ic_thumbs_up"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/profileImg" />
-
-        <ImageView
-            android:id="@+id/heartBtn"
-            android:layout_width="18dp"
-            android:layout_height="42dp"
-            android:layout_marginLeft="8dp"
-            android:paddingBottom="10dp"
-            android:src="@drawable/ic_heart"
-            app:layout_constraintStart_toEndOf="@+id/likeBtn"
-            app:layout_constraintTop_toBottomOf="@+id/contentText" />
 
         <LinearLayout
             android:id="@+id/divider1"
             android:layout_width="match_parent"
             android:layout_height="2dp"
+            android:layout_marginTop="20dp"
             android:background="#F3F3F4"
             android:orientation="horizontal"
-            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/contentText" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

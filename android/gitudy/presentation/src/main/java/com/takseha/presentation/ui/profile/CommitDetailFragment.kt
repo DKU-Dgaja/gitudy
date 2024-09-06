@@ -28,6 +28,7 @@ import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.CommitStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.CommentListRVAdapter
+import com.takseha.presentation.adapter.CommitCommentListRVAdapter
 import com.takseha.presentation.adapter.DetailCommentListRVAdapter
 import com.takseha.presentation.databinding.FragmentCommitDetailBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
@@ -219,27 +220,19 @@ class CommitDetailFragment : Fragment() {
 
     private fun setCommitComments(comments: List<Comment>) {
         with(binding) {
-            val commentDetailListRVAdapter = DetailCommentListRVAdapter(requireContext(), comments)
-            commentList.adapter = commentDetailListRVAdapter
+            val commitCommentListRVAdapter = CommitCommentListRVAdapter(requireContext(), comments)
+            commentList.adapter = commitCommentListRVAdapter
             commentList.layoutManager = LinearLayoutManager(requireContext())
 
-            clickStudyCommentItem(commentDetailListRVAdapter, comments)
+            clickCommitCommentItem(commitCommentListRVAdapter, comments)
         }
     }
 
     // TODO: 수정 시 메세지 입력 창 같이 떠오르는 현상 없애고, edittext가 자판 위로 오도록 처리
-    private fun clickStudyCommentItem(commentDetailListRVAdapter: DetailCommentListRVAdapter, commentList: List<Comment>) {
-        commentDetailListRVAdapter.onClickListener = object : DetailCommentListRVAdapter.OnClickListener {
+    private fun clickCommitCommentItem(commitCommentListRVAdapter: CommitCommentListRVAdapter, commentList: List<Comment>) {
+        commitCommentListRVAdapter.onClickListener = object : CommitCommentListRVAdapter.OnClickListener {
             override fun onDeleteClick(view: View, position: Int) {
                 showDeleteCommentDialog(commentList[position].id)
-            }
-
-            override fun onLikeClick(view: View, position: Int) {
-                shakeBtn(view)
-            }
-
-            override fun onHeartClick(view: View, position: Int) {
-                shakeBtn(view)
             }
         }
     }
