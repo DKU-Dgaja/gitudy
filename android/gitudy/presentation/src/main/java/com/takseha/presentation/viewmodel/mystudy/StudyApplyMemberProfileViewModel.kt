@@ -34,4 +34,8 @@ class StudyApplyMemberProfileViewModel : BaseViewModel() {
             }
         )
     }
+
+    fun resetResponseState() {
+        _responseState.value = null
+    }
 }
