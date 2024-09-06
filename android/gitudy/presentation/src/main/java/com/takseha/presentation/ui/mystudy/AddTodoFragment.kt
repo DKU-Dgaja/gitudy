@@ -181,6 +181,7 @@ class AddTodoFragment : Fragment() {
                 applyBtn.isEnabled = false
             }
             viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.resetResponseState()
                 viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
                 viewModel.responseState.collectLatest {
                     if (it != null) {

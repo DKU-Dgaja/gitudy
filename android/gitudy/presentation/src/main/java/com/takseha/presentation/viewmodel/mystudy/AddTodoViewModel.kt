@@ -38,4 +38,8 @@ class AddTodoViewModel: BaseViewModel() {
             }
         )
     }
+
+    fun resetResponseState() {
+        _responseState.value = null
+    }
 }
