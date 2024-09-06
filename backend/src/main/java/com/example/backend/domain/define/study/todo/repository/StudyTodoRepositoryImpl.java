@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -22,8 +23,8 @@ import static com.example.backend.domain.define.study.todo.mapping.QStudyTodoMap
 @Component
 @RequiredArgsConstructor
 public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
+    private final static ZoneId KOREA_SEOUL = ZoneId.of("Asia/Seoul");
     private final JPAQueryFactory queryFactory;
-    private final UserService userService;
 
     @Override
     public List<StudyTodoWithCommitsResponse> findStudyTodoListByStudyInfoId_CursorPaging(Long studyInfoId, Long cursorIdx, Long limit) {
@@ -76,7 +77,7 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
                 .from(studyTodoMapping)
                 .join(studyTodo).on(studyTodoMapping.todoId.eq(studyTodo.id))
                 .where(studyTodo.studyInfoId.eq(studyInfoId)
-                        .and(studyTodo.todoDate.after(LocalDate.now()))
+                        .and(studyTodo.todoDate.after(LocalDate.now(KOREA_SEOUL)))
                         .and(studyTodoMapping.userId.eq(userId)))
                 .fetch();
 
@@ -91,7 +92,7 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
 
     @Override
     public Optional<StudyTodo> findStudyTodoByStudyInfoIdWithEarliestDueDate(Long studyInfoId) {
-        LocalDate currentDate = LocalDate.now();
+        LocalDate currentDate = LocalDate.now(KOREA_SEOUL);
 
         StudyTodo result = queryFactory.selectFrom(studyTodo)
                 .where(studyTodo.studyInfoId.eq(studyInfoId)
