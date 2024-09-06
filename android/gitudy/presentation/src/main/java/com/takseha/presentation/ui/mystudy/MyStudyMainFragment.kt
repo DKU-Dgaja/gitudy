@@ -14,6 +14,7 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -352,7 +353,7 @@ class MyStudyMainFragment : Fragment() {
 
     private fun setupUI(view: View) {
         if (view !is EditText) {
-            view.setOnTouchListener { _, event ->
+            view.setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     activity?.let { KeyboardUtils.hideKeyboard(it) }
                 }

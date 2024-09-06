@@ -107,7 +107,7 @@ class StudyApplyMessageFragment : Fragment() {
 
     private fun setupUI(view: View) {
         if (view !is EditText) {
-            view.setOnTouchListener { _, event ->
+            view.setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     activity?.let { KeyboardUtils.hideKeyboard(it) }
                 }
