@@ -26,6 +26,9 @@ class StudyApplyViewModel : BaseViewModel() {
     private val _isApplySucceed = MutableStateFlow<Boolean?>(null)
     val isApplySucceed = _isApplySucceed.asStateFlow()
 
+    private val _applyErrorMessage = MutableStateFlow<String?>(null)
+    val applyErrorMessage = _applyErrorMessage.asStateFlow()
+
     suspend fun getStudyInfo(studyInfoId: Int) {
         safeApiCall(
             apiCall = { gitudyStudyRepository.getStudyInfo(studyInfoId) },
@@ -133,7 +136,14 @@ class StudyApplyViewModel : BaseViewModel() {
                     Log.e("StudyApplyViewModel", "Exception: ${it.message}")
                 } ?: run {
                     response?.let {
-                        Log.e("StudyApplyViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                        val errorBody = it.errorBody()?.string() ?: ""
+                        Log.e("StudyApplyViewModel", "HTTP Error: ${it.code()} ${it.errorBody()?.string()}")
+
+                        if (errorBody.contains("재가입")) {
+                            _applyErrorMessage.value = "스터디 재가입은 불가합니다"
+                        } else if (errorBody.contains("이미 해당")) {
+                            _applyErrorMessage.value = "이미 가입한 스터디입니다"
+                        }
                     }
                 }
             }
