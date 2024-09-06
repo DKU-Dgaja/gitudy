@@ -249,7 +249,6 @@ public class StudyTodoService {
                 .toList();
     }
 
-    @Transactional
     public StudyTodoProgressResponse readStudyTodoProgress(Long userId, Long studyInfoId) {
         // 해당 스터디에서 활동중인 스터디원 인원수
         int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
