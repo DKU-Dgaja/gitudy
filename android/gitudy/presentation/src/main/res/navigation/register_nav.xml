@@ -64,25 +64,16 @@
             app:destination="@id/popupFragment" />
     </fragment>
     <fragment
-        android:id="@+id/inputIdFragment"
-        android:name="com.takseha.presentation.ui.auth.InputIdFragment"
-        android:label="fragment_input_id"
-        tools:layout="@layout/fragment_input_id">
-        <action
-            android:id="@+id/action_inputIdFragment_to_loginCompleteFragment"
-            app:destination="@id/loginCompleteFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/inputNicknameFragment"
         android:name="com.takseha.presentation.ui.auth.InputNicknameFragment"
         android:label="fragment_input_nickname"
         tools:layout="@layout/fragment_input_nickname">
-        <action
-            android:id="@+id/action_inputNicknameFragment_to_inputIdFragment"
-            app:destination="@id/inputIdFragment" />
         <argument
             android:name="pushAlarmYn"
             app:argType="boolean" />
+        <action
+            android:id="@+id/action_inputNicknameFragment_to_loginCompleteFragment"
+            app:destination="@id/loginCompleteFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginCompleteFragment"

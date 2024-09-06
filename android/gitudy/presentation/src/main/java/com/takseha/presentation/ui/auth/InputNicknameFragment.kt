@@ -20,6 +20,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputNicknameBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
+import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.auth.RegisterViewModel
 import kotlinx.coroutines.launch
@@ -150,9 +151,16 @@ class InputNicknameFragment : Fragment() {
             }
 
             confirmBtn.setOnClickListener {
-                viewModel.setNickname(inputNicknameEditText.text.toString())
-                it.findNavController()
-                    .navigate(R.id.action_inputNicknameFragment_to_inputIdFragment)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val fcmToken = MyFirebaseMessagingService.getFirebaseToken().toString()
+                    viewModel.apply {
+                        setNickname(inputNicknameEditText.text.toString())
+                        setFCMToken(fcmToken)
+                        getRegisterTokens()
+                    }
+                    view.findNavController()
+                        .navigate(R.id.action_inputNicknameFragment_to_loginCompleteFragment)
+                }
             }
         }
     }

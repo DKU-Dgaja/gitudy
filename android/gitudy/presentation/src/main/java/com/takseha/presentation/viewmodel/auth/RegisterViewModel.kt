@@ -26,37 +26,8 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
     private val _registerInfoState = MutableStateFlow(RegisterRequest())
     val registerInfoState = _registerInfoState.asStateFlow()
 
-    private var _isCorrectId = MutableStateFlow<Boolean?>(null)
-    val isCorrectId = _isCorrectId.asStateFlow()
-
     private val _isCorrectName = MutableStateFlow<Boolean?>(null)
     val isCorrectName = _isCorrectName.asStateFlow()
-
-    suspend fun checkGithubId(githubId: String) {
-        githubRepository = GithubRepository()
-        safeApiCall(
-            apiCall = { githubRepository.checkCorrectGithubId(githubId) },
-            onSuccess = { response ->
-                if (response.isSuccessful) {
-                    _isCorrectId.value = true
-                }
-            },
-            onError = { e, response ->
-                _isCorrectId.value = false
-                e?.let {
-                    Log.e("RegisterViewModel", "Exception: ${it.message}")
-                } ?: run {
-                    response?.let {
-                        Log.e("RegisterViewModel", "HTTP Error: $it")
-                    }
-                }
-            }
-        )
-    }
-
-    fun resetCorrectId() {
-        _isCorrectId.value = null
-    }
 
     suspend fun checkNickname(name: String) {
         gitudyAuthRepository = GitudyAuthRepository()
@@ -91,9 +62,6 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
     }
     fun setNickname(name: String) {
         _registerInfoState.update { it.copy(name = name) }
-    }
-    fun setGithubId(githubId: String) {
-        _registerInfoState.update { it.copy(githubId = githubId) }
     }
     fun setFCMToken(fcmToken: String) {
         _registerInfoState.update { it.copy(fcmToken = fcmToken) }
