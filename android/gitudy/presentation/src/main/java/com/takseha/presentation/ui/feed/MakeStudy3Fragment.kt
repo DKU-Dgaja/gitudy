@@ -88,7 +88,7 @@ class MakeStudy3Fragment : Fragment() {
 
     private fun setStudyImg(studyCnt: Int) {
         with(binding) {
-            when (studyCnt) {
+            when (studyCnt % 10) {
                 0 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_10)
                 1 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_9)
                 2 -> studyImg.setImageResource(R.drawable.bg_mystudy_small_8)
