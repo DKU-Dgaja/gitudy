@@ -82,6 +82,16 @@ class CommitDetailViewModel : BaseViewModel() {
                         }"
                     )
                 }
+            },
+            onError = { e, response ->
+                e?.let {
+                    Log.e("StudyApplyViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        val errorBody = it.errorBody()?.string() ?: "없음"
+                        Log.e("StudyApplyViewModel", "HTTP Error: ${it.code()} $errorBody")
+                    }
+                }
             }
         )
     }

@@ -197,7 +197,7 @@ class CommitDetailFragment : Fragment() {
         }
         customSetDialog.setOnCancelClickListener {
             viewLifecycleOwner.lifecycleScope.launch {
-                viewModel.rejectCommit(studyInfoId, "", commitId)
+                viewModel.rejectCommit(studyInfoId, "거절 이유", commitId)
                 with(binding) {
                     commitManageBtn.visibility = GONE
                     commitStatus.apply {
