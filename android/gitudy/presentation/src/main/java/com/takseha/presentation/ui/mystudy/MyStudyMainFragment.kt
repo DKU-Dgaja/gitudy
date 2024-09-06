@@ -245,7 +245,7 @@ class MyStudyMainFragment : Fragment() {
                 leaderTag.visibility = GONE
                 studyEndTag.visibility = VISIBLE
                 newCommentLayout.visibility = GONE
-                noTodoAlarm.setTextColor(R.color.GS_300)
+                noTodoAlarm.setTextColor(ContextCompat.getColor(requireContext(), R.color.GS_300))
                 settingBtn.visibility = GONE
             }
             studyName.text = myStudyInfo.topic

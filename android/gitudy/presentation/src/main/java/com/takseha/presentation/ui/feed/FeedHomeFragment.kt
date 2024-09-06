@@ -160,7 +160,7 @@ class FeedHomeFragment : Fragment() {
         studyList: List<StudyInfoWithBookmarkStatus>,
         studyCategoryMappingMap: Map<Int, List<String>>
     ) {
-        val activeStudyList = studyList.filter { it.studyInfo.status != StudyStatus.STUDY_INACTIVE }
+        val activeStudyList = studyList.filter { it.studyInfo.status != StudyStatus.STUDY_INACTIVE && it.studyInfo.status != StudyStatus.STUDY_DELETED}
         setFeedList(activeStudyList, studyCategoryMappingMap)
     }
 

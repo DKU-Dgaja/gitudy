@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.mystudy
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
@@ -139,7 +140,8 @@ class MyStudyHomeFragment : Fragment() {
     }
 
     private fun updateStudyList(studyList: List<MyStudyWithTodo>) {
-        val activeStudyList = studyList.filter { it.studyInfo.status != StudyStatus.STUDY_INACTIVE }
+        val activeStudyList = studyList.filter { it.studyInfo.status != StudyStatus.STUDY_INACTIVE && it.studyInfo.status != StudyStatus.STUDY_DELETED }
+        Log.d("MyStudyHomeFragment", activeStudyList.toString())
         setMyStudyList(activeStudyList)
     }
 
