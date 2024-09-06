@@ -28,7 +28,7 @@ public class RankingServiceTest extends MockTestConfig {
     private ZSetOperations<String, Object> zSetOperations;
 
     @Autowired
-    private RedisTemplate<String, Object> redisTemplate;
+    private RedisTemplate<String, Object> redisTemplateDb1;
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;
@@ -42,14 +42,14 @@ public class RankingServiceTest extends MockTestConfig {
 
     @BeforeEach
     void setUp() {
-        //   when(redisTemplate.opsForZSet()).thenReturn(zSetOperations);
+        //   when(redisTemplateDb1.opsForZSet()).thenReturn(zSetOperations);
     }
 
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
-        redisTemplate.delete(USER_RANKING_KEY);
-        redisTemplate.delete(STUDY_RANKING_KEY);
+        redisTemplateDb1.delete(USER_RANKING_KEY);
+        redisTemplateDb1.delete(STUDY_RANKING_KEY);
     }
 
     @Test
