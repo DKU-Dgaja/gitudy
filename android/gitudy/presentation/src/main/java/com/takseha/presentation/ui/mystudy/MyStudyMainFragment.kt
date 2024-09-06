@@ -91,18 +91,6 @@ class MyStudyMainFragment : Fragment() {
         var comment = ""
         setupUI(view)
 
-        if (studyStatus != StudyStatus.STUDY_INACTIVE) {
-            requireActivity().window.statusBarColor = ContextCompat.getColor(
-                requireContext(),
-                colorList[studyImgColor.toIntOrNull() ?: 0]
-            )
-        } else {
-            requireActivity().window.statusBarColor = ContextCompat.getColor(
-                requireContext(),
-                R.color.GS_300
-            )
-        }
-
         observeViewModel()
 
         with(binding) {
@@ -180,7 +168,18 @@ class MyStudyMainFragment : Fragment() {
     private fun observeViewModel() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
-                setMyStudyInfo(studyImgColor, it.myStudyInfo)
+                if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+                    requireActivity().window.statusBarColor = ContextCompat.getColor(
+                        requireContext(),
+                        colorList[it.myStudyInfo.profileImageUrl.toIntOrNull() ?: 0]
+                    )
+                } else {
+                    requireActivity().window.statusBarColor = ContextCompat.getColor(
+                        requireContext(),
+                        R.color.GS_300
+                    )
+                }
+                setMyStudyInfo(it.myStudyInfo.profileImageUrl, it.myStudyInfo)
                 if (it.isUrgentTodo) {
                     with(binding) {
                         noTodoAlarm.visibility = GONE

@@ -78,21 +78,20 @@ class StudyApplyInfoFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (studyStatus != StudyStatus.STUDY_INACTIVE) {
-            requireActivity().window.statusBarColor = ContextCompat.getColor(
-                requireContext(),
-                colorList[studyImgColor.toIntOrNull() ?: 0]
-            )
-        } else {
-            requireActivity().window.statusBarColor = ContextCompat.getColor(
-                requireContext(),
-                R.color.GS_300
-            )
-        }
-
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
-                setStudyInfo(studyImgColor, it)
+                if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+                    requireActivity().window.statusBarColor = ContextCompat.getColor(
+                        requireContext(),
+                        colorList[it.studyInfo.profileImageUrl.toIntOrNull() ?: 0]
+                    )
+                } else {
+                    requireActivity().window.statusBarColor = ContextCompat.getColor(
+                        requireContext(),
+                        R.color.GS_300
+                    )
+                }
+                setStudyInfo(it.studyInfo.profileImageUrl, it)
             }
         }
 
