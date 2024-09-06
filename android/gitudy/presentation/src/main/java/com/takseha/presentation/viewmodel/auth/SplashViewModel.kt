@@ -26,7 +26,7 @@ class SplashViewModel : BaseViewModel() {
                     Log.e("SplashViewModel", "Exception: ${it.message}")
                 } ?: run {
                     response?.let {
-                        if (response.code() == 401 || response.code() == 403) {
+                        if (response.code() == 400 || response.code() == 401 || response.code() == 403) {
                             _availableTokenCheck.value = false
                         }
                         Log.e("SplashViewModel", "HTTP Error: ${it.code()} ${it.message()}")
