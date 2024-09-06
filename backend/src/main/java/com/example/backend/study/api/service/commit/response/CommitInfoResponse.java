@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 public class CommitInfoResponse {
@@ -16,7 +17,7 @@ public class CommitInfoResponse {
     private Long userId;          // 사용자 아이디
     private String commitSHA;     // 커밋 식별자 SHA 값
     private String message;       // 커밋 메시지
-    private LocalDate commitDate; // 커밋 날짜
+    private LocalDateTime commitDate; // 커밋 날짜
     private CommitStatus status;  // 커밋 상태
     private String rejectionReason; // 커밋 거절 이유
     private LikeCount likeCount;  // 커밋 좋아요 수
@@ -24,7 +25,7 @@ public class CommitInfoResponse {
     private String profileImageUrl;  // 커밋 사용자 프로필 이미지
 
     @Builder
-    public CommitInfoResponse(Long id, Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason, LikeCount likeCount, String name, String profileImageUrl) {
+    public CommitInfoResponse(Long id, Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDateTime commitDate, CommitStatus status, String rejectionReason, LikeCount likeCount, String name, String profileImageUrl) {
         this.id = id;
         this.studyInfoId = studyInfoId;
         this.studyTodoId = studyTodoId;

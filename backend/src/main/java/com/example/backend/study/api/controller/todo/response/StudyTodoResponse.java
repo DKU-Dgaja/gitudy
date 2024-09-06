@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 public class StudyTodoResponse {
 
-    private Long id;             // to doid
+    private Long id;             // 투두 Id
 
     private Long studyInfoId;    // 스터티 Id
 
@@ -27,7 +27,7 @@ public class StudyTodoResponse {
 
     private String todoLink;     // To do 링크
 
-    private LocalDate todoDate;  // To do 날짜
+    private LocalDateTime todoDate;  // To do 날짜
 
     private String todoFolderName;   // To do에 해당하는 폴더명
 

@@ -14,6 +14,7 @@ import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @DynamicInsert
@@ -41,9 +42,9 @@ public class StudyCommit extends BaseEntity {
     @Column(name = "MESSAGE", nullable = false)
     private String message;                     // 커밋 메세지
 
-    @Temporal(TemporalType.DATE)
+    @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "COMMIT_DATE", nullable = false)
-    private LocalDate commitDate;               // 커밋 날짜
+    private LocalDateTime commitDate;               // 커밋 날짜
 
     @Enumerated(EnumType.STRING)
     @Column(name = "COMMIT_STATUS")
@@ -57,7 +58,7 @@ public class StudyCommit extends BaseEntity {
     private LikeCount likeCount;                // 커밋 좋아요
 
     @Builder
-    public StudyCommit(Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDate commitDate, CommitStatus status, String rejectionReason) {
+    public StudyCommit(Long studyInfoId, Long studyTodoId, Long userId, String commitSHA, String message, LocalDateTime commitDate, CommitStatus status, String rejectionReason) {
         this.studyInfoId = studyInfoId;
         this.studyTodoId = studyTodoId;
         this.userId = userId;

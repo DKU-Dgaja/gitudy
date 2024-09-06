@@ -3,6 +3,7 @@ package com.example.backend.domain.define.study.commit;
 import com.example.backend.study.api.service.github.response.GithubCommitResponse;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +22,7 @@ public class StudyCommitFixture {
                 .userId(userId)
                 .commitSHA(commitSHA)
                 .message("메세지")
-                .commitDate(LocalDate.now())
+                .commitDate(LocalDateTime.now())
                 .status(COMMIT_APPROVAL)
                 .rejectionReason(null)
                 .build();
@@ -34,13 +35,13 @@ public class StudyCommitFixture {
                 .userId(userId)
                 .commitSHA(commitSHA)
                 .message("메세지")
-                .commitDate(LocalDate.now())
+                .commitDate(LocalDateTime.now())
                 .status(COMMIT_WAITING)
                 .rejectionReason(null)
                 .build();
     }
 
-    public static StudyCommit createStudyCommitWithDate(Long userId, Long studyInfoId, Long studyTodoId, String commitSHA, LocalDate date) {
+    public static StudyCommit createStudyCommitWithDate(Long userId, Long studyInfoId, Long studyTodoId, String commitSHA, LocalDateTime date) {
         return StudyCommit.builder()
                 .studyInfoId(studyInfoId)
                 .studyTodoId(studyTodoId)
@@ -85,7 +86,7 @@ public class StudyCommitFixture {
     public static GithubCommitResponse createGithubCommitResponse(String authorName) {
         return GithubCommitResponse.builder()
                 .sha("sha")
-                .commitDate(LocalDate.now())
+                .commitDate(LocalDateTime.now())
                 .message("message")
                 .authorName(authorName)
                 .build();

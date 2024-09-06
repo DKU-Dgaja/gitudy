@@ -29,6 +29,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -272,7 +273,7 @@ class GithubApiServiceTest extends TestConfig {
         String testTitle = "[백준] 2557번 Hello World";
         String testDetail = "기본적인 입출력 문제입니다! 가볍게 풀어보세요.";
         String testTodoLink = "https://www.acmicpc.net/problem/2557";
-        LocalDate testTodoDate = LocalDate.of(2024, 8, 20);
+        LocalDateTime testTodoDate = LocalDateTime.of(2024, 8, 20, 1, 1, 1);
         String testRepoName = "TTTEST";
 
         RepositoryInfo repoInfo = RepositoryInfo.builder()

@@ -28,6 +28,8 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.chrono.ChronoLocalDate;
+import java.time.chrono.ChronoLocalDateTime;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
@@ -172,7 +174,7 @@ public class WebhookService {
                 todoMapping.getStatus() == TODO_OVERDUE) {
 
             // 지각 여부 체크
-            StudyTodoStatus updateStatus = commit.commitDate().isAfter(todo.getTodoDate()) ? TODO_OVERDUE : TODO_COMPLETE;
+            StudyTodoStatus updateStatus = commit.commitDate().isAfter(ChronoLocalDateTime.from(todo.getTodoDate())) ? TODO_OVERDUE : TODO_COMPLETE;
 
             todoMapping.updateTodoMappingStatus(updateStatus);
         }

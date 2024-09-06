@@ -31,6 +31,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
@@ -88,7 +89,7 @@ class WebhookServiceTest extends TestConfig {
         String todoFolderName = todo.getTodoFolderName();
 
         // 마감일 지킨 커밋
-        LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        LocalDateTime commitDate = todo.getTodoDate().minusDays(1);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
                 List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
@@ -125,7 +126,7 @@ class WebhookServiceTest extends TestConfig {
         String todoFolderName = todo.getTodoFolderName();
 
         // 지각한 커밋
-        LocalDate commitDate = todo.getTodoDate().plusDays(1);
+        LocalDateTime commitDate = todo.getTodoDate().plusDays(1);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
                 List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
@@ -157,7 +158,7 @@ class WebhookServiceTest extends TestConfig {
         String commitId = "123";
         String message = "commit message";
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
-        LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        LocalDateTime commitDate = todo.getTodoDate().minusDays(1);
         String todoFolderName = todo.getTodoFolderName();
 
         // 존재하지 않는 유저(깃허브계정)
@@ -183,7 +184,7 @@ class WebhookServiceTest extends TestConfig {
         String commitId = "123";
         String username = user.getGithubId();
         String message = "commit message";
-        LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        LocalDateTime commitDate = todo.getTodoDate().minusDays(1);
         String todoFolderName = todo.getTodoFolderName();
 
         // 존재하지 않는 스터디
@@ -210,7 +211,7 @@ class WebhookServiceTest extends TestConfig {
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
         String message = "test commit";
-        LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        LocalDateTime commitDate = todo.getTodoDate().minusDays(1);
 
         // 존재하지 않는 투두폴더
         String todoFolderName = "invalid-folder-name";
@@ -241,7 +242,7 @@ class WebhookServiceTest extends TestConfig {
         String todoFolderName = todo.getTodoFolderName();
 
         // 마감일 지킨 커밋
-        LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        LocalDateTime commitDate = todo.getTodoDate().minusDays(1);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
                 List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
@@ -267,7 +268,7 @@ class WebhookServiceTest extends TestConfig {
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
         String todoFolderName = todo.getTodoFolderName();
-        LocalDate commitDate = todo.getTodoDate().minusDays(3);
+        LocalDateTime commitDate = todo.getTodoDate().minusDays(3);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
                 List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
@@ -296,7 +297,7 @@ class WebhookServiceTest extends TestConfig {
         StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodo(study.getId()));
 
         // 투두에 커밋 등록 및 지각 상태의 투두 매핑 세팅
-        studyCommitRepository.save(StudyCommitFixture.createStudyCommitWithDate(user.getId(), study.getId(), todo.getId(), "1234", LocalDate.now().plusDays(3)));
+        studyCommitRepository.save(StudyCommitFixture.createStudyCommitWithDate(user.getId(), study.getId(), todo.getId(), "1234", LocalDateTime.now().plusDays(3)));
         studyTodoMappingRepository.save(StudyTodoFixture.createOverdueStudyTodoMapping(todo.getId(), user.getId()));
 
         String commitId = "123";
@@ -304,7 +305,7 @@ class WebhookServiceTest extends TestConfig {
         String username = user.getGithubId();
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
         String todoFolderName = todo.getTodoFolderName();
-        LocalDate commitDate = todo.getTodoDate().plusDays(3);
+        LocalDateTime commitDate = todo.getTodoDate().plusDays(3);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
                 List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));
@@ -334,22 +335,22 @@ class WebhookServiceTest extends TestConfig {
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
 
         // 미완료 투두 A
-        StudyTodo todoA = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "A", "detail", "link", LocalDate.now()));
+        StudyTodo todoA = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "A", "detail", "link", LocalDateTime.now()));
         studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todoA.getId(), user.getId()));
 
         // 미완료 투두 B
-        StudyTodo todoB = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "B", "detail", "link", LocalDate.now()));
+        StudyTodo todoB = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "B", "detail", "link", LocalDateTime.now()));
         studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todoB.getId(), user.getId()));
 
         // 완료 투두 C
-        StudyTodo todoC = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "C", "detail", "link", LocalDate.now()));
+        StudyTodo todoC = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "C", "detail", "link", LocalDateTime.now()));
         studyTodoMappingRepository.save(StudyTodoFixture.createCompleteStudyTodoMapping(todoC.getId(), user.getId()));
         studyCommitRepository.save(StudyCommitFixture.createDefaultStudyCommit(user.getId(), study.getId(), todoC.getId(), "shaB"));
 
         // 지각 투두 D
-        StudyTodo todoD = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "D", "detail", "link", LocalDate.now()));
+        StudyTodo todoD = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "D", "detail", "link", LocalDateTime.now()));
         studyTodoMappingRepository.save(StudyTodoFixture.createOverdueStudyTodoMapping(todoD.getId(), user.getId()));
-        studyCommitRepository.save(StudyCommitFixture.createStudyCommitWithDate(user.getId(), study.getId(), todoD.getId(), "shaD", LocalDate.now().plusDays(3)));
+        studyCommitRepository.save(StudyCommitFixture.createStudyCommitWithDate(user.getId(), study.getId(), todoD.getId(), "shaD", LocalDateTime.now().plusDays(3)));
 
         // 웹훅 페이로드
         String repositoryFullName = study.getRepositoryInfo().getOwner() + "/" + study.getRepositoryInfo().getName();
@@ -362,7 +363,7 @@ class WebhookServiceTest extends TestConfig {
                         todoB.getTodoFolderName() + "/solution.java"),
                 List.of(todoC.getTodoFolderName() + "/solution2.java",
                         todoD.getTodoFolderName() + "/solution.java"),
-                LocalDate.now().minusDays(3)
+                LocalDateTime.now().minusDays(3)
         )));
 
         // when
@@ -403,11 +404,11 @@ class WebhookServiceTest extends TestConfig {
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
 
         // 미완료 투두 A
-        StudyTodo todoA = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "A", "detail", "link", LocalDate.now().minusDays(3)));
+        StudyTodo todoA = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "A", "detail", "link", LocalDateTime.now().minusDays(3)));
         studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todoA.getId(), user.getId()));
 
         // 미완료 투두 B
-        StudyTodo todoB = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "B", "detail", "link", LocalDate.now().plusDays(3)));
+        StudyTodo todoB = studyTodoRepository.save(StudyTodoFixture.createStudyTodoCustom(study.getId(), "B", "detail", "link", LocalDateTime.now().plusDays(3)));
         studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todoB.getId(), user.getId()));
 
         // 웹훅 페이로드
@@ -421,11 +422,11 @@ class WebhookServiceTest extends TestConfig {
                 List.of(new CommitPayload(
                                 commitAId, messageA, user.getGithubId(),
                                 List.of(todoA.getTodoFolderName() + "/solution.java"), null,
-                                LocalDate.now()),
+                                LocalDateTime.now()),
                         new CommitPayload(
                                 commitBId, messageB, user.getGithubId(),
                                 List.of(todoB.getTodoFolderName() + "/solution.java"), null,
-                                LocalDate.now())
+                                LocalDateTime.now())
                 ));
 
         // when
@@ -463,7 +464,7 @@ class WebhookServiceTest extends TestConfig {
                 "e4adeb0d170eca2d4fe8f738876e607a43e94953",
                 "Create todo folder",
                 user.getGithubId(), List.of(todo.getTodoFolderName() + "/test.md"),
-                List.of(), LocalDate.of(2024, 8, 26)
+                List.of(), LocalDateTime.of(2024, 8, 26, 1, 1, 1)
         )));
 
         // when
@@ -492,7 +493,7 @@ class WebhookServiceTest extends TestConfig {
         String todoFolderName = todo.getTodoFolderName();
 
         // 마감일 지킨 커밋
-        LocalDate commitDate = todo.getTodoDate().minusDays(1);
+        LocalDateTime commitDate = todo.getTodoDate().minusDays(1);
 
         WebhookPayload payload = new WebhookPayload(repositoryFullName, List.of(new CommitPayload(commitId, message, username,
                 List.of(todoFolderName + "/" + "solution.java"), List.of(), commitDate)));

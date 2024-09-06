@@ -3,6 +3,7 @@ package com.example.backend.webhook.api.controller.request;
 import lombok.Builder;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Builder
@@ -12,5 +13,5 @@ public record CommitPayload(
         String username,             // 커밋한 사용자의 깃허브 ID
         List<String> commitAdded,    // 추가된 파일 리스트
         List<String> commitModified, // 수정된 파일 리스트
-        LocalDate commitDate         // 커밋 날짜
+        LocalDateTime commitDate         // 커밋 날짜
 ) {}
