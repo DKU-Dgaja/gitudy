@@ -5,11 +5,12 @@ import com.takseha.data.dto.feed.MakeStudyRequest
 import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyListResponse
 import com.takseha.data.dto.feed.StudyRankResponse
+import com.takseha.data.dto.mystudy.CommentRequest
 import com.takseha.data.dto.mystudy.ConventionResponse
 import com.takseha.data.dto.mystudy.MakeTodoRequest
-import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.SetConventionRequest
 import com.takseha.data.dto.mystudy.StudyCommentListResponse
+import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.dto.mystudy.TodoListResponse
 import com.takseha.data.dto.mystudy.TodoProgressResponse
@@ -95,6 +96,16 @@ interface GitudyStudyService {
         @Path("studyInfoId") studyInfoId: Int
     ): Response<StudyInfoResponse>
 
+    @DELETE("/study/{studyInfoId}")
+    suspend fun deleteStudy(
+        @Path("studyInfoId") studyInfoId: Int
+    ): Response<Void>
+
+    @DELETE("/study/{studyInfoId}/close")
+    suspend fun endStudy(
+        @Path("studyInfoId") studyInfoId: Int
+    ): Response<Void>
+
     @POST("/study/{studyInfoId}/convention")
     suspend fun setConvention(
         @Path("studyInfoId") studyInfoId: Int,
@@ -119,14 +130,14 @@ interface GitudyStudyService {
     @POST("/study/{studyInfoId}/comment")
     suspend fun makeStudyComment(
         @Path("studyInfoId") studyInfoId: Int,
-        @Body content: String
+        @Body request: CommentRequest
     ): Response<Void>
 
     @PATCH("/study/{studyInfoId}/comment/{studyCommentId}")
     suspend fun updateStudyComment(
         @Path("studyInfoId") studyInfoId: Int,
         @Path("studyCommentId") studyCommentId: Int,
-        @Body content: String
+        @Body request: CommentRequest
     ): Response<Void>
 
     @PATCH("/study/{studyInfoId}")

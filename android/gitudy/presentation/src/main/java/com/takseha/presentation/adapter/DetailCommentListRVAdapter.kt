@@ -12,15 +12,13 @@ import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.takseha.data.dto.mystudy.StudyComment
+import com.takseha.data.dto.mystudy.Comment
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ItemCommentDetailBinding
 import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
-class DetailCommentListRVAdapter(val context: Context, val commentList: List<StudyComment>) :
+class DetailCommentListRVAdapter(val context: Context, val commentList: List<Comment>) :
     RecyclerView.Adapter<DetailCommentListRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onDeleteClick(view: View, position: Int)

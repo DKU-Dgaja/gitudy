@@ -7,13 +7,14 @@ import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
@@ -21,11 +22,10 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.StudyPeriodStatus
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.data.dto.mystudy.StudyComment
+import com.takseha.data.dto.mystudy.Comment
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
 import com.takseha.data.dto.mystudy.Todo
@@ -34,10 +34,8 @@ import com.takseha.presentation.adapter.CategoryInStudyRVAdapter
 import com.takseha.presentation.adapter.CommentListRVAdapter
 import com.takseha.presentation.adapter.MemberRankRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyMainBinding
-import com.takseha.presentation.databinding.LayoutSnackbarDescBinding
-import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.mystudy.MyStudyMainViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import java.time.LocalDate
@@ -48,6 +46,7 @@ class MyStudyMainFragment : Fragment() {
     private val viewModel: MyStudyMainViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
+    private var studyStatus: StudyStatus? = null
     private lateinit var studyImgColor: String
     private val colorList = listOf(
         R.color.BG_10,
@@ -67,10 +66,7 @@ class MyStudyMainFragment : Fragment() {
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
-        requireActivity().window.statusBarColor = ContextCompat.getColor(
-            requireContext(),
-            colorList[studyImgColor.toIntOrNull() ?: 0]
-        )
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         lifecycleScope.launch {
             launch { viewModel.getMyStudyInfo(studyInfoId) }
             launch { viewModel.getUrgentTodo(studyInfoId) }
@@ -88,11 +84,23 @@ class MyStudyMainFragment : Fragment() {
         return binding.root
     }
 
-    // TODO: todo link 버튼 눌렀을 때 이동하는 기능 구현
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         var comment = ""
+        setupUI(view)
+
+        if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+            requireActivity().window.statusBarColor = ContextCompat.getColor(
+                requireContext(),
+                colorList[studyImgColor.toIntOrNull() ?: 0]
+            )
+        } else {
+            requireActivity().window.statusBarColor = ContextCompat.getColor(
+                requireContext(),
+                R.color.GS_300
+            )
+        }
 
         observeViewModel()
 
@@ -100,6 +108,7 @@ class MyStudyMainFragment : Fragment() {
             val bundle = Bundle().apply {
                 putInt("studyInfoId", studyInfoId)
                 putBoolean("isLeader", isLeader!!)
+                putSerializable("studyStatus", studyStatus)
             }
 
             myStudyMainSwipeRefreshLayout.setOnRefreshListener {
@@ -120,17 +129,12 @@ class MyStudyMainFragment : Fragment() {
                 view.findNavController()
                     .navigate(R.id.action_myStudyMainFragment_to_myStudySettingFragment, bundle)
             }
-            studyGithubLink.setOnClickListener {
+            copyBtn.setOnClickListener {
                 val textToCopy = studyGithubLinkText.text
                 val clipboard =
                     requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                val clip = ClipData.newPlainText("label", textToCopy)
+                val clip = ClipData.newPlainText("githubLink", textToCopy)
                 clipboard.setPrimaryClip(clip)
-
-                copyOkImg.visibility = VISIBLE
-                copyOkImg.postDelayed({
-                    copyOkImg.visibility = GONE
-                }, 2000)
             }
             todoMoreBtn.setOnClickListener {
                 view.findNavController()
@@ -198,7 +202,14 @@ class MyStudyMainFragment : Fragment() {
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.commentState.collectLatest {
-                setStudyComments(it)
+                if (it != null) {
+                    if (it.isEmpty()) {
+                        binding.isNoCommentLayout.visibility = VISIBLE
+                    } else {
+                        binding.isNoCommentLayout.visibility = GONE
+                    }
+                    setStudyComments(it)
+                }
             }
         }
     }
@@ -207,10 +218,6 @@ class MyStudyMainFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         super.onResume()
-        requireActivity().window.statusBarColor = ContextCompat.getColor(
-            requireContext(),
-            colorList[studyImgColor.toIntOrNull() ?: 0]
-        )
         viewLifecycleOwner.lifecycleScope.launch {
             launch { viewModel.getMyStudyInfo(studyInfoId) }
             launch { viewModel.getUrgentTodo(studyInfoId) }
@@ -224,12 +231,23 @@ class MyStudyMainFragment : Fragment() {
         studyImgColor: String,
         myStudyInfo: StudyInfoResponse
     ) {
-        val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
-
         with(binding) {
-            studyImg.setImageResource(studyImgSrc)
+            if (studyStatus != StudyStatus.STUDY_INACTIVE) {
+                val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
+                studyImg.setImageResource(studyImgSrc)
+                studyEndTag.visibility = GONE
+                leaderTag.visibility = if (isLeader!!) VISIBLE else GONE
+                newCommentLayout.visibility = VISIBLE
+                settingBtn.visibility = VISIBLE
+            } else {
+                studyImg.setImageResource(R.drawable.bg_mystudy_full_default)
+                leaderTag.visibility = GONE
+                studyEndTag.visibility = VISIBLE
+                newCommentLayout.visibility = GONE
+                noTodoAlarm.setTextColor(R.color.GS_300)
+                settingBtn.visibility = GONE
+            }
             studyName.text = myStudyInfo.topic
-            leaderTag.visibility = if (myStudyInfo.isLeader) VISIBLE else GONE
             studyRule.text = setCommitRule(myStudyInfo.periodType)
             studyInfo.text = myStudyInfo.info
             isStudyOpenText.text = setStudyStatus(myStudyInfo.status)
@@ -246,6 +264,13 @@ class MyStudyMainFragment : Fragment() {
     private fun setUrgentTodoInfo(todoInfo: Todo?) {
         with(binding) {
             if (todoInfo != null) {
+                todoLinkBtn.setOnClickListener {
+                    val textToCopy = todoInfo.todoLink
+                    val clipboard =
+                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("todoLink", textToCopy)
+                    clipboard.setPrimaryClip(clip)
+                }
                 todoDetailTitle.text = todoInfo.title
                 todoDetailText.text = todoInfo.detail
                 todoTime.text = todoInfo.todoDate
@@ -278,7 +303,8 @@ class MyStudyMainFragment : Fragment() {
 
     private fun setStudyRank(rankAndScore: StudyRankResponse) {
         with(binding) {
-            studyRankText.text = getString(R.string.study_team_rank, rankAndScore.score, rankAndScore.ranking)
+            studyRankText.text =
+                getString(R.string.study_team_rank, rankAndScore.score, rankAndScore.ranking)
         }
     }
 
@@ -312,14 +338,32 @@ class MyStudyMainFragment : Fragment() {
             StudyStatus.STUDY_PRIVATE -> getString(R.string.study_lock)
             StudyStatus.STUDY_PUBLIC -> getString(R.string.study_unlock)
             StudyStatus.STUDY_DELETED -> getString(R.string.study_deleted)
+            else -> getString(R.string.study_inactive)
         }
     }
 
-    private fun setStudyComments(comments: List<StudyComment>) {
+    private fun setStudyComments(comments: List<Comment>) {
         with(binding) {
             val commentListRVAdapter = CommentListRVAdapter(requireContext(), comments)
             commentList.adapter = commentListRVAdapter
             commentList.layoutManager = LinearLayoutManager(requireContext())
+        }
+    }
+
+    private fun setupUI(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    activity?.let { KeyboardUtils.hideKeyboard(it) }
+                }
+                false
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
         }
     }
 

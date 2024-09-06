@@ -9,6 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentPopupDetail2Binding
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 class PopupDetail2Fragment : Fragment() {
     private var _binding : FragmentPopupDetail2Binding? = null
@@ -16,7 +18,6 @@ class PopupDetail2Fragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =  ContextCompat.getColor(requireContext(), R.color.WHITE)
     }
 
     override fun onCreateView(
@@ -29,12 +30,32 @@ class PopupDetail2Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        requireActivity().window.statusBarColor =  ContextCompat.getColor(requireContext(), R.color.WHITE)
         with(binding) {
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
             }
+
+            val termsText = loadAssetTextFile("terms_of_service.txt")
+            serviceTermBody.text = termsText
         }
+    }
+
+    private fun loadAssetTextFile(fileName: String): String {
+        val stringBuilder = StringBuilder()
+        try {
+            val inputStream = requireContext().assets.open(fileName)
+            val reader = BufferedReader(InputStreamReader(inputStream))
+
+            var line: String?
+            while (reader.readLine().also { line = it } != null) {
+                stringBuilder.append(line).append("\n")
+            }
+            reader.close()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+        return stringBuilder.toString()
     }
 
     override fun onDestroyView() {

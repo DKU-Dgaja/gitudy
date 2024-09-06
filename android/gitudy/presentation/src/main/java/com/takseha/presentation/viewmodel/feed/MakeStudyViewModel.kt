@@ -31,6 +31,9 @@ class MakeStudyViewModel() : BaseViewModel()  {
     private val _newStudyInfoState = MutableStateFlow(MakeStudyRequest())
     val newStudyInfoState = _newStudyInfoState.asStateFlow()
 
+    private val _responseState = MutableStateFlow<Boolean?>(null)
+    val responseState = _responseState.asStateFlow()
+
     fun setStudyIntro(title: String, detail: String, githubRepo: String, categoryIdList: List<Int>) {
         _newStudyInfoState.update { it.copy(topic = title, info = detail, repositoryName = githubRepo, categoriesId = categoryIdList) }
     }
@@ -54,6 +57,10 @@ class MakeStudyViewModel() : BaseViewModel()  {
         )
     }
 
+    fun resetCorrectRepoName() {
+        _isValidRepoName.value = null
+    }
+
     fun getAllCategory() = viewModelScope.launch {
         gitudyCategoryRepository = GitudyCategoryRepository()
         safeApiCall(
@@ -75,9 +82,18 @@ class MakeStudyViewModel() : BaseViewModel()  {
             apiCall = { gitudyStudyRepository.makeNewStudy(request) },
             onSuccess = { response ->
                 if (response.isSuccessful) {
+                    _responseState.value = true
                     Log.d("MakeStudyViewModel", response.code().toString())
-                } else {
-                    Log.e("MakeStudyViewModel", "newStudyResponse status: ${response.code()}\nnewStudyResponse message: ${response.errorBody()?.string()}")
+                }
+            },
+            onError = { e, response ->
+                _responseState.value = false
+                e?.let {
+                    Log.e("MakeStudyViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("MakeStudyViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )

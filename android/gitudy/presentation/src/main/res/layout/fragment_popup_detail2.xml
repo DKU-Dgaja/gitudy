@@ -9,17 +9,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="22dp"
         android:layout_marginTop="20dp"
         android:layout_marginRight="22dp"
+        android:layout_marginBottom="30dp"
         android:orientation="vertical"
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="43dp">
+            android:layout_marginBottom="30dp">
 
             <ImageView
                 android:id="@+id/backBtn"
@@ -35,7 +36,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="개인정보 처리 방침"
+                android:text="서비스 이용약관"
                 android:textColor="@color/GS_900"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -43,10 +44,16 @@
                 app:layout_constraintTop_toTopOf="parent" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
-        <TextView
+        <ScrollView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/detail2_body" />
+            android:layout_height="wrap_content">
 
+            <TextView
+                android:id="@+id/serviceTermBody"
+                style="@style/B6_3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/GS_700" />
+        </ScrollView>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

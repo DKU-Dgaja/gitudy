@@ -9,5 +9,7 @@ data class TodoProgressResponse(
     @SerializedName("todo")
     val todo: Todo?,
     @SerializedName("total_member_count")
-    val totalMemberCount: Int
+    val totalMemberCount: Int,
+    @SerializedName("my_status")
+    val myStatus: TodoStatus
 )

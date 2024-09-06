@@ -125,14 +125,16 @@ class StudyApplyViewModel : BaseViewModel() {
                 if (response.isSuccessful) {
                     _isApplySucceed.value = true
                     Log.d("StudyApplyViewModel", response.code().toString())
-                } else {
-                    _isApplySucceed.value = false
-                    Log.e(
-                        "StudyApplyViewModel",
-                        "applyStudyResponse status: ${response.code()}\napplyStudyResponse message: ${
-                            response.errorBody()?.string()
-                        }"
-                    )
+                }
+            },
+            onError = { e, response ->
+                _isApplySucceed.value = false
+                e?.let {
+                    Log.e("StudyApplyViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("StudyApplyViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )

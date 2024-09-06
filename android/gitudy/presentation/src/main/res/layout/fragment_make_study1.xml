@@ -70,16 +70,31 @@
                 android:orientation="vertical"
                 app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle">
 
-                <EditText
-                    android:id="@+id/studyNameEditText"
-                    style="@style/B6_1"
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/box_non_stroke_r12"
-                    android:backgroundTint="#F4F5F5"
-                    android:hint="스터디 이름을 입력해주세요"
-                    android:padding="20dp"
-                    android:textColorHint="@color/GS_500" />
+                    android:backgroundTint="#F4F5F5">
+                    <EditText
+                        android:id="@+id/studyNameEditText"
+                        style="@style/B6_1"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:hint="스터디 이름을 입력해주세요"
+                        android:layout_weight="1"
+                        android:background="@null"
+                        android:maxLength="10"
+                        android:padding="20dp"
+                        android:textColorHint="@color/GS_500" />
+
+                    <TextView
+                        android:id="@+id/titleTextLength"
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="15dp"
+                        android:textColor="@color/GS_400" />
+                </LinearLayout>
 
                 <LinearLayout
                     android:id="@+id/studyDetailLayout"
@@ -111,14 +126,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="24dp"
-                    android:paddingStart="20dp"
-                    android:paddingEnd="15dp"
-                    android:paddingTop="20dp"
-                    android:paddingBottom="20dp"
-                    android:backgroundTint="#F4F5F5"
                     android:background="@drawable/box_non_stroke_r12"
+                    android:backgroundTint="#F4F5F5"
                     android:gravity="center_vertical"
-                    android:orientation="horizontal">
+                    android:orientation="horizontal"
+                    android:paddingStart="20dp"
+                    android:paddingTop="20dp"
+                    android:paddingEnd="15dp"
+                    android:paddingBottom="20dp">
 
                     <EditText
                         android:id="@+id/studyGithubLinkEditText"
@@ -135,7 +150,7 @@
                         style="@style/B7_1"
                         android:layout_width="42dp"
                         android:layout_height="25dp"
-                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:background="@drawable/selector_btn_r85_enable"
                         android:enabled="true"
                         android:gravity="center"
@@ -168,10 +183,10 @@
                 </LinearLayout>
 
                 <ImageView
-                    android:layout_gravity="center_horizontal"
                     android:id="@+id/waitImg"
                     android:layout_width="20dp"
                     android:layout_height="20dp"
+                    android:layout_gravity="center_horizontal"
                     android:src="@drawable/ic_wait"
                     android:visibility="gone" />
 
@@ -180,8 +195,8 @@
                     style="@style/B7_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="4dp"
                     android:layout_marginStart="15dp"
+                    android:layout_marginTop="4dp"
                     android:text="@string/feed_make_study_github_repo_desc"
                     android:textColor="@color/GS_400"
                     android:visibility="visible" />

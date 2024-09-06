@@ -14,7 +14,6 @@
             style="@style/B6_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/study_name"
             android:textColor="@color/GS_700"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -43,7 +42,6 @@
             android:layout_marginTop="10dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/feed_member_number"
             android:textColor="@color/GS_400"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/categoryList" />

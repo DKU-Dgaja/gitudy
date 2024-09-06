@@ -7,22 +7,26 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.takseha.data.dto.mystudy.StudyComment
+import com.takseha.data.dto.feed.StudyStatus
+import com.takseha.data.dto.mystudy.Comment
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.DetailCommentListRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyCommentBoardBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.mystudy.StudyCommentBoardViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -32,12 +36,14 @@ class StudyCommentBoardFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: StudyCommentBoardViewModel by activityViewModels()
     private var studyInfoId: Int = 0
+    private var studyStatus: StudyStatus? = null
     private var comment = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         viewModel.getStudyComments(studyInfoId, 10)
     }
 
@@ -51,6 +57,7 @@ class StudyCommentBoardFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI(view)
 
         // TODO: limit 무한스크롤 관련 구현
         viewLifecycleOwner.lifecycleScope.launch {
@@ -66,16 +73,18 @@ class StudyCommentBoardFragment : Fragment() {
             }
         }
         with(binding) {
+            if (studyStatus == StudyStatus.STUDY_INACTIVE) messageLayout.visibility = GONE
+
             commentSwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.getStudyComments(studyInfoId, 50)
                     commentSwipeRefreshLayout.isRefreshing = false
                 }
             }
-
                 backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
             }
+
             newCommentBody.addTextChangedListener(object : TextWatcher {
                 override fun beforeTextChanged(
                     s: CharSequence?,
@@ -105,7 +114,7 @@ class StudyCommentBoardFragment : Fragment() {
         }
     }
 
-    private fun setStudyComments(comments: List<StudyComment>) {
+    private fun setStudyComments(comments: List<Comment>) {
         with(binding) {
             val commentDetailListRVAdapter = DetailCommentListRVAdapter(requireContext(), comments)
             commentList.adapter = commentDetailListRVAdapter
@@ -116,7 +125,7 @@ class StudyCommentBoardFragment : Fragment() {
     }
 
     // TODO: 수정 시 메세지 입력 창 같이 떠오르는 현상 없애고, edittext가 자판 위로 오도록 처리
-    private fun clickStudyCommentItem(commentDetailListRVAdapter: DetailCommentListRVAdapter, commentList: List<StudyComment>) {
+    private fun clickStudyCommentItem(commentDetailListRVAdapter: DetailCommentListRVAdapter, commentList: List<Comment>) {
         commentDetailListRVAdapter.onClickListener = object : DetailCommentListRVAdapter.OnClickListener {
             override fun onDeleteClick(view: View, position: Int) {
                 showDeleteCommentDialog(commentList[position].studyInfoId, commentList[position].id)
@@ -147,6 +156,23 @@ class StudyCommentBoardFragment : Fragment() {
         val animator = ObjectAnimator.ofPropertyValuesHolder(view, translateX)
         animator.duration = 500 // 애니메이션 지속 시간 (ms)
         animator.start()
+    }
+
+    private fun setupUI(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { _, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    activity?.let { KeyboardUtils.hideKeyboard(it) }
+                }
+                false
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
+        }
     }
 
     override fun onDestroyView() {

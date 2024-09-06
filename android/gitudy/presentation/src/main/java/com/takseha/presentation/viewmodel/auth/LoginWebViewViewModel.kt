@@ -27,8 +27,15 @@ class LoginWebViewViewModel(application: Application) : BaseApplicationViewModel
                 if (response != null) {
                     _role.value = response.role
                     Log.d("LoginWebViewViewModel", "access token: ${response.accessToken}\nrefresh token: ${response.refreshToken}\nrole: ${role.value}")
-                } else {
-                    Log.e("LoginWebViewViewModel", "login token 생성 실패")
+                }
+            },
+            onError = { e, response ->
+                e?.let {
+                    Log.e("LoginWebViewViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("LoginWebViewViewModel", "HTTP Error: $it")
+                    }
                 }
             }
         )

@@ -1,6 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -100,14 +102,13 @@ class StudyApplyMemberListFragment : Fragment() {
         studyApplyMemberListRVAdapter.onClickListener =
             object : StudyApplyMemberListRVAdapter.OnClickListener {
                 override fun onClick(view: View, position: Int) {
-                    val bundle = Bundle().apply {
-                        putSerializable("memberProfile", studyApplyMemberList[position])
-                        putInt("studyInfoId", studyInfoId)
-                    }
-                    view.findNavController().navigate(
-                        R.id.action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment,
-                        bundle
-                    )
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        val bundle = Bundle().apply {
+                            putSerializable("memberProfile", studyApplyMemberList[position])
+                            putInt("studyInfoId", studyInfoId)
+                        }
+                        view.findNavController().navigate(R.id.action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment, bundle)
+                    }, 200)
                 }
             }
     }

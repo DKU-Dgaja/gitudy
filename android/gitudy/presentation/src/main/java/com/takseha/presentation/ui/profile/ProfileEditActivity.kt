@@ -1,12 +1,16 @@
 package com.takseha.presentation.ui.profile
 
+import android.graphics.Rect
 import android.os.Build
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import androidx.activity.viewModels
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -20,6 +24,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.ActivityProfileEditBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.ui.common.SnackBarHelper
 import com.takseha.presentation.viewmodel.profile.ProfileEditViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -115,17 +120,22 @@ class ProfileEditActivity : AppCompatActivity() {
             nicknameValidationCheckBtn.setOnClickListener {
                 lifecycleScope.launch {
                     var name = nicknameEditText.text.toString()
+
+                    viewModel.resetCorrectName()
                     viewModel.checkNickname(name)
+                    viewModel.isCorrectName.collectLatest {
+                        if (it != null) {
+                            if (it) {
+                                nicknameValidationCheckBtn.visibility = GONE
+                                validationCheckedImg.visibility = VISIBLE
 
-                    val isCorrectName = viewModel.isCorrectName.value
-                    if (isCorrectName == true) {
-                        nicknameValidationCheckBtn.visibility = GONE
-                        validationCheckedImg.visibility = VISIBLE
-
-                        applyBtn.isEnabled = isApplyEnable()
-                    } else {
-                        alertText.text = getString(R.string.alert_name_not_ok)
-                        applyBtn.isEnabled = false
+                                applyBtn.isEnabled = isApplyEnable()
+                            } else {
+                                alertText.text = getString(R.string.alert_name_not_ok)
+                                validationCheckedImg.visibility = GONE
+                                applyBtn.isEnabled = false
+                            }
+                        }
                     }
                 }
             }
@@ -231,6 +241,10 @@ class ProfileEditActivity : AppCompatActivity() {
                 linkedinLinkEditText.setText("")
             }
 
+            profileOpenSwitch.setOnCheckedChangeListener { _, isChecked ->
+                applyBtn.isEnabled = isApplyEnable()
+            }
+
             applyBtn.setOnClickListener {
                 val name = nicknameEditText.text.toString()
                 val profileImageUrl = viewModel.uiState.value.profileImageUrl
@@ -244,6 +258,20 @@ class ProfileEditActivity : AppCompatActivity() {
                 showUpdateProfileInfoDialog(name, profileImageUrl, socialInfo, profilePublicYn)
             }
         }
+    }
+
+    override fun dispatchTouchEvent(ev: MotionEvent): Boolean {
+        val view = currentFocus
+        if (view != null && view is EditText) {
+            val outRect = Rect()
+            view.getGlobalVisibleRect(outRect)
+            if (!outRect.contains(ev.rawX.toInt(), ev.rawY.toInt())) {
+                view.clearFocus()
+                val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+                imm.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+        }
+        return super.dispatchTouchEvent(ev)
     }
 
     private fun setUserInfo(
@@ -261,6 +289,7 @@ class ProfileEditActivity : AppCompatActivity() {
             githubLinkEditText.setText(userInfo.socialInfo?.githubLink)
             blogLinkEditText.setText(userInfo.socialInfo?.blogLink)
             linkedinLinkEditText.setText(userInfo.socialInfo?.linkedInLink)
+            profileOpenSwitch.isChecked = userInfo.profilePublicYn ?: false
 
             applyBtn.isEnabled = false
         }

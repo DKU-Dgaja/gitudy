@@ -29,9 +29,8 @@ class ProfileEditViewModel : BaseViewModel() {
     private val _uiState = MutableStateFlow(UserInfoUpdatePageResponse())
     val uiState = _uiState.asStateFlow()
 
-    private var _isCorrectName = MutableLiveData<Boolean>()
-    val isCorrectName : LiveData<Boolean>
-        get() = _isCorrectName
+    private val _isCorrectName = MutableStateFlow<Boolean?>(null)
+    val isCorrectName = _isCorrectName.asStateFlow()
 
     fun getUserProfileInfo() =viewModelScope.launch {
         safeApiCall(
@@ -64,13 +63,23 @@ class ProfileEditViewModel : BaseViewModel() {
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     _isCorrectName.value = true
-                } else {
-                    _isCorrectName.value = false
-                    Log.e("ProfileEditViewModel", "correctNameResponse status: ${response.code()}\ncorrectNameResponse message: ${response.errorBody()?.string()}")
-
+                }
+            },
+            onError = { e, response ->
+                _isCorrectName.value = false
+                e?.let {
+                    Log.e("ProfileEditViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("ProfileEditViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )
+    }
+
+    fun resetCorrectName() {
+        _isCorrectName.value = null
     }
 
     suspend fun updateUserInfo(name: String, profileImageUrl: String, socialInfo: SocialInfo?, profilePublicYn: Boolean) {

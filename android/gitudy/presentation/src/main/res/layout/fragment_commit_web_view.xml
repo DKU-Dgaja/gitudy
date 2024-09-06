@@ -4,14 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/BACKGROUND_BLACK"
     tools:context=".ui.profile.CommitWebViewFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="860dp"
         android:layout_marginBottom="-20dp"
-        android:elevation="50dp"
+        app:cardElevation="30dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 

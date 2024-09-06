@@ -126,7 +126,7 @@ class MainHomeAlertFragment : Fragment() {
                         putInt("studyInfoId", notice.studyInfoId)
                     }
                     view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_studyApplyMemberListFragment, bundle)
-                } else if (notice.title.contains("거절")) {
+                } else if (notice.title.contains("실패")) {
                     val intent = Intent(requireContext(), StudyApplyActivity::class.java)
                     intent.putExtra("studyInfoId", notice.studyInfoId)
                     startActivity(intent)

@@ -1,11 +1,10 @@
 package com.takseha.presentation.viewmodel.mystudy
 
 import android.util.Log
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyRankResponse
-import com.takseha.data.dto.mystudy.StudyComment
+import com.takseha.data.dto.mystudy.Comment
+import com.takseha.data.dto.mystudy.CommentRequest
 import com.takseha.data.dto.mystudy.StudyConvention
 import com.takseha.data.dto.mystudy.StudyInfoResponse
 import com.takseha.data.dto.mystudy.StudyMember
@@ -13,7 +12,6 @@ import com.takseha.data.dto.mystudy.Todo
 import com.takseha.data.repository.gitudy.GitudyMemberRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.viewmodel.common.BaseViewModel
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -26,7 +24,7 @@ class MyStudyMainViewModel() : BaseViewModel() {
     private val _myStudyState = MutableStateFlow(MyStudyMainInfoState())
     val myStudyState = _myStudyState.asStateFlow()
 
-    private val _commentState = MutableStateFlow<List<StudyComment>>(emptyList())
+    private val _commentState = MutableStateFlow<List<Comment>?>(null)
     val commentState = _commentState.asStateFlow()
 
     suspend fun getMyStudyInfo(studyInfoId: Int) {
@@ -174,8 +172,9 @@ class MyStudyMainViewModel() : BaseViewModel() {
     }
 
     suspend fun makeStudyComment(studyInfoId: Int, content: String, limit: Long) {
+        val request = CommentRequest(content)
         safeApiCall(
-            apiCall = { gitudyStudyRepository.makeStudyComment(studyInfoId, content) },
+            apiCall = { gitudyStudyRepository.makeStudyComment(studyInfoId, request) },
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     viewModelScope.launch {
