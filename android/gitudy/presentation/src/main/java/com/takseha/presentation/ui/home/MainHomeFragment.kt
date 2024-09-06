@@ -93,12 +93,12 @@ class MainHomeFragment : Fragment() {
     }
 
     private fun setMyStudyList(studyList: List<MyStudyWithTodo>) {
-        // 필터를 사용하여 조건에 맞는 항목만 걸러냅니다.
         val uncompletedStudyList = studyList.filter { study ->
             study.urgentTodo?.myStatus != TodoStatus.TODO_COMPLETE && study.urgentTodo?.todo != null
         }
 
         with(binding) {
+            if (uncompletedStudyList.isEmpty()) isNoStudyLayout.visibility = VISIBLE else isNoStudyLayout.visibility = GONE
             val mainStudyRVAdapter = MainStudyRVAdapter(requireContext(), uncompletedStudyList)
 
             myStudyList.adapter = mainStudyRVAdapter
