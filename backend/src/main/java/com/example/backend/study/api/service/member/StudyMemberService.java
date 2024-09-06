@@ -182,7 +182,13 @@ public class StudyMemberService {
 
         User findUser = userService.findUserByIdOrThrowException(user.getUserId());
 
-        // ACTIVE, WAITING, WITHDRAWAL, RESIGNED 상태는 재가입 불가
+        // ACTIVE 상태 재가입 불가
+        if (studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_ALREADY_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_ALREADY_MEMBER);
+        }
+
+        // WAITING, WITHDRAWAL, RESIGNED 상태는 재가입 불가
         if (studyMemberRepository.isMemberStatusByUserIdAndStudyInfoId(findUser.getId(), studyInfo.getId())) {
             log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_REAPPLY_MEMBER);
             throw new MemberException(ExceptionMessage.STUDY_REAPPLY_MEMBER);
