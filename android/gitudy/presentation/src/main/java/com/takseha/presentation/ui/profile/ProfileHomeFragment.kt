@@ -175,6 +175,7 @@ class ProfileHomeFragment : Fragment() {
                     "studyImgColor",
                     bookmarks[position].studyInfoWithIdResponse.profileImageUrl
                 )
+                intent.putExtra("studyStatus", bookmarks[position].studyInfoWithIdResponse.status)
                 startActivity(intent)
             }
 
