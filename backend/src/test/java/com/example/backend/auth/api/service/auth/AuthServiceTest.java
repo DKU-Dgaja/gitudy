@@ -253,6 +253,8 @@ class AuthServiceTest extends MockTestConfig {
 
         // then
         assertThat(deletedUser.getRole()).isEqualTo(UserRole.WITHDRAW);
+        assertEquals(deletedUser.getName(), "탈퇴한 사용자");
+        assertEquals(deletedUser.getPlatformId(), "DELETED" + deletedUser.getId());
     }
 
     @Test

@@ -113,7 +113,7 @@ public class User extends BaseEntity implements UserDetails {
     public void withdrawal(String reason) {
         this.role = UserRole.WITHDRAW;
         this.name = "탈퇴한 사용자";
-        this.platformId = "DELETED";
+        this.platformId = "DELETED" + this.getId();
         this.socialInfo = null;
         this.githubId = null;
         this.profileImageUrl = null;
