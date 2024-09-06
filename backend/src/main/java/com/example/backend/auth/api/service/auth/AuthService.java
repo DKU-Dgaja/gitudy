@@ -217,6 +217,9 @@ public class AuthService {
                     throw new UserException(ExceptionMessage.USER_NOT_FOUND);
                 });
 
+        // 랭킹 스코어 삭제
+        rankingService.deleteUserScore(findUser.getId());
+  
         // 사용자가 운영하던 스터디 종료
         studyManagementService.closeStudiesOwnedByUser(findUser.getId());
 
