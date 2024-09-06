@@ -39,6 +39,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
@@ -89,7 +91,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
     public final static String expectedTitle = "백준 1234번 풀기";
     public final static String expectedDetail = "오늘 자정까지 풀고 제출한다";
     public final static String expectedTodoLink = "https://www.acmicpc.net/";
-    public final static LocalDate expectedTodoDate = LocalDate.now();
+    public final static LocalDateTime expectedTodoDate = LocalDateTime.now();
     public final static StudyTodoStatus expectedStatus = TODO_INCOMPLETE;
     public final static Long CursorIdx = null;
     public final static Long Limit = 3L;
@@ -195,7 +197,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         String updatedTitle = "제목변경";
         String updatedDetail = "설명변경";
         String updatedTodoLink = "링크변경";
-        LocalDate updatedTodoDate = LocalDate.now().plusDays(3);
+        LocalDateTime updatedTodoDate = LocalDateTime.now().plusDays(3);
 
         StudyTodoUpdateRequest request = StudyTodoFixture.updateStudyTodoRequest(updatedTitle, updatedDetail, updatedTodoLink, updatedTodoDate);
 
@@ -208,7 +210,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertEquals(updatedTitle, updatedTodo.getTitle());
         assertEquals(updatedDetail, updatedTodo.getDetail());
         assertEquals(updatedTodoLink, updatedTodo.getTodoLink());
-        assertEquals(updatedTodoDate, updatedTodo.getTodoDate());
+        assertEquals(updatedTodoDate.truncatedTo(ChronoUnit.MICROS), updatedTodo.getTodoDate().truncatedTo(ChronoUnit.MICROS));
     }
 
     @Test
@@ -494,8 +496,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyMemberRepository.saveAll(List.of(A, koo, Lee));
 
         // 스터디장 To do 생성
-        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(2));
-        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(2));
+        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(3));
         studyTodoRepository.save(studyTodoA);
         studyTodoRepository.save(studyTodoB);
 
@@ -591,8 +593,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyMemberRepository.saveAll(List.of(A, koo, Lee));
 
         // 스터디장 To do 생성
-        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(2));
-        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(2));
+        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(3));
         studyTodoRepository.save(studyTodoA);
         studyTodoRepository.save(studyTodoB);
 
@@ -634,8 +636,8 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyMemberRepository.saveAll(List.of(study_leader, koo, Lee));
 
         // 스터디장 To do 생성
-        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(2));
-        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(2));
+        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(3));
         studyTodoRepository.save(studyTodoA);
         studyTodoRepository.save(studyTodoB);
 

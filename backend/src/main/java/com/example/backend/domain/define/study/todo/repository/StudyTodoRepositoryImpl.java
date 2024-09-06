@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -76,7 +77,7 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
                 .from(studyTodoMapping)
                 .join(studyTodo).on(studyTodoMapping.todoId.eq(studyTodo.id))
                 .where(studyTodo.studyInfoId.eq(studyInfoId)
-                        .and(studyTodo.todoDate.after(LocalDate.now()))
+                        .and(studyTodo.todoDate.after(LocalDateTime.now()))
                         .and(studyTodoMapping.userId.eq(userId)))
                 .fetch();
 
@@ -91,7 +92,7 @@ public class StudyTodoRepositoryImpl implements StudyTodoRepositoryCustom {
 
     @Override
     public Optional<StudyTodo> findStudyTodoByStudyInfoIdWithEarliestDueDate(Long studyInfoId) {
-        LocalDate currentDate = LocalDate.now();
+        LocalDateTime currentDate = LocalDateTime.now();
 
         StudyTodo result = queryFactory.selectFrom(studyTodo)
                 .where(studyTodo.studyInfoId.eq(studyInfoId)

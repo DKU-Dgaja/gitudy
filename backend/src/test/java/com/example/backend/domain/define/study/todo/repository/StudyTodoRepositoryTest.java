@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -66,7 +67,7 @@ public class StudyTodoRepositoryTest extends TestConfig {
                     expectedTitle + td,
                     expectedDetail + td,
                     expectedTodoLink + td,
-                    expectedTodoDate.plusDays(td)
+                    LocalDateTime.from(expectedTodoDate.plusDays(td).atStartOfDay())
             ));
             // 각 To do에 Commit 2개씩 저장
             IntStream.rangeClosed(1, 2).forEach(ci -> {
@@ -117,11 +118,11 @@ public class StudyTodoRepositoryTest extends TestConfig {
 
         // To do 5개 저장
         studyTodoRepository.saveAll(List.of(
-                StudyTodoFixture.createStudyTodoCustom(study.getId(), "A","A", "A", LocalDate.now().plusDays(1)),
-                StudyTodoFixture.createStudyTodoCustom(study.getId(), "B","B", "B", LocalDate.now().plusDays(2)),
-                StudyTodoFixture.createStudyTodoCustom(study.getId(), "C","C", "C", LocalDate.now().plusDays(3)),
-                StudyTodoFixture.createStudyTodoCustom(study.getId(), "D","D", "D", LocalDate.now().plusDays(4)),
-                StudyTodoFixture.createStudyTodoCustom(study.getId(), "E","E", "E", LocalDate.now().plusDays(5))
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "A","A", "A", LocalDateTime.now().plusDays(1)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "B","B", "B", LocalDateTime.now().plusDays(2)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "C","C", "C", LocalDateTime.now().plusDays(3)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "D","D", "D", LocalDateTime.now().plusDays(4)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "E","E", "E", LocalDateTime.now().plusDays(5))
         ));
 
         // when

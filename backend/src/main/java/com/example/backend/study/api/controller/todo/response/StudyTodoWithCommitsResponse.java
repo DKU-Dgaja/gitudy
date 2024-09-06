@@ -29,7 +29,7 @@ public class StudyTodoWithCommitsResponse {
 
     private String todoLink;     // To do 링크
 
-    private LocalDate todoDate;  // To do 날짜
+    private LocalDateTime todoDate;  // To do 날짜
 
     private String todoFolderName;   // To do에 해당하는 폴더명
 

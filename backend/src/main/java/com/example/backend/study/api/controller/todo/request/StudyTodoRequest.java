@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Getter
 @NoArgsConstructor
@@ -22,6 +23,6 @@ public class StudyTodoRequest {
 
     private String todoLink;                   // To do 링크
 
-    private LocalDate todoDate;                // To do 기한
+    private LocalDateTime todoDate;                // To do 기한
 
 }

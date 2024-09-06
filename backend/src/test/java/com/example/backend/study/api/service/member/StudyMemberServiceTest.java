@@ -46,6 +46,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -325,10 +326,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember));
 
         // 현재 날짜 이후로 설정된 To do (마감기한 지나지 않은 To do)
-        StudyTodo futureTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
-        StudyTodo futureTodo2 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(5));
+        StudyTodo futureTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(3));
+        StudyTodo futureTodo2 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(5));
         // 현재 날짜 이전으로 설정된 To do (마감기한 지난 To do)
-        StudyTodo pastTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().minusDays(3));
+        StudyTodo pastTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().minusDays(3));
         studyTodoRepository.saveAll(List.of(futureTodo1, futureTodo2, pastTodo1));
 
         // activeMember에게 할당된 to do: 2개는 미래, 1개는 과거
@@ -377,10 +378,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         studyMemberRepository.saveAll(List.of(leader, activeMember));
 
         // 현재 날짜 이후로 설정된 To do (마감기한 지나지 않은 To do)
-        StudyTodo futureTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
-        StudyTodo futureTodo2 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(5));
+        StudyTodo futureTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(3));
+        StudyTodo futureTodo2 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().plusDays(5));
         // 현재 날짜 이전으로 설정된 To do (마감기한 지난 To do)
-        StudyTodo pastTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().minusDays(3));
+        StudyTodo pastTodo1 = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDateTime.now().minusDays(3));
         studyTodoRepository.saveAll(List.of(futureTodo1, futureTodo2, pastTodo1));
 
         // activeMember에게 할당된 to do: 2개는 미래, 1개는 과거
