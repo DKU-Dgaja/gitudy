@@ -13,6 +13,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class MessageRequest {
 
-    @Size(max = 40, message = "메세지 40자 이내")
+    @Size(max = 100, message = "메세지 100자 이내")
     private String message;          // 팀장에게 한마디 or 멤버에게 보낼 메세지 or 탈퇴 메세지
 }

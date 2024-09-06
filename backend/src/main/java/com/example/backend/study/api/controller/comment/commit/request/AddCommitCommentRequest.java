@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AddCommitCommentRequest {
     @NotBlank(message = "댓글 내용은 공백일 수 없습니다.")
-    @Size(max = 60, message = "댓글 내용은 60자를 넘을 수 없습니다.")
+    @Size(max = 100, message = "댓글 내용은 100자를 넘을 수 없습니다.")
     private String content;
 
     private Long studyInfoId;  // 프론트에서 처리할 스터디Id
