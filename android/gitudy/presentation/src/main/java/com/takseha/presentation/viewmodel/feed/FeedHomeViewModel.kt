@@ -46,6 +46,7 @@ class FeedHomeViewModel : BaseViewModel() {
                     if (feedStudyListInfo.studyInfoList.isEmpty()) {
                         _uiState.update {
                             it.copy(
+                                studyInfoList = emptyList(),
                                 isFeedEmpty = true
                             )
                         }

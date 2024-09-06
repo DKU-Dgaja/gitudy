@@ -181,6 +181,7 @@ class AddTodoFragment : Fragment() {
                 applyBtn.isEnabled = false
             }
             viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.resetResponseState()
                 viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
                 viewModel.responseState.collectLatest {
                     if (it != null) {
@@ -201,7 +202,7 @@ class AddTodoFragment : Fragment() {
 
     private fun setupUI(view: View) {
         if (view !is EditText) {
-            view.setOnTouchListener { _, event ->
+            view.setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     activity?.let { KeyboardUtils.hideKeyboard(it) }
                 }

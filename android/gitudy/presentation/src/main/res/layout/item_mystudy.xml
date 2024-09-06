@@ -111,7 +111,7 @@
                 android:text="@string/study_to_do_empty"
                 android:textColor="@color/BASIC_RED"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/progressBar"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
                 app:layout_constraintStart_toEndOf="@+id/todoImg"
                 app:layout_constraintTop_toTopOf="@+id/divider" />
 
@@ -169,38 +169,34 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="290dp"
-                android:layout_height="16dp"
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:max="100"
-                android:progress="50"
-                android:progressDrawable="@drawable/progress_bar"
+                android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
+                app:layout_constraintTop_toBottomOf="@+id/todoImg">
 
-            <TextView
-                android:id="@+id/todoCheckNum"
-                style="@style/B6_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="19dp"
-                android:textColor="@color/GS_500"
-                app:layout_constraintEnd_toStartOf="@+id/totalNum"
-                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="13dp"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="50"
+                    android:progressDrawable="@drawable/progress_bar" />
 
-            <TextView
-                android:id="@+id/totalNum"
-                style="@style/B6_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="19dp"
-                android:textColor="@color/GS_500"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
-
+                <TextView
+                    android:id="@+id/todoCheckNum"
+                    style="@style/B6_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="35dp"
+                    android:textColor="@color/GS_500" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>

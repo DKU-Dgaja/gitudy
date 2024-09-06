@@ -85,7 +85,12 @@ class StudyApplyMemberProfileFragment : Fragment() {
             } else {
                 profileInfo.socialInfo!!.linkedInLink
             }
-            messageContent.text = profileInfo?.signGreeting
+            if (profileInfo?.signGreeting == null || profileInfo.signGreeting == "") {
+                messageContent.text = "메세지가 없어요"
+                messageContent.setTextColor(ContextCompat.getColor(requireContext(), R.color.GS_500))
+            } else {
+                messageContent.text = profileInfo.signGreeting
+            }
 
             githubLinkBtn.setOnClickListener {
                 val textToCopy = profileInfo?.socialInfo?.githubLink ?: ""
@@ -130,6 +135,7 @@ class StudyApplyMemberProfileFragment : Fragment() {
                 }
             }
             viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.resetResponseState()
                 viewModel.approveApplyMember(studyInfoId, applyUserId, approve)
                 viewModel.responseState.collectLatest {
                     if (it != null) {

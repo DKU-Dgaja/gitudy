@@ -21,14 +21,16 @@
 
         <TextView
             android:id="@+id/contentText"
-            style="B6_1"
-            android:layout_width="230dp"
+            style="@style/B6_2"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="14dp"
+            android:layout_marginStart="14dp"
+            android:layout_marginEnd="14dp"
             android:layout_marginTop="20dp"
             android:layout_marginBottom="20dp"
             android:textColor="@color/GS_600"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/dateText"
             app:layout_constraintStart_toEndOf="@+id/profileImg"
             app:layout_constraintTop_toTopOf="parent" />
 

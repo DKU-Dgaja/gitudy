@@ -4,10 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:clipToPadding="false"
     android:paddingLeft="22dp"
     android:paddingRight="22dp"
     android:paddingBottom="48dp"
-    android:clipToPadding="false"
     tools:context=".ui.mystudy.QuitStudyFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -48,6 +48,7 @@
         android:textColor="@color/BLACK"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/quitStudyTitle" />
+
     <RadioGroup
         android:id="@+id/deleteReasonSelectRadioGroup"
         android:layout_width="match_parent"
@@ -110,7 +111,9 @@
         android:layout_height="wrap_content"
         android:background="@drawable/box_non_stroke_r8"
         android:backgroundTint="#F3F5F7"
-        android:hint="기타 탈퇴 이유를 입력해주세요"
+        android:hint="기타 탈퇴 이유를 입력해주세요(100자 이내)"
+        android:maxLength="100"
+        android:maxLines="2"
         android:paddingStart="14dp"
         android:paddingTop="20dp"
         android:paddingEnd="14dp"

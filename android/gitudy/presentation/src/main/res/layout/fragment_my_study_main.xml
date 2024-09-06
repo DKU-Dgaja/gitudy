@@ -209,7 +209,8 @@
                     <TextView
                         android:id="@+id/studyGithubLinkText"
                         style="@style/B6_2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:textColor="@color/GS_600" />
 
@@ -475,9 +476,10 @@
                             android:background="@null"
                             android:focusableInTouchMode="true"
                             android:gravity="top|start"
-                            android:hint="메세지 남기기"
+                            android:hint="팀원들에게 응원의 한마디를 남겨보세요!\n(100자 이내)"
                             android:imeOptions="actionDone"
                             android:inputType="textMultiLine"
+                            android:maxLength="100"
                             android:maxLines="2"
                             android:overScrollMode="always"
                             android:paddingBottom="10dp"

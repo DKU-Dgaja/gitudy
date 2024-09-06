@@ -94,9 +94,14 @@ class StudyApplyMessageFragment : Fragment() {
                             binding.applyBtn.findNavController()
                                 .navigate(R.id.action_studyApplyMessageFragment_to_newStudyApplyFragment)
                         } else {
-                            makeSnackBar(getString(R.string.alert_study_apply_already_done)).apply {
-                                anchorView = binding.applyBtn
-                            }.show()
+                            viewModel.applyErrorMessage.collectLatest { errorMessage ->
+                                if (errorMessage != null) {
+                                    makeSnackBar(errorMessage).apply {
+                                        anchorView = binding.applyBtn
+                                    }.show()
+                                    viewModel.resetApplyErrorMessage()
+                                }
+                            }
                         }
                     }
                 }
@@ -107,7 +112,7 @@ class StudyApplyMessageFragment : Fragment() {
 
     private fun setupUI(view: View) {
         if (view !is EditText) {
-            view.setOnTouchListener { _, event ->
+            view.setOnTouchListener { v, event ->
                 if (event.action == MotionEvent.ACTION_DOWN) {
                     activity?.let { KeyboardUtils.hideKeyboard(it) }
                 }

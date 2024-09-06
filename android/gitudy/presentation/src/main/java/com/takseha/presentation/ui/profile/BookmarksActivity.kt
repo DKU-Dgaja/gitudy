@@ -62,16 +62,17 @@ class BookmarksActivity : AppCompatActivity() {
             bookmarkList.adapter = bookmarkListRVAdapter
             bookmarkList.layoutManager = LinearLayoutManager(this@BookmarksActivity)
 
-            clickFeedItem(bookmarkListRVAdapter, bookmarks)
+            clickBookmarkItem(bookmarkListRVAdapter, bookmarks)
         }
     }
 
-    private fun clickFeedItem(bookmarkListRVAdapter: BookmarkListRVAdapter, bookmarks: List<Bookmark>) {
+    private fun clickBookmarkItem(bookmarkListRVAdapter: BookmarkListRVAdapter, bookmarks: List<Bookmark>) {
         bookmarkListRVAdapter.onClickListener = object : BookmarkListRVAdapter.OnClickListener {
             override fun onClick(view: View, position: Int) {
                 val intent = Intent(this@BookmarksActivity, StudyApplyActivity::class.java)
                 intent.putExtra("studyInfoId", bookmarks[position].studyInfoId)
                 intent.putExtra("studyImgColor", bookmarks[position].studyInfoWithIdResponse.profileImageUrl)
+                intent.putExtra("studyStatus", bookmarks[position].studyInfoWithIdResponse.status)
                 startActivity(intent)
             }
 

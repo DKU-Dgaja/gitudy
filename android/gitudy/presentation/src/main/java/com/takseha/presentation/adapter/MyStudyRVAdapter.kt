@@ -35,7 +35,6 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
         val todoTimeText = binding.todoTimeText
         val todoTime = binding.todoTime
         val todoCheckNum = binding.todoCheckNum
-        val totalNum = binding.totalNum
         val progressBar = binding.progressBar
         val studyEndTag = binding.studyEndTag
     }
@@ -68,16 +67,14 @@ class MyStudyRVAdapter(val context : Context, val studyInfoList : List<MyStudyWi
             holder.studyImg.setImageResource(studyImage)
             holder.leaderTag.visibility = if (studyInfo.isLeader) VISIBLE else GONE
             holder.studyEndTag.visibility = GONE
-            holder.todoCheckNum.text = "${urgentTodo.completeMemberCount ?: 0}/"
-            holder.totalNum.text = studyInfo.currentMember.toString()
+            holder.todoCheckNum.text = context.getString(R.string.study_todo_check_num, urgentTodo.completeMemberCount, studyInfo.currentMember)
             holder.progressBar.progress = urgentTodo.completeMemberCount ?: 0
             holder.progressBar.max = studyInfo.currentMember
         } else {
             holder.studyImg.setImageResource(R.drawable.bg_mystudy_small_default)
             holder.leaderTag.visibility = GONE
             holder.studyEndTag.visibility = VISIBLE
-            holder.todoCheckNum.text = "0/"
-            holder.totalNum.text = studyInfo.currentMember.toString()
+            holder.todoCheckNum.text = context.getString(R.string.study_todo_check_num, 0, studyInfo.currentMember)
             holder.progressBar.progress = 0
             holder.progressBar.max = studyInfo.currentMember
             holder.noTodoAlarm.setTextColor(R.color.GS_300)

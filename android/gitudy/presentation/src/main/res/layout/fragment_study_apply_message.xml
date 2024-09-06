@@ -63,7 +63,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:background="@null"
-                        android:hint="스터디를 이끄는 팀장에게\n간단한 자기소개, 다짐 등을 남겨주세요"
+                        android:maxLength="100"
+                        android:hint="스터디를 이끄는 팀장에게\n간단한 자기소개, 다짐 등을 남겨주세요\n(100자 이내)"
                         android:textColor="@color/BLACK"
                         android:textColorHint="@color/GS_500" />
                 </ScrollView>

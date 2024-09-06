@@ -82,12 +82,12 @@
         android:id="@+id/messageLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:background="@drawable/faded_edge"
         android:elevation="5dp"
         android:gravity="bottom"
         android:orientation="horizontal"
         android:paddingTop="10dp"
         android:paddingBottom="20dp"
-        android:background="@drawable/faded_edge"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -112,18 +112,19 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@null"
-                android:hint="메세지 남기기"
-                android:paddingBottom="10dp"
-                android:textColor="@color/GS_900"
-                android:textColorHint="@color/GS_500"
-                android:maxLines="2"
-                android:scrollbars="vertical"
-                android:overScrollMode="always"
-                android:inputType="textMultiLine"
-                android:imeOptions="actionDone"
+                android:focusableInTouchMode="true"
                 android:gravity="top|start"
+                android:hint="팀원들에게 응원의 한마디를 남겨보세요!\n(100자 이내)"
+                android:imeOptions="actionDone"
+                android:inputType="textMultiLine"
+                android:maxLength="100"
+                android:maxLines="2"
+                android:overScrollMode="always"
+                android:paddingBottom="10dp"
+                android:scrollbars="vertical"
                 android:scrollHorizontally="false"
-                android:focusableInTouchMode="true" />
+                android:textColor="@color/GS_900"
+                android:textColorHint="@color/GS_500" />
         </LinearLayout>
 
         <Button

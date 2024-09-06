@@ -33,11 +33,11 @@ interface GitudyCommitsService {
         @Query("studyInfoId") studyInfoId: Int
     ): Response<Void>
 
-    @GET("/commits/{commitId}/reject")
+    @POST("/commits/{commitId}/reject")
     suspend fun rejectCommit(
         @Path("commitId") commitId: Int,
         @Query("studyInfoId") studyInfoId: Int,
-        @Query("request") request: CommitRejectRequest
+        @Body request: CommitRejectRequest
     ): Response<Void>
 
     @GET("/commits/{commitId}/comments")

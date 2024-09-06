@@ -166,6 +166,7 @@ class ProfileHomeViewModel : BaseViewModel() {
                     if (commitList.isEmpty()) {
                         _myCommitsState.update {
                             it.copy(
+                                commitList = emptyList(),
                                 isMyCommitEmpty = true
                             )
                         }

@@ -49,9 +49,16 @@ class MakeStudyViewModel() : BaseViewModel()  {
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     _isValidRepoName.value = true
-                } else {
-                    _isValidRepoName.value = false
-                    Log.e("MakeStudyViewModel", "isValidRepoNameResponse status: ${response.code()}\nisValidRepoNameResponse message: ${response.errorBody()?.string()}")
+                }
+            },
+            onError = { e, response ->
+                _isValidRepoName.value = false
+                e?.let {
+                    Log.e("MakeStudyViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("MakeStudyViewModel", "HTTP Error: ${it.code()} ${it.errorBody()?.string()}")
+                    }
                 }
             }
         )

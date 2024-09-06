@@ -49,6 +49,7 @@ class MyStudyHomeViewModel : BaseViewModel() {
                     if (studies.isEmpty()) {
                         _myStudyState.update {
                             it.copy(
+                                myStudiesWithTodo = emptyList(),
                                 isMyStudiesEmpty = true
                             )
                         }

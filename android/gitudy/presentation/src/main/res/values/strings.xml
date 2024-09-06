@@ -45,6 +45,7 @@
     <string name="study_name">단국알고깃터디</string>
     <string name="study_no_my_study">가입 중인 스터디가 없어요</string>
     <string name="study_commit_rule">주 1회 커밋 필수</string>
+    <string name="study_todo_check_num">%d/%d</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
     <string name="study_deleted">스터디 삭제</string>
