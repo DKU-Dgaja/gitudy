@@ -188,7 +188,7 @@ public class StudyMemberRepositoryImpl implements StudyMemberRepositoryCustom {
                 .from(studyMember)
                 .where(studyMember.userId.eq(userId)
                         .and(studyMember.studyInfoId.eq(studyInfoId))  // 가입 불가능한 상태 제외
-                        .and(studyMember.status.in(StudyMemberStatus.STUDY_ACTIVE, StudyMemberStatus.STUDY_WAITING, StudyMemberStatus.STUDY_WITHDRAWAL, StudyMemberStatus.STUDY_RESIGNED)))
+                        .and(studyMember.status.in(StudyMemberStatus.STUDY_WAITING, StudyMemberStatus.STUDY_WITHDRAWAL, StudyMemberStatus.STUDY_RESIGNED)))
                 .fetchFirst() != null;
     }
 }
