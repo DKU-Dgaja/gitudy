@@ -136,8 +136,8 @@ class StudyApplyViewModel : BaseViewModel() {
                     Log.e("StudyApplyViewModel", "Exception: ${it.message}")
                 } ?: run {
                     response?.let {
-                        val errorBody = it.errorBody()?.string() ?: ""
-                        Log.e("StudyApplyViewModel", "HTTP Error: ${it.code()} ${it.errorBody()?.string()}")
+                        val errorBody = it.errorBody()?.string() ?: "없음"
+                        Log.e("StudyApplyViewModel", "HTTP Error: ${it.code()} $errorBody")
 
                         if (errorBody.contains("재가입")) {
                             _applyErrorMessage.value = "스터디 재가입은 불가합니다"
