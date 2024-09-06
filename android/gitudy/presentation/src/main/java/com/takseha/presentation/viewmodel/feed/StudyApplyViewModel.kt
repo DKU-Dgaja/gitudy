@@ -150,6 +150,10 @@ class StudyApplyViewModel : BaseViewModel() {
         )
     }
 
+    fun resetApplyErrorMessage() {
+        _applyErrorMessage.value = null
+    }
+
     suspend fun withdrawApplyStudy(studyInfoId: Int) {
         safeApiCall(
             apiCall = { gitudyMemberRepository.withdrawApplyStudy(studyInfoId) },

@@ -99,6 +99,7 @@ class StudyApplyMessageFragment : Fragment() {
                                     makeSnackBar(errorMessage).apply {
                                         anchorView = binding.applyBtn
                                     }.show()
+                                    viewModel.resetApplyErrorMessage()
                                 }
                             }
                         }
