@@ -123,7 +123,6 @@ class AuthControllerTest extends MockTestConfig {
         // 유효성 검사 통과하는 request
         AuthRegisterRequest request = AuthRegisterRequest.builder()
                 .name("구영민")
-                .githubId("test@1234")
                 .pushAlarmYn(false)
                 .fcmToken("token")
                 .build();

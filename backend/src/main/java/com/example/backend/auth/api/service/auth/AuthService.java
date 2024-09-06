@@ -74,17 +74,21 @@ public class AuthService {
          */
         User findUser = userRepository.findByPlatformIdAndPlatformType(platformId, platformType)
                 .orElseGet(() -> {
-                    User saveUser = User.builder()
+                    User.UserBuilder userBuilder = User.builder()
                             .platformId(platformId)
                             .platformType(loginResponse.getPlatformType())
                             .role(UserRole.UNAUTH)
                             .name(name)
                             .score(10)
-                            .profileImageUrl(profileImageUrl)
-                            .build();
+                            .profileImageUrl(profileImageUrl);
+
+                    if (platformType == UserPlatformType.GITHUB) {
+                        userBuilder.githubId(name);
+                    }
+
+                    User saveUser = userBuilder.build();
 
                     log.info(">>>> [ UNAUTH 권한으로 사용자를 DB에 등록합니다. 이후 회원가입이 필요합니다 ] <<<<");
-
                     return userRepository.save(saveUser);
                 });
 
@@ -184,7 +188,7 @@ public class AuthService {
         }
 
         // 회원가입 정보 DB 반영
-        findUser.updateRegister(request.getName(), request.getGithubId(), request.isPushAlarmYn());
+        findUser.updateRegister(request.getName(), request.isPushAlarmYn());
 
         // fcmToken 저장
         FcmToken fcmToken = FcmToken.builder()
