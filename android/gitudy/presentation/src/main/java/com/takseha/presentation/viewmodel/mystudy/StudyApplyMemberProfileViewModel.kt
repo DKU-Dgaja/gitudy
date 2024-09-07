@@ -23,6 +23,8 @@ class StudyApplyMemberProfileViewModel : BaseViewModel() {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 _responseState.value = false
                 e?.let {
                     Log.e("StudyApplyMemberProfileViewModel", "Exception: ${it.message}")

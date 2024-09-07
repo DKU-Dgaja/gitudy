@@ -84,6 +84,8 @@ class CommitDetailViewModel : BaseViewModel() {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 e?.let {
                     Log.e("StudyApplyViewModel", "Exception: ${it.message}")
                 } ?: run {

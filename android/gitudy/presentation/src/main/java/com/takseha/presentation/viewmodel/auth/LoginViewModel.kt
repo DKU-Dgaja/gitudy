@@ -40,6 +40,8 @@ class LoginViewModel(application: Application) : BaseApplicationViewModel(applic
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 e?.let {
                     Log.e("LoginViewModel", "Exception: ${it.message}")
                 } ?: run {

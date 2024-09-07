@@ -54,11 +54,22 @@ abstract class BaseApplicationViewModel(application: Application) : AndroidViewM
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     onError(e, null)
-                    Log.e("BaseViewModel", e.toString())
+                    Log.e("BaseApplicationViewModel", e.toString())
                 }
             }
         }
     }
+
+    protected fun handleDefaultError(e: Exception?) {
+        viewModelScope.launch {
+            if (e != null) {
+                _snackbarMessage.emit("네트워크 연결을 확인해주세요")
+            } else {
+                _snackbarMessage.emit(null)
+            }
+        }
+    }
+
 
     fun resetSnackbarMessage() {
         _snackbarMessage.value = null

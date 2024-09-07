@@ -18,6 +18,7 @@ import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import com.takseha.presentation.viewmodel.home.MainHomeAlertViewModel
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
+import com.takseha.presentation.viewmodel.mystudy.MyStudyHomeViewModel
 import com.takseha.presentation.viewmodel.profile.ProfileHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 class MainHomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainHomeBinding
     private val mainHomeViewModel: MainHomeViewModel by viewModels()
+    private val myStudyHomeViewModel: MyStudyHomeViewModel by viewModels()
     private val feedHomeViewModel: FeedHomeViewModel by viewModels()
     private val profileHomeViewModel: ProfileHomeViewModel by viewModels()
     private lateinit var snackBarHelper: SnackBarHelper
@@ -49,6 +51,17 @@ class MainHomeActivity : AppCompatActivity() {
                     if (it.isNotBlank()) {
                         snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
                         mainHomeViewModel.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            myStudyHomeViewModel.snackbarMessage.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        myStudyHomeViewModel.resetSnackbarMessage()
                     }
                 }
             }

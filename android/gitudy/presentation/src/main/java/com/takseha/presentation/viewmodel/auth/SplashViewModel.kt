@@ -2,6 +2,7 @@ import android.util.Log
 import com.takseha.data.dto.auth.login.RoleStatus
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.presentation.viewmodel.common.BaseViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -22,6 +23,8 @@ class SplashViewModel : BaseViewModel() {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 e?.let {
                     Log.e("SplashViewModel", "Exception: ${it.message}")
                 } ?: run {

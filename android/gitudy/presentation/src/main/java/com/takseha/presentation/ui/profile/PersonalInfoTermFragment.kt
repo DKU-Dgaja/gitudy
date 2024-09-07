@@ -1,4 +1,4 @@
-package com.takseha.presentation.viewmodel.profile
+package com.takseha.presentation.ui.profile
 
 import android.os.Bundle
 import android.view.LayoutInflater

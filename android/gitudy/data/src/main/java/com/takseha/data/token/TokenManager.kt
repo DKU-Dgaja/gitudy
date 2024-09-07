@@ -49,7 +49,7 @@ class TokenManager(context: Context) {
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                null
+                throw e
             }
         }
     }
@@ -68,7 +68,7 @@ class TokenManager(context: Context) {
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                null
+                throw e
             }
         }
     }
@@ -89,7 +89,7 @@ class TokenManager(context: Context) {
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", "register error: ${e.message}")
-                null
+                throw e
             }
         }
     }
@@ -111,7 +111,7 @@ class TokenManager(context: Context) {
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                false
+                throw e
             }
         }
     }
@@ -133,7 +133,7 @@ class TokenManager(context: Context) {
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                false
+                throw e
             }
         }
     }
@@ -155,7 +155,7 @@ class TokenManager(context: Context) {
                 }
             } catch (e: Exception) {
                 Log.e("TokenManager", e.message.toString())
-                false
+                throw e
             }
         }
     }

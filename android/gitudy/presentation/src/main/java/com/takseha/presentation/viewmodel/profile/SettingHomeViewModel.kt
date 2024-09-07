@@ -48,6 +48,8 @@ class SettingHomeViewModel(application: Application) : BaseApplicationViewModel(
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 _logoutResponseState.value = false
                 e?.let {
                     Log.e("SettingHomeViewModel", "Exception: ${it.message}")
@@ -72,6 +74,8 @@ class SettingHomeViewModel(application: Application) : BaseApplicationViewModel(
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 _deleteResponseState.value = false
                 e?.let {
                     Log.e("SettingHomeViewModel", "Exception: ${it.message}")

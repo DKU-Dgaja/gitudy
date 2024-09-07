@@ -21,12 +21,15 @@ abstract class BaseViewModel : ViewModel() {
         apiCall: suspend () -> T,
         onSuccess: (T) -> Unit,
         onError: (Exception?, Response<*>?) -> Unit = { e, response ->
-            if (e != null) {
-                _snackbarMessage.value = "네트워크 연결을 확인해주세요"
-            } else {
-                _snackbarMessage.value = null
+            viewModelScope.launch {
+                if (e != null) {
+                    _snackbarMessage.emit("네트워크 연결을 확인해주세요")
+                } else {
+                    _snackbarMessage.emit(null)
+                }
             }
         }
+
     ) {
         viewModelScope.launch(dispatcher) {
             try {
@@ -40,7 +43,7 @@ abstract class BaseViewModel : ViewModel() {
                             when (result.code()) {
                                 502, 500 -> {
                                     onError(null, result)
-                                    _snackbarMessage.value = "서버에 문제가 발생했어요. 잠시 후 다시 시도해주세요."
+                                    _snackbarMessage.emit("서버에 문제가 발생했어요. 잠시 후 다시 시도해주세요.")
                                 }
                                 else -> onError(null, result)
                             }
@@ -57,6 +60,17 @@ abstract class BaseViewModel : ViewModel() {
             }
         }
     }
+
+    protected fun handleDefaultError(e: Exception?) {
+        viewModelScope.launch {
+            if (e != null) {
+                _snackbarMessage.emit("네트워크 연결을 확인해주세요")
+            } else {
+                _snackbarMessage.emit(null)
+            }
+        }
+    }
+
 
     fun resetSnackbarMessage() {
         _snackbarMessage.value = null

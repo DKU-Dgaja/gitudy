@@ -66,6 +66,8 @@ class ProfileEditViewModel : BaseViewModel() {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 _isCorrectName.value = false
                 e?.let {
                     Log.e("ProfileEditViewModel", "Exception: ${it.message}")
