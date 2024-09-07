@@ -28,6 +28,7 @@ class AddTodoViewModel: BaseViewModel() {
             },
             onError = { e, response ->
                 super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 _responseState.value = false
                 e?.let {
                     Log.e("AddTodoViewModel", "Exception: ${it.message}")

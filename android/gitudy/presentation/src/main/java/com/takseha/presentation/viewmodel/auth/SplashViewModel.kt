@@ -24,6 +24,7 @@ class SplashViewModel : BaseViewModel() {
             },
             onError = { e, response ->
                 super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 e?.let {
                     Log.e("SplashViewModel", "Exception: ${it.message}")
                 } ?: run {

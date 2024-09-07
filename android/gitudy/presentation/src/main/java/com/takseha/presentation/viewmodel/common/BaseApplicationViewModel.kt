@@ -54,7 +54,7 @@ abstract class BaseApplicationViewModel(application: Application) : AndroidViewM
             } catch (e: Exception) {
                 withContext(Dispatchers.Main) {
                     onError(e, null)
-                    Log.e("BaseViewModel", e.toString())
+                    Log.e("BaseApplicationViewModel", e.toString())
                 }
             }
         }

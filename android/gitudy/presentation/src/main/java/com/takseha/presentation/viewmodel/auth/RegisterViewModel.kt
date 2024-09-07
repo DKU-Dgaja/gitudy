@@ -41,6 +41,7 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
             },
             onError = { e, response ->
                 super.handleDefaultError(e)
+                super.resetSnackbarMessage()
                 _isCorrectName.value = false
                 e?.let {
                     Log.e("RegisterViewModel", "Exception: ${it.message}")
