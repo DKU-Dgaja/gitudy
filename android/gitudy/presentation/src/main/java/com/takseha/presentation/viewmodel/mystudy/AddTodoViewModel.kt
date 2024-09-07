@@ -27,6 +27,7 @@ class AddTodoViewModel: BaseViewModel() {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
                 _responseState.value = false
                 e?.let {
                     Log.e("AddTodoViewModel", "Exception: ${it.message}")

@@ -30,6 +30,7 @@ class LoginWebViewViewModel(application: Application) : BaseApplicationViewModel
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
                 e?.let {
                     Log.e("LoginWebViewViewModel", "Exception: ${it.message}")
                 } ?: run {

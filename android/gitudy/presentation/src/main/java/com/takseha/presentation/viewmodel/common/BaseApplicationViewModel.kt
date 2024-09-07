@@ -60,6 +60,17 @@ abstract class BaseApplicationViewModel(application: Application) : AndroidViewM
         }
     }
 
+    protected fun handleDefaultError(e: Exception?) {
+        viewModelScope.launch {
+            if (e != null) {
+                _snackbarMessage.emit("네트워크 연결을 확인해주세요")
+            } else {
+                _snackbarMessage.emit(null)
+            }
+        }
+    }
+
+
     fun resetSnackbarMessage() {
         _snackbarMessage.value = null
     }

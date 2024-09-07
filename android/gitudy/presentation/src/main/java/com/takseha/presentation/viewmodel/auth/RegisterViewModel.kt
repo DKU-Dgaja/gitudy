@@ -40,6 +40,7 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
                 _isCorrectName.value = false
                 e?.let {
                     Log.e("RegisterViewModel", "Exception: ${it.message}")

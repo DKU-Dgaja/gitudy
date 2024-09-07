@@ -52,6 +52,7 @@ class MakeStudyViewModel() : BaseViewModel()  {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
                 _isValidRepoName.value = false
                 e?.let {
                     Log.e("MakeStudyViewModel", "Exception: ${it.message}")
@@ -94,6 +95,7 @@ class MakeStudyViewModel() : BaseViewModel()  {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
                 _responseState.value = false
                 e?.let {
                     Log.e("MakeStudyViewModel", "Exception: ${it.message}")

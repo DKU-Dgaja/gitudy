@@ -131,6 +131,7 @@ class StudyApplyViewModel : BaseViewModel() {
                 }
             },
             onError = { e, response ->
+                super.handleDefaultError(e)
                 _isApplySucceed.value = false
                 e?.let {
                     Log.e("StudyApplyViewModel", "Exception: ${it.message}")

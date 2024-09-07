@@ -49,7 +49,7 @@
         tools:layout="@layout/fragment_logout_complete" />
     <fragment
         android:id="@+id/personalInfoTermFragment"
-        android:name="com.takseha.presentation.viewmodel.profile.PersonalInfoTermFragment"
+        android:name="com.takseha.presentation.ui.profile.PersonalInfoTermFragment"
         android:label="fragment_personal_info_term"
         tools:layout="@layout/fragment_personal_info_term" />
 </navigation>
