@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 public class UserNameRequest {
 
     @NotBlank(message = "이름은 공백일 수 없습니다.")
-    @Size(max = 6, message = "이름 6자 이내")
     private String name;  // 이름
 
 }
