@@ -1119,7 +1119,7 @@ public class StudyMemberServiceTest extends MockTestConfig {
         // given
         LocalDate today = LocalDate.now();
         User leader = userRepository.save(UserFixture.generateAuthUser());
-        User user = userRepository.save(UserFixture.generateAuthUser());
+        User user = userRepository.save(UserFixture.generateAuthJusung());
         StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(leader.getId()));
 
         // 모든 Todo가 과거의 날짜
@@ -1132,6 +1132,9 @@ public class StudyMemberServiceTest extends MockTestConfig {
         // 승인 대기중인 멤버
         StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user.getId(), study.getId());
         studyMemberRepository.save(waitingMember);
+
+        GithubApiToken githubApiToken = GithubApiTokenFixture.createToken("token", user.getId());
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(githubApiToken);
 
         // when
         studyMemberService.leaderApproveRefuseMember(study.getId(), user.getId(), true);
