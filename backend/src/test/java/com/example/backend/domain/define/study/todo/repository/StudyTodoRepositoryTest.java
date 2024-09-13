@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.stream.IntStream;
 
@@ -34,7 +35,6 @@ public class StudyTodoRepositoryTest extends TestConfig {
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;
-
 
     private final String expectedTitle = "Title";
     private final String expectedDetail = "Detail";
@@ -131,5 +131,29 @@ public class StudyTodoRepositoryTest extends TestConfig {
         assertEquals("A", todo.getTitle());
         assertEquals("A", todo.getDetail());
         assertEquals("A", todo.getTodoLink());
+    }
+
+    @Test
+    void 마감일이_지나지_않은_활성화된_투두를_조회한다() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        int expectedSize = 3;
+
+        // To do 5개 저장
+        studyTodoRepository.saveAll(List.of(
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "A","A", "A", today.plusDays(1)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "B","B", "B", today.plusDays(2)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "C","C", "C", today),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "D","D", "D", today.minusDays(1)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "E","E", "E", today.minusDays(2))
+        ));
+
+        // when
+        List<StudyTodo> todoList = studyTodoRepository.findByStudyInfoIdAndTodoDateGreaterThanEqual(study.getId(), today);
+
+        // then
+        assertEquals(expectedSize, todoList.size());
     }
 }
