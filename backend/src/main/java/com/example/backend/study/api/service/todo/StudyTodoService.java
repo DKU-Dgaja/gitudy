@@ -250,29 +250,25 @@ public class StudyTodoService {
     }
 
     public StudyTodoProgressResponse readStudyTodoProgress(Long userId, Long studyInfoId) {
-        // 해당 스터디에서 활동중인 스터디원 인원수
-        int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
 
         // 오늘이거나 오늘 이후의 To-do 중 가장 마감일이 빠른 To-do
         return studyTodoRepository.findStudyTodoByStudyInfoIdWithEarliestDueDate(studyInfoId)
                 .map(todo -> {
+                    // 해당 스터디에서 활동중인 스터디원 인원수
+                    int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
+
                     // 투두 완료 멤버 인원 수
                     int completeMemberCount = studyTodoMappingRepository.findCompleteTodoMappingCountByTodoId(todo.getId());
 
                     // 자신의 투두 완료 여부 확인
-                    StudyTodoMapping findTodoMapping = studyTodoMappingRepository.findByTodoIdAndUserId(
-                        todo.getId(), userId).orElseThrow(() -> {
-                        log.warn(">>>> {} <<<<",
-                            ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND.getText());
-                        throw new TodoException(ExceptionMessage.STUDY_TODO_MAPPING_NOT_FOUND);
-                    });
-
-                    return StudyTodoProgressResponse.builder()
-                        .todo(StudyTodoResponse.of(todo))
-                        .totalMemberCount(memberCount)
-                        .completeMemberCount(completeMemberCount)
-                        .myStatus(findTodoMapping.getStatus())
-                        .build();
+                    return studyTodoMappingRepository.findByTodoIdAndUserId(todo.getId(), userId)
+                            .map(todoMapping -> StudyTodoProgressResponse.builder()
+                                    .todo(StudyTodoResponse.of(todo))
+                                    .totalMemberCount(memberCount)
+                                    .completeMemberCount(completeMemberCount)
+                                    .myStatus(todoMapping.getStatus())
+                                    .build())
+                            .orElseGet(StudyTodoProgressResponse::empty);
                 })
                 .orElseGet(StudyTodoProgressResponse::empty);
     }

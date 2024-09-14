@@ -39,6 +39,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
@@ -656,6 +657,32 @@ public class StudyTodoServiceTest extends MockTestConfig {
         assertEquals(response.getCompleteMemberCount(), expectedCompleteMemberCnt);
         assertSame(response.getMyStatus(), TODO_INCOMPLETE);
 
+    }
+
+    @Test
+    void 가장_빠른_마감일을_가진_투두_진행률_조회_시_할당받은_투두가_없을_경우_빈_객체_반환_테스트() {
+        // given
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        User leader = userRepository.save(generateAuthUser());
+        User member1 = userRepository.save(generateKaKaoUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember study_leader = StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId());
+        StudyMember koo = StudyMemberFixture.createDefaultStudyMember(member1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(study_leader, koo));
+
+        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), today));
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), study_leader.getUserId()));
+
+        // when
+        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(koo.getId(), studyInfo.getId());
+
+        // then
+        assertNull(response.getTodo());
+        assertEquals(response.getTotalMemberCount(), 0);
+        assertEquals(response.getCompleteMemberCount(), 0);
     }
 
 }

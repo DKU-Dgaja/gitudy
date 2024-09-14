@@ -18,6 +18,9 @@ public interface StudyTodoRepository extends JpaRepository<StudyTodo, Long>, Stu
 
     List<StudyTodo> findByStudyInfoIdAndTodoDateAfter(Long studyInfoId, LocalDate date);
 
+    // 마감일이 지나지 않은 투두 리스트 조회
+    List<StudyTodo> findByStudyInfoIdAndTodoDateGreaterThanEqual(Long studyId, LocalDate date);
+
     Optional<StudyTodo> findByTodoFolderName(String folderName);
 
 }
