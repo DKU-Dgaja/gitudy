@@ -38,13 +38,13 @@ class StudyCommitControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
-    @MockBean
+    @Autowired
     private StudyCommitService studyCommitService;
 
-    @MockBean
+    @Autowired
     private StudyMemberService studyMemberService;
 
     @Autowired

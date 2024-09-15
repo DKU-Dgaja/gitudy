@@ -42,10 +42,10 @@ class NoticeControllerTest extends MockTestConfig {
     @Autowired
     private JwtService jwtService;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
-    @MockBean
+    @Autowired
     private NoticeService noticeService;
 
 

@@ -46,7 +46,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
     @Autowired
     private JwtService jwtService;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
     @Autowired
@@ -58,7 +58,7 @@ public class StudyMemberControllerTest extends MockTestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
-    @MockBean
+    @Autowired
     private StudyMemberService studyMemberService;
 
     @Autowired

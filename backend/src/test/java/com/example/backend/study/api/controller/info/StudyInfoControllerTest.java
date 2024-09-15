@@ -55,7 +55,7 @@ class StudyInfoControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
     @Autowired
@@ -67,16 +67,19 @@ class StudyInfoControllerTest extends MockTestConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private StudyInfoService studyInfoService;
+
     @Autowired
     private StudyInfoRepository studyInfoRepository;
+
     @Autowired
     private StudyCategoryRepository studyCategoryRepository;
-    @MockBean
+
+    @Autowired
     private StudyMemberService studyMemberService;
 
-    @MockBean
+    @Autowired
     private RankingService rankingService;
 
     @AfterEach

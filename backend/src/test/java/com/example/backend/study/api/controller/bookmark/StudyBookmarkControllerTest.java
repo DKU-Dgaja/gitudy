@@ -35,10 +35,10 @@ class StudyBookmarkControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private StudyBookmarkService studyBookmarkService;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
     @Autowired

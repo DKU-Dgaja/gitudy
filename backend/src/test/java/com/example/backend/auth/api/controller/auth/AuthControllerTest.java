@@ -50,7 +50,7 @@ class AuthControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
     @Autowired
@@ -62,7 +62,7 @@ class AuthControllerTest extends MockTestConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private RankingService rankingService;
 
     @AfterEach

@@ -74,10 +74,10 @@ public class StudyTodoControllerTest extends MockTestConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
+    @Autowired
     private StudyTodoService studyTodoService;
 
-    @MockBean
+    @Autowired
     private StudyMemberService studyMemberService;
 
     @AfterEach

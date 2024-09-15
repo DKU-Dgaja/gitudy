@@ -52,10 +52,10 @@ class StudyCommentControllerTest extends MockTestConfig {
     @Autowired
     private StudyInfoRepository studyInfoRepository;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
-    @MockBean
+    @Autowired
     private StudyCommentService studyCommentService;
 
     @Autowired
@@ -64,7 +64,7 @@ class StudyCommentControllerTest extends MockTestConfig {
     @Autowired
     private StudyCommentRepository studyCommentRepository;
 
-    @MockBean
+    @Autowired
     private StudyMemberService studyMemberService;
 
     @AfterEach

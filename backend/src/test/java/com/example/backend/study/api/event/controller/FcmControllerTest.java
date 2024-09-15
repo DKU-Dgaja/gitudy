@@ -37,7 +37,7 @@ class FcmControllerTest extends MockTestConfig {
     @Autowired
     private JwtService jwtService;
 
-    @MockBean
+    @Autowired
     private FcmService fcmService;
 
     @Autowired

@@ -55,10 +55,10 @@ public class StudyConventionControllerTest extends MockTestConfig {
     @Autowired
     private StudyConventionRepository studyConventionRepository;
 
-    @MockBean
+    @Autowired
     private StudyMemberService studyMemberService;
 
-    @MockBean
+    @Autowired
     private StudyConventionService studyConventionService;
 
     @Autowired

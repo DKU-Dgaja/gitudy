@@ -38,13 +38,13 @@ CommitCommentControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
+    @Autowired
     private CommitCommentService commitCommentService;
 
-    @MockBean
+    @Autowired
     private StudyMemberService studyMemberService;
 
-    @MockBean
+    @Autowired
     private AuthService authService;
 
     @Autowired

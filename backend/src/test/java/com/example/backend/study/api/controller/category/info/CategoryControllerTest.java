@@ -53,9 +53,9 @@ class CategoryControllerTest extends MockTestConfig {
     @Autowired
     private UserRepository userRepository;
 
-    @MockBean
+    @Autowired
     private CategoryService categoryService;
-    @MockBean
+    @Autowired
     private AuthService authService;
 
     @Autowired
