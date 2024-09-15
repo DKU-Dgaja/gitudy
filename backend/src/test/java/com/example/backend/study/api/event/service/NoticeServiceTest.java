@@ -1,6 +1,7 @@
 package com.example.backend.study.api.event.service;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
@@ -27,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SuppressWarnings("NonAsciiCharacters")
-class NoticeServiceTest extends MockTestConfig {
+class NoticeServiceTest extends TestConfig {
 
     @Autowired
     private NoticeService noticeService;

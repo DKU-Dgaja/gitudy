@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.todo;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.todo.TodoException;
 import com.example.backend.domain.define.account.user.User;
@@ -52,7 +53,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
-public class StudyTodoServiceTest extends MockTestConfig {
+public class StudyTodoServiceTest extends TestConfig {
 
     @Autowired
     private StudyTodoRepository studyTodoRepository;

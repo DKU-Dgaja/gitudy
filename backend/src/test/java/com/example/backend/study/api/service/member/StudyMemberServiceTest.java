@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.member;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.api.service.auth.AuthService;
 import com.example.backend.auth.config.fixture.UserFixture;
@@ -55,7 +56,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class StudyMemberServiceTest extends MockTestConfig {
+public class StudyMemberServiceTest extends TestConfig {
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;

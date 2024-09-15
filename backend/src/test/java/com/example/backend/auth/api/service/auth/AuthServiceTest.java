@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoAndRankingResponse;
@@ -51,7 +52,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-class AuthServiceTest extends MockTestConfig {
+class AuthServiceTest extends TestConfig {
 
     @MockBean
     private OAuthService oAuthService;

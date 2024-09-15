@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.info;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -49,7 +50,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
-class StudyInfoServiceTest extends MockTestConfig {
+class StudyInfoServiceTest extends TestConfig {
     private final static Long LIMIT = 10L;
     private final static String SORTBY = "score";
     @Autowired
