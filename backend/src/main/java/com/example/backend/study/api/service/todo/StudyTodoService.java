@@ -249,22 +249,26 @@ public class StudyTodoService {
                 .toList();
     }
 
-    @Transactional
-    public StudyTodoProgressResponse readStudyTodoProgress(Long studyInfoId) {
-        // 해당 스터디에서 활동중인 스터디원 인원수
-        int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
+    public StudyTodoProgressResponse readStudyTodoProgress(Long userId, Long studyInfoId) {
 
         // 오늘이거나 오늘 이후의 To-do 중 가장 마감일이 빠른 To-do
         return studyTodoRepository.findStudyTodoByStudyInfoIdWithEarliestDueDate(studyInfoId)
                 .map(todo -> {
+                    // 해당 스터디에서 활동중인 스터디원 인원수
+                    int memberCount = studyMemberRepository.findActiveMembersByStudyInfoId(studyInfoId).size();
+
                     // 투두 완료 멤버 인원 수
                     int completeMemberCount = studyTodoMappingRepository.findCompleteTodoMappingCountByTodoId(todo.getId());
 
-                    return StudyTodoProgressResponse.builder()
-                            .todo(StudyTodoResponse.of(todo))
-                            .totalMemberCount(memberCount)
-                            .completeMemberCount(completeMemberCount)
-                            .build();
+                    // 자신의 투두 완료 여부 확인
+                    return studyTodoMappingRepository.findByTodoIdAndUserId(todo.getId(), userId)
+                            .map(todoMapping -> StudyTodoProgressResponse.builder()
+                                    .todo(StudyTodoResponse.of(todo))
+                                    .totalMemberCount(memberCount)
+                                    .completeMemberCount(completeMemberCount)
+                                    .myStatus(todoMapping.getStatus())
+                                    .build())
+                            .orElseGet(StudyTodoProgressResponse::empty);
                 })
                 .orElseGet(StudyTodoProgressResponse::empty);
     }

@@ -7,10 +7,12 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -22,6 +24,7 @@ import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentAddTodoBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.mystudy.AddTodoViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -49,6 +52,8 @@ class AddTodoFragment : Fragment() {
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI(view)
+
         with(binding) {
             var title = todoTitleText.text.toString()
             var detail = todoDetailText.text.toString()
@@ -176,6 +181,7 @@ class AddTodoFragment : Fragment() {
                 applyBtn.isEnabled = false
             }
             viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.resetResponseState()
                 viewModel.makeNewTodo(studyInfoId, title, todoLink, detail, todoDate)
                 viewModel.responseState.collectLatest {
                     if (it != null) {
@@ -192,6 +198,23 @@ class AddTodoFragment : Fragment() {
             }
         }
         customSetDialog.show()
+    }
+
+    private fun setupUI(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    activity?.let { KeyboardUtils.hideKeyboard(it) }
+                }
+                false
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
+        }
     }
 
     override fun onDestroyView() {

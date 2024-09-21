@@ -6,8 +6,9 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
         app:cardCornerRadius="12dp"
-        android:layout_marginBottom="24dp">
+        app:cardElevation="0.5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -18,7 +19,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/bg_feed_full_1"
+                android:src="@drawable/bg_feed_full_default"
                 app:layout_constraintBottom_toBottomOf="@+id/studyInfoLayout"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -46,9 +47,26 @@
                         style="@style/B3_1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/study_name"
                         android:textColor="@color/WHITE"
                         app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/studyEndTag"
+                        style="@style/B7_2"
+                        android:layout_width="40dp"
+                        android:layout_height="22dp"
+                        android:layout_marginLeft="8dp"
+                        android:background="@drawable/box_non_stroke_r24"
+                        android:backgroundTint="@color/WHITE"
+                        android:gravity="center"
+                        android:paddingLeft="3dp"
+                        android:paddingRight="3dp"
+                        android:text="종료"
+                        android:textColor="@color/GS_500"
+                        android:visibility="visible"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toEndOf="@+id/studyName"
                         app:layout_constraintTop_toTopOf="parent" />
 
                     <ImageView
@@ -68,7 +86,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="8dp"
-                    android:text="@string/study_commit_rule"
                     android:textColor="@color/GS_200" />
 
                 <TextView
@@ -77,7 +94,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
-                    android:text="@string/study_team_rank_full"
                     android:textColor="@color/GS_200" />
 
                 <LinearLayout
@@ -89,24 +105,32 @@
                     <TextView
                         android:id="@+id/teamScore"
                         style="@style/B7_1"
-                        android:layout_width="53dp"
-                        android:layout_height="24dp"
-                        android:background="@drawable/box_non_stroke_r6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:background="@drawable/box_non_stroke_r8_no_size"
                         android:backgroundTint="@color/BASIC_GRADIENT_TOP"
                         android:gravity="center"
-                        android:text="%d"
+                        android:minWidth="54dp"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
                         android:textColor="@color/BLACK" />
 
                     <TextView
                         android:id="@+id/totalDayCnt"
                         style="@style/B7_1"
-                        android:layout_width="53dp"
-                        android:layout_height="24dp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
                         android:layout_marginLeft="8dp"
-                        android:background="@drawable/box_non_stroke_r6"
+                        android:background="@drawable/box_non_stroke_r8_no_size"
                         android:backgroundTint="#40F2F6FA"
                         android:gravity="center"
-                        android:text="@string/study_total_day_cnt"
+                        android:minWidth="54dp"
+                        android:paddingStart="10dp"
+                        android:paddingTop="4dp"
+                        android:paddingEnd="10dp"
+                        android:paddingBottom="4dp"
                         android:textColor="@color/WHITE" />
 
                     <androidx.recyclerview.widget.RecyclerView
@@ -165,7 +189,6 @@
                     style="@style/B6_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/study_member_rv"
                     android:textColor="@color/GS_500"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"

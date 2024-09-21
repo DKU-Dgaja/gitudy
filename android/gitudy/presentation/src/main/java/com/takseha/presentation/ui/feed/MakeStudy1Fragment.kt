@@ -5,20 +5,23 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.takseha.data.dto.feed.Category
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.AllCategoryRVAdapter
 import com.takseha.presentation.databinding.FragmentMakeStudy1Binding
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.feed.MakeStudyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -28,6 +31,7 @@ class MakeStudy1Fragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MakeStudyViewModel by activityViewModels()
     private var categories = ArrayList<String>()
+    private val maxLength = 10
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +48,7 @@ class MakeStudy1Fragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI(view)
 
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.categoryState.collectLatest {
@@ -68,8 +73,11 @@ class MakeStudy1Fragment : Fragment() {
                 override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
 
                 override fun afterTextChanged(s: Editable?) {
+                    titleTextLength.text =
+                        getString(R.string.text_length, studyNameEditText.text.length, maxLength)
                     title = studyNameEditText.text.toString()
-                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
+                    nextBtn.isEnabled =
+                        title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                 }
             })
             studyDetailEditText.addTextChangedListener(object : TextWatcher {
@@ -85,7 +93,8 @@ class MakeStudy1Fragment : Fragment() {
 
                 override fun afterTextChanged(s: Editable?) {
                     detail = studyDetailEditText.text.toString()
-                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
+                    nextBtn.isEnabled =
+                        title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                 }
             })
             studyGithubLinkEditText.addTextChangedListener(object : TextWatcher {
@@ -105,7 +114,8 @@ class MakeStudy1Fragment : Fragment() {
                             ContextCompat.getColor(
                                 requireContext(),
                                 R.color.GS_400
-                            ))
+                            )
+                        )
                     }
                     validationCheckedImg.visibility = GONE
                     isValidNameBtn.visibility = VISIBLE
@@ -137,28 +147,35 @@ class MakeStudy1Fragment : Fragment() {
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
+
                         2 -> repoDesc.apply {
                             text = "영문, 숫자, ., -, _ 만 입력해주세요"
                             setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
+
                         3 -> repoDesc.apply {
                             text = "., -, _ 로 끝나지 않는 이름을 입력해주세요"
                             setTextColor(
                                 ContextCompat.getColor(
                                     requireContext(),
                                     R.color.BASIC_RED
-                                ))
+                                )
+                            )
                         }
                     }
                 } else {
                     viewLifecycleOwner.lifecycleScope.launch {
+                        viewModel.resetCorrectRepoName()
                         viewModel.checkValidRepoName(githubRepo)
+
                         viewModel.isValidRepoName.collectLatest {
                             Log.e("MakeStudy1Fragment", it.toString())
                             when (it) {
@@ -166,6 +183,7 @@ class MakeStudy1Fragment : Fragment() {
                                     repoDesc.visibility = GONE
                                     waitImg.visibility = VISIBLE
                                 }
+
                                 true -> {
                                     repoDesc.visibility = VISIBLE
                                     waitImg.visibility = GONE
@@ -175,12 +193,15 @@ class MakeStudy1Fragment : Fragment() {
                                             ContextCompat.getColor(
                                                 requireContext(),
                                                 R.color.BASIC_GREEN
-                                            ))
+                                            )
+                                        )
                                     }
                                     validationCheckedImg.visibility = VISIBLE
                                     isValidNameBtn.visibility = GONE
-                                    nextBtn.isEnabled = title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
+                                    nextBtn.isEnabled =
+                                        title.isNotEmpty() && detail.isNotEmpty() && validationCheckedImg.visibility == VISIBLE
                                 }
+
                                 false -> {
                                     repoDesc.visibility = VISIBLE
                                     waitImg.visibility = GONE
@@ -190,8 +211,10 @@ class MakeStudy1Fragment : Fragment() {
                                             ContextCompat.getColor(
                                                 requireContext(),
                                                 R.color.BASIC_RED
-                                            ))
+                                            )
+                                        )
                                     }
+                                    validationCheckedImg.visibility = GONE
                                     nextBtn.isEnabled = false
                                 }
                             }
@@ -200,10 +223,10 @@ class MakeStudy1Fragment : Fragment() {
                 }
             }
 
-            // TODO : edittext 키보드 위로 올라가도록 하는 기능 구현
-            // TODO : 카테고리 status도 state에 저장하는 기능 구현
             nextBtn.setOnClickListener {
-                val categoryIdList = (categoryListRecyclerView.adapter as? AllCategoryRVAdapter)?.getSelectedItems() ?: emptyList()
+                val categoryIdList =
+                    (categoryListRecyclerView.adapter as? AllCategoryRVAdapter)?.getSelectedItems()
+                        ?: emptyList()
                 viewModel.setStudyIntro(title, detail, githubRepo, categoryIdList)
                 val bundle = Bundle().apply {
                     putStringArrayList("categories", categories)
@@ -222,16 +245,24 @@ class MakeStudy1Fragment : Fragment() {
             val allCategoryRVAdapter = AllCategoryRVAdapter(requireContext(), categoryList)
 
             categoryListRecyclerView.adapter = allCategoryRVAdapter
-            categoryListRecyclerView.layoutManager = GridLayoutManager(requireContext(), 3)
+            categoryListRecyclerView.layoutManager =
+                StaggeredGridLayoutManager(3, StaggeredGridLayoutManager.HORIZONTAL)
 
             clickCategoryItem(allCategoryRVAdapter, categoryList)
         }
     }
 
-    private fun clickCategoryItem(allCategoryRVAdapter: AllCategoryRVAdapter, categoryList: List<Category>) {
+    private fun clickCategoryItem(
+        allCategoryRVAdapter: AllCategoryRVAdapter,
+        categoryList: List<Category>
+    ) {
         allCategoryRVAdapter.itemClick = object : AllCategoryRVAdapter.ItemClick {
             override fun onClick(view: View, position: Int) {
-                categories.add(categoryList[position].name)
+                if (categories.contains(categoryList[position].name)) {
+                    categories.remove(categoryList[position].name)
+                } else {
+                    categories.add(categoryList[position].name)
+                }
             }
         }
     }
@@ -257,6 +288,23 @@ class MakeStudy1Fragment : Fragment() {
 
         // 모든 조건을 만족
         return 4
+    }
+
+    private fun setupUI(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    activity?.let { KeyboardUtils.hideKeyboard(it) }
+                }
+                false
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
+        }
     }
 
     override fun onDestroyView() {

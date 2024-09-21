@@ -1,6 +1,7 @@
 package com.example.backend.study.api.service.info;
 
 import com.example.backend.auth.api.controller.auth.response.UserInfoResponse;
+import com.example.backend.auth.api.service.rank.RankingService;
 import com.example.backend.auth.api.service.rank.event.StudyScoreSaveEvent;
 import com.example.backend.auth.api.service.rank.event.UserScoreUpdateEvent;
 import com.example.backend.common.exception.ExceptionMessage;
@@ -59,6 +60,7 @@ public class StudyInfoService {
     private final GithubApiService githubApiService;
     private final GithubApiTokenService githubApiTokenService;
     private final ApplicationEventPublisher eventPublisher;
+    private final RankingService rankingService;
 
     @Transactional
     public StudyInfoRegisterResponse registerStudy(StudyInfoRegisterRequest request, UserInfoResponse userInfo) {
@@ -92,9 +94,7 @@ public class StudyInfoService {
         registerDefaultConvention(studyInfo.getId());
 
         // github에 스터디 레포지토리 생성
-        log.info("스터디 레포지토리를 생성하기 위해 토큰 조회 중.. (userId: {})", userInfo.getUserId());
         GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
-        log.info("스터디 레포지토리를 생성하기 위한 토큰 조회 완료 (userId: {})", userInfo.getUserId());
 
         githubApiService.createRepository(token.githubApiToken(), studyInfo.getRepositoryInfo(), "README.md를 작성해주세요.");
 
@@ -127,6 +127,9 @@ public class StudyInfoService {
 
         // 스터디 멤버 상태정보 변경
         updateWithdrawalStudyMember(studyInfoId);
+
+        // 랭킹 스코어 삭제
+        rankingService.deleteStudyScore(studyInfo.getId());
 
         return true;
     }
@@ -322,14 +325,22 @@ public class StudyInfoService {
     public void checkDuplicateRepoName(UserInfoResponse userInfo, String repoName) {
 
         // 사용자의 깃허브 토큰 조회
-        log.info("레포지토리 이름 중복 체크 전 토큰 조회 중.. (userId: {})", userInfo.getUserId());
         GithubApiToken token = githubApiTokenService.getToken(userInfo.getUserId());
-        log.info("레포지토리 이름 중복 체크 전 토큰 조회 완료 (userId: {})", userInfo.getUserId());
 
         // 레포지토리 이름 중복 확인
         if (githubApiService.repositoryExists(token.githubApiToken(), userInfo.getGithubId(), repoName)) {
             log.error(">>>> [ {} : {} ] <<<<", ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS.getText(), repoName);
             throw new GithubApiException(ExceptionMessage.GITHUB_API_REPOSITORY_ALREADY_EXISTS);
         }
+    }
+    @Transactional
+    public boolean closeStudy(Long studyInfoId) {
+        // 스터디 조회 예외처리
+        StudyInfo studyInfo = findStudyInfoByIdOrThrowException(studyInfoId);
+
+        // 스터디 상태정보 변경
+        studyInfo.updateInactiveStudy();
+
+        return true;
     }
 }

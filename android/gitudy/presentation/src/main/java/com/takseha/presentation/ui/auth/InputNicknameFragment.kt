@@ -3,12 +3,13 @@ package com.takseha.presentation.ui.auth
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -19,6 +20,8 @@ import com.google.android.material.snackbar.Snackbar
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentInputNicknameBinding
 import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
+import com.takseha.presentation.firebase.MyFirebaseMessagingService
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.auth.RegisterViewModel
 import kotlinx.coroutines.launch
 
@@ -30,8 +33,6 @@ class InputNicknameFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
     }
 
     override fun onCreateView(
@@ -44,6 +45,9 @@ class InputNicknameFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
+        setupUI(view)
 
         // registerInfoState 업데이트
         val args: InputNicknameFragmentArgs by navArgs()
@@ -116,41 +120,47 @@ class InputNicknameFragment : Fragment() {
             isNameOkBtn.setOnClickListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     var name = inputNicknameEditText.text.toString()
+
+                    viewModel.resetCorrectName()
                     viewModel.checkNickname(name)
-                    val isCorrectName = viewModel.isCorrectName.value
-                    Log.e("InputNicknameFragment", isCorrectName.toString())
-                    if (isCorrectName == true) {
-                        nicknameLengthWithMax.apply {
-                            text = getString(R.string.alert_name_ok)
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.GS_500
-                                )
-                            )
+                    viewModel.isCorrectName.collect {
+                        if (it != null) {
+                            if (it) {
+                                nicknameLengthWithMax.apply {
+                                    text = getString(R.string.alert_name_ok)
+                                    setTextColor(
+                                        ContextCompat.getColor(requireContext(), R.color.GS_500)
+                                    )
+                                }
+                                isNameOkBtn.visibility = GONE
+                                validationCheckedImg.visibility = VISIBLE
+                                confirmBtn.isEnabled = true
+                            } else {
+                                nicknameLengthWithMax.apply {
+                                    text = getString(R.string.alert_name_not_ok)
+                                    setTextColor(
+                                        ContextCompat.getColor(requireContext(), R.color.BASIC_RED)
+                                    )
+                                }
+                                validationCheckedImg.visibility = GONE
+                                confirmBtn.isEnabled = false
+                            }
                         }
-                        isNameOkBtn.visibility = GONE
-                        validationCheckedImg.visibility = VISIBLE
-                        confirmBtn.isEnabled = true
-                    } else {
-                        nicknameLengthWithMax.apply {
-                            text = getString(R.string.alert_name_not_ok)
-                            setTextColor(
-                                ContextCompat.getColor(
-                                    requireContext(),
-                                    R.color.BASIC_RED
-                                )
-                            )
-                        }
-                        confirmBtn.isEnabled = false
                     }
                 }
             }
 
             confirmBtn.setOnClickListener {
-                viewModel.setNickname(inputNicknameEditText.text.toString())
-                it.findNavController()
-                    .navigate(R.id.action_inputNicknameFragment_to_inputIdFragment)
+                viewLifecycleOwner.lifecycleScope.launch {
+                    val fcmToken = MyFirebaseMessagingService.getFirebaseToken().toString()
+                    viewModel.apply {
+                        setNickname(inputNicknameEditText.text.toString())
+                        setFCMToken(fcmToken)
+                        getRegisterTokens()
+                    }
+                    view.findNavController()
+                        .navigate(R.id.action_inputNicknameFragment_to_loginCompleteFragment)
+                }
             }
         }
     }
@@ -181,6 +191,23 @@ class InputNicknameFragment : Fragment() {
         }
 
         return snackBar
+    }
+
+    private fun setupUI(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    activity?.let { KeyboardUtils.hideKeyboard(it) }
+                }
+                false
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
+        }
     }
 
     override fun onDestroyView() {

@@ -39,10 +39,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.*;
 
 import static com.example.backend.auth.config.fixture.UserFixture.*;
 import static com.example.backend.domain.define.study.commit.StudyCommitFixture.createDefaultStudyCommitList;
+import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_INCOMPLETE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -487,7 +489,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
         studyInfoRepository.save(studyInfo);
 
-        StudyMember A = StudyMemberFixture.createStudyMemberLeader(member1.getId(), studyInfo.getId());
+        StudyMember A = StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId());
         StudyMember koo = StudyMemberFixture.createDefaultStudyMember(member1.getId(), studyInfo.getId());
         StudyMember Lee = StudyMemberFixture.createDefaultStudyMember(member2.getId(), studyInfo.getId());
         studyMemberRepository.saveAll(List.of(A, koo, Lee));
@@ -506,7 +508,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
         studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(studyTodoB.getId(), koo.getUserId()));
 
         // when
-        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(studyInfo.getId());
+        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(leader.getId(), studyInfo.getId());
 
         // then
         assertEquals(response.getTodo().getId(), studyTodoA.getId());
@@ -526,7 +528,7 @@ public class StudyTodoServiceTest extends MockTestConfig {
 
         // 스터디장 To do 생성
         // when
-        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(studyInfo.getId());
+        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(leader.getId(), studyInfo.getId());
 
         // then
         assertNull(response.getTodo());
@@ -570,4 +572,117 @@ public class StudyTodoServiceTest extends MockTestConfig {
         }
 
     }
+
+    @Test
+    void 가장_빠른_마감일을_가진_Todo_진행률_조회_시_자신의_완료_여부도_함께_반환한다A() {
+        // given
+        int expectedTotalMemberCnt = 3;
+        int expectedCompleteMemberCnt = 2;
+
+        User leader = userRepository.save(generateAuthUser());
+        User member1 = userRepository.save(generateKaKaoUser());
+        User member2 = userRepository.save(generateGoogleUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember A = StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId());
+        StudyMember koo = StudyMemberFixture.createDefaultStudyMember(member1.getId(), studyInfo.getId());
+        StudyMember Lee = StudyMemberFixture.createDefaultStudyMember(member2.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(A, koo, Lee));
+
+        // 스터디장 To do 생성
+        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(2));
+        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        studyTodoRepository.save(studyTodoA);
+        studyTodoRepository.save(studyTodoB);
+
+        StudyTodoMapping studyTodoMapping1 = StudyTodoFixture.createStudyTodoMapping(studyTodoA.getId(), koo.getUserId());
+        StudyTodoMapping studyTodoMapping2 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodoA.getId(), Lee.getUserId());
+        StudyTodoMapping studyTodoMapping3 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodoA.getId(), A.getUserId());
+        studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2, studyTodoMapping3));
+
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(studyTodoB.getId(), koo.getUserId()));
+
+        // when
+        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(leader.getId(), studyInfo.getId());
+
+        // then
+        assertEquals(response.getTodo().getId(), studyTodoA.getId());
+        assertEquals(response.getTodo().getTitle(), studyTodoA.getTitle());
+        assertEquals(response.getTotalMemberCount(), expectedTotalMemberCnt);
+        assertEquals(response.getCompleteMemberCount(), expectedCompleteMemberCnt);
+        assertSame(response.getMyStatus(), TODO_COMPLETE);
+
+    }
+
+    @Test
+    void 가장_빠른_마감일을_가진_Todo_진행률_조회_시_자신의_완료_여부도_함께_반환한다B() {
+        // given
+        int expectedTotalMemberCnt = 3;
+        int expectedCompleteMemberCnt = 1;
+
+        User leader = userRepository.save(generateAuthUser());
+        User member1 = userRepository.save(generateKaKaoUser());
+        User member2 = userRepository.save(generateGoogleUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember study_leader = StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId());
+        StudyMember koo = StudyMemberFixture.createDefaultStudyMember(member1.getId(), studyInfo.getId());
+        StudyMember Lee = StudyMemberFixture.createDefaultStudyMember(member2.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(study_leader, koo, Lee));
+
+        // 스터디장 To do 생성
+        StudyTodo studyTodoA = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(2));
+        StudyTodo studyTodoB = StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), LocalDate.now().plusDays(3));
+        studyTodoRepository.save(studyTodoA);
+        studyTodoRepository.save(studyTodoB);
+
+        StudyTodoMapping studyTodoMapping1 = StudyTodoFixture.createStudyTodoMapping(studyTodoA.getId(), koo.getUserId());
+        StudyTodoMapping studyTodoMapping2 = StudyTodoFixture.createInCompleteStudyTodoMapping(studyTodoA.getId(), Lee.getUserId());
+        StudyTodoMapping studyTodoMapping3 = StudyTodoFixture.createCompleteStudyTodoMapping(studyTodoA.getId(), study_leader.getUserId());
+        studyTodoMappingRepository.saveAll(List.of(studyTodoMapping1, studyTodoMapping2, studyTodoMapping3));
+
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(studyTodoB.getId(), koo.getUserId()));
+
+        // when
+        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(Lee.getUserId(), studyInfo.getId());
+
+        // then
+        assertEquals(response.getTodo().getId(), studyTodoA.getId());
+        assertEquals(response.getTodo().getTitle(), studyTodoA.getTitle());
+        assertEquals(response.getTotalMemberCount(), expectedTotalMemberCnt);
+        assertEquals(response.getCompleteMemberCount(), expectedCompleteMemberCnt);
+        assertSame(response.getMyStatus(), TODO_INCOMPLETE);
+
+    }
+
+    @Test
+    void 가장_빠른_마감일을_가진_투두_진행률_조회_시_할당받은_투두가_없을_경우_빈_객체_반환_테스트() {
+        // given
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        User leader = userRepository.save(generateAuthUser());
+        User member1 = userRepository.save(generateKaKaoUser());
+
+        StudyInfo studyInfo = StudyInfoFixture.createDefaultPublicStudyInfo(leader.getId());
+        studyInfoRepository.save(studyInfo);
+
+        StudyMember study_leader = StudyMemberFixture.createStudyMemberLeader(leader.getId(), studyInfo.getId());
+        StudyMember koo = StudyMemberFixture.createDefaultStudyMember(member1.getId(), studyInfo.getId());
+        studyMemberRepository.saveAll(List.of(study_leader, koo));
+
+        StudyTodo todo = studyTodoRepository.save(StudyTodoFixture.createStudyTodoByTodoDate(studyInfo.getId(), today));
+        studyTodoMappingRepository.save(StudyTodoFixture.createStudyTodoMapping(todo.getId(), study_leader.getUserId()));
+
+        // when
+        StudyTodoProgressResponse response = studyTodoService.readStudyTodoProgress(koo.getId(), studyInfo.getId());
+
+        // then
+        assertNull(response.getTodo());
+        assertEquals(response.getTotalMemberCount(), 0);
+        assertEquals(response.getCompleteMemberCount(), 0);
+    }
+
 }

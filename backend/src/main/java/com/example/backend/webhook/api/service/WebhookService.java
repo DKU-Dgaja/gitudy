@@ -90,7 +90,8 @@ public class WebhookService {
                 .name(user.getName())
                 .studyInfoId(study.getId())
                 .studyTopic(study.getTopic())
-                .studyTodoTopic(todo.getTitle()));
+                .studyTodoTopic(todo.getTitle())
+                .build());
     }
 
     private User validateAndGetUser(String username, StudyInfo study) {

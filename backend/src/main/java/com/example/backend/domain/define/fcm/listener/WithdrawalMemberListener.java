@@ -32,8 +32,8 @@ public class WithdrawalMemberListener {
 
             fcmService.sendMessageSingleDevice(FcmSingleTokenRequest.builder()
                     .token(fcmToken.getFcmToken())
-                    .title("(깃털 이모티콘)깃리링")
-                    .message(event.getWithdrawalMemberName() + "님이 " + event.getStudyInfoTopic() + " 스터디를 떠났습니다.")
+                    .title("[" + event.getStudyInfoTopic() + "] 팀원 스터디 탈퇴")
+                    .message(event.getWithdrawalMemberName() + "님이 탈퇴하였습니다.🥲\n앞으로의 스터디도 화이팅!")
                     .build());
         }
 

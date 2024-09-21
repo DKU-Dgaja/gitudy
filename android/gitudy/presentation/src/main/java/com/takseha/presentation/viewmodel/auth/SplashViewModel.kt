@@ -2,6 +2,7 @@ import android.util.Log
 import com.takseha.data.dto.auth.login.RoleStatus
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
 import com.takseha.presentation.viewmodel.common.BaseViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 
@@ -19,19 +20,20 @@ class SplashViewModel : BaseViewModel() {
                     val role = response.body()?.role
                     _availableTokenCheck.value =
                         !(role == RoleStatus.WITHDRAW || role == RoleStatus.UNAUTH)
-                } else {
-                    if (response.code() == 401 || response.code() == 403) {
-                        // 토큰 재발급
-                        _availableTokenCheck.value = false
-                    } else {
-                        // 기타 서버 에러
+                }
+            },
+            onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
+                e?.let {
+                    Log.e("SplashViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        if (response.code() == 400 || response.code() == 401 || response.code() == 403) {
+                            _availableTokenCheck.value = false
+                        }
+                        Log.e("SplashViewModel", "HTTP Error: ${it.code()} ${it.message()}")
                     }
-                    Log.e(
-                        "SplashViewModel",
-                        "checkTokenResponse status: ${response.code()}\ncheckTokenResponse message: ${
-                            response.errorBody()!!.string()
-                        }"
-                    )
                 }
             }
         )

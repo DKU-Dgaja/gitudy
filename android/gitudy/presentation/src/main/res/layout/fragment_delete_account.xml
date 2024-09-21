@@ -51,6 +51,19 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/deleteAccountTitleLayout" />
 
+    <ProgressBar
+        android:id="@+id/loadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="5dp"
+        android:indeterminateTint="@color/GS_400"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <RadioGroup
         android:id="@+id/deleteReasonSelectRadioGroup"
         android:layout_width="match_parent"
@@ -113,7 +126,9 @@
         android:layout_height="wrap_content"
         android:background="@drawable/box_non_stroke_r8"
         android:backgroundTint="#F3F5F7"
-        android:hint="기타 탈퇴 이유를 입력해주세요"
+        android:hint="기타 탈퇴 이유를 입력해주세요(100자 이내)"
+        android:maxLength="100"
+        android:maxLines="2"
         android:paddingStart="14dp"
         android:paddingTop="20dp"
         android:paddingEnd="14dp"

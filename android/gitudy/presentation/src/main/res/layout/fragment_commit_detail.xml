@@ -4,269 +4,275 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/BACKGROUND_BLACK"
+    android:background="@color/TRANSPARENT"
     tools:context=".ui.profile.CommitDetailFragment">
 
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
-        android:layout_height="860dp"
+        android:layout_height="match_parent"
+        android:layout_marginTop="30dp"
         android:layout_marginBottom="-20dp"
-        android:elevation="50dp"
         app:cardCornerRadius="16dp"
+        app:cardElevation="30dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
-        <androidx.constraintlayout.widget.ConstraintLayout
+        <androidx.core.widget.NestedScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:paddingLeft="22dp"
-            android:paddingRight="22dp"
-            android:paddingBottom="48dp">
+            android:fillViewport="true">
 
-            <ImageView
-                android:id="@+id/backBtn"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/ic_arrow_back"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/commitTitle"
-                style="@style/B3_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="100dp"
-                android:gravity="center"
-                android:paddingRight="10dp"
-                android:text=""
-                android:textColor="@color/GS_800"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/commitInfo"
-                style="@style/B7_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="10dp"
-                android:text=""
-                android:textColor="@color/GS_400"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
-
-            <TextView
-                android:id="@+id/commitStatus"
-                style="@style/B7_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="4dp"
-                android:layout_marginTop="10dp"
-                android:text=""
-                app:layout_constraintStart_toEndOf="@+id/commitInfo"
-                app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
-
-            <LinearLayout
-                android:id="@+id/profileLayout"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="46dp"
-                android:gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/commitInfo">
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:paddingLeft="22dp"
+                android:paddingRight="22dp"
+                android:paddingBottom="90dp">
 
                 <ImageView
-                    android:id="@+id/profileImg"
-                    android:layout_width="27dp"
-                    android:layout_height="27dp"
-                    android:layout_marginRight="6dp"
-                    android:background="@drawable/circle_non_stroke"
-                    android:clipToOutline="true" />
+                    android:id="@+id/backBtn"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ic_arrow_back"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/nickname"
-                    style="@style/B6_2"
+                    android:id="@+id/commitTitle"
+                    style="@style/B3_1"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:textColor="@color/GS_800" />
-            </LinearLayout>
-
-            <TextView
-            android:id="@+id/commitManageBtn"
-            style="@style/B7_2"
-            android:visibility="gone"
-            android:layout_width="80dp"
-            android:layout_height="32dp"
-            android:layout_marginTop="46dp"
-            android:background="@drawable/box_non_stroke_r85_black"
-            android:gravity="center"
-            android:text="승인 | 반려"
-            android:textColor="@color/WHITE"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/commitInfo" />
-
-            <LinearLayout
-                android:id="@+id/commitCheckedImg"
-                android:layout_width="80dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="46dp"
-                android:background="@drawable/box_stroke_200_r85"
-                android:gravity="center"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/commitInfo">
-
-                <ImageView
-                    android:layout_width="14dp"
-                    android:layout_height="14dp"
-                    android:layout_marginEnd="1dp"
-                    android:src="@drawable/ic_check_grey_c" />
+                    android:layout_marginTop="100dp"
+                    android:gravity="center"
+                    android:paddingRight="10dp"
+                    android:text=""
+                    android:textColor="@color/GS_800"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
-                    android:id="@+id/commitStateText"
+                    android:id="@+id/commitInfo"
                     style="@style/B7_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
                     android:text=""
-                    android:textColor="@color/GS_500" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/divider1"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="20dp"
-                android:background="@color/GS_200"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileLayout" />
-
-            <LinearLayout
-                android:id="@+id/githubLinkBtn"
-                android:layout_width="152dp"
-                android:layout_height="32dp"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/box_non_stroke_r24"
-                android:backgroundTint="#ECEFF1"
-                android:gravity="center"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/divider1">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:layout_marginRight="4dp"
-                    android:src="@drawable/ic_link" />
+                    android:textColor="@color/GS_400"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
 
                 <TextView
-                    style="@style/B6_2"
+                    android:id="@+id/commitStatus"
+                    style="@style/B7_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="커밋 내용 확인하기"
-                    android:textColor="@color/BASIC_BLUE" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="5dp"
-                android:gravity="center"
-                app:layout_constraintBottom_toTopOf="@+id/divider2"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <ImageView
-                    android:layout_width="24dp"
-                    android:layout_height="24dp"
-                    android:src="@drawable/ic_thumbs_up" />
-
-                <ImageView
-                    android:id="@+id/heartBtn"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginLeft="8dp"
-                    android:src="@drawable/ic_heart"
-                    app:layout_constraintStart_toEndOf="@+id/likeBtn"
-                    app:layout_constraintTop_toBottomOf="@+id/contentText" />
-
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/divider2"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
-                android:layout_marginTop="140dp"
-                android:background="@color/GS_200"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/githubLinkBtn" />
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/commentList"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="20dp"
-                app:layout_constraintTop_toBottomOf="@+id/divider2"
-                tools:layout_editor_absoluteX="22dp"/>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:layout_marginBottom="10dp"
-                android:gravity="bottom"
-                android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
+                    android:layout_marginLeft="4dp"
+                    android:layout_marginTop="10dp"
+                    android:text=""
+                    app:layout_constraintStart_toEndOf="@+id/commitInfo"
+                    app:layout_constraintTop_toBottomOf="@+id/commitTitle" />
 
                 <LinearLayout
-                    android:id="@+id/newCommentBox"
-                    android:layout_width="290dp"
+                    android:id="@+id/profileLayout"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="6dp"
-                    android:background="@drawable/box_non_stroke_r8"
-                    android:backgroundTint="#F3F5F7"
-                    android:gravity="center_horizontal"
-                    android:paddingLeft="16dp"
-                    android:paddingTop="10dp"
-                    android:paddingRight="16dp"
-                    app:layout_constraintBottom_toBottomOf="parent">
+                    android:layout_marginTop="46dp"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/commitInfo">
 
-                    <ScrollView
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
+                    <ImageView
+                        android:id="@+id/profileImg"
+                        android:layout_width="27dp"
+                        android:layout_height="27dp"
+                        android:layout_marginRight="6dp"
+                        android:background="@drawable/circle_non_stroke"
+                        android:clipToOutline="true" />
 
-                        <EditText
-                            android:id="@+id/newCommentBody"
-                            style="@style/B6_2"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:hint="리뷰 또는 메세지 남기기"
-                            android:paddingBottom="10dp"
-                            android:textColor="@color/GS_900"
-                            android:textColorHint="@color/GS_500" />
-                    </ScrollView>
+                    <TextView
+                        android:id="@+id/nickname"
+                        style="@style/B6_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/GS_800" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/commitManageBtn"
+                    style="@style/B7_2"
+                    android:layout_width="80dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="46dp"
+                    android:background="@drawable/box_non_stroke_r85_black"
+                    android:gravity="center"
+                    android:text="승인 | 반려"
+                    android:textColor="@color/WHITE"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/commitInfo" />
+
+                <LinearLayout
+                    android:id="@+id/divider1"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="20dp"
+                    android:background="@color/GS_200"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/profileLayout" />
+
+                <LinearLayout
+                    android:id="@+id/githubLinkBtn"
+                    android:layout_width="152dp"
+                    android:layout_height="32dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/box_non_stroke_r24"
+                    android:backgroundTint="#ECEFF1"
+                    android:gravity="center"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider1">
+
+                    <ImageView
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:layout_marginRight="4dp"
+                        android:src="@drawable/ic_link" />
+
+                    <TextView
+                        style="@style/B6_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="커밋 내용 확인하기"
+                        android:textColor="@color/BASIC_BLUE" />
 
                 </LinearLayout>
 
-                <Button
-                    android:id="@+id/postBtn"
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="5dp"
+                    android:gravity="center"
+                    app:layout_constraintBottom_toTopOf="@+id/divider2"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <ImageView
+                        android:id="@+id/thumbBtn"
+                        android:layout_width="24dp"
+                        android:layout_height="24dp"
+                        android:src="@drawable/ic_thumbs_up" />
+
+                    <ImageView
+                        android:id="@+id/heartBtn"
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="8dp"
+                        android:src="@drawable/ic_heart"
+                        app:layout_constraintStart_toEndOf="@+id/likeBtn"
+                        app:layout_constraintTop_toBottomOf="@+id/contentText" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/divider2"
+                    android:layout_width="match_parent"
+                    android:layout_height="2dp"
+                    android:layout_marginTop="140dp"
+                    android:background="@color/GS_200"
+                    android:orientation="horizontal"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/githubLinkBtn" />
+
+                <TextView
+                    android:id="@+id/isNoCommentLayout"
                     style="@style/B6_2"
-                    android:layout_width="69dp"
-                    android:layout_height="38dp"
-                    android:layout_marginBottom="1dp"
-                    android:background="@drawable/selector_btn_r8_enable"
-                    android:enabled="false"
-                    android:text="@string/post"
-                    android:textColor="@drawable/selector_text_color_enable" />
-            </LinearLayout>
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/commit_comment_recommand"
+                    android:textColor="@color/GS_400"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/commentList"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:minHeight="200dp"
+                    android:nestedScrollingEnabled="false"
+                    app:layout_constraintTop_toBottomOf="@+id/divider2" />
 
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.core.widget.NestedScrollView>
     </androidx.cardview.widget.CardView>
+
+    <LinearLayout
+        android:id="@+id/messageLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/faded_edge"
+        android:elevation="30dp"
+        android:gravity="bottom"
+        android:orientation="horizontal"
+        android:paddingStart="22dp"
+        android:paddingTop="10dp"
+        android:paddingEnd="22dp"
+        android:paddingBottom="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <LinearLayout
+            android:id="@+id/newCommentBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="6dp"
+            android:layout_weight="1"
+            android:background="@drawable/box_non_stroke_r8"
+            android:backgroundTint="#F3F5F7"
+            android:gravity="center_horizontal"
+            android:paddingLeft="16dp"
+            android:paddingTop="10dp"
+            android:paddingRight="16dp"
+            app:layout_constraintBottom_toBottomOf="parent">
+
+            <EditText
+                android:id="@+id/newCommentBody"
+                style="@style/B6_2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:focusableInTouchMode="true"
+                android:gravity="top|start"
+                android:hint="커밋 리뷰를 남겨보세요\n(100자 이내)"
+                android:imeOptions="actionDone"
+                android:inputType="textMultiLine"
+                android:maxLength="100"
+                android:maxLines="2"
+                android:overScrollMode="always"
+                android:paddingBottom="10dp"
+                android:scrollbars="vertical"
+                android:scrollHorizontally="false"
+                android:textColor="@color/GS_900"
+                android:textColorHint="@color/GS_500" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/postBtn"
+            style="@style/B6_2"
+            android:layout_width="69dp"
+            android:layout_height="38dp"
+            android:layout_marginBottom="1dp"
+            android:background="@drawable/selector_btn_r8_enable"
+            android:enabled="false"
+            android:text="@string/post"
+            android:textColor="@drawable/selector_text_color_enable" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

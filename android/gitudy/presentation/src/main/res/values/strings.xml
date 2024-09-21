@@ -12,6 +12,7 @@
     <string name="next">다음</string>
     <string name="text_length">%d/%d</string>
     <string name="text_length_alert">%d자 이내</string>
+    <string name="copy">복사</string>
     <string name="comment_hint">%s님에게 응원과 격려의 메시지를 남겨주세요!</string>
     <string name="commit_title">[FE] feat(#72): 커밋 상세 페이지 UI 구현</string>
     <string name="version">최신버전이에요(Beta)</string>
@@ -44,9 +45,11 @@
     <string name="study_name">단국알고깃터디</string>
     <string name="study_no_my_study">가입 중인 스터디가 없어요</string>
     <string name="study_commit_rule">주 1회 커밋 필수</string>
+    <string name="study_todo_check_num">%d/%d</string>
     <string name="study_lock">스터디 비공개</string>
     <string name="study_unlock">스터디 공개</string>
-    <string name="study_deleted">스터디 종료</string>
+    <string name="study_deleted">스터디 삭제</string>
+    <string name="study_inactive">스터디 종료</string>
     <string name="study_team_rank">%d점 • %d등</string>
     <string name="study_member_score">기여도 %d</string>
     <string name="study_team_rank_full">랭킹 %d등 • 최근활동 %s</string>
@@ -66,6 +69,7 @@
     <string name="commit_convention">ToDoCode 메세지</string>
     <string name="commit_convention_description">커밋할 때, 해당 To-Do의\nToDoCode를 커밋 메세지 맨 앞에 넣어주세요.\n띄어쓰기 한 칸은 필수!</string>
     <string name="commit_convention_ex">3Dck8A [BOJ]#1234:JAVA\n45jB9r [PROG]Lv2_34번:c++</string>
+    <string name="commit_comment_recommand">아직 등록된 리뷰가 없어요</string>
     <string name="message_select_noti">%님에게 전달할\n메시지를 선택해주세요</string>
     <string name="message_make_noti">%님에게 대신 전달할게요</string>
     <string name="send_message">알림보내기</string>
@@ -81,9 +85,11 @@
     <string name="study_quit_reason2">더 이상 스터디가 필요하지 않아요</string>
     <string name="study_quit_reason3">팀원들과 맞지 않아 불편해요</string>
     <string name="study_quit_alert_title">스터디를 탈퇴하시겠습니까?</string>
-    <string name="study_quit_alert_detail">스터디 활동 기록은 남아있어요</string>
+    <string name="study_quit_alert_detail">스터디 활동 기록은 남아있어요\n* 추후 재가입은 불가해요</string>
     <string name="study_end_alert_title">스터디를 종료하시겠습니까?</string>
-    <string name="study_end_alert_detail">스터디의 모든 활동이 종료돼요</string>
+    <string name="study_end_alert_detail">스터디의 모든 활동이 종료돼요\n(활동 기록은 볼 수 있어요)</string>
+    <string name="study_delete_alert_title">스터디를 삭제하시겠습니까?</string>
+    <string name="study_delete_alert_detail">스터디 및 스터디의 모든 활동 기록이 삭제돼요 </string>
 
     <!-- Strings related to rv_item -->
     <string name="study_score">%d점</string>
@@ -133,6 +139,7 @@
     <string name="profile_delete_account_reason2">오류가 많아요</string>
     <string name="profile_delete_account_reason3">앱 이용이 불편해요</string>
     <string name="profile_delete_account_reason4">기타</string>
+    <string name="profile_problem_solve_detail">이메일로 문제를 알려주세요\n빠르게 해결해드릴게요!</string>
     <string name="alert_logout_title">로그아웃을 하시겠습니까?</string>
     <string name="alert_logout_detail">로그아웃 시\n 참여 스터디 알림을 받지 못해요</string>
     <string name="alert_delete_account_title">회원 탈퇴를 하시겠습니까?</string>
@@ -140,7 +147,5 @@
     <string name="alert_logout_cancel">닫기</string>
     <string name="alert_logout_confirm">로그아웃</string>
     <string name="alert_delete_account_confirm">탈퇴하기</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

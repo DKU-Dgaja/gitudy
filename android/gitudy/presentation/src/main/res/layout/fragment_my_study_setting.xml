@@ -169,7 +169,19 @@
         android:layout_height="wrap_content"
         android:background="@drawable/box_non_stroke_r8_black"
         android:text="스터디 종료"
+        android:layout_marginBottom="20dp"
         android:textColor="@color/WHITE"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/studyDeleteBtn" />
+
+    <Button
+        android:id="@+id/studyDeleteBtn"
+        style="@style/B5_1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/box_non_stroke_r8"
+        android:text="스터디 삭제"
+        android:textColor="@color/BASIC_RED"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

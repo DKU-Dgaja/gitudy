@@ -2,6 +2,7 @@ package com.takseha.presentation.ui.auth
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -26,6 +27,11 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         window.statusBarColor = ContextCompat.getColor(this, R.color.BACKGROUND)
         setBinding()
+
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
 
         snackBarHelper = SnackBarHelper(this)
         lifecycleScope.launch {

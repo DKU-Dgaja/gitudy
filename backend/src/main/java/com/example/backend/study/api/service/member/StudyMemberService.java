@@ -19,6 +19,10 @@ import com.example.backend.domain.define.study.member.event.NotifyMemberEvent;
 import com.example.backend.domain.define.study.member.event.ResignMemberEvent;
 import com.example.backend.domain.define.study.member.event.WithdrawalMemberEvent;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
+import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
+import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.request.MessageRequest;
 import com.example.backend.study.api.controller.member.response.StudyMemberApplyListAndCursorIdxResponse;
@@ -28,15 +32,21 @@ import com.example.backend.study.api.service.github.GithubApiService;
 import com.example.backend.study.api.service.github.GithubApiTokenService;
 import com.example.backend.study.api.service.info.StudyInfoService;
 import com.example.backend.study.api.service.user.UserService;
+import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.backend.domain.define.study.member.constant.StudyMemberStatus.STUDY_WAITING;
 
 @Slf4j
 @Service
@@ -46,6 +56,7 @@ public class StudyMemberService {
 
     private final StudyMemberRepository studyMemberRepository;
     private final StudyTodoRepository studyTodoRepository;
+    private final StudyTodoMappingRepository studyTodoMappingRepository;
     private final StudyInfoService studyInfoService;
     private final ApplicationEventPublisher eventPublisher;
     private final UserService userService;
@@ -177,40 +188,35 @@ public class StudyMemberService {
                 throw new MemberException(ExceptionMessage.STUDY_JOIN_CODE_FAIL);
             }
         }
-        // 스터디 멤버인지확인
+
+        User findUser = userService.findUserByIdOrThrowException(user.getUserId());
+
+        // ACTIVE 상태 재가입 불가
         if (studyMemberRepository.existsStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
             log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_ALREADY_MEMBER);
             throw new MemberException(ExceptionMessage.STUDY_ALREADY_MEMBER);
         }
 
-        // 스터디 가입 신청후 이미 대기중인 멤버인지 확인
-        if (studyMemberRepository.isWaitingStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
-            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_WAITING_MEMBER);
-            throw new MemberException(ExceptionMessage.STUDY_WAITING_MEMBER);
+        // WAITING, WITHDRAWAL, RESIGNED 상태는 재가입 불가
+        if (studyMemberRepository.isMemberStatusByUserIdAndStudyInfoId(findUser.getId(), studyInfo.getId())) {
+            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_REAPPLY_MEMBER);
+            throw new MemberException(ExceptionMessage.STUDY_REAPPLY_MEMBER);
         }
 
-        // 강퇴되었던 멤버인지 확인
-        if (studyMemberRepository.isResignedStudyMemberByUserIdAndStudyInfoId(user.getUserId(), studyInfoId)) {
-            log.warn(">>>> {} : {} <<<<", user.getUserId(), ExceptionMessage.STUDY_RESIGNED_MEMBER);
-            throw new MemberException(ExceptionMessage.STUDY_RESIGNED_MEMBER);
-        }
-
-
-        // 탈퇴한 멤버인지 확인, 승인 거부된 유저인지 확인
-        Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfoId, user.getUserId());
-        if (existingMember.isPresent()) {
-            if (existingMember.get().getStatus() == StudyMemberStatus.STUDY_WITHDRAWAL || existingMember.get().getStatus() == StudyMemberStatus.STUDY_REFUSED) {
-                existingMember.get().updateStudyMemberStatus(StudyMemberStatus.STUDY_WAITING); // 상태변경
-                existingMember.get().updateSignGreeting(messageRequest.getMessage()); // 가입인사 수정
-            }
-
-        } else {
-            // '스터디 승인 대기중인 유저' 로 생성
+        // 승인 거부된 유저인지 확인
+        Optional<StudyMember> existingMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), findUser.getId());
+        if (existingMember.isEmpty()) {
+            // 신규 가입자 StudyMember 생성
             studyMemberRepository.save(StudyMember.builder()
-                    .studyInfoId(studyInfoId)
-                    .userId(user.getUserId())
+                    .studyInfoId(studyInfo.getId())
+                    .userId(findUser.getId())
+                    .status(STUDY_WAITING)
                     .signGreeting(messageRequest.getMessage())
                     .build());
+
+        } else { // 스터디장이 승인 거부 했던 멤버
+            existingMember.get().updateStudyMemberStatus(STUDY_WAITING);
+            existingMember.get().updateSignGreeting(messageRequest.getMessage());
         }
 
         User leader = userService.findUserByIdOrThrowException(studyInfo.getUserId());
@@ -268,38 +274,17 @@ public class StudyMemberService {
 
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_ACTIVE);
 
-            // User 조회
-            User findUser = userService.findUserByStudyMemberOrThrowException(applyMember);
+            // 유저 점수 업데이트
+            User findUser = updateUserScore(applyMember);
 
-            // 스터디 가입 시 User +5점
-            findUser.addUserScore(5);
-            // 유저점수 이벤트 발생
-            eventPublisher.publishEvent(UserScoreUpdateEvent.builder()
-                    .userid(findUser.getId())
-                    .score(5)
-                    .build());
+            // 레포지토리 초대 및 수락
+            addCollaborator(studyInfo, findUser);
 
-            // 스터디장 레포지토리에 가입 성공 스터디원 Collaborator 추가
-            RepositoryInfo repoInfo = studyInfo.getRepositoryInfo();
-
-            // 스터디 레포지토리에 초대
-            log.info("레포지토리에 초대하기 전 스터디장의 토큰 조회 중.. (userId: {})", studyInfo.getUserId());
-            GithubApiToken leaderToken = githubApiTokenService.getToken(studyInfo.getUserId());
-            log.info("레포지토리에 초대하기 전 스터디장의 토큰 조회 완료 (userId: {})", studyInfo.getUserId());
-
-            githubApiService.addCollaborator(leaderToken.githubApiToken(),
-                    repoInfo, findUser.getGithubId());
-
-            // 스터디원의 초대 수락
-            log.info("레포지토리에 초대하기 전 스터디원의 토큰 조회 중.. (userId: {})", findUser.getId());
-            GithubApiToken memberToken = githubApiTokenService.getToken(findUser.getId());
-            log.info("레포지토리에 초대하기 전 스터디원의 토큰 조회 완료 (userId: {})", findUser.getId());
-
-            githubApiService.acceptInvitation(memberToken.githubApiToken(), findUser.getGithubId());
+            // 활성화되어있는 Todo를 할당
+            saveActiveTodoMapping(studyInfoId, findUser);
 
         } else {
             applyMember.updateStudyMemberStatus(StudyMemberStatus.STUDY_REFUSED);
-
         }
 
         User applyUser = userService.findUserByIdOrThrowException(applyUserId);
@@ -314,6 +299,57 @@ public class StudyMemberService {
                 .name(applyUser.getName())
                 .build());
 
+    }
+
+    private void saveActiveTodoMapping(Long studyInfoId, User findUser) {
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        List<StudyTodo> activeTodos = studyTodoRepository.findByStudyInfoIdAndTodoDateGreaterThanEqual(studyInfoId, today);
+
+        List<StudyTodoMapping> studyTodoMappings = activeTodos.stream()
+                .map(todo -> StudyTodoMapping.builder()
+                        .userId(findUser.getId())
+                        .todoId(todo.getId())
+                        .status(StudyTodoStatus.TODO_INCOMPLETE)
+                        .build())
+                .toList();
+        studyTodoMappingRepository.saveAll(studyTodoMappings);
+    }
+
+    private void addCollaborator(StudyInfo studyInfo, User findUser) {
+        // 스터디장 레포지토리에 가입 성공 스터디원 Collaborator 추가
+        RepositoryInfo repoInfo = studyInfo.getRepositoryInfo();
+
+        // 스터디 레포지토리에 초대
+        log.info("레포지토리에 초대하기 전 스터디장의 토큰 조회 중.. (userId: {})", studyInfo.getUserId());
+        GithubApiToken leaderToken = githubApiTokenService.getToken(studyInfo.getUserId());
+        log.info("레포지토리에 초대하기 전 스터디장의 토큰 조회 완료 (userId: {})", studyInfo.getUserId());
+
+        githubApiService.addCollaborator(leaderToken.githubApiToken(),
+                repoInfo, findUser.getGithubId());
+
+        // 스터디원의 초대 수락
+        log.info("레포지토리에 초대하기 전 스터디원의 토큰 조회 중.. (userId: {})", findUser.getId());
+        GithubApiToken memberToken = githubApiTokenService.getToken(findUser.getId());
+        log.info("레포지토리에 초대하기 전 스터디원의 토큰 조회 완료 (userId: {})", findUser.getId());
+
+        githubApiService.acceptInvitation(memberToken.githubApiToken(), findUser.getGithubId());
+    }
+
+    @NonNull
+    private User updateUserScore(StudyMember applyMember) {
+        // User 조회
+        User findUser = userService.findUserByStudyMemberOrThrowException(applyMember);
+
+        // 스터디 가입 시 User +5점
+        findUser.addUserScore(5);
+
+        // 유저점수 이벤트 발생
+        eventPublisher.publishEvent(UserScoreUpdateEvent.builder()
+                .userid(findUser.getId())
+                .score(5)
+                .build());
+
+        return findUser;
     }
 
     // 스터디 가입신청 목록 조회 메서드
@@ -391,7 +427,7 @@ public class StudyMemberService {
     // 대기중인 스터디원인지 확인 메서드
     private void checkMemberStatusWaiting(StudyMember studyMember) {
 
-        if (studyMember.getStatus() != StudyMemberStatus.STUDY_WAITING) {
+        if (studyMember.getStatus() != STUDY_WAITING) {
             log.warn(">>>> {} : {} <<<<", studyMember.getUserId(), ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
             throw new MemberException(ExceptionMessage.STUDY_WAITING_NOT_MEMBER);
         }

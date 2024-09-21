@@ -13,7 +13,7 @@
         android:layout_gravity="bottom"
         android:layout_marginBottom="-20dp"
         android:clipToPadding="false"
-        android:elevation="50dp"
+        app:cardElevation="30dp"
         app:cardCornerRadius="16dp"
         app:layout_constraintBottom_toBottomOf="parent">
 
@@ -73,7 +73,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/pretendard_semibold"
-                    android:text="필수 약관에 모두 동의"
+                    android:text="약관에 모두 동의"
                     android:textColor="@color/GS_400"
                     android:textSize="18sp" />
             </LinearLayout>
@@ -119,7 +119,7 @@
                     style="@style/B5_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="[필수] 개인정보 처리방침 동의"
+                    android:text="[필수] 개인정보 수집 및 이용에 대한 동의"
                     android:textColor="@color/GS_900"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
@@ -202,16 +202,6 @@
                     android:textColor="@color/GS_900"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
-
-                <ImageView
-                    android:id="@+id/detailBtn3"
-                    android:layout_width="20dp"
-                    android:layout_height="20dp"
-                    android:layout_marginLeft="8dp"
-                    android:src="@drawable/ic_arrow"
-                    app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/detailTitle3"
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <CheckBox

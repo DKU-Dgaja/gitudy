@@ -36,7 +36,6 @@ import java.util.List;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_COMPLETE;
 import static com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus.TODO_OVERDUE;
 import static com.mongodb.assertions.Assertions.assertFalse;
-import static com.mongodb.assertions.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 

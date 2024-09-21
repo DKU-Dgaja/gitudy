@@ -19,6 +19,9 @@
         <action
             android:id="@+id/action_settingHomeFragment_to_logoutCompleteFragment"
             app:destination="@id/logoutCompleteFragment" />
+        <action
+            android:id="@+id/action_settingHomeFragment_to_personalInfoTermFragment"
+            app:destination="@id/personalInfoTermFragment" />
     </fragment>
     <fragment
         android:id="@+id/customerServiceFragment"
@@ -44,4 +47,9 @@
         android:name="com.takseha.presentation.ui.profile.LogoutCompleteFragment"
         android:label="fragment_logout_complete"
         tools:layout="@layout/fragment_logout_complete" />
+    <fragment
+        android:id="@+id/personalInfoTermFragment"
+        android:name="com.takseha.presentation.ui.profile.PersonalInfoTermFragment"
+        android:label="fragment_personal_info_term"
+        tools:layout="@layout/fragment_personal_info_term" />
 </navigation>

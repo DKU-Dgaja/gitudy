@@ -59,7 +59,7 @@ jobs:
     needs: test
     steps:
     - name: Upload Report
-      uses: 'actions/upload-artifact@v2'
+      uses: 'actions/upload-artifact@v3'
       with:
         name: report.xml
         path: ${{ github.workspace }}/backend/build/reports/jacoco/test/jacocoTestReport.xml

@@ -17,12 +17,11 @@ import com.takseha.presentation.firebase.MyFirebaseMessagingService
 import com.takseha.presentation.ui.auth.LoginActivity
 import com.takseha.presentation.ui.common.SnackBarHelper
 import com.takseha.presentation.ui.home.MainHomeActivity
-import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class SplashActivity : AppCompatActivity() {
-    private val viewModel: SplashViewModel by viewModels()
+    private val splashViewModel: SplashViewModel by viewModels()
     private lateinit var prefs: SP
     private lateinit var snackBarHelper: SnackBarHelper
 
@@ -34,21 +33,21 @@ class SplashActivity : AppCompatActivity() {
 
         snackBarHelper = SnackBarHelper(this)
         lifecycleScope.launch {
-            viewModel.snackbarMessage.collectLatest { message ->
+            splashViewModel.snackbarMessage.collectLatest { message ->
                 message?.let {
                     if (it.isNotBlank()) {
                         snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
-                        viewModel.resetSnackbarMessage()
+                        splashViewModel.resetSnackbarMessage()
                     }
                 }
             }
         }
 
         lifecycleScope.launch {
-            viewModel.checkAvailableToken()
+            splashViewModel.checkAvailableToken()
             val fcmToken = MyFirebaseMessagingService.getFirebaseToken().toString()
             Log.d("SplashActivity", "access token: ${prefs.loadPref(SPKey.ACCESS_TOKEN, "0")}\nrefresh token: ${prefs.loadPref(SPKey.REFRESH_TOKEN, "0")}\nfcm token: $fcmToken")
-            viewModel.availableTokenCheck.collectLatest {
+            splashViewModel.availableTokenCheck.collectLatest {
                 if (it != null) {
                     setMainHome(it)
                     Log.d("SplashActivity", it.toString())

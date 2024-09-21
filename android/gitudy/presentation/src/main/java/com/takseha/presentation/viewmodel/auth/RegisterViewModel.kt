@@ -26,28 +26,8 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
     private val _registerInfoState = MutableStateFlow(RegisterRequest())
     val registerInfoState = _registerInfoState.asStateFlow()
 
-    private var _isCorrectId = MutableLiveData<Boolean>()
-    val isCorrectId : LiveData<Boolean>
-        get() = _isCorrectId
-
-    private var _isCorrectName = MutableLiveData<Boolean>()
-    val isCorrectName : LiveData<Boolean>
-        get() = _isCorrectName
-
-    suspend fun checkGithubId(githubId: String) {
-        githubRepository = GithubRepository()
-        safeApiCall(
-            apiCall = { githubRepository.checkCorrectGithubId(githubId) },
-            onSuccess = { response ->
-                if (response.isSuccessful) {
-                    _isCorrectId.value = true
-                } else {
-                    _isCorrectId.value = false
-                    Log.e("RegisterViewModel", "githubResponse status: ${response.code()}\ngithubResponse message: ${response.message()}")
-                }
-            }
-        )
-    }
+    private val _isCorrectName = MutableStateFlow<Boolean?>(null)
+    val isCorrectName = _isCorrectName.asStateFlow()
 
     suspend fun checkNickname(name: String) {
         gitudyAuthRepository = GitudyAuthRepository()
@@ -57,22 +37,33 @@ class RegisterViewModel(application: Application) : BaseApplicationViewModel(app
             onSuccess = { response ->
                 if (response.isSuccessful) {
                     _isCorrectName.value = true
-                } else {
-                    _isCorrectName.value = false
-                    Log.e("RegisterViewModel", "correctNameResponse status: ${response.code()}\ncorrectNameResponse message: ${response.message()}")
+                }
+            },
+            onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
+                _isCorrectName.value = false
+                e?.let {
+                    Log.e("RegisterViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("RegisterViewModel", "HTTP Error: $it")
+                    }
                 }
             }
         )
     }
+
+    fun resetCorrectName() {
+        _isCorrectName.value = null
+    }
+
 
     fun setPushAlarmYn(isPush: Boolean) {
         _registerInfoState.update { it.copy(pushAlarmYn = isPush) }
     }
     fun setNickname(name: String) {
         _registerInfoState.update { it.copy(name = name) }
-    }
-    fun setGithubId(githubId: String) {
-        _registerInfoState.update { it.copy(githubId = githubId) }
     }
     fun setFCMToken(fcmToken: String) {
         _registerInfoState.update { it.copy(fcmToken = fcmToken) }

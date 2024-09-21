@@ -1,5 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -12,8 +15,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.Commit
 import com.takseha.data.dto.mystudy.Todo
 import com.takseha.presentation.R
@@ -30,12 +33,14 @@ class ToDoFragment : Fragment() {
     private val viewModel: TodoViewModel by activityViewModels()
     private var studyInfoId: Int = 0
     private var isLeader: Boolean? = null
+    private var studyStatus: StudyStatus? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = requireActivity().intent?.getIntExtra("studyInfoId", 0) ?: 0
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
+        studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
         viewModel.getTodoList(studyInfoId)
     }
 
@@ -61,15 +66,17 @@ class ToDoFragment : Fragment() {
                     setTodoList(it.todoListInfo)
                 }
                 // TODO: 커밋 히스토리 함께 보기 설정
-                if (binding.commitWithTodoCheckBtn.isChecked) {
-
-                } else {
-
-                }
+//                if (binding.commitWithTodoCheckBtn.isChecked) {
+//
+//                } else {
+//
+//                }
             }
         }
 
         with(binding) {
+            if (studyStatus == StudyStatus.STUDY_INACTIVE) addTodoBtn.visibility = GONE
+
             todoSwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
                     viewModel.getTodoList(studyInfoId)
@@ -87,6 +94,7 @@ class ToDoFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         viewModel.getTodoList(studyInfoId)
     }
 
@@ -116,7 +124,11 @@ class ToDoFragment : Fragment() {
             }
 
             override fun onLinkClick(view: View, position: Int) {
-                TODO("Not yet implemented")
+                val textToCopy = todoList[position].todoLink
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("todoLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
             }
         }
     }

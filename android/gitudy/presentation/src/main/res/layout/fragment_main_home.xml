@@ -1,168 +1,185 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/BACKGROUND"
     android:clipToPadding="false"
+    android:fillViewport="true"
     tools:context=".ui.home.MainHomeFragment">
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/homeProfileLayout"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="500dp"
-        android:layout_marginTop="-20dp"
-        android:backgroundTint="#1B1B25"
-        app:cardCornerRadius="20dp"
-        app:cardElevation="7dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_height="match_parent"
+        android:paddingBottom="110dp"
+        android:clipToPadding="false">
+        <androidx.cardview.widget.CardView
+            android:id="@+id/homeProfileLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="22dp"
+            android:layout_height="500dp"
+            android:layout_marginTop="-20dp"
+            android:backgroundTint="#1B1B25"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="7dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="22dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="22dp"
+                android:layout_marginBottom="35dp">
+
+
+                <ImageView
+                    android:id="@+id/alarmBtn"
+                    android:layout_width="36dp"
+                    android:layout_height="36dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ic_alarm_white"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/profileProgressBar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="210dp"
+                    android:layout_height="210dp"
+                    android:layout_centerInParent="true"
+                    android:layout_marginTop="50dp"
+                    android:padding="5dp"
+                    android:progressDrawable="@drawable/progress_bar_c"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/characterImg" />
+
+                <ImageView
+                    android:id="@+id/characterImg"
+                    android:layout_width="250dp"
+                    android:layout_height="250dp"
+                    android:layout_marginTop="60dp"
+                    android:padding="-30dp"
+                    android:src="@drawable/character_bebe_to_15"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
+                    android:id="@+id/nickname"
+                    style="@style/B2_1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="15dp"
+                    android:gravity="center"
+                    android:text=""
+                    android:textColor="@color/WHITE"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/profileProgressBar" />
+
+                <ImageView
+                    android:id="@+id/editBtn"
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginLeft="3dp"
+                    android:layout_marginTop="20dp"
+                    android:src="@drawable/ic_pencil"
+                    app:layout_constraintStart_toEndOf="@+id/nickname"
+                    app:layout_constraintTop_toBottomOf="@+id/profileProgressBar" />
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/box_stroke_200_r21"
+                    android:gravity="center"
+                    android:paddingLeft="10dp"
+                    android:paddingRight="10dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/nickname">
+
+                    <TextView
+                        android:id="@+id/scoreAndRank"
+                        style="@style/B6_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/home_my_rank"
+                        android:textColor="@color/GS_200" />
+
+                </LinearLayout>
+
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:id="@+id/isNoStudyLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="22dp"
+            android:layout_marginEnd="22dp"
             android:layout_marginTop="20dp"
-            android:layout_marginRight="22dp"
-            android:layout_marginBottom="35dp">
-
-
-            <ImageView
-                android:id="@+id/alarmBtn"
-                android:layout_width="36dp"
-                android:layout_height="36dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/ic_alarm_white"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <ProgressBar
-                android:id="@+id/profileProgressBar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="210dp"
-                android:layout_height="210dp"
-                android:layout_centerInParent="true"
-                android:layout_marginTop="50dp"
-                android:padding="5dp"
-                android:progressDrawable="@drawable/progress_bar_c"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/characterImg" />
-
-            <ImageView
-                android:id="@+id/characterImg"
-                android:layout_width="250dp"
-                android:layout_height="250dp"
-                android:layout_marginTop="60dp"
-                android:padding="-30dp"
-                android:src="@drawable/character_bebe_to_15"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/nickname"
-                style="@style/B2_1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:gravity="center"
-                android:text=""
-                android:textColor="@color/WHITE"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/profileProgressBar" />
-
-            <ImageView
-                android:id="@+id/editBtn"
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/ic_pencil"
-                app:layout_constraintStart_toEndOf="@+id/nickname"
-                app:layout_constraintTop_toBottomOf="@+id/profileProgressBar" />
+            android:backgroundTint="@color/WHITE"
+            android:visibility="gone"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="0.5dp"
+            app:layout_constraintTop_toBottomOf="@+id/todoTitle">
 
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="24dp"
-                android:background="@drawable/box_stroke_200_r21"
-                android:gravity="center"
-                android:paddingLeft="10dp"
-                android:paddingRight="10dp"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/nickname">
+                android:layout_gravity="center"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="5dp"
+                    android:src="@drawable/ic_todo_git"
+                    android:textColor="@color/GS_300" />
 
                 <TextView
-                    android:id="@+id/scoreAndRank"
-                    style="@style/B6_2"
+                    style="@style/B3_2"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/home_my_rank"
-                    android:textColor="@color/GS_200" />
-
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:text="해야 할 To-Do가 없어요"
+                    android:textColor="@color/GS_400" />
             </LinearLayout>
 
+        </androidx.cardview.widget.CardView>
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-    </androidx.cardview.widget.CardView>
-
-    <androidx.cardview.widget.CardView
-        android:id="@+id/isNoStudyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="22dp"
-        android:layout_marginTop="32dp"
-        android:backgroundTint="@color/WHITE"
-        android:visibility="gone"
-        app:cardCornerRadius="12dp"
-        app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout">
-
-        <LinearLayout
+        <TextView
+            android:id="@+id/todoTitle"
+            style="@style/B4_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp"
-            android:orientation="vertical">
+            android:layout_marginStart="22dp"
+            android:layout_marginTop="30dp"
+            android:text="이번 주 TO-DO를 완료해주세요"
+            android:textColor="@color/GS_500"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout" />
 
-            <ImageView
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:layout_gravity="center"
-                android:layout_marginBottom="5dp"
-                android:src="@drawable/ic_plus_c_300"
-                android:textColor="@color/GS_300" />
-
-            <TextView
-                style="@style/B3_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:gravity="center"
-                android:text="@string/home_recommend"
-                android:textColor="@color/GS_400" />
-        </LinearLayout>
-
-    </androidx.cardview.widget.CardView>
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/myStudyList"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginLeft="22dp"
-        android:layout_marginTop="32dp"
-        android:layout_marginRight="22dp"
-        android:layout_marginBottom="100dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/homeProfileLayout" />
-
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/myStudyList"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="22dp"
+            android:layout_marginRight="22dp"
+            android:layout_marginTop="15dp"
+            android:nestedScrollingEnabled="false"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.core.widget.NestedScrollView>

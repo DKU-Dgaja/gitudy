@@ -1,6 +1,7 @@
 package com.takseha.presentation.ui.home
 
 import android.os.Bundle
+import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import com.takseha.presentation.viewmodel.home.MainHomeAlertViewModel
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
+import com.takseha.presentation.viewmodel.mystudy.MyStudyHomeViewModel
 import com.takseha.presentation.viewmodel.profile.ProfileHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -24,20 +26,22 @@ import kotlinx.coroutines.launch
 class MainHomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainHomeBinding
     private val mainHomeViewModel: MainHomeViewModel by viewModels()
+    private val myStudyHomeViewModel: MyStudyHomeViewModel by viewModels()
     private val feedHomeViewModel: FeedHomeViewModel by viewModels()
     private val profileHomeViewModel: ProfileHomeViewModel by viewModels()
     private lateinit var snackBarHelper: SnackBarHelper
 
-    private val callback = object : OnBackPressedCallback(true) {
-        override fun handleOnBackPressed() {
-            super.handleOnBackCancelled()
-        }
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main_home)
-        setInit()
+
+        // 뒤로가기 금지
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+            }
+        })
+
+        setBinding()
         setMainFragmentView(savedInstanceState)
 
         snackBarHelper = SnackBarHelper(this)
@@ -47,6 +51,17 @@ class MainHomeActivity : AppCompatActivity() {
                     if (it.isNotBlank()) {
                         snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
                         mainHomeViewModel.resetSnackbarMessage()
+                    }
+                }
+            }
+        }
+
+        lifecycleScope.launch {
+            myStudyHomeViewModel.snackbarMessage.collectLatest { message ->
+                message?.let {
+                    if (it.isNotBlank()) {
+                        snackBarHelper.makeSnackBar(findViewById(android.R.id.content), it).show()
+                        myStudyHomeViewModel.resetSnackbarMessage()
                     }
                 }
             }
@@ -75,18 +90,10 @@ class MainHomeActivity : AppCompatActivity() {
         }
     }
 
-    private fun setInit() {
-        setBinding()
-        setNoBackPressed()
-    }
-
     private fun setBinding() {
         binding = ActivityMainHomeBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
-    }
-    private fun setNoBackPressed() {
-        this.onBackPressedDispatcher.addCallback(this, callback)
     }
     private fun setMainFragmentView(savedInstanceState: Bundle?) {
         with(binding) {

@@ -2,18 +2,25 @@ package com.takseha.presentation.ui.profile
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.profile.Bookmark
+import com.takseha.data.dto.profile.CommitWithStudyName
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.BookmarkListRVAdapter
+import com.takseha.presentation.adapter.MyCommitListRVAdapter
 import com.takseha.presentation.databinding.FragmentProfileHomeBinding
 import com.takseha.presentation.ui.feed.StudyApplyActivity
 import com.takseha.presentation.ui.home.MainHomeAlertActivity
@@ -35,6 +42,7 @@ class ProfileHomeFragment : Fragment() {
             launch { viewModel.getUserProfileInfo() }
             launch { viewModel.getUserInfo() }
             launch { viewModel.getBookmarks(null, 3) }
+            launch { viewModel.getMyCommitLists(null, null, 3) }
         }
     }
 
@@ -65,11 +73,22 @@ class ProfileHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.bookmarksState.collectLatest { bookmarksState ->
                 if (!bookmarksState.isBookmarksEmpty) {
-                    binding.isNoBookmarkLayout.visibility = View.GONE
+                    binding.isNoBookmarkLayout.visibility = GONE
                 } else {
-                    binding.isNoBookmarkLayout.visibility = View.VISIBLE
+                    binding.isNoBookmarkLayout.visibility = VISIBLE
                 }
                 setBookmarkList(bookmarksState.bookmarksInfo)
+            }
+        }
+
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewModel.myCommitsState.collectLatest { myCommitsState ->
+                if (!myCommitsState.isMyCommitEmpty) {
+                    binding.isNoCommit.visibility = GONE
+                } else {
+                    binding.isNoCommit.visibility = VISIBLE
+                }
+                setMyCommitList(myCommitsState.commitList)
             }
         }
 
@@ -82,7 +101,13 @@ class ProfileHomeFragment : Fragment() {
                 val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
                 startActivity(intent)
             }
-            binding.bookmarkMoreBtn.setOnClickListener {
+            commitMoreBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MyCommitActivity::class.java)
+                intent.putExtra("isLeader", false)
+                intent.putExtra("studyStatus", StudyStatus.STUDY_INACTIVE)
+                startActivity(intent)
+            }
+            bookmarkMoreBtn.setOnClickListener {
                 val intent = Intent(requireContext(), BookmarksActivity::class.java)
                 startActivity(intent)
             }
@@ -95,6 +120,7 @@ class ProfileHomeFragment : Fragment() {
             launch { viewModel.getUserProfileInfo() }
             launch { viewModel.getUserInfo() }
             launch { viewModel.getBookmarks(null, 3) }
+            launch { viewModel.getMyCommitLists(null, null, 3) }
         }
     }
 
@@ -149,6 +175,7 @@ class ProfileHomeFragment : Fragment() {
                     "studyImgColor",
                     bookmarks[position].studyInfoWithIdResponse.profileImageUrl
                 )
+                intent.putExtra("studyStatus", bookmarks[position].studyInfoWithIdResponse.status)
                 startActivity(intent)
             }
 
@@ -157,6 +184,15 @@ class ProfileHomeFragment : Fragment() {
                     viewModel.setBookmarkStatus(bookmarks[position].studyInfoId, null, 3)
                 }
             }
+        }
+    }
+
+    private fun setMyCommitList(commits: List<CommitWithStudyName>) {
+        with(binding) {
+            val myCommitListRVAdapter = MyCommitListRVAdapter(requireContext(), commits)
+
+            commitList.adapter = myCommitListRVAdapter
+            commitList.layoutManager = LinearLayoutManager(requireContext())
         }
     }
 

@@ -2,8 +2,10 @@ package com.takseha.presentation.ui.feed
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
@@ -14,6 +16,7 @@ import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentStudyApplyMessageBinding
 import com.takseha.presentation.databinding.LayoutSnackbarGreyBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.feed.StudyApplyViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -41,6 +44,8 @@ class StudyApplyMessageFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI(view)
+
         with(binding) {
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
@@ -89,15 +94,37 @@ class StudyApplyMessageFragment : Fragment() {
                             binding.applyBtn.findNavController()
                                 .navigate(R.id.action_studyApplyMessageFragment_to_newStudyApplyFragment)
                         } else {
-                            makeSnackBar(getString(R.string.alert_study_apply_already_done)).apply {
-                                anchorView = binding.applyBtn
-                            }.show()
+                            viewModel.applyErrorMessage.collectLatest { errorMessage ->
+                                if (errorMessage != null) {
+                                    makeSnackBar(errorMessage).apply {
+                                        anchorView = binding.applyBtn
+                                    }.show()
+                                    viewModel.resetApplyErrorMessage()
+                                }
+                            }
                         }
                     }
                 }
             }
         }
         customSetDialog.show()
+    }
+
+    private fun setupUI(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    activity?.let { KeyboardUtils.hideKeyboard(it) }
+                }
+                false
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
+        }
     }
 
     override fun onDestroyView() {

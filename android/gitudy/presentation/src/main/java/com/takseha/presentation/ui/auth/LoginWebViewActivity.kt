@@ -81,7 +81,6 @@ class LoginWebViewActivity : AppCompatActivity() {
                     intent.putExtra("role", it.toString())
                     startActivity(intent)
                 }
-
                 return true
             }
             return false

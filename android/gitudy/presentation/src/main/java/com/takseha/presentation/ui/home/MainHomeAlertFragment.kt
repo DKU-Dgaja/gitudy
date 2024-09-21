@@ -1,10 +1,6 @@
 package com.takseha.presentation.ui.home
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Context.RECEIVER_NOT_EXPORTED
 import android.content.Intent
-import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -19,6 +15,7 @@ import androidx.navigation.findNavController
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.home.Notice
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.NoticeListRVAdapter
@@ -36,7 +33,8 @@ class MainHomeAlertFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.WHITE)
         viewModel.getNoticeList(null, 50)
     }
 
@@ -81,7 +79,8 @@ class MainHomeAlertFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.WHITE)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.getNoticeList(null, 50)
         }
@@ -93,7 +92,8 @@ class MainHomeAlertFragment : Fragment() {
             alertList.adapter = noticeListRVAdapter
             alertList.layoutManager = LinearLayoutManager(requireContext())
 
-            val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+            val itemTouchHelperCallback = object :
+                ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
                 override fun onMove(
                     recyclerView: RecyclerView,
                     viewHolder: RecyclerView.ViewHolder,
@@ -116,7 +116,11 @@ class MainHomeAlertFragment : Fragment() {
         }
     }
 
-    private fun clickNoticeItem(noticeListRVAdapter: NoticeListRVAdapter, noticeList: List<Notice>) {
+    // TODO: 추후 수정 필요
+    private fun clickNoticeItem(
+        noticeListRVAdapter: NoticeListRVAdapter,
+        noticeList: List<Notice>
+    ) {
         noticeListRVAdapter.onClickListener = object : NoticeListRVAdapter.OnClickListener {
             override fun onClick(view: View, position: Int) {
                 val notice = noticeList[position]
@@ -125,27 +129,36 @@ class MainHomeAlertFragment : Fragment() {
                     val bundle = Bundle().apply {
                         putInt("studyInfoId", notice.studyInfoId)
                     }
-                    view.findNavController().navigate(R.id.action_mainHomeAlertFragment_to_studyApplyMemberListFragment, bundle)
-                } else if (notice.title.contains("거절")) {
-                    val intent = Intent(requireContext(), StudyApplyActivity::class.java)
-                    intent.putExtra("studyInfoId", notice.studyInfoId)
+                    view.findNavController().navigate(
+                        R.id.action_mainHomeAlertFragment_to_studyApplyMemberListFragment,
+                        bundle
+                    )
+                } else if (notice.title.contains("실패")) {
+                    val intent = Intent(requireContext(), StudyApplyActivity::class.java).apply {
+                        putExtra("studyInfoId", notice.studyInfoId)
+                        putExtra("studyStatus", StudyStatus.STUDY_PUBLIC)
+                    }
                     startActivity(intent)
                 } else if (notice.title.contains("탈퇴")) {
 
                 } else if (notice.title.contains("스터디")) {
-                    val intent = Intent(requireContext(), MyStudyMainActivity::class.java)
-                    intent.putExtra("studyInfoId", notice.studyInfoId)
+                    val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
+                        putExtra("studyInfoId", notice.studyInfoId)
+                        putExtra("studyStatus", StudyStatus.STUDY_PUBLIC)
+                    }
                     startActivity(intent)
                 } else if (notice.title.contains("TO-DO 업데이트")) {
                     val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
                         putExtra("studyInfoId", notice.studyInfoId)
                         putExtra("targetFragment", "toDoFragment")
+                        putExtra("studyStatus", StudyStatus.STUDY_PUBLIC)
                     }
                     startActivity(intent)
                 } else if (notice.title.contains("커밋 승인") || notice.title.contains("커밋 반려")) {
                     val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
                         putExtra("studyInfoId", notice.studyInfoId)
                         putExtra("targetFragment", "toDoFragment")
+                        putExtra("studyStatus", StudyStatus.STUDY_PUBLIC)
                     }
                     startActivity(intent)
                 }

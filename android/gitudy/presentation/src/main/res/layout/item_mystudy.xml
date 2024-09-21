@@ -6,7 +6,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="24dp"
-        app:cardCornerRadius="12dp">
+        app:cardCornerRadius="12dp"
+        app:cardElevation="0.5dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -30,7 +31,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="2dp"
-                android:text="단국알고깃터디"
                 android:textColor="@color/GS_800"
                 app:layout_constraintStart_toEndOf="@+id/studyImg"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -49,7 +49,25 @@
                 android:paddingRight="3dp"
                 android:text="팀장"
                 android:textColor="@color/WHITE"
-                android:visibility="visible"
+                android:visibility="gone"
+                app:layout_constraintStart_toEndOf="@+id/studyName"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/studyEndTag"
+                style="@style/B7_2"
+                android:layout_width="40dp"
+                android:layout_height="22dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginTop="6dp"
+                android:background="@drawable/box_non_stroke_r24"
+                android:backgroundTint="@color/GS_300"
+                android:gravity="center"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
+                android:text="종료"
+                android:textColor="@color/GS_500"
+                android:visibility="gone"
                 app:layout_constraintStart_toEndOf="@+id/studyName"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -60,7 +78,6 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="12dp"
                 android:layout_marginTop="6dp"
-                android:text="@string/study_score"
                 android:textColor="@color/BLACK"
                 app:layout_constraintStart_toEndOf="@+id/studyImg"
                 app:layout_constraintTop_toBottomOf="@+id/studyName" />
@@ -94,7 +111,7 @@
                 android:text="@string/study_to_do_empty"
                 android:textColor="@color/BASIC_RED"
                 android:visibility="gone"
-                app:layout_constraintBottom_toTopOf="@+id/progressBar"
+                app:layout_constraintBottom_toTopOf="@+id/linearLayout4"
                 app:layout_constraintStart_toEndOf="@+id/todoImg"
                 app:layout_constraintTop_toTopOf="@+id/divider" />
 
@@ -116,7 +133,6 @@
                     android:layout_height="wrap_content"
                     android:layout_marginRight="4dp"
                     android:layout_marginBottom="4dp"
-                    android:text="@string/study_to_do"
                     android:textColor="@color/GS_700" />
 
 
@@ -139,7 +155,6 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="4dp"
-                        android:text="@string/to_do_deadline_date"
                         android:textColor="@color/GS_600" />
                 </LinearLayout>
             </LinearLayout>
@@ -150,45 +165,38 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="25dp"
-                android:text="미완료"
                 android:textColor="@color/GS_400"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider" />
 
-            <ProgressBar
-                android:id="@+id/progressBar"
-                style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                android:layout_width="290dp"
-                android:layout_height="16dp"
+            <LinearLayout
+                android:id="@+id/linearLayout4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:max="100"
-                android:progress="50"
-                android:progressDrawable="@drawable/progress_bar"
+                android:orientation="horizontal"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
+                app:layout_constraintTop_toBottomOf="@+id/todoImg">
 
-            <TextView
-                android:id="@+id/todoCheckNum"
-                style="@style/B6_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="19dp"
-                android:text="%d"
-                android:textColor="@color/GS_500"
-                app:layout_constraintEnd_toStartOf="@+id/totalNum"
-                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                    android:layout_width="0dp"
+                    android:layout_height="16dp"
+                    android:layout_marginEnd="13dp"
+                    android:layout_weight="1"
+                    android:max="100"
+                    android:progress="50"
+                    android:progressDrawable="@drawable/progress_bar" />
 
-            <TextView
-                android:id="@+id/totalNum"
-                style="@style/B6_2"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="19dp"
-                android:text="@string/study_to_do_check"
-                android:textColor="@color/GS_500"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/todoImg" />
-
+                <TextView
+                    android:id="@+id/todoCheckNum"
+                    style="@style/B6_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minWidth="35dp"
+                    android:textColor="@color/GS_500" />
+            </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.cardview.widget.CardView>
 </layout>

@@ -1,5 +1,8 @@
 package com.takseha.presentation.ui.mystudy
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -29,7 +32,7 @@ class StudyApplyMemberProfileFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.BACKGROUND_BLACK)
+        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = arguments?.getInt("studyInfoId") ?: 0
         profileInfo = arguments?.getSerializable("memberProfile") as StudyApplyMember
     }
@@ -82,7 +85,34 @@ class StudyApplyMemberProfileFragment : Fragment() {
             } else {
                 profileInfo.socialInfo!!.linkedInLink
             }
-            messageContent.text = profileInfo?.signGreeting
+            if (profileInfo?.signGreeting == null || profileInfo.signGreeting == "") {
+                messageContent.text = "메세지가 없어요"
+                messageContent.setTextColor(ContextCompat.getColor(requireContext(), R.color.GS_500))
+            } else {
+                messageContent.text = profileInfo.signGreeting
+            }
+
+            githubLinkBtn.setOnClickListener {
+                val textToCopy = profileInfo?.socialInfo?.githubLink ?: ""
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("githubLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
+            }
+            blogLinkBtn.setOnClickListener {
+                val textToCopy = profileInfo?.socialInfo?.blogLink ?: ""
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("blogLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
+            }
+            linkedinLinkBtn.setOnClickListener {
+                val textToCopy = profileInfo?.socialInfo?.linkedInLink ?: ""
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("linkedinLink", textToCopy)
+                clipboard.setPrimaryClip(clip)
+            }
         }
     }
 
@@ -105,6 +135,7 @@ class StudyApplyMemberProfileFragment : Fragment() {
                 }
             }
             viewLifecycleOwner.lifecycleScope.launch {
+                viewModel.resetResponseState()
                 viewModel.approveApplyMember(studyInfoId, applyUserId, approve)
                 viewModel.responseState.collectLatest {
                     if (it != null) {

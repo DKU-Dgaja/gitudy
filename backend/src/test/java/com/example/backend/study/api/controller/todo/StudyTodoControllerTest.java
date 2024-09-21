@@ -40,10 +40,10 @@ import java.util.Map;
 
 import static com.example.backend.auth.config.fixture.UserFixture.generateAuthUser;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -328,7 +328,7 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoProgress(any(Long.class))).thenReturn(response);
+        when(studyTodoService.readStudyTodoProgress(anyLong(), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + 1L + "/todo/progress")

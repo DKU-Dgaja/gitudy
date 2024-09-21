@@ -14,9 +14,6 @@ public class AuthRegisterRequest {
     @NotNull
     private String name;
 
-    @NotNull
-    private String githubId;
-
     private boolean pushAlarmYn;
 
     private String fcmToken;

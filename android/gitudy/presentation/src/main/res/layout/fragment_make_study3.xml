@@ -48,15 +48,15 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/makeStudyTitle" />
 
-    <ImageView
-        android:id="@+id/imgEditBtn"
-        android:layout_width="26dp"
-        android:layout_height="26dp"
-        android:layout_margin="11dp"
-        android:src="@drawable/ic_camera"
-        android:visibility="gone"
-        app:layout_constraintBottom_toBottomOf="@+id/studyImg"
-        app:layout_constraintEnd_toEndOf="@+id/studyImg" />
+<!--    <ImageView-->
+<!--        android:id="@+id/imgEditBtn"-->
+<!--        android:layout_width="26dp"-->
+<!--        android:layout_height="26dp"-->
+<!--        android:layout_margin="11dp"-->
+<!--        android:src="@drawable/ic_camera"-->
+<!--        android:visibility="visible"-->
+<!--        app:layout_constraintBottom_toBottomOf="@+id/studyImg"-->
+<!--        app:layout_constraintEnd_toEndOf="@+id/studyImg" />-->
 
     <TextView
         style="@style/B7_3"
@@ -68,6 +68,19 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studyImg" />
+
+    <ProgressBar
+        android:id="@+id/loadingIndicator"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:elevation="5dp"
+        android:indeterminateTint="@color/GS_400"
+        android:visibility="gone"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/studyFinalLayout"

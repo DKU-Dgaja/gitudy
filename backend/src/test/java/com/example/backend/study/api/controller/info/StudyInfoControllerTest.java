@@ -46,7 +46,6 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -643,5 +642,28 @@ class StudyInfoControllerTest extends MockTestConfig {
 
                 .andExpect(status().isOk());
 
+    }
+
+    @Test
+    void 스터디_종료_테스트() throws Exception {
+        // given
+        User savedUser = userRepository.save(generateAuthUser());
+        StudyInfo studyInfo = studyInfoRepository.save(generateStudyInfo(savedUser.getId()));
+        Map<String, String> map = TokenUtil.createTokenMap(savedUser);
+        String accessToken = jwtService.generateAccessToken(map, savedUser);
+
+        // when
+        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
+        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+                .thenReturn(UserInfoResponse.of(savedUser));
+
+        when(studyInfoService.closeStudy(anyLong())).thenReturn(true);
+
+        // then
+        mockMvc.perform(delete("/study/" + studyInfo.getId() + "/close")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .header(AUTHORIZATION, createAuthorizationHeader(accessToken)))
+
+                .andExpect(status().isOk());
     }
 }

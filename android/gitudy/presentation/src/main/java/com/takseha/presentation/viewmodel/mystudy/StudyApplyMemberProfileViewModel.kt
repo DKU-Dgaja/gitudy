@@ -20,14 +20,24 @@ class StudyApplyMemberProfileViewModel : BaseViewModel() {
                 if (response.isSuccessful) {
                     _responseState.value = true
                     Log.d("StudyApplyMemberProfileViewModel", response.code().toString())
-                } else {
-                    _responseState.value = false
-                    Log.e(
-                        "StudyApplyMemberProfileViewModel",
-                        "approveApplyMemberResponse status: ${response.code()}\napproveApplyMemberResponse message: ${response.errorBody()?.string()}"
-                    )
+                }
+            },
+            onError = { e, response ->
+                super.handleDefaultError(e)
+                super.resetSnackbarMessage()
+                _responseState.value = false
+                e?.let {
+                    Log.e("StudyApplyMemberProfileViewModel", "Exception: ${it.message}")
+                } ?: run {
+                    response?.let {
+                        Log.e("StudyApplyMemberProfileViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                    }
                 }
             }
         )
+    }
+
+    fun resetResponseState() {
+        _responseState.value = null
     }
 }

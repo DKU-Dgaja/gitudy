@@ -1,5 +1,8 @@
 package com.takseha.presentation.ui.profile
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -26,7 +29,17 @@ class CustomerServiceFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        binding.backBtn.setOnClickListener { it.findNavController().popBackStack() }
+
+        with(binding) {
+            backBtn.setOnClickListener { it.findNavController().popBackStack() }
+            copyBtn.setOnClickListener {
+                val textToCopy = emailAddress.text
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("emailAddress", textToCopy)
+                clipboard.setPrimaryClip(clip)
+            }
+        }
     }
 
     override fun onDestroyView() {

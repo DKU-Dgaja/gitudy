@@ -5,6 +5,7 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".ui.profile.CustomerServiceFragment">
+    
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/customerServiceTitle"
         android:layout_width="match_parent"
@@ -34,32 +35,63 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <LinearLayout
-        android:id="@+id/customerServiceAlertText"
+    
+    <TextView
+        android:id="@+id/problemSolveTitle"
+        style="@style/B2_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="22dp"
+        android:text="문제가 생겼나요?"
+        android:textColor="@color/BLACK"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customerServiceTitle" />
+
+    <TextView
+        android:id="@+id/problemSolveDetail"
+        style="@style/B4_1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:layout_marginStart="22dp"
+        android:text="@string/profile_problem_solve_detail"
+        android:textColor="@color/GS_700"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/problemSolveTitle" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:gravity="center"
-        android:orientation="vertical"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginBottom="5dp"
-            android:src="@drawable/ic_alert_300" />
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_mail"
+            android:layout_marginEnd="6dp"/>
 
         <TextView
-            style="@style/B3_2"
+            android:id="@+id/emailAddress"
+            style="@style/B4_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="@string/setting_later"
-            android:textColor="@color/GS_400" />
+            android:text="takseha98@gmail.com"
+            android:textColor="@color/GS_800" />
+
+        <TextView
+            android:id="@+id/copyBtn"
+            style="@style/B6_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:text="@string/copy"
+            android:textColor="@color/BASIC_BLUE" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

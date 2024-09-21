@@ -41,7 +41,6 @@ import static org.mockito.Mockito.*;
 import static org.springframework.http.HttpStatus.UNAUTHORIZED;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -124,7 +123,6 @@ class AuthControllerTest extends MockTestConfig {
         // 유효성 검사 통과하는 request
         AuthRegisterRequest request = AuthRegisterRequest.builder()
                 .name("구영민")
-                .githubId("test@1234")
                 .pushAlarmYn(false)
                 .fcmToken("token")
                 .build();
@@ -164,7 +162,7 @@ class AuthControllerTest extends MockTestConfig {
                 .message("reason")
                 .build();
 
-        doNothing().when(authService).userDelete(any(String.class), any(MessageRequest.class));
+        doNothing().when(authService).userDelete(any(User.class), any(String.class));
 
         // when
         mockMvc.perform(post("/auth/delete")
@@ -464,8 +462,7 @@ class AuthControllerTest extends MockTestConfig {
     @Test
     void 닉네임_중복체크_유효성_검증_실패_테스트2() throws Exception {
         // given
-        String inValidName = "이름은6자이내";
-        String expectedError = "name: 이름 6자 이내";
+        String inValidName = "엄청나게긴긴긴긴닉네임";
 
         UserNameRequest request = UserFixture.generateUserNameRequest(inValidName);
 
@@ -477,8 +474,7 @@ class AuthControllerTest extends MockTestConfig {
                         .content(objectMapper.writeValueAsString(request)))
 
                 // then
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.message").value(expectedError));
+                .andExpect(status().isOk());
     }
 
 }

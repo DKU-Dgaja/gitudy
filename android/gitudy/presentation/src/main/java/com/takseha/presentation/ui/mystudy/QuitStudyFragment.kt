@@ -2,10 +2,12 @@ package com.takseha.presentation.ui.mystudy
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import android.widget.EditText
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
@@ -14,6 +16,7 @@ import androidx.navigation.fragment.findNavController
 import com.takseha.presentation.R
 import com.takseha.presentation.databinding.FragmentQuitStudyBinding
 import com.takseha.presentation.ui.common.CustomCheckDialog
+import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.mystudy.MyStudySettingViewModel
 import kotlinx.coroutines.launch
 
@@ -39,6 +42,8 @@ class QuitStudyFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setupUI(view)
+
         with(binding) {
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
@@ -78,6 +83,23 @@ class QuitStudyFragment : Fragment() {
             }
         }
         customCheckDialog.show()
+    }
+
+    private fun setupUI(view: View) {
+        if (view !is EditText) {
+            view.setOnTouchListener { v, event ->
+                if (event.action == MotionEvent.ACTION_DOWN) {
+                    activity?.let { KeyboardUtils.hideKeyboard(it) }
+                }
+                false
+            }
+        }
+        if (view is ViewGroup) {
+            for (i in 0 until view.childCount) {
+                val innerView = view.getChildAt(i)
+                setupUI(innerView)
+            }
+        }
     }
 
     override fun onDestroyView() {

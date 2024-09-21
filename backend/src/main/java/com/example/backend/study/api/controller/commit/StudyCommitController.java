@@ -76,7 +76,7 @@ public class StudyCommitController {
     }
 
     @ApiResponse(responseCode = "200", description = "커밋 거절 성공")
-    @GetMapping("/{commitId}/reject")
+    @PostMapping("/{commitId}/reject")
     public ResponseEntity<Void> rejectCommit(@AuthenticationPrincipal User user,
                                              @RequestParam(name = "studyInfoId") Long studyInfoId,
                                              @Valid @RequestBody CommitRejectionRequest request,

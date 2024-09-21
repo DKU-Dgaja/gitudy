@@ -7,22 +7,21 @@
     android:layout_height="match_parent"
     tools:context=".ui.mystudy.MyStudyMainFragment">
 
-    <ScrollView
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="none">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingBottom="60dp">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/studyImg"
                 android:layout_width="match_parent"
                 android:layout_height="207dp"
                 android:scaleType="centerCrop"
-                android:src="@drawable/bg_mystudy_full_1"
+                android:src="@drawable/bg_mystudy_full_default"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -87,6 +86,24 @@
                     app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
+                    android:id="@+id/studyEndTag"
+                    style="@style/B6_2"
+                    android:layout_width="48dp"
+                    android:layout_height="28dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginTop="7dp"
+                    android:background="@drawable/box_non_stroke_r24"
+                    android:backgroundTint="@color/GS_300"
+                    android:gravity="center"
+                    android:paddingLeft="3dp"
+                    android:paddingRight="3dp"
+                    android:text="종료"
+                    android:textColor="@color/GS_500"
+                    android:visibility="gone"
+                    app:layout_constraintStart_toEndOf="@+id/studyName"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <TextView
                     android:id="@+id/studyRule"
                     style="@style/B6_2"
                     android:layout_width="wrap_content"
@@ -111,6 +128,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="20dp"
+                    android:nestedScrollingEnabled="true"
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                     app:layout_constraintStart_toStartOf="parent"
@@ -191,17 +209,19 @@
                     <TextView
                         android:id="@+id/studyGithubLinkText"
                         style="@style/B6_2"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
                         android:layout_height="wrap_content"
                         android:textColor="@color/GS_600" />
 
-                    <ImageView
-                        android:id="@+id/copyOkImg"
-                        android:layout_width="24dp"
-                        android:layout_height="24dp"
-                        android:layout_marginStart="10dp"
-                        android:src="@drawable/ic_copy_check"
-                        android:visibility="gone" />
+                    <TextView
+                        android:id="@+id/copyBtn"
+                        style="@style/B7_2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="6dp"
+                        android:text="@string/copy"
+                        android:textColor="@color/BASIC_BLUE" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -304,6 +324,7 @@
                                     android:textColor="@color/GS_700" />
 
                                 <ImageView
+                                    android:id="@+id/todoLinkBtn"
                                     android:layout_width="14dp"
                                     android:layout_height="14dp"
                                     android:src="@drawable/ic_link"
@@ -354,6 +375,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="10dp"
+                        android:nestedScrollingEnabled="false"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
@@ -393,6 +415,21 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider3" />
 
+                <TextView
+                    android:id="@+id/isNoCommentLayout"
+                    style="@style/B6_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="200dp"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="10dp"
+                    android:gravity="center"
+                    android:text="아직 등록된 글이 없어요"
+                    android:textColor="@color/GS_400"
+                    android:visibility="visible"
+                    app:layout_constraintBottom_toTopOf="@+id/newCommentLayout"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="@+id/studyName"
+                    app:layout_constraintTop_toBottomOf="@+id/commentListTitle" />
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/commentList"
@@ -400,22 +437,26 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="10dp"
                     android:layout_marginBottom="10dp"
+                    android:minHeight="200dp"
+                    android:nestedScrollingEnabled="false"
+                    app:layout_constraintBottom_toTopOf="@+id/newCommentLayout"
                     app:layout_constraintTop_toBottomOf="@+id/commentListTitle" />
 
                 <LinearLayout
+                    android:id="@+id/newCommentLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="56dp"
-                    android:layout_marginTop="20dp"
-                    android:layout_marginBottom="10dp"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/faded_edge"
                     android:gravity="bottom"
-                    android:orientation="horizontal"
+                    android:paddingTop="10dp"
+                    android:paddingBottom="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/commentList">
+                    app:layout_constraintStart_toStartOf="parent">
 
                     <LinearLayout
                         android:id="@+id/newCommentBox"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="6dp"
                         android:layout_weight="1"
@@ -427,23 +468,27 @@
                         android:paddingRight="16dp"
                         app:layout_constraintBottom_toBottomOf="parent">
 
-                        <ScrollView
+                        <EditText
+                            android:id="@+id/newCommentBody"
+                            style="@style/B6_2"
                             android:layout_width="match_parent"
-                            android:layout_height="match_parent">
-
-                            <EditText
-                                android:id="@+id/newCommentBody"
-                                style="@style/B6_2"
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:background="@null"
-                                android:hint="메세지 남기기"
-                                android:paddingBottom="10dp"
-                                android:textColor="@color/GS_900"
-                                android:textColorHint="@color/GS_500" />
-                        </ScrollView>
-
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:focusableInTouchMode="true"
+                            android:gravity="top|start"
+                            android:hint="팀원들에게 응원의 한마디를 남겨보세요!\n(100자 이내)"
+                            android:imeOptions="actionDone"
+                            android:inputType="textMultiLine"
+                            android:maxLength="100"
+                            android:maxLines="2"
+                            android:overScrollMode="always"
+                            android:paddingBottom="10dp"
+                            android:scrollbars="vertical"
+                            android:scrollHorizontally="false"
+                            android:textColor="@color/GS_900"
+                            android:textColorHint="@color/GS_500" />
                     </LinearLayout>
+
 
                     <Button
                         android:id="@+id/postBtn"
@@ -459,7 +504,5 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-
-    </ScrollView>
+    </androidx.core.widget.NestedScrollView>
 </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

@@ -31,6 +31,7 @@ import com.example.backend.domain.define.study.member.repository.StudyMemberRepo
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.controller.member.request.MessageRequest;
@@ -46,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.List;
 import java.util.Optional;
 
@@ -489,10 +491,10 @@ public class StudyMemberServiceTest extends MockTestConfig {
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
-        MemberException em = assertThrows(MemberException.class, () -> {
+        MemberException exception = assertThrows(MemberException.class, () -> {
             studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
-        assertEquals(ExceptionMessage.STUDY_RESIGNED_MEMBER.getText(), em.getMessage());
+        assertEquals(ExceptionMessage.STUDY_REAPPLY_MEMBER.getText(), exception.getMessage());
 
     }
 
@@ -518,17 +520,17 @@ public class StudyMemberServiceTest extends MockTestConfig {
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // then
-        MemberException em = assertThrows(MemberException.class, () -> {
+        MemberException exception = assertThrows(MemberException.class, () -> {
             studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
         });
 
-        assertEquals(ExceptionMessage.STUDY_WAITING_MEMBER.getText(), em.getMessage());
+        assertEquals(ExceptionMessage.STUDY_REAPPLY_MEMBER.getText(), exception.getMessage());
 
     }
 
     @Test
     @DisplayName("비공개 스터디 가입 신청- 참여코드가 맞는 경우")
-    public void applyStudyMember_privateStudy_joinCode_match() throws FirebaseMessagingException {
+    public void applyStudyMember_privateStudy_joinCode_match() {
         // given
         String joinCode = "joinCode";
 
@@ -610,8 +612,8 @@ public class StudyMemberServiceTest extends MockTestConfig {
 
 
     @Test
-    @DisplayName("이전에 탈퇴한 멤버가 가입 신청 테스트")
-    public void applyStudyMember_withdrawal() throws FirebaseMessagingException {
+    @DisplayName("이전에 탈퇴한 멤버가 가입 신청 불가 테스트")
+    public void applyStudyMember_withdrawal() {
         // given
         String joinCode = null;
 
@@ -630,16 +632,17 @@ public class StudyMemberServiceTest extends MockTestConfig {
         MessageRequest request = StudyMemberFixture.generateMessageRequest();
 
         // when
-        studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
-        Optional<StudyMember> waitMember = studyMemberRepository.findByStudyInfoIdAndUserId(studyInfo.getId(), user1.getId());
+        MemberException exception = assertThrows(MemberException.class, () -> {
+            studyMemberService.applyStudyMember(userInfo, studyInfo.getId(), joinCode, request);
+        });
 
         // then
-        assertEquals(StudyMemberStatus.STUDY_WAITING, waitMember.get().getStatus());
+        assertEquals("스터디 재가입이 불가능한 멤버입니다.", exception.getMessage());
     }
 
     @Test
     @DisplayName("이전에 승인 거부된 멤버가 가입 신청 테스트")
-    public void applyStudyMember_refused() throws FirebaseMessagingException {
+    public void applyStudyMember_refused() {
         // given
         String joinCode = null;
 
@@ -1050,7 +1053,6 @@ public class StudyMemberServiceTest extends MockTestConfig {
     @DisplayName("스터디 멤버가 팀장에게 알림 테스트 - 알림여부 true")
     void notify_leader_test_true() throws FirebaseMessagingException {
         // given
-
         User leader = UserFixture.generateAuthUser();
         User user1 = UserFixture.generateAuthUserPushAlarmY();
         userRepository.saveAll(List.of(leader, user1));
@@ -1072,4 +1074,78 @@ public class StudyMemberServiceTest extends MockTestConfig {
         verify(notifyLeaderListener).notifyLeaderListener(any(NotifyLeaderEvent.class)); // notifyLeaderListener 호출 검증
     }
 
+    @Test
+    void 가입이_승인된_멤버는_활성화된_투두를_성공적으로_할당받는다() {
+        // given
+        User user = userRepository.save(UserFixture.generateAuthUser());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(user.getId()));
+
+        LocalDate today = LocalDate.now(ZoneId.of("Asia/Seoul"));
+        int expectedSize = 3;
+
+        // To do 5개 저장
+        studyTodoRepository.saveAll(List.of(
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "A","A", "A", today.plusDays(1)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "B","B", "B", today.plusDays(2)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "C","C", "C", today),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "D","D", "D", today.minusDays(1)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "E","E", "E", today.minusDays(2))
+        ));
+
+        // 승인 대기중인 멤버
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user.getId(), study.getId());  // 승인 대기중 멤버 생성
+        studyMemberRepository.save(waitingMember);
+
+        GithubApiToken githubApiToken = GithubApiTokenFixture.createToken("token", user.getId());
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(githubApiToken);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(study.getId(), user.getId(), true);
+        List<StudyTodoMapping> todoMappingList = studyTodoMappingRepository.findByUserId(user.getId());
+        List<StudyTodo> assignedTodos = studyTodoRepository.findAllById(todoMappingList.stream().map(StudyTodoMapping::getTodoId).toList());
+
+        // then
+        assertEquals(expectedSize, todoMappingList.size());
+        for (var tm : todoMappingList) {
+            assertEquals(StudyTodoStatus.TODO_INCOMPLETE, tm.getStatus());
+            assertEquals(user.getId(), tm.getUserId());
+        }
+
+        assertTrue(assignedTodos.stream().allMatch(todo -> !todo.getTodoDate().isBefore(today)));
+    }
+
+    @Test
+    void 가입이_승인된_멤버는_활성화된_투두가_없을때_아무런_투두매핑이_생성되지_않는다() {
+        // given
+        LocalDate today = LocalDate.now();
+        User leader = userRepository.save(UserFixture.generateAuthUser());
+        User user = userRepository.save(UserFixture.generateAuthJusung());
+        StudyInfo study = studyInfoRepository.save(StudyInfoFixture.generateStudyInfo(leader.getId()));
+
+        // 모든 Todo가 과거의 날짜
+        studyTodoRepository.saveAll(List.of(
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "A","A", "A", today.minusDays(1)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "B","B", "B", today.minusDays(2)),
+                StudyTodoFixture.createStudyTodoCustom(study.getId(), "C","C", "C", today.minusDays(3))
+        ));
+
+        // 승인 대기중인 멤버
+        StudyMember waitingMember = StudyMemberFixture.createStudyMemberWaiting(user.getId(), study.getId());
+        studyMemberRepository.save(waitingMember);
+
+        GithubApiToken githubApiToken = GithubApiTokenFixture.createToken("token", user.getId());
+        when(githubApiTokenService.getToken(any(Long.class))).thenReturn(githubApiToken);
+
+        // when
+        studyMemberService.leaderApproveRefuseMember(study.getId(), user.getId(), true);
+        List<StudyTodoMapping> todoMappingList = studyTodoMappingRepository.findByUserId(user.getId());
+
+        // then
+        assertTrue(todoMappingList.isEmpty());
+
+        StudyMember approvedMember = studyMemberRepository.findByStudyInfoIdAndUserId(study.getId(), user.getId()).get();
+        assertEquals(StudyMemberStatus.STUDY_ACTIVE, approvedMember.getStatus());
+    }
+
 }
+

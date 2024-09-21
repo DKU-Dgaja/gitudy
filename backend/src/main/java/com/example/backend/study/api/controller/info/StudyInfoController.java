@@ -136,4 +136,14 @@ public class StudyInfoController {
 
         return ResponseEntity.ok().body(response);
     }
+    @ApiResponse(responseCode = "200", description = "스터디 종료 성공")
+    @DeleteMapping("/{studyInfoId}/close")
+    public ResponseEntity<Void> closeStudy(@AuthenticationPrincipal User user,
+                                            @PathVariable(name = "studyInfoId") Long studyInfoId) {
+        // 유저가 스터디 장이 아닐 경우 예외 발생
+        studyMemberService.isValidateStudyLeader(user, studyInfoId);
+        studyInfoService.closeStudy(studyInfoId);
+
+        return ResponseEntity.ok().build();
+    }
 }

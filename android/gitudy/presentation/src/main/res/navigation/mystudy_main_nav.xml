@@ -30,7 +30,8 @@
             app:destination="@id/addTodoFragment" />
         <action
             android:id="@+id/action_toDoFragment_to_commitDetailFragment"
-            app:destination="@id/commitDetailFragment" />
+            app:destination="@id/commitDetailFragment"
+            app:enterAnim="@anim/vertical_enter" />
     </fragment>
     <fragment
         android:id="@+id/myStudySettingFragment"
@@ -114,7 +115,8 @@
         tools:layout="@layout/fragment_study_apply_member_list" >
         <action
             android:id="@+id/action_studyApplyMemberListFragment_to_studyApplyMemberProfileFragment"
-            app:destination="@id/studyApplyMemberProfileFragment" />
+            app:destination="@id/studyApplyMemberProfileFragment"
+            app:enterAnim="@anim/vertical_enter" />
     </fragment>
     <fragment
         android:id="@+id/studyApplyMemberProfileFragment"
