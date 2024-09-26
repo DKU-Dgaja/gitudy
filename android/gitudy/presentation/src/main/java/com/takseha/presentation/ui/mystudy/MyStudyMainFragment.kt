@@ -125,6 +125,17 @@ class MyStudyMainFragment : Fragment() {
                 val clip = ClipData.newPlainText("githubLink", textToCopy)
                 clipboard.setPrimaryClip(clip)
             }
+            todoInfoBtn.setOnClickListener {
+                if(todoInfoText.visibility == GONE) {
+                    todoInfoText.visibility = VISIBLE
+                } else {
+                    todoInfoText.visibility = GONE
+                }
+            }
+            todoBox.setOnClickListener {
+                view.findNavController()
+                    .navigate(R.id.action_myStudyMainFragment_to_toDoFragment, bundle)
+            }
             todoMoreBtn.setOnClickListener {
                 view.findNavController()
                     .navigate(R.id.action_myStudyMainFragment_to_toDoFragment, bundle)

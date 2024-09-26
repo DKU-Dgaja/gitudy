@@ -14,6 +14,8 @@
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
+            android:clipToPadding="false"
+            android:clipChildren="false"
             android:layout_height="wrap_content">
 
             <ImageView
@@ -245,6 +247,43 @@
                     android:textColor="@color/GS_900"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+                <ImageView
+                    android:id="@+id/todoInfoBtn"
+                    android:layout_width="21dp"
+                    android:layout_height="21dp"
+                    android:layout_marginStart="4dp"
+                    android:layout_marginTop="37dp"
+                    android:src="@drawable/ic_info"
+                    app:layout_constraintStart_toEndOf="@+id/todoTitle"
+                    app:layout_constraintTop_toBottomOf="@+id/divider2" />
+
+                <ImageView
+                    android:id="@+id/addTodoBtn"
+                    android:layout_width="56dp"
+                    android:layout_height="56dp"
+                    android:layout_marginEnd="30dp"
+                    android:background="@drawable/circle_non_stroke"
+                    android:elevation="5dp"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_add_todo" />
+
+                <TextView
+                    android:id="@+id/todoInfoText"
+                    style="@style/B7_2"
+                    android:visibility="gone"
+                    android:layout_width="270dp"
+                    android:layout_height="55dp"
+                    android:background="@drawable/box_stroke_200_r8"
+                    android:gravity="center_vertical"
+                    android:padding="13dp"
+                    android:text="@string/study_to_do_info"
+                    android:textColor="@color/GS_400"
+                    android:layout_marginTop="6dp"
+                    android:elevation="2dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+
 
                 <TextView
                     android:id="@+id/todoMoreBtn"
