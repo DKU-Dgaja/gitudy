@@ -56,6 +56,7 @@
     <string name="study_github_link">https://github.com/%s/%s</string>
     <string name="study_noti">2월까지 프로젝트 마무리!</string>
     <string name="study_to_do">백준의 1253번 문제 풀기</string>
+    <string name="study_to_do_info">스터디 레포지토리에 있는 To-Do 폴더에 커밋하면\n커밋이 앱에 자동으로 등록돼요!</string>
     <string name="study_to_do_body">본문내용이 그렇게 많으려나?? 글자 수 제한해서 2줄 이상 안넘게 막으면 접고 펼치는거 없앨 수 있어. 그럼 더 간결해보이긴 해</string>
     <string name="to_do_deadline">마감일 </string>
     <string name="to_do_deadline_date">%d.%d.%d</string>
