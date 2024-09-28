@@ -4,8 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="48dp"
     android:clipToPadding="false"
+    android:paddingBottom="48dp"
     tools:context=".ui.mystudy.ToDoFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,6 +27,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/todoTitleText"
             style="@style/B3_1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -36,37 +37,63 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/todoInfoBtn"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="2dp"
+            android:src="@drawable/ic_info"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/todoTitleText"
+            app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-<!--    <CheckBox-->
-<!--        android:id="@+id/commitWithTodoCheckBtn"-->
-<!--        android:layout_width="22dp"-->
-<!--        android:layout_height="22dp"-->
-<!--        android:layout_marginLeft="22dp"-->
-<!--        android:layout_marginTop="22dp"-->
-<!--        android:background="@drawable/selector_ic_check_sq_checked"-->
-<!--        android:button="@null"-->
-<!--        android:checked="true"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />-->
+    <TextView
+        android:id="@+id/todoInfoText"
+        style="@style/B7_2"
+        android:layout_width="270dp"
+        android:layout_height="55dp"
+        android:background="@drawable/box_stroke_200_r8"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        android:padding="13dp"
+        android:text="@string/study_to_do_info"
+        android:textColor="@color/GS_400"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />
+    <!--    <CheckBox-->
+    <!--        android:id="@+id/commitWithTodoCheckBtn"-->
+    <!--        android:layout_width="22dp"-->
+    <!--        android:layout_height="22dp"-->
+    <!--        android:layout_marginLeft="22dp"-->
+    <!--        android:layout_marginTop="22dp"-->
+    <!--        android:background="@drawable/selector_ic_check_sq_checked"-->
+    <!--        android:button="@null"-->
+    <!--        android:checked="true"-->
+    <!--        app:layout_constraintStart_toStartOf="parent"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />-->
 
-<!--    <TextView-->
-<!--        style="@style/B6_1"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginLeft="4dp"-->
-<!--        android:layout_marginTop="22dp"-->
-<!--        android:text="커밋 히스토리 함께 보기"-->
-<!--        android:textColor="@color/GS_800"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/commitWithTodoCheckBtn"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />-->
+    <!--    <TextView-->
+    <!--        style="@style/B6_1"-->
+    <!--        android:layout_width="wrap_content"-->
+    <!--        android:layout_height="wrap_content"-->
+    <!--        android:layout_marginLeft="4dp"-->
+    <!--        android:layout_marginTop="22dp"-->
+    <!--        android:text="커밋 히스토리 함께 보기"-->
+    <!--        android:textColor="@color/GS_800"-->
+    <!--        app:layout_constraintStart_toEndOf="@+id/commitWithTodoCheckBtn"-->
+    <!--        app:layout_constraintTop_toBottomOf="@+id/todoTitle" />-->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/memberList"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginLeft="22dp"
-        android:layout_marginTop="30dp"
+        android:layout_marginTop="60dp"
         android:orientation="horizontal"
         android:visibility="gone"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -106,7 +133,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginLeft="22dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="30dp"
         android:layout_marginRight="22dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/memberList">

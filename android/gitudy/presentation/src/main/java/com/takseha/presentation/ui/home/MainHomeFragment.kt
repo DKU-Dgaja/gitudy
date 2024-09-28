@@ -4,10 +4,10 @@ import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.mystudy.TodoStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MainStudyRVAdapter
-import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMainHomeBinding
 import com.takseha.presentation.ui.mystudy.MyStudyMainActivity
 import com.takseha.presentation.viewmodel.home.MainHomeUserInfoUiState
@@ -41,6 +40,7 @@ class MainHomeFragment : Fragment() {
         lifecycleScope.launch {
             launch { viewModel.getUserInfo() }
             launch { viewModel.getMyStudyList(null, 50, "score") }
+            launch { viewModel.getAlertCount(null, 1) }
         }
     }
 
@@ -89,6 +89,7 @@ class MainHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             launch { viewModel.getUserInfo() }
             launch { viewModel.getMyStudyList(null, 50, "score") }
+            launch { viewModel.getAlertCount(null, 1) }
         }
     }
 
@@ -120,6 +121,7 @@ class MainHomeFragment : Fragment() {
             profileProgressBar.max = userInfo.progressMax
             profileProgressBar.progress = userInfo.progressScore
             characterImg.setImageResource(userInfo.characterImgSrc)
+            alarmActiveDot.visibility = if (userInfo.isAlert) VISIBLE else INVISIBLE
         }
     }
 

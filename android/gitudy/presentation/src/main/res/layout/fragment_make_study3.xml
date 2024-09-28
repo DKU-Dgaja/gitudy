@@ -82,157 +82,163 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/studyFinalLayout"
+    <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="67dp"
-        android:background="@drawable/box_stroke_300_r12"
-        android:backgroundTint="#F8F8F8"
-        android:paddingLeft="22dp"
-        android:paddingTop="32dp"
-        android:paddingRight="22dp"
-        android:paddingBottom="32dp"
+        android:paddingBottom="80dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/studyImg">
 
-        <TextView
-            android:id="@+id/studyName"
-            style="@style/B2_1"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/GS_800"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/studyDetail"
-            style="@style/B7_2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="12dp"
-            android:textColor="@color/GS_700"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyName" />
-
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/tagList"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:orientation="horizontal"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/studyDetail" />
-
-        <LinearLayout
-            android:id="@+id/divider1"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/studyFinalLayout"
             android:layout_width="match_parent"
-            android:layout_height="2dp"
-            android:layout_marginTop="20dp"
-            android:background="#F8F8F8"
-            android:orientation="horizontal"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tagList" />
-
-        <LinearLayout
-            android:id="@+id/IsStudyOpen"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="26dp"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/divider1">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/ic_lock" />
+            android:background="@drawable/box_stroke_300_r12"
+            android:backgroundTint="#F8F8F8"
+            android:paddingLeft="22dp"
+            android:paddingTop="32dp"
+            android:paddingRight="22dp"
+            android:paddingBottom="32dp">
 
             <TextView
-                android:id="@+id/isPublicStudy"
-                style="@style/B6_2"
+                android:id="@+id/studyName"
+                style="@style/B2_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/study_lock"
-                android:textColor="@color/GS_600" />
-        </LinearLayout>
-
-        <LinearLayout
-            android:id="@+id/memberNumber"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/IsStudyOpen">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/ic_people" />
+                android:textColor="@color/GS_800"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/maxMemberText"
-                style="@style/B6_2"
+                android:id="@+id/studyDetail"
+                style="@style/B7_2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/feed_member_full_number"
-                android:textColor="@color/GS_600" />
-        </LinearLayout>
+                android:layout_marginTop="12dp"
+                android:textColor="@color/GS_700"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/studyName" />
 
-        <LinearLayout
-            android:id="@+id/studyGithubLink"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/memberNumber">
-
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="10dp"
-                android:padding="3dp"
-                android:src="@drawable/logo_github" />
-
-            <TextView
-                android:id="@+id/githubRepoLink"
-                style="@style/B6_2"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tagList"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/GS_600" />
-        </LinearLayout>
+                android:layout_marginTop="15dp"
+                android:orientation="horizontal"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/studyDetail" />
 
-        <LinearLayout
-            android:id="@+id/studyRule"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="13dp"
-            android:gravity="center"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/studyGithubLink">
+            <LinearLayout
+                android:id="@+id/divider1"
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                android:layout_marginTop="20dp"
+                android:background="#F8F8F8"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tagList" />
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginRight="10dp"
-                android:src="@drawable/ic_attendance" />
-
-            <TextView
-                android:id="@+id/commitRule"
-                style="@style/B6_2"
+            <LinearLayout
+                android:id="@+id/IsStudyOpen"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/feed_rule_week"
-                android:textColor="@color/GS_600" />
-        </LinearLayout>
+                android:layout_marginTop="26dp"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider1">
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_lock" />
 
+                <TextView
+                    android:id="@+id/isPublicStudy"
+                    style="@style/B6_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/study_lock"
+                    android:textColor="@color/GS_600" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/memberNumber"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/IsStudyOpen">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_people" />
+
+                <TextView
+                    android:id="@+id/maxMemberText"
+                    style="@style/B6_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feed_member_full_number"
+                    android:textColor="@color/GS_600" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/studyGithubLink"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/memberNumber">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    android:padding="3dp"
+                    android:src="@drawable/logo_github" />
+
+                <TextView
+                    android:id="@+id/githubRepoLink"
+                    style="@style/B6_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/GS_600" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/studyRule"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="13dp"
+                android:gravity="center"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/studyGithubLink">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:layout_marginRight="10dp"
+                    android:src="@drawable/ic_attendance" />
+
+                <TextView
+                    android:id="@+id/commitRule"
+                    style="@style/B6_2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/feed_rule_week"
+                    android:textColor="@color/GS_600" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.core.widget.NestedScrollView>
     <Button
         android:id="@+id/makeStudyBtn"
         style="@style/B5_1"

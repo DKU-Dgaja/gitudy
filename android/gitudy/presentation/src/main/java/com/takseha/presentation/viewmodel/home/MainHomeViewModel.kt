@@ -9,6 +9,7 @@ import com.takseha.data.dto.feed.StudyCountResponse
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.mystudy.TodoProgressResponse
 import com.takseha.data.repository.gitudy.GitudyAuthRepository
+import com.takseha.data.repository.gitudy.GitudyNoticeRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.R
 import com.takseha.presentation.viewmodel.common.BaseViewModel
@@ -22,6 +23,7 @@ import java.io.Serializable
 class MainHomeViewModel : BaseViewModel() {
     private var gitudyAuthRepository = GitudyAuthRepository()
     private var gitudyStudyRepository = GitudyStudyRepository()
+    private val gitudyNoticeRepository = GitudyNoticeRepository()
 
     private val _uiState = MutableStateFlow(MainHomeUserInfoUiState())
     val uiState = _uiState.asStateFlow()
@@ -162,24 +164,27 @@ class MainHomeViewModel : BaseViewModel() {
        }
     }
 
-    suspend fun getStudyCount() {
+    fun getAlertCount(cursorTime: String?, limit: Long) =viewModelScope.launch {
         safeApiCall(
-            apiCall = { gitudyStudyRepository.getStudyCount(true) },
+            apiCall = { gitudyNoticeRepository.getNoticeList(cursorTime, limit) },
             onSuccess = { response ->
                 if (response.isSuccessful) {
-                    val studyCnt = response.body()!!.count
+                    val noticeList = response.body()
 
-                    _myStudyState.update {
-                        it.copy(
-                            studyCnt = studyCnt
-                        )
+                    if (noticeList?.isEmpty() != false) {
+                        _uiState.update { it.copy(
+                            isAlert = false
+                        ) }
+                    } else {
+                        _uiState.update { it.copy(
+                            isAlert = true
+                        ) }
                     }
+
                 } else {
                     Log.e(
                         "MainHomeViewModel",
-                        "studyCntResponse status: ${response.code()}\nstudyCntResponse message: ${
-                            response.errorBody()?.string()
-                        }"
+                        "isAlertResponse status: ${response.code()}\nisAlertResponse message: ${response.errorBody()?.string()}"
                     )
                 }
             }
@@ -195,14 +200,15 @@ data class MyStudyWithTodo(
 )
 
 data class MainHomeUserInfoUiState(
-    var name: String = "",
-    var score: Int = 0,
-    var githubId: String = "",
-    var profileImgUrl: String = "",
-    var rank: Int = 0,
-    var progressScore: Int = 0,
-    var progressMax: Int = 15,
-    var characterImgSrc: Int = R.drawable.character_bebe_to_15
+    val name: String = "",
+    val score: Int = 0,
+    val githubId: String = "",
+    val profileImgUrl: String = "",
+    val rank: Int = 0,
+    val progressScore: Int = 0,
+    val progressMax: Int = 15,
+    val characterImgSrc: Int = R.drawable.character_bebe_to_15,
+    val isAlert: Boolean = false
 ) : Serializable
 
 data class MainHomeMyStudyUiState(

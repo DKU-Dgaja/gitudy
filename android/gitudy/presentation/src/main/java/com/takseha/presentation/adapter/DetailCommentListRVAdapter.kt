@@ -34,8 +34,8 @@ class DetailCommentListRVAdapter(val context: Context, val commentList: List<Com
         var date = binding.dateText
         var content = binding.contentText
         var moreBtn = binding.moreBtn
-        var likeBtn = binding.likeBtn
-        var heartBtn = binding.heartBtn
+//        var likeBtn = binding.likeBtn
+//        var heartBtn = binding.heartBtn
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -66,12 +66,12 @@ class DetailCommentListRVAdapter(val context: Context, val commentList: List<Com
             // more 버튼 클릭 이벤트 처리
             showPopupMenu(v, position)
         }
-        holder.likeBtn.setOnClickListener { v ->
-            this.onClickListener?.onLikeClick(v, position)
-        }
-        holder.heartBtn.setOnClickListener { v ->
-            this.onClickListener?.onHeartClick(v, position)
-        }
+//        holder.likeBtn.setOnClickListener { v ->
+//            this.onClickListener?.onLikeClick(v, position)
+//        }
+//        holder.heartBtn.setOnClickListener { v ->
+//            this.onClickListener?.onHeartClick(v, position)
+//        }
 
     }
 
