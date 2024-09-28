@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.feed.StudyRankResponse
 import com.takseha.data.repository.gitudy.GitudyBookmarksRepository
+import com.takseha.data.repository.gitudy.GitudyNoticeRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
 import com.takseha.presentation.viewmodel.common.BaseViewModel
 import kotlinx.coroutines.async
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 class FeedHomeViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
     private var gitudyBookmarksRepository = GitudyBookmarksRepository()
+    private val gitudyNoticeRepository = GitudyNoticeRepository()
 
     private var _uiState = MutableStateFlow(FeedHomeUiState())
     val uiState = _uiState.asStateFlow()
@@ -171,13 +173,41 @@ class FeedHomeViewModel : BaseViewModel() {
             }
         )
     }
+
+    fun getAlertCount(cursorTime: String?, limit: Long) =viewModelScope.launch {
+        safeApiCall(
+            apiCall = { gitudyNoticeRepository.getNoticeList(cursorTime, limit) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val noticeList = response.body()
+
+                    if (noticeList?.isEmpty() != false) {
+                        _uiState.update { it.copy(
+                            isAlert = false
+                        ) }
+                    } else {
+                        _uiState.update { it.copy(
+                            isAlert = true
+                        ) }
+                    }
+
+                } else {
+                    Log.e(
+                        "FeedHomeViewModel",
+                        "isAlertResponse status: ${response.code()}\nisAlertResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
+            }
+        )
+    }
 }
 
 data class FeedHomeUiState(
     var studyInfoList: List<StudyInfoWithBookmarkStatus> = listOf(),
     var studyCategoryMappingMap: Map<Int, List<String>> = mapOf(),
     var studyCnt: Int? = null,
-    var isFeedEmpty: Boolean? = null
+    var isFeedEmpty: Boolean? = null,
+    val isAlert: Boolean = false
 )
 
 data class StudyInfoWithBookmarkStatus(

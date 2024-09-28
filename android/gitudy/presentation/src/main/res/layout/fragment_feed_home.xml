@@ -39,6 +39,25 @@
             app:layout_constraintStart_toEndOf="@+id/feedTitle"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/alarmBtn"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:src="@drawable/ic_alarm"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <ImageView
+            android:id="@+id/alarmActiveDot"
+            android:visibility="invisible"
+            android:layout_width="7dp"
+            android:layout_height="7dp"
+            android:layout_marginTop="7dp"
+            android:layout_marginEnd="5dp"
+            android:src="@drawable/ic_alert_active"
+            app:layout_constraintEnd_toEndOf="@id/alarmBtn"
+            app:layout_constraintTop_toTopOf="@id/alarmBtn" />
+
         <CheckBox
             android:id="@+id/enableStudyCheckBtn"
             android:layout_width="22dp"
