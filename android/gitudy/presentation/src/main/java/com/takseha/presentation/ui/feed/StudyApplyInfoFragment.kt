@@ -143,7 +143,10 @@ class StudyApplyInfoFragment : Fragment() {
                 val studyImgSrc = setStudyImg(studyImgColor.toIntOrNull() ?: 0)
                 studyImg.setImageResource(studyImgSrc)
                 studyEndTag.visibility = GONE
-                if (studyInfo.currentMember == studyInfo.maximumMember) {
+                if (studyInfo.isLeader) {
+                    studyEnterBtn.isEnabled = false
+                    studyEnterBtn.text = "이미 가입한 스터디입니다"
+                } else if(studyInfo.currentMember == studyInfo.maximumMember) {
                     studyEnterBtn.isEnabled = false
                     studyEnterBtn.text = "모집 완료"
                 } else {
