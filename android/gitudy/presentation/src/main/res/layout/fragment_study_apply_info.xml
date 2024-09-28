@@ -199,13 +199,14 @@
                             android:layout_height="wrap_content"
                             android:textColor="@color/GS_600" />
 
-                        <ImageView
-                            android:id="@+id/copyOkImg"
-                            android:layout_width="24dp"
-                            android:layout_height="24dp"
-                            android:layout_marginStart="10dp"
-                            android:src="@drawable/ic_copy_check"
-                            android:visibility="gone" />
+                        <TextView
+                            android:id="@+id/copyBtn"
+                            style="@style/B7_2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="6dp"
+                            android:text="@string/copy"
+                            android:textColor="@color/BASIC_BLUE" />
                     </LinearLayout>
 
                     <LinearLayout
