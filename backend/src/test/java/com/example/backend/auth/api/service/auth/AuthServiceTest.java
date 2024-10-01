@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.service.auth;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.auth.api.controller.auth.request.AdminLoginRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.UserInfoAndRankingResponse;
@@ -36,6 +37,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.HashMap;
@@ -52,6 +54,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class AuthServiceTest extends MockTestConfig {
+    @Value("${admin.token}")
+    private String adminToken;
+    @Value("${admin.password}")
+    private String adminPassword;
 
     @MockBean
     private OAuthService oAuthService;
@@ -458,6 +464,59 @@ class AuthServiceTest extends MockTestConfig {
         assertSame(allByUserId.get(0).getStatus(), StudyStatus.STUDY_INACTIVE);
         assertSame(StudyMemberStatus.STUDY_WITHDRAWAL, member.getStatus());
 
+    }
+
+    @Test
+    @DisplayName("Admin 로그인 - 아이디 불일치로 실패 테스트")
+    void loginAdminFailDueToIncorrectId() {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id("not_admin") // 잘못된 아이디
+                .password(adminPassword) // 올바른 패스워드
+                .build();
+
+        // then
+        UserException exception = assertThrows(UserException.class, () -> {
+            authService.loginAdmin(request);
+        });
+
+        // verify
+        assertEquals(ExceptionMessage.USER_NOT_ADMIN_ID.getText(), exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Admin 로그인 - 패스워드 불일치로 실패 테스트")
+    void loginAdminFailDueToIncorrectPassword() {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id("admin") // 올바른 아이디
+                .password("wrongPassword") // 잘못된 패스워드
+                .build();
+
+        // then
+        UserException exception = assertThrows(UserException.class, () -> {
+            authService.loginAdmin(request);
+        });
+
+        // verify
+        assertEquals(ExceptionMessage.USER_NOT_ADMIN_PASSWORD.getText(), exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Admin 로그인 성공 테스트")
+    void loginAdminSuccess() {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id("admin") // 올바른 아이디
+                .password(adminPassword) // 올바른 패스워드
+                .build();
+
+        // when
+        AuthLoginResponse response = authService.loginAdmin(request);
+
+        // then
+        assertNotNull(response);
+        assertEquals(adminToken, response.getAccessToken());
     }
 
 }
