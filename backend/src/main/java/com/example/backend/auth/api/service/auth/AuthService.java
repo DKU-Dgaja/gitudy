@@ -1,5 +1,6 @@
 package com.example.backend.auth.api.service.auth;
 
+import com.example.backend.auth.api.controller.auth.request.AdminLoginRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.response.AuthLoginResponse;
 import com.example.backend.auth.api.controller.auth.response.ReissueAccessTokenResponse;
@@ -33,6 +34,7 @@ import com.example.backend.study.api.service.info.StudyManagementService;
 import io.jsonwebtoken.Claims;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -45,6 +47,11 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
+    @Value("${admin.token}")
+    private String adminToken;
+    @Value("${admin.password}")
+    private String adminPassword;
+
     private static final String PLATFORM_ID_CLAIM = "platformId";
     private static final String PLATFORM_TYPE_CLAIM = "platformType";
     private static final String ROLE_CLAIM = "role";
@@ -315,5 +322,24 @@ public class AuthService {
             log.error(">>>> User not found for githubId {} <<<<", githubId);
             return new UserException(ExceptionMessage.USER_NOT_FOUND_WITH_GITHUB_ID);
         }).getId();
+    }
+
+    // 닉네임 중복체크 메서드
+    public AuthLoginResponse loginAdmin(AdminLoginRequest request) {
+
+        if (!request.getId().equals("admin")) {
+            log.warn(">>>> {} : {} <<<<", request.getId(), ExceptionMessage.USER_NOT_ADMIN_ID);
+            throw new UserException(ExceptionMessage.USER_NOT_ADMIN_ID);
+        }
+        if(!request.getPassword().equals(adminPassword)){
+            log.warn(">>>> {} : {} <<<<", request.getPassword(), ExceptionMessage.USER_NOT_ADMIN_PASSWORD);
+            throw new UserException(ExceptionMessage.USER_NOT_ADMIN_PASSWORD);
+        }
+
+        log.warn(">>>> [ {}님이 로그인하셨습니다 ] <<<<", request.getId());
+
+        return AuthLoginResponse.builder()
+                .accessToken(adminToken)
+                .build();
     }
 }
