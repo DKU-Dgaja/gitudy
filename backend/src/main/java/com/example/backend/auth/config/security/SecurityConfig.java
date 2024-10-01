@@ -40,6 +40,7 @@ public class SecurityConfig {
                                 .requestMatchers("/auth/loginPage").permitAll()
                                 .requestMatchers("/auth/*/login").permitAll()
                                 .requestMatchers("/auth/check-nickname").permitAll()
+                                .requestMatchers("/auth/admin").permitAll()
                                 // Others
                                 .anyRequest().hasAnyAuthority("USER", "ADMIN")
                 )
