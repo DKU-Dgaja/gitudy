@@ -50,10 +50,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SuppressWarnings("NonAsciiCharacters")
 class AuthControllerTest extends MockTestConfig {
 
-    @Value("${admin.token}")
-    private String adminToken;
-    @Value("${admin.password}")
-    private String adminPassword;
+    @Value("${tester.token}")
+    private String testerToken;
+    @Value("${tester.id}")
+    private String testerId;
+    @Value("${tester.password}")
+    private String testerPassword;
 
     @Autowired
     private MockMvc mockMvc;
@@ -491,11 +493,11 @@ class AuthControllerTest extends MockTestConfig {
         // given
         AdminLoginRequest request = AdminLoginRequest.builder()
                 .id("admin")
-                .password(adminPassword)
+                .password(testerPassword)
                 .build();
 
         AuthLoginResponse response = AuthLoginResponse.builder()
-                .accessToken(adminToken)
+                .accessToken(testerToken)
                 .build();
 
         when(authService.loginAdmin(any(AdminLoginRequest.class))).thenReturn(response);
@@ -505,7 +507,7 @@ class AuthControllerTest extends MockTestConfig {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.access_token").value(adminToken));
+                .andExpect(jsonPath("$.access_token").value(testerToken));
     }
 
     @Test
@@ -514,7 +516,7 @@ class AuthControllerTest extends MockTestConfig {
         // given
         AdminLoginRequest request = AdminLoginRequest.builder()
                 .id("not_admin") // 잘못된 아이디
-                .password(adminPassword) // 올바른 패스워드
+                .password(testerPassword) // 올바른 패스워드
                 .build();
 
         doThrow(new UserException(ExceptionMessage.USER_NOT_ADMIN_ID))
@@ -534,7 +536,7 @@ class AuthControllerTest extends MockTestConfig {
     void adminLoginFailDueToIncorrectPassword() throws Exception {
         // given
         AdminLoginRequest request = AdminLoginRequest.builder()
-                .id("admin") // 올바른 아이디
+                .id(testerId) // 올바른 아이디
                 .password("wrongPassword") // 잘못된 패스워드
                 .build();
 

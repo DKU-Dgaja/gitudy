@@ -54,10 +54,12 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 class AuthServiceTest extends MockTestConfig {
-    @Value("${admin.token}")
-    private String adminToken;
-    @Value("${admin.password}")
-    private String adminPassword;
+    @Value("${tester.token}")
+    private String testerToken;
+    @Value("${tester.id}")
+    private String testerId;
+    @Value("${tester.password}")
+    private String testerPassword;
 
     @MockBean
     private OAuthService oAuthService;
@@ -472,7 +474,7 @@ class AuthServiceTest extends MockTestConfig {
         // given
         AdminLoginRequest request = AdminLoginRequest.builder()
                 .id("not_admin") // 잘못된 아이디
-                .password(adminPassword) // 올바른 패스워드
+                .password(testerPassword) // 올바른 패스워드
                 .build();
 
         // then
@@ -489,7 +491,7 @@ class AuthServiceTest extends MockTestConfig {
     void loginAdminFailDueToIncorrectPassword() {
         // given
         AdminLoginRequest request = AdminLoginRequest.builder()
-                .id("admin") // 올바른 아이디
+                .id(testerId) // 올바른 아이디
                 .password("wrongPassword") // 잘못된 패스워드
                 .build();
 
@@ -507,8 +509,8 @@ class AuthServiceTest extends MockTestConfig {
     void loginAdminSuccess() {
         // given
         AdminLoginRequest request = AdminLoginRequest.builder()
-                .id("admin") // 올바른 아이디
-                .password(adminPassword) // 올바른 패스워드
+                .id(testerId) // 올바른 아이디
+                .password(testerPassword) // 올바른 패스워드
                 .build();
 
         // when
@@ -516,7 +518,7 @@ class AuthServiceTest extends MockTestConfig {
 
         // then
         assertNotNull(response);
-        assertEquals(adminToken, response.getAccessToken());
+        assertEquals(testerToken, response.getAccessToken());
     }
 
 }

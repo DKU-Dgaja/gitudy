@@ -47,10 +47,12 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class AuthService {
-    @Value("${admin.token}")
-    private String adminToken;
-    @Value("${admin.password}")
-    private String adminPassword;
+    @Value("${tester.token}")
+    private String testerToken;
+    @Value("${tester.id}")
+    private String testerId;
+    @Value("${tester.password}")
+    private String testerPassword;
 
     private static final String PLATFORM_ID_CLAIM = "platformId";
     private static final String PLATFORM_TYPE_CLAIM = "platformType";
@@ -327,11 +329,11 @@ public class AuthService {
     // 닉네임 중복체크 메서드
     public AuthLoginResponse loginAdmin(AdminLoginRequest request) {
 
-        if (!request.getId().equals("admin")) {
+        if (!request.getId().equals(testerId)) {
             log.warn(">>>> {} : {} <<<<", request.getId(), ExceptionMessage.USER_NOT_ADMIN_ID);
             throw new UserException(ExceptionMessage.USER_NOT_ADMIN_ID);
         }
-        if(!request.getPassword().equals(adminPassword)){
+        if(!request.getPassword().equals(testerPassword)){
             log.warn(">>>> {} : {} <<<<", request.getPassword(), ExceptionMessage.USER_NOT_ADMIN_PASSWORD);
             throw new UserException(ExceptionMessage.USER_NOT_ADMIN_PASSWORD);
         }
@@ -339,7 +341,7 @@ public class AuthService {
         log.warn(">>>> [ {}님이 로그인하셨습니다 ] <<<<", request.getId());
 
         return AuthLoginResponse.builder()
-                .accessToken(adminToken)
+                .accessToken(testerToken)
                 .build();
     }
 }
