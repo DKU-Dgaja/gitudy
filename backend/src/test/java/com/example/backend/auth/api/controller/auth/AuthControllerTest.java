@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.auth.api.controller.auth.request.AdminLoginRequest;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
@@ -16,6 +17,7 @@ import com.example.backend.auth.api.service.rank.RankingService;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.user.UserException;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -46,6 +49,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SuppressWarnings("NonAsciiCharacters")
 class AuthControllerTest extends MockTestConfig {
+
+    @Value("${tester.token}")
+    private String testerToken;
+    @Value("${tester.id}")
+    private String testerId;
+    @Value("${tester.password}")
+    private String testerPassword;
 
     @Autowired
     private MockMvc mockMvc;
@@ -477,4 +487,68 @@ class AuthControllerTest extends MockTestConfig {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("Admin 로그인 성공 테스트")
+    void adminLoginSuccessTest() throws Exception {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id("admin")
+                .password(testerPassword)
+                .build();
+
+        AuthLoginResponse response = AuthLoginResponse.builder()
+                .accessToken(testerToken)
+                .build();
+
+        when(authService.loginAdmin(any(AdminLoginRequest.class))).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(post("/auth/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").value(testerToken));
+    }
+
+    @Test
+    @DisplayName("Admin 로그인 실패 테스트 - 잘못된 아이디로 로그인 시도")
+    void adminLoginFailDueToIncorrectId() throws Exception {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id("not_admin") // 잘못된 아이디
+                .password(testerPassword) // 올바른 패스워드
+                .build();
+
+        doThrow(new UserException(ExceptionMessage.USER_NOT_ADMIN_ID))
+                .when(authService)
+                .loginAdmin(any(AdminLoginRequest.class));
+
+        // when & then
+        mockMvc.perform(post("/auth/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.USER_NOT_ADMIN_ID.getText()));
+    }
+
+    @Test
+    @DisplayName("Admin 로그인 실패 테스트 - 잘못된 패스워드로 로그인 시도")
+    void adminLoginFailDueToIncorrectPassword() throws Exception {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id(testerId) // 올바른 아이디
+                .password("wrongPassword") // 잘못된 패스워드
+                .build();
+
+        doThrow(new UserException(ExceptionMessage.USER_NOT_ADMIN_PASSWORD))
+                .when(authService)
+                .loginAdmin(any(AdminLoginRequest.class));
+
+        // when & then
+        mockMvc.perform(post("/auth/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.USER_NOT_ADMIN_PASSWORD.getText()));
+    }
 }

@@ -42,6 +42,8 @@ public enum ExceptionMessage {
     USER_NOT_FOUND("데이터베이스에서 사용자를 찾을 수 없습니다."),
     USER_NAME_DUPLICATION("중복된 이름입니다."),
     USER_NOT_FOUND_WITH_GITHUB_ID("깃허브 계정에 해당하는 사용자를 찾을 수 없습니다."),
+    USER_NOT_ADMIN_ID("관리자의 아이디가 아닙니다."),
+    USER_NOT_ADMIN_PASSWORD("관리자의 패스워드가 아닙니다.."),
 
     // CommitException
     COMMIT_NOT_FOUND("커밋 정보를 찾을 수 없습니다."),

@@ -1,5 +1,6 @@
 package com.example.backend.auth.api.controller.auth;
 
+import com.example.backend.auth.api.controller.auth.request.AdminLoginRequest;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
@@ -186,4 +187,12 @@ public class AuthController {
         return ResponseEntity.ok().build();
     }
 
+    @ApiResponse(responseCode = "200", description = "관리자 로그인 성공")
+    @PostMapping("/admin")
+    public ResponseEntity<AuthLoginResponse> loginAdmin(@RequestBody AdminLoginRequest request) {
+
+        AuthLoginResponse response = authService.loginAdmin(request);
+
+        return ResponseEntity.ok().body(response);
+    }
 }
