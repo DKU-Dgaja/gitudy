@@ -22,6 +22,7 @@ class CommitCommentListRVAdapter(val context: Context, val commentList: List<Com
     RecyclerView.Adapter<CommitCommentListRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onDeleteClick(view: View, position: Int)
+        fun onReportClick(view: View, position: Int)
     }
 
     var onClickListener: OnClickListener? = null
@@ -32,6 +33,7 @@ class CommitCommentListRVAdapter(val context: Context, val commentList: List<Com
         var date = binding.dateText
         var content = binding.contentText
         var moreBtn = binding.moreBtn
+        var moreReportBtn = binding.moreReportBtn
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -54,14 +56,37 @@ class CommitCommentListRVAdapter(val context: Context, val commentList: List<Com
 
         if (commentList[position].isMyComment) {
             holder.moreBtn.visibility = VISIBLE
+            holder.moreReportBtn.visibility = GONE
         } else {
             holder.moreBtn.visibility = GONE
+            holder.moreReportBtn.visibility = VISIBLE
         }
 
         holder.moreBtn.setOnClickListener { v ->
             // more 버튼 클릭 이벤트 처리
             showPopupMenu(v, position)
         }
+
+        holder.moreReportBtn.setOnClickListener { v ->
+            showReportPopupMenu(v, position)
+        }
+    }
+
+    private fun showReportPopupMenu(view: View, position: Int) {
+        val popup = PopupMenu(context, view)
+        popup.inflate(R.menu.report_menu)
+
+        popup.setOnMenuItemClickListener { item: MenuItem ->
+            when (item.itemId) {
+                R.id.menu_report -> {
+                    // 신고 버튼 클릭 처리
+                    this.onClickListener?.onReportClick(view, position)
+                    true
+                }
+                else -> false
+            }
+        }
+        popup.show()
     }
 
     private fun showPopupMenu(view: View, position: Int) {
