@@ -107,7 +107,7 @@ class ToDoFragment : Fragment() {
 
     private fun setTodoList(todoList: List<Todo>) {
         with(binding) {
-            val todoListRVAdapter = ToDoListRVAdapter(requireContext(), todoList)
+            val todoListRVAdapter = ToDoListRVAdapter(requireContext(), todoList, isLeader)
 
             todoWithDateList.adapter = todoListRVAdapter
             todoWithDateList.layoutManager = LinearLayoutManager(requireContext())
