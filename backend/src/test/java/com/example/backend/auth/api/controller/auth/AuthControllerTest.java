@@ -500,7 +500,7 @@ class AuthControllerTest extends MockTestConfig {
                 .accessToken(testerToken)
                 .build();
 
-        when(authService.loginAdmin(any(AdminLoginRequest.class))).thenReturn(response);
+        when(mockAuthService.loginAdmin(any(AdminLoginRequest.class))).thenReturn(response);
 
         // when & then
         mockMvc.perform(post("/auth/admin")
@@ -520,7 +520,7 @@ class AuthControllerTest extends MockTestConfig {
                 .build();
 
         doThrow(new UserException(ExceptionMessage.USER_NOT_ADMIN_ID))
-                .when(authService)
+                .when(mockAuthService)
                 .loginAdmin(any(AdminLoginRequest.class));
 
         // when & then
@@ -541,7 +541,7 @@ class AuthControllerTest extends MockTestConfig {
                 .build();
 
         doThrow(new UserException(ExceptionMessage.USER_NOT_ADMIN_PASSWORD))
-                .when(authService)
+                .when(mockAuthService)
                 .loginAdmin(any(AdminLoginRequest.class));
 
         // when & then
