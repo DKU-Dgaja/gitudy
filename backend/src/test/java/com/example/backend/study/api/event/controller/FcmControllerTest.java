@@ -38,7 +38,7 @@ class FcmControllerTest extends MockTestConfig {
     private JwtService jwtService;
 
     @Autowired
-    private FcmService fcmService;
+    private FcmService mockFcmService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -61,7 +61,7 @@ class FcmControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        doNothing().when(fcmService).saveFcmTokenRequest(any(User.class), any(FcmTokenSaveRequest.class));
+        doNothing().when(mockFcmService).saveFcmTokenRequest(any(User.class), any(FcmTokenSaveRequest.class));
 
         // then
         mockMvc.perform(post("/fcm")
@@ -80,7 +80,7 @@ class FcmControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
 
-        doNothing().when(fcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class));
+        doNothing().when(mockFcmService).sendMessageSingleDevice(any(FcmSingleTokenRequest.class));
 
         FcmSingleTokenRequest fcmSingleTokenRequest = FcmFixture.generateFcmSingleTokenRequest();
 
@@ -101,7 +101,7 @@ class FcmControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
 
-        doNothing().when(fcmService).sendMessageMultiDevice(any(FcmMultiTokenRequest.class));
+        doNothing().when(mockFcmService).sendMessageMultiDevice(any(FcmMultiTokenRequest.class));
 
         FcmMultiTokenRequest fcmMultiTokenRequest = FcmFixture.generateFcmMultiTokenRequest();
 

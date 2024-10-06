@@ -75,10 +75,10 @@ public class StudyTodoControllerTest extends MockTestConfig {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private StudyTodoService studyTodoService;
+    private StudyTodoService mockStudyTodoService;
 
     @Autowired
-    private StudyMemberService studyMemberService;
+    private StudyMemberService mockStudyMemberService;
 
     @AfterEach
     void tearDown() {
@@ -105,9 +105,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         StudyTodoRequest studyTodoRequest = StudyTodoFixture.generateStudyTodoRequest();
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyTodoService).registerStudyTodo(any(StudyTodoRequest.class), any(Long.class));
+        doNothing().when(mockStudyTodoService).registerStudyTodo(any(StudyTodoRequest.class), any(Long.class));
 
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/todo")
@@ -142,9 +142,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
 
         //when
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyTodoService).updateStudyTodo(any(StudyTodoUpdateRequest.class), any(Long.class), any(Long.class));
+        doNothing().when(mockStudyTodoService).updateStudyTodo(any(StudyTodoUpdateRequest.class), any(Long.class), any(Long.class));
 
         //then
         mockMvc.perform(put("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
@@ -171,9 +171,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
 
         //when
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyTodoService).deleteStudyTodo(any(Long.class), any(Long.class));
+        doNothing().when(mockStudyTodoService).deleteStudyTodo(any(Long.class), any(Long.class));
 
 
         //then
@@ -199,9 +199,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
                 .build();
         response.setNextCursorIdx();
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+        when(mockStudyTodoService.readStudyTodoList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
@@ -231,9 +231,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
                 .build();
         response.setNextCursorIdx();
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoList(any(Long.class), any(), any(Long.class))).thenReturn(response);
+        when(mockStudyTodoService.readStudyTodoList(any(Long.class), any(), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo")
@@ -262,8 +262,8 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         StudyTodoResponse response = StudyTodoResponse.of(studyTodo);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodo(any(Long.class), any(Long.class))).thenReturn(response);
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        when(mockStudyTodoService.readStudyTodo(any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + studyTodo.getId())
@@ -298,9 +298,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
                         .build()
         );
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoStatus(any(Long.class), any(Long.class))).thenReturn(response);
+        when(mockStudyTodoService.readStudyTodoStatus(any(Long.class), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/todo/" + 1L + "/status")
@@ -326,9 +326,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
                 .completeMemberCount(5)
                 .build();
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.readStudyTodoProgress(anyLong(), any(Long.class))).thenReturn(response);
+        when(mockStudyTodoService.readStudyTodoProgress(anyLong(), any(Long.class))).thenReturn(response);
 
         // when
         mockMvc.perform(get("/study/" + 1L + "/todo/progress")
@@ -350,9 +350,9 @@ public class StudyTodoControllerTest extends MockTestConfig {
 
         List<CommitInfoResponse> list = List.of(CommitInfoResponse.builder().commitSHA("tt").build());
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyTodoService.selectTodoCommits(any(Long.class)))
+        when(mockStudyTodoService.selectTodoCommits(any(Long.class)))
                 .thenReturn(list);
 
         // when

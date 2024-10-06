@@ -39,13 +39,13 @@ class StudyCommitControllerTest extends MockTestConfig {
     private MockMvc mockMvc;
 
     @Autowired
-    private AuthService authService;
+    private AuthService mockAuthService;
 
     @Autowired
-    private StudyCommitService studyCommitService;
+    private StudyCommitService mockStudyCommitService;
 
     @Autowired
-    private StudyMemberService studyMemberService;
+    private StudyMemberService mockStudyMemberService;
 
     @Autowired
     private JwtService jwtService;
@@ -61,8 +61,8 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockStudyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when
@@ -85,8 +85,8 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockStudyCommitService.selectUserCommitList(any(Long.class), any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when
@@ -109,7 +109,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class)))
+        when(mockAuthService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
@@ -133,7 +133,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class)))
+        when(mockAuthService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
@@ -158,9 +158,9 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
-        when(studyCommitService.getCommitDetailsById(any(Long.class))).thenReturn(CommitInfoResponse.builder().commitSHA(commitSha).build());
+        when(mockStudyCommitService.getCommitDetailsById(any(Long.class))).thenReturn(CommitInfoResponse.builder().commitSHA(commitSha).build());
 
         // when
         mockMvc.perform(get("/commits/" + commitId)
@@ -182,9 +182,9 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
-        when(studyCommitService.getCommitDetailsById(any(Long.class))).thenThrow(new CommitException(ExceptionMessage.COMMIT_NOT_FOUND));
+        when(mockStudyCommitService.getCommitDetailsById(any(Long.class))).thenThrow(new CommitException(ExceptionMessage.COMMIT_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/commits/" + commitId)
@@ -206,9 +206,9 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyCommitService).approveCommit(anyLong());
+        doNothing().when(mockStudyCommitService).approveCommit(anyLong());
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/approve")
@@ -234,9 +234,9 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyCommitService).rejectCommit(anyLong(), anyString());
+        doNothing().when(mockStudyCommitService).rejectCommit(anyLong(), anyString());
 
         // when
         mockMvc.perform(post("/commits/" + commitId + "/reject")
@@ -284,9 +284,9 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(user));
-        when(studyCommitService.selectWaitingCommit(any(Long.class))).thenReturn(List.of(CommitInfoResponse.builder().commitSHA(commitSha).build()));
+        when(mockStudyCommitService.selectWaitingCommit(any(Long.class))).thenReturn(List.of(CommitInfoResponse.builder().commitSHA(commitSha).build()));
 
         // when
         mockMvc.perform(get("/commits/waiting")
@@ -307,7 +307,7 @@ class StudyCommitControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenThrow(new MemberException(ExceptionMessage.STUDY_MEMBER_NOT_LEADER));
 
         // when

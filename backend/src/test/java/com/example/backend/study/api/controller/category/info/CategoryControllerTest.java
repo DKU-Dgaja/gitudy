@@ -54,9 +54,10 @@ class CategoryControllerTest extends MockTestConfig {
     private UserRepository userRepository;
 
     @Autowired
-    private CategoryService categoryService;
+    private CategoryService mockCategoryService;
+
     @Autowired
-    private AuthService authService;
+    private AuthService mockAuthService;
 
     @Autowired
     private StudyCategoryRepository studyCategoryRepository;
@@ -84,8 +85,8 @@ class CategoryControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(categoryService).registerCategory(request);
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockCategoryService).registerCategory(request);
 
         // then
         mockMvc.perform(post("/category")
@@ -111,8 +112,8 @@ class CategoryControllerTest extends MockTestConfig {
                 .build();
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(categoryService).registerCategory(request);
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockCategoryService).registerCategory(request);
 
         //when, then
         mockMvc.perform(post("/category")
@@ -140,8 +141,8 @@ class CategoryControllerTest extends MockTestConfig {
                 .build();
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(categoryService).registerCategory(request);
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockCategoryService).registerCategory(request);
 
         //when, then
         mockMvc.perform(post("/category")
@@ -169,8 +170,8 @@ class CategoryControllerTest extends MockTestConfig {
                 .build();
 
         //when
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(categoryService).updateCategory(any(CategoryUpdateRequest.class), any(Long.class));
+        when(mockAuthService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(mockCategoryService).updateCategory(any(CategoryUpdateRequest.class), any(Long.class));
 
         //then
         mockMvc.perform(patch("/category/" + studyCategory.getId())
@@ -199,8 +200,8 @@ class CategoryControllerTest extends MockTestConfig {
                 .build();
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(categoryService).updateCategory(request, studyCategory.getId());
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockCategoryService).updateCategory(request, studyCategory.getId());
 
         //when, then
         mockMvc.perform(post("/category")
@@ -231,8 +232,8 @@ class CategoryControllerTest extends MockTestConfig {
                 .build();
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(categoryService).updateCategory(request, studyCategory.getId());
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockCategoryService).updateCategory(request, studyCategory.getId());
 
         //when, then
         mockMvc.perform(patch("/category/" + studyCategory.getId())
@@ -261,7 +262,7 @@ class CategoryControllerTest extends MockTestConfig {
 
         //when
         doThrow(new CategoryException(ExceptionMessage.CATEGORY_NOT_FOUND))
-                .when(categoryService)
+                .when(mockCategoryService)
                 .updateCategory(any(), any());
 
         //then
@@ -286,8 +287,8 @@ class CategoryControllerTest extends MockTestConfig {
                 = studyCategoryRepository.save(StudyCategoryFixture.createDefaultPublicStudyCategory("name"));
 
         //when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        doNothing().when(categoryService).deleteCategory(any(Long.class));
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(mockCategoryService).deleteCategory(any(Long.class));
 
         //then
         mockMvc.perform(delete("/category/" + studyCategory.getId())
@@ -311,7 +312,7 @@ class CategoryControllerTest extends MockTestConfig {
 
         //when
         doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
-                .when(authService)
+                .when(mockAuthService)
                 .findUserInfo(any(User.class));
 
         //then
@@ -335,8 +336,8 @@ class CategoryControllerTest extends MockTestConfig {
         CategoryListAndCursorIdxResponse response
                 = StudyCategoryFixture.generateCategoryListAndCursorIdxResponse(3);
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(categoryService.selectCategoryList(any(Long.class), any(Long.class), any(Long.class)))
+        when(mockAuthService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockCategoryService.selectCategoryList(any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(response);
 
         // when
@@ -364,7 +365,7 @@ class CategoryControllerTest extends MockTestConfig {
 
         //when
         doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
-                .when(authService)
+                .when(mockAuthService)
                 .findUserInfo(any(User.class));
 
         mockMvc.perform(get("/category/" + studyInfo.getId())
@@ -412,7 +413,7 @@ class CategoryControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(categoryService.selectCategoryList()).thenReturn(List.of(CategoryResponse.builder().id(categoryId).name(categoryName).build()));
+        when(mockCategoryService.selectCategoryList()).thenReturn(List.of(CategoryResponse.builder().id(categoryId).name(categoryName).build()));
 
         // when
         mockMvc.perform(get("/category/")

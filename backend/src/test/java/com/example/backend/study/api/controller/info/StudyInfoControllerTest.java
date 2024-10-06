@@ -56,7 +56,7 @@ class StudyInfoControllerTest extends MockTestConfig {
     private MockMvc mockMvc;
 
     @Autowired
-    private AuthService authService;
+    private AuthService mockAuthService;
 
     @Autowired
     private UserRepository userRepository;
@@ -68,7 +68,7 @@ class StudyInfoControllerTest extends MockTestConfig {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private StudyInfoService studyInfoService;
+    private StudyInfoService mockStudyInfoService;
 
     @Autowired
     private StudyInfoRepository studyInfoRepository;
@@ -77,10 +77,10 @@ class StudyInfoControllerTest extends MockTestConfig {
     private StudyCategoryRepository studyCategoryRepository;
 
     @Autowired
-    private StudyMemberService studyMemberService;
+    private StudyMemberService mockStudyMemberService;
 
     @Autowired
-    private RankingService rankingService;
+    private RankingService mockRankingService;
 
     @AfterEach
     void tearDown() {
@@ -102,7 +102,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
+        when(mockStudyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
         mockMvc.perform(post("/study/")
@@ -128,7 +128,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
+        when(mockStudyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
         mockMvc.perform(post("/study/")
@@ -156,7 +156,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(studyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
+        when(mockStudyInfoService.registerStudy(any(StudyInfoRegisterRequest.class), any(UserInfoResponse.class)))
                 .thenReturn(Mockito.mock(StudyInfoRegisterResponse.class));
         // then
         mockMvc.perform(post("/study/")
@@ -178,11 +178,11 @@ class StudyInfoControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
 
-        when(studyInfoService.deleteStudy(anyLong())).thenReturn(true);
+        when(mockStudyInfoService.deleteStudy(anyLong())).thenReturn(true);
 
         // then
         mockMvc.perform(delete("/study/" + studyInfo.getId())
@@ -210,9 +210,9 @@ class StudyInfoControllerTest extends MockTestConfig {
 
 
         //when
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyInfoService).updateStudyInfo(studyInfoUpdateRequest, studyInfo.getId());
+        doNothing().when(mockStudyInfoService).updateStudyInfo(studyInfoUpdateRequest, studyInfo.getId());
 
         //then
         mockMvc.perform(patch("/study/" + studyInfo.getId())
@@ -238,9 +238,9 @@ class StudyInfoControllerTest extends MockTestConfig {
 
         UpdateStudyInfoPageResponse updateStudyInfoPageResponse = generateUpdateStudyInfoPageResponseWithCategory(studyInfo.getUserId(), studyCategories);
         //when
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyInfoService.updateStudyInfoPage(any(Long.class))).thenReturn(updateStudyInfoPageResponse);
+        when(mockStudyInfoService.updateStudyInfoPage(any(Long.class))).thenReturn(updateStudyInfoPageResponse);
 
         //then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/update")
@@ -261,9 +261,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockAuthService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockStudyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -289,9 +289,9 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(), any(Long.class), any(String.class), any(Boolean.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockAuthService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockStudyInfoService.selectStudyInfoList(any(Long.class), any(), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -317,8 +317,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(mockAuthService.authenticate(any(Long.class), any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockStudyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -344,8 +344,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockStudyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -371,8 +371,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(studyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockStudyInfoService.selectStudyInfoList(any(Long.class), any(Long.class), any(Long.class), any(String.class), any(Boolean.class)))
                 .thenReturn(generateMyStudyInfoListAndCursorIdxResponse());
 
         // when
@@ -398,8 +398,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(studyInfoService.selectStudyInfoDetail(any(Long.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockStudyInfoService.selectStudyInfoDetail(any(Long.class), any(Long.class)))
                 .thenReturn(generateStudyInfoDetailResponse(studyInfo));
 
         // when
@@ -424,8 +424,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(studyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockStudyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))
                 .thenReturn(StudyInfoCountResponse.builder()
                         .count(1)
                         .build());
@@ -449,8 +449,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(studyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockStudyInfoService.getStudyInfoCount(any(Long.class), any(Boolean.class)))
                 .thenReturn(StudyInfoCountResponse.builder()
                         .count(1)
                         .build());
@@ -479,8 +479,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockStudyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
 
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -504,8 +504,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockStudyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
 
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -531,8 +531,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockStudyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
 
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -557,8 +557,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockStudyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
 
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -583,8 +583,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockStudyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
 
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -609,8 +609,8 @@ class StudyInfoControllerTest extends MockTestConfig {
         RepoNameCheckRequest request = new RepoNameCheckRequest(valid);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(studyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockStudyInfoService).checkDuplicateRepoName(any(UserInfoResponse.class), any(String.class));
 
         mockMvc.perform(post("/study/check-name")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -636,7 +636,7 @@ class StudyInfoControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
-        when(rankingService.getStudyRankings(studyInfo)).thenReturn(any(StudyRankingResponse.class));
+        when(mockRankingService.getStudyRankings(studyInfo)).thenReturn(any(StudyRankingResponse.class));
 
         // when
         mockMvc.perform(get("/study/rank/" + studyInfo.getId())
@@ -656,11 +656,11 @@ class StudyInfoControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(authService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any())).thenReturn(UserInfoResponse.of(savedUser));
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
 
-        when(studyInfoService.closeStudy(anyLong())).thenReturn(true);
+        when(mockStudyInfoService.closeStudy(anyLong())).thenReturn(true);
 
         // then
         mockMvc.perform(delete("/study/" + studyInfo.getId() + "/close")

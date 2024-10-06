@@ -56,10 +56,10 @@ public class StudyConventionControllerTest extends MockTestConfig {
     private StudyConventionRepository studyConventionRepository;
 
     @Autowired
-    private StudyMemberService studyMemberService;
+    private StudyMemberService mockStudyMemberService;
 
     @Autowired
-    private StudyConventionService studyConventionService;
+    private StudyConventionService mockStudyConventionService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -85,8 +85,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
 
         StudyConventionRequest request = StudyConventionFixture.generateStudyConventionRequest();
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyConventionService).registerStudyConvention(any(StudyConventionRequest.class), any(Long.class));
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(mockStudyConventionService).registerStudyConvention(any(StudyConventionRequest.class), any(Long.class));
 
         //when , then
         mockMvc.perform(post("/study/" + studyInfo.getId() + "/convention")
@@ -141,8 +141,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
 
         StudyConventionUpdateRequest updateRequest = StudyConventionFixture.generateStudyConventionUpdateRequest();
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyConventionService).updateStudyConvention(any(StudyConventionUpdateRequest.class), any(Long.class));
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(mockStudyConventionService).updateStudyConvention(any(StudyConventionUpdateRequest.class), any(Long.class));
 
 
         //when, then
@@ -174,8 +174,8 @@ public class StudyConventionControllerTest extends MockTestConfig {
         studyConventionRepository.save(studyConvention);
 
 
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyConventionService).updateStudyConvention(any(StudyConventionUpdateRequest.class), any(Long.class));
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(savedUser));
+        doNothing().when(mockStudyConventionService).updateStudyConvention(any(StudyConventionUpdateRequest.class), any(Long.class));
 
 
         //when, then
@@ -207,9 +207,9 @@ public class StudyConventionControllerTest extends MockTestConfig {
         studyConventionRepository.save(studyConvention);
 
         //when
-        when(studyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyLeader(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        doNothing().when(studyConventionService).deleteStudyConvention(any(Long.class));
+        doNothing().when(mockStudyConventionService).deleteStudyConvention(any(Long.class));
 
 
         //then
@@ -235,9 +235,9 @@ public class StudyConventionControllerTest extends MockTestConfig {
 
         StudyConventionResponse response = StudyConventionResponse.of(studyConvention);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyConventionService.readStudyConvention(any(Long.class))).thenReturn(response);
+        when(mockStudyConventionService.readStudyConvention(any(Long.class))).thenReturn(response);
 
         // when, then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention/" + studyConvention.getId())
@@ -267,9 +267,9 @@ public class StudyConventionControllerTest extends MockTestConfig {
                 .build();
         response.setNextCursorIdx();
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyConventionService.readStudyConventionList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
+        when(mockStudyConventionService.readStudyConventionList(any(Long.class), any(Long.class), any(Long.class))).thenReturn(response);
 
         // when, then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention")
@@ -301,9 +301,9 @@ public class StudyConventionControllerTest extends MockTestConfig {
                 .build();
         response.setNextCursorIdx();
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenReturn(UserInfoResponse.of(savedUser));
-        when(studyConventionService.readStudyConventionList(any(Long.class), any(), any(Long.class))).thenReturn(response);
+        when(mockStudyConventionService.readStudyConventionList(any(Long.class), any(), any(Long.class))).thenReturn(response);
 
         // when, then
         mockMvc.perform(get("/study/" + studyInfo.getId() + "/convention")
