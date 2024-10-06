@@ -35,11 +35,11 @@ class StudyBookmarkControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private StudyBookmarkService studyBookmarkService;
+    @Autowired
+    private StudyBookmarkService mockStudyBookmarkService;
 
-    @MockBean
-    private AuthService authService;
+    @Autowired
+    private AuthService mockAuthService;
 
     @Autowired
     private JwtService jwtService;
@@ -52,8 +52,8 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyBookmarkService.selectUserBookmarkList(any(Long.class), any(Long.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockStudyBookmarkService.selectUserBookmarkList(any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(List.of(BookmarkInfoResponse.builder().build()));
 
         // when
@@ -77,8 +77,8 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
-        when(studyBookmarkService.selectUserBookmarkList(any(Long.class), any(Long.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockStudyBookmarkService.selectUserBookmarkList(any(Long.class), any(Long.class), any(Long.class)))
                 .thenReturn(new ArrayList<>());
 
         // when
@@ -102,7 +102,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class)))
+        when(mockAuthService.findUserInfo(any(User.class)))
                 .thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // when
@@ -147,8 +147,8 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        doNothing().when(studyBookmarkService).handleBookmark(any(Long.class), any(Long.class));
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(mockStudyBookmarkService).handleBookmark(any(Long.class), any(Long.class));
 
         // when
         mockMvc.perform(get("/bookmarks/study/" + studyInfoId)
@@ -169,7 +169,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
+        when(mockAuthService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/bookmarks/study/" + studyInfoId)
@@ -191,8 +191,8 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        when(studyBookmarkService.getIsMyBookMark(any(Long.class), any(Long.class)))
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockStudyBookmarkService.getIsMyBookMark(any(Long.class), any(Long.class)))
                 .thenReturn(StudyBookmarkFixture.createIsMyBookmarkResponse(user.getId(), studyInfoId));
 
         // when
@@ -214,7 +214,7 @@ class StudyBookmarkControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, user);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
+        when(mockAuthService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/bookmarks/study/" + studyInfoId + "/my-bookmark")

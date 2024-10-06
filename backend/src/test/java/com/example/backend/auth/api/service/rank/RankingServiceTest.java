@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.service.rank;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.study.info.repository.StudyInfoRepository;
 import com.example.backend.study.api.service.info.StudyInfoService;
@@ -17,7 +18,7 @@ import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class RankingServiceTest extends MockTestConfig {
+public class RankingServiceTest extends TestConfig {
     @Autowired
     private RankingService rankingService;
 
