@@ -83,6 +83,13 @@ class ToDoFragment : Fragment() {
                     todoSwipeRefreshLayout.isRefreshing = false
                 }
             }
+            todoInfoBtn.setOnClickListener {
+                if(todoInfoText.visibility == GONE) {
+                    todoInfoText.visibility = VISIBLE
+                } else {
+                    todoInfoText.visibility = GONE
+                }
+            }
             backBtn.setOnClickListener {
                 it.findNavController().popBackStack()
             }

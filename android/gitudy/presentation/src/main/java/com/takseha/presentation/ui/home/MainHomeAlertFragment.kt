@@ -154,7 +154,7 @@ class MainHomeAlertFragment : Fragment() {
                         putExtra("studyStatus", StudyStatus.STUDY_PUBLIC)
                     }
                     startActivity(intent)
-                } else if (notice.title.contains("커밋 승인") || notice.title.contains("커밋 반려")) {
+                } else if (notice.title.contains("커밋")) {
                     val intent = Intent(requireContext(), MyStudyMainActivity::class.java).apply {
                         putExtra("studyInfoId", notice.studyInfoId)
                         putExtra("targetFragment", "toDoFragment")

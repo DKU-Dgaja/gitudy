@@ -4,7 +4,6 @@ import com.example.backend.domain.define.study.commit.StudyCommit;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
 import com.example.backend.study.api.controller.todo.response.StudyTodoWithCommitsResponse;
 import com.example.backend.study.api.service.commit.response.CommitInfoResponse;
-import com.example.backend.study.api.service.user.UserService;
 import com.querydsl.core.Tuple;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

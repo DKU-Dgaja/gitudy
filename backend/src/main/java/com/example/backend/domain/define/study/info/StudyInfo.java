@@ -43,7 +43,7 @@ public class StudyInfo extends BaseEntity {
     @Column(name = "END_DATE")
     private LocalDate endDate;                      // 스터디 종료일
 
-    @Column(name = "INFO", length = 512)
+    @Column(name = "INFO", columnDefinition = "TEXT")
     private String info;                            // 스터디 소개
 
     @Enumerated(EnumType.STRING)
