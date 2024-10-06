@@ -53,6 +53,15 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <ImageView
+            android:id="@+id/moreReportBtn"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@drawable/ic_more"
+            android:visibility="gone"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/contentText"
             style="@style/B6_2"

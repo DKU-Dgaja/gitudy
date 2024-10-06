@@ -20,11 +20,13 @@ import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.material.snackbar.Snackbar
 import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.data.dto.mystudy.Comment
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.DetailCommentListRVAdapter
 import com.takseha.presentation.databinding.FragmentStudyCommentBoardBinding
+import com.takseha.presentation.databinding.LayoutSnackbarRedBinding
 import com.takseha.presentation.ui.common.CustomSetDialog
 import com.takseha.presentation.ui.common.KeyboardUtils
 import com.takseha.presentation.viewmodel.mystudy.StudyCommentBoardViewModel
@@ -138,8 +140,34 @@ class StudyCommentBoardFragment : Fragment() {
             override fun onHeartClick(view: View, position: Int) {
                 shakeBtn(view)
             }
+
+            override fun onReportClick(view: View, position: Int) {
+                makeSnackBar("신고가 접수되었습니다").show()
+            }
         }
     }
+
+    private fun makeSnackBar(message: String): Snackbar {
+        val snackBar = Snackbar.make(requireView(), "Red SnackBar", Snackbar.LENGTH_SHORT)
+        val binding = LayoutSnackbarRedBinding.inflate(layoutInflater)
+
+        @Suppress("RestrictedApi")
+        val snackBarLayout = snackBar.view as Snackbar.SnackbarLayout
+
+        with(snackBarLayout) {
+            removeAllViews()
+            setPadding(22, 0, 22, 20)
+            setBackgroundColor(ContextCompat.getColor(requireContext(), R.color.TRANSPARENT))
+            addView(binding.root, 0)
+        }
+
+        with(binding) {
+            snackBarText.text = message
+        }
+
+        return snackBar
+    }
+
     private fun showDeleteCommentDialog(studyInfoId: Int, studyCommentId: Int) {
         val customSetDialog = CustomSetDialog(requireContext())
         customSetDialog.setAlertText(getString(R.string.study_comment_delete))

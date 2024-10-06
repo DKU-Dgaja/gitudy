@@ -39,7 +39,7 @@ class MyStudyHomeFragment : Fragment() {
         sortStatus = "score"
 
         lifecycleScope.launch {
-            launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+            launch { viewModel.getMyStudyList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
             launch { viewModel.getAlertCount(null, 1) }
         }
@@ -97,13 +97,13 @@ class MyStudyHomeFragment : Fragment() {
                 }
                 sortStatus = standard
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+                    launch { viewModel.getMyStudyList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
                 }
             }
             myStudySwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+                    launch { viewModel.getMyStudyList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
                     myStudySwipeRefreshLayout.isRefreshing = false
                 }
@@ -115,7 +115,7 @@ class MyStudyHomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+            launch { viewModel.getMyStudyList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
             launch { viewModel.getAlertCount(null, 1) }
         }

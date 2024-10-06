@@ -5,6 +5,8 @@ import android.os.Build
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.View.GONE
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.PopupMenu
 import androidx.annotation.RequiresApi
@@ -19,7 +21,7 @@ import com.takseha.presentation.ui.common.UTCToKoreanTimeConverter
 import java.time.LocalDate
 import java.time.LocalDateTime
 
-class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
+class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>, val isLeader: Boolean?) :
     RecyclerView.Adapter<ToDoListRVAdapter.ViewHolder>() {
     interface OnClickListener {
         fun onCommitClick(commit: Commit)
@@ -61,6 +63,12 @@ class ToDoListRVAdapter(val context: Context, val todoList: List<Todo>) :
                     R.color.BASIC_RED
                 )
             )
+        }
+
+        if (isLeader == true) {
+            holder.moreBtn.visibility = VISIBLE
+        } else {
+            holder.moreBtn.visibility = GONE
         }
 
         holder.moreBtn.setOnClickListener { v ->
