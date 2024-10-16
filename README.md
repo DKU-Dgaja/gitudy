@@ -4,8 +4,10 @@
 
 # 깃터디(Gitudy)
 > ### 깃허브를 이용한 알고리즘 스터디 관리 플랫폼, 깃터디
-
+<p align="center">
+<a href='https://play.google.com/store/apps/details?id=com.takseha.gitudy&pcampaignid=web_share&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img alt='다운로드하기 Google Play' src='https://play.google.com/intl/en_us/badges/static/images/badges/ko_badge_web_generic.png' height="80"/></a>
 <br/>
+</p>
 
 <p align="center">
   <img src="https://github.com/DKU-Dgaja/gitudy/assets/86196342/b4083818-997d-4cee-b3a3-3b72d8d5d5aa" align="center" height="500">
