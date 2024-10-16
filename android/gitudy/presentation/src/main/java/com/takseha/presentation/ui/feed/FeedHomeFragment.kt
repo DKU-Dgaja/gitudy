@@ -37,7 +37,7 @@ class FeedHomeFragment : Fragment() {
         sortStatus = "score"
 
         lifecycleScope.launch {
-            launch { viewModel.getFeedList(null, 50, sortStatus) }
+            launch { viewModel.getFeedList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
             launch { viewModel.getAlertCount(null, 1) }
         }
@@ -97,14 +97,14 @@ class FeedHomeFragment : Fragment() {
                 }
                 sortStatus = standard
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getFeedList(null, 50, sortStatus) }
+                    launch { viewModel.getFeedList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
                     launch { viewModel.getAlertCount(null, 1) }
                 }
             }
             feedSwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getFeedList(null, 50, sortStatus) }
+                    launch { viewModel.getFeedList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
                     feedSwipeRefreshLayout.isRefreshing = false
                 }
@@ -124,7 +124,7 @@ class FeedHomeFragment : Fragment() {
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
         viewLifecycleOwner.lifecycleScope.launch {
-            launch { viewModel.getFeedList(null, 50, sortStatus) }
+            launch { viewModel.getFeedList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
         }
     }
