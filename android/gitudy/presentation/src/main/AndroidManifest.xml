@@ -6,6 +6,9 @@
 
     <application>
         <activity
+            android:name=".ui.auth.TesterLoginActivity"
+            android:exported="false" />
+        <activity
             android:name=".ui.profile.SettingActivity"
             android:exported="false" />
         <activity
