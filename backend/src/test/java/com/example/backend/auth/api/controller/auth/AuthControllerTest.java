@@ -1,6 +1,7 @@
 package com.example.backend.auth.api.controller.auth;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.auth.api.controller.auth.request.AdminLoginRequest;
 import com.example.backend.auth.api.controller.auth.request.AuthRegisterRequest;
 import com.example.backend.auth.api.controller.auth.request.UserNameRequest;
 import com.example.backend.auth.api.controller.auth.request.UserUpdateRequest;
@@ -16,6 +17,7 @@ import com.example.backend.auth.api.service.rank.RankingService;
 import com.example.backend.auth.config.fixture.UserFixture;
 import com.example.backend.common.exception.ExceptionMessage;
 import com.example.backend.common.exception.auth.AuthException;
+import com.example.backend.common.exception.user.UserException;
 import com.example.backend.common.utils.TokenUtil;
 import com.example.backend.domain.define.account.user.SocialInfo;
 import com.example.backend.domain.define.account.user.User;
@@ -27,6 +29,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
@@ -47,11 +50,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SuppressWarnings("NonAsciiCharacters")
 class AuthControllerTest extends MockTestConfig {
 
+    @Value("${tester.token}")
+    private String testerToken;
+    @Value("${tester.id}")
+    private String testerId;
+    @Value("${tester.password}")
+    private String testerPassword;
+
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private AuthService authService;
+    @Autowired
+    private AuthService mockAuthService;
 
     @Autowired
     private UserRepository userRepository;
@@ -62,8 +72,8 @@ class AuthControllerTest extends MockTestConfig {
     @Autowired
     private ObjectMapper objectMapper;
 
-    @MockBean
-    private RankingService rankingService;
+    @Autowired
+    private RankingService mockRankingService;
 
     @AfterEach
     void tearDown() {
@@ -127,7 +137,7 @@ class AuthControllerTest extends MockTestConfig {
                 .fcmToken("token")
                 .build();
 
-        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class)))
+        when(mockAuthService.register(any(AuthServiceRegisterRequest.class), any(User.class)))
                 .thenReturn(AuthLoginResponse.builder()
                         .accessToken(extendedAtk)
                         .refreshToken(extendedRtk)
@@ -152,7 +162,7 @@ class AuthControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(savedUser);
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
-        when(authService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthLoginResponse.builder()
+        when(mockAuthService.register(any(AuthServiceRegisterRequest.class), any(User.class))).thenReturn(AuthLoginResponse.builder()
                 .accessToken(accessToken)
                 //.refreshToken(refreshToken)
                 .build()
@@ -162,7 +172,7 @@ class AuthControllerTest extends MockTestConfig {
                 .message("reason")
                 .build();
 
-        doNothing().when(authService).userDelete(any(User.class), any(String.class));
+        doNothing().when(mockAuthService).userDelete(any(User.class), any(String.class));
 
         // when
         mockMvc.perform(post("/auth/delete")
@@ -182,7 +192,7 @@ class AuthControllerTest extends MockTestConfig {
         UserInfoAndRankingResponse savedUser = UserInfoAndRankingResponse.of(userRepository.save(user), 1L);
 
 
-        when(authService.getUserByInfo(user.getPlatformId(), GITHUB)).thenReturn(savedUser);
+        when(mockAuthService.getUserByInfo(user.getPlatformId(), GITHUB)).thenReturn(savedUser);
 
         HashMap<String, String> map = new HashMap<>();
         map.put("role", user.getRole().name());
@@ -249,8 +259,8 @@ class AuthControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
-        when(authService.updateUserPage(any(Long.class))).thenReturn(UserUpdatePageResponse.builder()
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(savedUser));
+        when(mockAuthService.updateUserPage(any(Long.class))).thenReturn(UserUpdatePageResponse.builder()
                 .name(savedUser.getName())
                 .profileImageUrl(savedUser.getProfileImageUrl())
                 .build());
@@ -275,7 +285,7 @@ class AuthControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+        when(mockAuthService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
 
         // then
         mockMvc.perform(get("/auth/update")
@@ -303,8 +313,8 @@ class AuthControllerTest extends MockTestConfig {
                         .blogLink("https://test.tistory.com/").build())
                 .build();
         // when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(mockAuthService).updateUser(any(UserUpdateServiceRequest.class));
 
         // then
         mockMvc.perform(post("/auth/update")
@@ -335,8 +345,8 @@ class AuthControllerTest extends MockTestConfig {
                         .build())
                 .build();
         // when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        doNothing().when(authService).updateUser(any(UserUpdateServiceRequest.class));
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(mockAuthService).updateUser(any(UserUpdateServiceRequest.class));
 
         // then
         mockMvc.perform(post("/auth/update")
@@ -365,9 +375,9 @@ class AuthControllerTest extends MockTestConfig {
                 .build();
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
         doThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY))
-                .when(authService)
+                .when(mockAuthService)
                 .updateUser(any(UserUpdateServiceRequest.class));
 
         // then
@@ -391,8 +401,8 @@ class AuthControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
-        doNothing().when(authService).updatePushAlarmYn(any(Long.class), any(boolean.class));
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.builder().build());
+        doNothing().when(mockAuthService).updatePushAlarmYn(any(Long.class), any(boolean.class));
 
         // then
         mockMvc.perform(get("/auth/update/pushAlarmYn" + "/" + true)
@@ -412,7 +422,7 @@ class AuthControllerTest extends MockTestConfig {
         String accessToken = jwtService.generateAccessToken(map, savedUser);
 
         // when
-        when(authService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
+        when(mockAuthService.findUserInfo(any(User.class))).thenThrow(new AuthException(ExceptionMessage.UNAUTHORIZED_AUTHORITY));
         // then
         mockMvc.perform(get("/auth/update/pushAlarmYn" + "/" + true)
                         .contentType(MediaType.APPLICATION_JSON)
@@ -428,7 +438,7 @@ class AuthControllerTest extends MockTestConfig {
         // given
         UserNameRequest request = UserFixture.generateUserNameRequest("이정우");
 
-        doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
+        doNothing().when(mockAuthService).nickNameDuplicationCheck(any(UserNameRequest.class));
 
         // when & then
         mockMvc.perform(post("/auth/check-nickname")
@@ -447,7 +457,7 @@ class AuthControllerTest extends MockTestConfig {
 
         UserNameRequest request = UserFixture.generateUserNameRequest(inValidName);
 
-        doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
+        doNothing().when(mockAuthService).nickNameDuplicationCheck(any(UserNameRequest.class));
 
         // when
         mockMvc.perform(post("/auth/check-nickname")
@@ -466,7 +476,7 @@ class AuthControllerTest extends MockTestConfig {
 
         UserNameRequest request = UserFixture.generateUserNameRequest(inValidName);
 
-        doNothing().when(authService).nickNameDuplicationCheck(any(UserNameRequest.class));
+        doNothing().when(mockAuthService).nickNameDuplicationCheck(any(UserNameRequest.class));
 
         // when
         mockMvc.perform(post("/auth/check-nickname")
@@ -477,4 +487,68 @@ class AuthControllerTest extends MockTestConfig {
                 .andExpect(status().isOk());
     }
 
+    @Test
+    @DisplayName("Admin 로그인 성공 테스트")
+    void adminLoginSuccessTest() throws Exception {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id("admin")
+                .password(testerPassword)
+                .build();
+
+        AuthLoginResponse response = AuthLoginResponse.builder()
+                .accessToken(testerToken)
+                .build();
+
+        when(mockAuthService.loginAdmin(any(AdminLoginRequest.class))).thenReturn(response);
+
+        // when & then
+        mockMvc.perform(post("/auth/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.access_token").value(testerToken));
+    }
+
+    @Test
+    @DisplayName("Admin 로그인 실패 테스트 - 잘못된 아이디로 로그인 시도")
+    void adminLoginFailDueToIncorrectId() throws Exception {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id("not_admin") // 잘못된 아이디
+                .password(testerPassword) // 올바른 패스워드
+                .build();
+
+        doThrow(new UserException(ExceptionMessage.USER_NOT_ADMIN_ID))
+                .when(mockAuthService)
+                .loginAdmin(any(AdminLoginRequest.class));
+
+        // when & then
+        mockMvc.perform(post("/auth/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.USER_NOT_ADMIN_ID.getText()));
+    }
+
+    @Test
+    @DisplayName("Admin 로그인 실패 테스트 - 잘못된 패스워드로 로그인 시도")
+    void adminLoginFailDueToIncorrectPassword() throws Exception {
+        // given
+        AdminLoginRequest request = AdminLoginRequest.builder()
+                .id(testerId) // 올바른 아이디
+                .password("wrongPassword") // 잘못된 패스워드
+                .build();
+
+        doThrow(new UserException(ExceptionMessage.USER_NOT_ADMIN_PASSWORD))
+                .when(mockAuthService)
+                .loginAdmin(any(AdminLoginRequest.class));
+
+        // when & then
+        mockMvc.perform(post("/auth/admin")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value(ExceptionMessage.USER_NOT_ADMIN_PASSWORD.getText()));
+    }
 }

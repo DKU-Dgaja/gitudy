@@ -103,7 +103,7 @@ class MakeStudyViewModel() : BaseViewModel()  {
                     Log.e("MakeStudyViewModel", "Exception: ${it.message}")
                 } ?: run {
                     response?.let {
-                        Log.e("MakeStudyViewModel", "HTTP Error: ${it.code()} ${it.message()}")
+                        Log.e("MakeStudyViewModel", "HTTP Error: ${it.code()} ${it.errorBody()?.string()}")
                     }
                 }
             }

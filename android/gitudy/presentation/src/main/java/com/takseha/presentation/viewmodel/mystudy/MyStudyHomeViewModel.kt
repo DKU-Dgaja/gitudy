@@ -3,26 +3,20 @@ package com.takseha.presentation.viewmodel.mystudy
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.takseha.data.dto.feed.StudyCountResponse
-import com.takseha.data.dto.feed.StudyInfo
 import com.takseha.data.dto.mystudy.TodoProgressResponse
-import com.takseha.data.repository.gitudy.GitudyAuthRepository
+import com.takseha.data.repository.gitudy.GitudyNoticeRepository
 import com.takseha.data.repository.gitudy.GitudyStudyRepository
-import com.takseha.presentation.R
 import com.takseha.presentation.viewmodel.common.BaseViewModel
-import com.takseha.presentation.viewmodel.home.MainHomeMyStudyUiState
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.io.Serializable
 
 class MyStudyHomeViewModel : BaseViewModel() {
     private var gitudyStudyRepository = GitudyStudyRepository()
+    private val gitudyNoticeRepository = GitudyNoticeRepository()
 
     private val _myStudyState = MutableStateFlow(MyStudyHomeUiState())
     val myStudyState = _myStudyState.asStateFlow()
@@ -128,10 +122,38 @@ class MyStudyHomeViewModel : BaseViewModel() {
             }
         )
     }
+
+    fun getAlertCount(cursorTime: String?, limit: Long) =viewModelScope.launch {
+        safeApiCall(
+            apiCall = { gitudyNoticeRepository.getNoticeList(cursorTime, limit) },
+            onSuccess = { response ->
+                if (response.isSuccessful) {
+                    val noticeList = response.body()
+
+                    if (noticeList?.isEmpty() != false) {
+                        _myStudyState.update { it.copy(
+                            isAlert = false
+                        ) }
+                    } else {
+                        _myStudyState.update { it.copy(
+                            isAlert = true
+                        ) }
+                    }
+
+                } else {
+                    Log.e(
+                        "MyStudyMainViewModel",
+                        "isAlertResponse status: ${response.code()}\nisAlertResponse message: ${response.errorBody()?.string()}"
+                    )
+                }
+            }
+        )
+    }
 }
 
 data class MyStudyHomeUiState(
     var myStudiesWithTodo: List<MyStudyWithTodo> = listOf(),
     var studyCnt: Int = 0,
-    var isMyStudiesEmpty: Boolean? = null
+    var isMyStudiesEmpty: Boolean? = null,
+    val isAlert: Boolean = false
 )

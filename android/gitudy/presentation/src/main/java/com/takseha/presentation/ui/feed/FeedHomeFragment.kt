@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -16,6 +17,7 @@ import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.FeedRVAdapter
 import com.takseha.presentation.databinding.FragmentFeedHomeBinding
+import com.takseha.presentation.ui.home.MainHomeAlertActivity
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
@@ -35,8 +37,9 @@ class FeedHomeFragment : Fragment() {
         sortStatus = "score"
 
         lifecycleScope.launch {
-            launch { viewModel.getFeedList(null, 50, sortStatus) }
+            launch { viewModel.getFeedList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
+            launch { viewModel.getAlertCount(null, 1) }
         }
     }
 
@@ -54,6 +57,7 @@ class FeedHomeFragment : Fragment() {
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.uiState.collectLatest {
                 with(binding) {
+                    alarmActiveDot.visibility = if (it.isAlert) VISIBLE else INVISIBLE
                     feedCnt.text = if (it.studyCnt == null) "" else it.studyCnt.toString()
 
                     if (it.isFeedEmpty == null) {
@@ -78,6 +82,10 @@ class FeedHomeFragment : Fragment() {
             }
         }
         with(binding) {
+            alarmBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
+                startActivity(intent)
+            }
             sortBtn.setOnClickListener {
                 var standard: String
                 if (sortStatus == "createdDateTime") {
@@ -89,13 +97,14 @@ class FeedHomeFragment : Fragment() {
                 }
                 sortStatus = standard
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getFeedList(null, 50, sortStatus) }
+                    launch { viewModel.getFeedList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
+                    launch { viewModel.getAlertCount(null, 1) }
                 }
             }
             feedSwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getFeedList(null, 50, sortStatus) }
+                    launch { viewModel.getFeedList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
                     feedSwipeRefreshLayout.isRefreshing = false
                 }
@@ -115,7 +124,7 @@ class FeedHomeFragment : Fragment() {
         requireActivity().window.statusBarColor =
             ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
         viewLifecycleOwner.lifecycleScope.launch {
-            launch { viewModel.getFeedList(null, 50, sortStatus) }
+            launch { viewModel.getFeedList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
         }
     }

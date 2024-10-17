@@ -38,14 +38,14 @@ CommitCommentControllerTest extends MockTestConfig {
     @Autowired
     private MockMvc mockMvc;
 
-    @MockBean
-    private CommitCommentService commitCommentService;
+    @Autowired
+    private CommitCommentService mockCommitCommentService;
 
-    @MockBean
-    private StudyMemberService studyMemberService;
+    @Autowired
+    private StudyMemberService mockStudyMemberService;
 
-    @MockBean
-    private AuthService authService;
+    @Autowired
+    private AuthService mockAuthService;
 
     @Autowired
     private JwtService jwtService;
@@ -62,8 +62,8 @@ CommitCommentControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
-        when(commitCommentService.getCommitCommentsList(any(Long.class), any(Long.class))).thenReturn(List.of(CommitCommentInfoResponse.builder().studyCommitId(commitId).build()));
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockCommitCommentService.getCommitCommentsList(any(Long.class), any(Long.class))).thenReturn(List.of(CommitCommentInfoResponse.builder().studyCommitId(commitId).build()));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
@@ -88,8 +88,8 @@ CommitCommentControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
-        when(commitCommentService.getCommitCommentsList(any(Long.class), any())).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockCommitCommentService.getCommitCommentsList(any(Long.class), any())).thenThrow(new AuthException(ExceptionMessage.AUTH_NOT_FOUND));
 
         // when
         mockMvc.perform(get("/commits/" + commitId + "/comments").contentType(MediaType.APPLICATION_JSON)
@@ -112,8 +112,8 @@ CommitCommentControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
-        doNothing().when(commitCommentService).addCommitComment(any(Long.class), any(Long.class), any(AddCommitCommentRequest.class));
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class))).thenReturn(UserInfoResponse.of(user));
+        doNothing().when(mockCommitCommentService).addCommitComment(any(Long.class), any(Long.class), any(AddCommitCommentRequest.class));
 
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
@@ -158,7 +158,7 @@ CommitCommentControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
                 .thenThrow(new MemberException(ExceptionMessage.STUDY_NOT_MEMBER));
         // when
         mockMvc.perform(post("/commits/" + commitId + "/comments")
@@ -183,10 +183,10 @@ CommitCommentControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(studyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
+        when(mockStudyMemberService.isValidateStudyMember(any(User.class), any(Long.class)))
             .thenReturn(UserInfoResponse.of(user));
 
-        doNothing().when(commitCommentService).updateCommitComment(anyLong(), anyLong(), any(AddCommitCommentRequest.class));
+        doNothing().when(mockCommitCommentService).updateCommitComment(anyLong(), anyLong(), any(AddCommitCommentRequest.class));
 
         // when
         mockMvc.perform(patch("/commits/" + commitId + "/comments/" + commentId)
@@ -209,9 +209,9 @@ CommitCommentControllerTest extends MockTestConfig {
         Map<String, String> map = TokenUtil.createTokenMap(user);
         String accessToken = jwtService.generateAccessToken(map, user);
 
-        when(authService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
+        when(mockAuthService.findUserInfo(any(User.class))).thenReturn(UserInfoResponse.of(user));
 
-        doNothing().when(commitCommentService).deleteCommitComment(anyLong(), anyLong());
+        doNothing().when(mockCommitCommentService).deleteCommitComment(anyLong(), anyLong());
 
         // when
         mockMvc.perform(delete("/commits/" + commitId + "/comments/" + commentId)

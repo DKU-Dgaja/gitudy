@@ -97,10 +97,6 @@ class ProfileHomeFragment : Fragment() {
                 val intent = Intent(requireContext(), ProfileEditActivity::class.java)
                 startActivity(intent)
             }
-            alarmBtn.setOnClickListener {
-                val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
-                startActivity(intent)
-            }
             commitMoreBtn.setOnClickListener {
                 val intent = Intent(requireContext(), MyCommitActivity::class.java)
                 intent.putExtra("isLeader", false)

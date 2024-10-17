@@ -1,6 +1,7 @@
 package com.example.backend.study.api.event.service;
 
 import com.example.backend.MockTestConfig;
+import com.example.backend.TestConfig;
 import com.example.backend.domain.define.account.user.User;
 import com.example.backend.domain.define.account.user.repository.UserRepository;
 import com.example.backend.domain.define.event.FcmFixture;
@@ -22,7 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @SuppressWarnings("NonAsciiCharacters")
-class FcmServiceTest extends MockTestConfig {
+class FcmServiceTest extends TestConfig {
 
     @Autowired
     private UserRepository userRepository;

@@ -6,6 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.GONE
+import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
@@ -17,6 +18,7 @@ import com.takseha.data.dto.feed.StudyStatus
 import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
+import com.takseha.presentation.ui.home.MainHomeAlertActivity
 import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import com.takseha.presentation.viewmodel.mystudy.MyStudyHomeViewModel
@@ -37,8 +39,9 @@ class MyStudyHomeFragment : Fragment() {
         sortStatus = "score"
 
         lifecycleScope.launch {
-            launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+            launch { viewModel.getMyStudyList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
+            launch { viewModel.getAlertCount(null, 1) }
         }
     }
 
@@ -54,6 +57,7 @@ class MyStudyHomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         viewLifecycleOwner.lifecycleScope.launch {
             viewModel.myStudyState.collectLatest {
+                binding.alarmActiveDot.visibility = if (it.isAlert) VISIBLE else INVISIBLE
                 binding.myStudyCnt.text = it.studyCnt.toString()
 
                 if (it.isMyStudiesEmpty == null) {
@@ -78,6 +82,10 @@ class MyStudyHomeFragment : Fragment() {
         }
         // 정렬: 최신순, 랭킹순
         with(binding) {
+            alarmBtn.setOnClickListener {
+                val intent = Intent(requireContext(), MainHomeAlertActivity::class.java)
+                startActivity(intent)
+            }
             sortBtn.setOnClickListener {
                 var standard: String
                 if (sortStatus == "createdDateTime") {
@@ -89,13 +97,13 @@ class MyStudyHomeFragment : Fragment() {
                 }
                 sortStatus = standard
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+                    launch { viewModel.getMyStudyList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
                 }
             }
             myStudySwipeRefreshLayout.setOnRefreshListener {
                 viewLifecycleOwner.lifecycleScope.launch {
-                    launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+                    launch { viewModel.getMyStudyList(null, 100, sortStatus) }
                     launch { viewModel.getStudyCount() }
                     myStudySwipeRefreshLayout.isRefreshing = false
                 }
@@ -107,8 +115,9 @@ class MyStudyHomeFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         viewLifecycleOwner.lifecycleScope.launch {
-            launch { viewModel.getMyStudyList(null, 50, sortStatus) }
+            launch { viewModel.getMyStudyList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
+            launch { viewModel.getAlertCount(null, 1) }
         }
     }
 
