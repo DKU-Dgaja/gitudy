@@ -6,8 +6,9 @@
 
     <application>
         <activity
-            android:name=".ui.auth.TesterLoginActivity"
-            android:exported="false" />
+            android:name=".ui.auth.AdminLoginActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"/>
         <activity
             android:name=".ui.profile.SettingActivity"
             android:exported="false" />

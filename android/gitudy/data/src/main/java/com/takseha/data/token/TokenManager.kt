@@ -81,7 +81,7 @@ class TokenManager(context: Context) {
 
                 if (response.isSuccessful) {
                     accessToken = response.body()!!.accessToken
-                    refreshToken = response.body()!!.refreshToken
+                    refreshToken = ""
                     response.body()!!
                 } else {
                     Log.e("TokenManager", "admin login response status: ${response.code()}\nadmin login response message: ${response.errorBody()?.string()}")
