@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/BACKGROUND"
+    android:clipToPadding="false"
+    android:clipChildren="false"
+    tools:context=".ui.auth.AdminLoginActivity">
+
+    <ImageView
+        android:id="@+id/backBtn"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:src="@drawable/ic_arrow_back"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="22dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginTop="100dp"
+        android:layout_marginEnd="22dp"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:layout_width="68dp"
+            android:layout_height="68dp"
+            android:src="@drawable/ic_noti" />
+
+        <TextView
+            style="@style/B1_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="11dp"
+            android:text="관리자 로그인"
+            android:textColor="@color/GS_900" />
+
+        <TextView
+            style="@style/B5_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="* 앱 검토 시 관리자 로그인을 이용해주세요."
+            android:textColor="@color/GS_400" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:clipToPadding="false"
+        android:id="@+id/inputInfoLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="22dp"
+        android:layout_marginEnd="22dp"
+        android:orientation="vertical"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="22dp">
+
+        <EditText
+            android:id="@+id/idEditText"
+            style="@style/B5_2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="14dp"
+            android:background="@drawable/box_stroke_200_r8"
+            android:hint="아이디 입력"
+            android:maxLength="20"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/GS_800"
+            android:textColorHint="@color/GS_400" />
+
+        <EditText
+            android:id="@+id/pwEditText"
+            style="@style/B5_2"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/box_stroke_200_r8"
+            android:hint="비밀번호 입력"
+            android:inputType="numberPassword"
+            android:maxLength="20"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:textColor="@color/GS_800"
+            android:textColorHint="@color/GS_400" />
+
+        <TextView
+            android:id="@+id/wrongInfoAlert"
+            style="@style/B6_1"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:text="@string/alert_wrong_login_info"
+            android:textColor="@color/BASIC_RED"
+            android:visibility="gone" />
+
+        <Button
+            android:id="@+id/adminLoginBtn"
+            style="@style/B5_1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="50dp"
+            android:background="@drawable/box_non_stroke_r8_green"
+            android:backgroundTint="@color/BASIC_BLUE"
+            android:padding="18dp"
+            android:text="관리자로 로그인"
+            android:textColor="@color/GS_900" />
+    </LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
