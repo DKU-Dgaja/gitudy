@@ -49,6 +49,9 @@ class LoginActivity : AppCompatActivity() {
             githubLoginBtn.setOnClickListener {
                 startLogin("GITHUB")
             }
+            adminLoginBtn.setOnClickListener {
+                startActivity(Intent(baseContext, AdminLoginActivity::class.java))
+            }
 //            otherLoginBtn.setOnClickListener {
 //                startActivity(Intent(baseContext, SubLoginActivity::class.java))
 //            }

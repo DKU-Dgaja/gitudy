@@ -3,6 +3,7 @@ package com.takseha.data.api.gitudy
 import com.takseha.data.dto.auth.auth.UserInfoResponse
 import com.takseha.data.dto.auth.auth.UserInfoUpdatePageResponse
 import com.takseha.data.dto.auth.auth.UserInfoUpdateRequest
+import com.takseha.data.dto.auth.login.AdminLoginRequest
 import com.takseha.data.dto.auth.login.LoginPageInfoResponse
 import com.takseha.data.dto.auth.login.ReissueTokenResponse
 import com.takseha.data.dto.auth.login.TokenResponse
@@ -26,6 +27,11 @@ interface GitudyAuthService {
         @Path("platformType") platformType: String,
         @Query("code") code: String,
         @Query("state") state: String
+    ): Response<TokenResponse>
+
+    @POST("/auth/admin")
+    suspend fun getAdminTokens(
+        @Body request: AdminLoginRequest
     ): Response<TokenResponse>
 
     @POST("/auth/register")
