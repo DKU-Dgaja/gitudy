@@ -16,6 +16,8 @@ import com.example.backend.domain.define.study.member.StudyMemberFixture;
 import com.example.backend.domain.define.study.member.repository.StudyMemberRepository;
 import com.example.backend.domain.define.study.todo.StudyTodoFixture;
 import com.example.backend.domain.define.study.todo.info.StudyTodo;
+import com.example.backend.domain.define.study.todo.mapping.StudyTodoMapping;
+import com.example.backend.domain.define.study.todo.mapping.constant.StudyTodoStatus;
 import com.example.backend.domain.define.study.todo.mapping.repository.StudyTodoMappingRepository;
 import com.example.backend.domain.define.study.todo.repository.StudyTodoRepository;
 import com.example.backend.study.api.service.github.GithubApiService;
@@ -24,6 +26,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.time.LocalDate;
@@ -31,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 
 import static com.example.backend.domain.define.account.user.constant.UserPlatformType.GITHUB;
 import static com.example.backend.domain.define.account.user.constant.UserRole.USER;
@@ -74,6 +78,10 @@ class StudyCommitAsyncServiceTest extends MockTestConfig {
     @Autowired
     private StudyMemberRepository studyMemberRepository;
 
+    @Autowired
+    @Qualifier("customExecutor")
+    private Executor customExecutor;
+
     @AfterEach
     void tearDown() {
         userRepository.deleteAllInBatch();
@@ -86,10 +94,8 @@ class StudyCommitAsyncServiceTest extends MockTestConfig {
     }
 
     @Test
-    @DisplayName("비동기 작업 테스트 - 정상적으로 비동기 실행 여부 확인")
-    public void testAsyncFetchRemoteCommitsAndSave() throws ExecutionException, InterruptedException {
-        // given
-        // 유저 저장
+    public void 동기_작업_성능_테스트() throws ExecutionException, InterruptedException {
+        // given: 테스트를 위한 유저와 연관 데이터 설정
         User user = userRepository.save(User.builder()
                 .platformId("1")
                 .platformType(GITHUB)
@@ -99,7 +105,6 @@ class StudyCommitAsyncServiceTest extends MockTestConfig {
                 .profileImageUrl("프로필이미지")
                 .build());
 
-        // 스터디 저장
         StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
                 .userId(user.getId())
                 .topic("topic")
@@ -110,102 +115,260 @@ class StudyCommitAsyncServiceTest extends MockTestConfig {
                         .branchName("main")
                         .build())
                 .build());
-
-        // 스터디원 저장
         studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
 
-        // 투두 저장
         String todoCode = "aBc123";
         StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
         todo.updateTodoCode(todoCode);
         studyTodoRepository.save(todo);
 
-        // 컨벤션 저장
-        String conventionName = "커밋 메세지 규칙";
-        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
-        String conventionDescription = "커밋 메세지 규칙: 투두코드6자리 + 공백(\" \") + [이름] 플랫폼 \":\" + 공백(\" \") + 문제 이름 \n" +
-                "예시 1) abc123 [이주성] 백준: 크리스마스 트리 \n" +
-                "예시 2) abc123 [이주성] 프로그래머스: 두 수의 곱";
+        studyTodoMappingRepository.save(StudyTodoMapping.builder()
+                .todoId(todo.getId())
+                .userId(user.getId())
+                .status(StudyTodoStatus.TODO_INCOMPLETE)
+                .build());
 
-        // 컨벤션 등록
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
         studyConventionRepository.save(StudyConvention.builder()
                 .studyInfoId(study.getId())
-                .name(conventionName)
-                .description(conventionDescription)
+                .name("커밋 메세지 규칙")
                 .content(convention)
                 .isActive(true)
                 .build());
 
-        // 커밋 저장
-        StudyCommit savedCommit = studyCommitRepository.save(StudyCommit.builder()
-                .studyInfoId(study.getId())
-                .studyTodoId(todo.getId())
-                .userId(user.getId())
-                .message("aBc123 [jusung-c] 백준: 컨벤션 수칙 지키기")
-                .commitDate(LocalDate.now())
-                .status(CommitStatus.COMMIT_APPROVAL)
-                .commitSHA("sha")
-                .build());
-
-        String A = "aBc123 [jusung-c] 백준: 컨벤션 지키기";
-
-        // 첫 페이지: 이미 저장된 커밋, 새로운 커밋
-        List<GithubCommitResponse> firstPage = List.of(
-                GithubCommitResponse.builder().authorName(user.getGithubId()).message(A).commitDate(LocalDate.now()).sha("sha1").build(),
-                GithubCommitResponse.builder().authorName(user.getGithubId()).message(savedCommit.getMessage()).commitDate(LocalDate.now()).sha("sha").build()
+        // Github API 호출 시간을 대신하는 지연 시간 설정 - 다수의 커밋
+        List<GithubCommitResponse> commitsA = List.of(
+                GithubCommitResponse.builder().authorName(user.getGithubId()).message(todoCode + " [jusung-c] 백준: 문제1").commitDate(LocalDate.now()).sha("sha1").build(),
+                GithubCommitResponse.builder().authorName(user.getGithubId()).message(todoCode + " [jusung-c] 백준: 문제2").commitDate(LocalDate.now()).sha("sha2").build(),
+                GithubCommitResponse.builder().authorName(user.getGithubId()).message(todoCode + " [jusung-c] 백준: 문제3").commitDate(LocalDate.now()).sha("sha3").build()
         );
 
-        // Mock Github API 서비스 호출
         when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(0), anyInt(), anyString()))
-                .thenReturn(firstPage);
+                .thenAnswer(t -> {
+                    Thread.sleep(2000); // Mock 처리로 2초 지연
+                    return commitsA;
+                });
         when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyInt(), anyString()))
                 .thenReturn(Collections.emptyList());
 
-        // when
-        long startTime = System.currentTimeMillis();
+        // 동기 작업 실행
+        long syncStartTime = System.currentTimeMillis();
         studyCommitService.fetchRemoteCommitsAndSave(study, todo);
-        long endTime = System.currentTimeMillis();
+        long syncEndTime = System.currentTimeMillis();
 
-        // when
+        // then
+        System.out.println("동기 로직 실행 시간: " + (syncEndTime - syncStartTime) + "ms");
+    }
+
+    @Test
+    public void 비동기_작업_성능_테스트() throws ExecutionException, InterruptedException {
+        // given: 테스트를 위한 유저와 연관 데이터 설정
+        User user = userRepository.save(User.builder()
+                .platformId("1")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("이름")
+                .githubId(REPOSITORY_OWNER)
+                .profileImageUrl("프로필이미지")
+                .build());
+
+        StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
+                .userId(user.getId())
+                .topic("topic")
+                .status(StudyStatus.STUDY_PUBLIC)
+                .repositoryInfo(RepositoryInfo.builder()
+                        .owner(REPOSITORY_OWNER)
+                        .name(REPOSITORY_NAME)
+                        .branchName("main")
+                        .build())
+                .build());
+        studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
+
+        String todoCode = "aBc123";
+        StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+        todo.updateTodoCode(todoCode);
+        studyTodoRepository.save(todo);
+
+        studyTodoMappingRepository.save(StudyTodoMapping.builder()
+                .todoId(todo.getId())
+                .userId(user.getId())
+                .status(StudyTodoStatus.TODO_INCOMPLETE)
+                .build());
+
+        String convention = "^[A-Za-z0-9]{6} \\[[A-Za-z가-힣0-9\\W]+\\] [A-Za-z가-힣]+: .+\\n?\\n?.*";
+        studyConventionRepository.save(StudyConvention.builder()
+                .studyInfoId(study.getId())
+                .name("커밋 메세지 규칙")
+                .content(convention)
+                .isActive(true)
+                .build());
+
+        // Github API 호출 시간을 대신하는 지연 시간 설정 - 다수의 커밋
+        List<GithubCommitResponse> commitsA = List.of(
+                GithubCommitResponse.builder().authorName(user.getGithubId()).message(todoCode + " [jusung-c] 백준: 문제1").commitDate(LocalDate.now()).sha("sha1").build(),
+                GithubCommitResponse.builder().authorName(user.getGithubId()).message(todoCode + " [jusung-c] 백준: 문제2").commitDate(LocalDate.now()).sha("sha2").build(),
+                GithubCommitResponse.builder().authorName(user.getGithubId()).message(todoCode + " [jusung-c] 백준: 문제3").commitDate(LocalDate.now()).sha("sha3").build()
+        );
+
+        when(githubApiService.fetchAllCommits(any(RepositoryInfo.class), eq(0), anyInt()))
+                .thenAnswer(t -> {
+                    Thread.sleep(2000); // Mock 처리로 2초 지연
+                    return commitsA;
+                });
+        when(githubApiService.fetchCommits(any(RepositoryInfo.class), eq(1), anyInt(), anyString()))
+                .thenReturn(Collections.emptyList());
+
+        // 비동기 작업 실행 및 완료 대기
         long asyncStartTime = System.currentTimeMillis();
-        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> studyCommitAsyncService.fetchRemoteCommitsAndSaveAsync(study, todo));
+        CompletableFuture<Void> future = studyCommitAsyncService.fetchRemoteCommitsForStudyAndTodoAsync(study, todo);
+        long responseEndTime = System.currentTimeMillis();
         future.get(); // 비동기 작업이 완료될 때까지 기다림
         long asyncEndTime = System.currentTimeMillis();
 
         // then
-        System.out.println("기존 로직 실행 시간: " + (endTime - startTime) + "ms");
-        System.out.println("비동기 로직 실행 시간: " + (asyncEndTime - asyncStartTime) + "ms");
+        System.out.println("비동기 적용 후 UI 응답 시간: " + (responseEndTime - asyncStartTime) + "\n비동기 로직 완료까지의 실제 시간: " + (asyncEndTime - asyncStartTime) + "ms");
 
-        // then
-        assertTrue(asyncEndTime - asyncStartTime < 100); // 100ms 이하로 즉시 반환되었는지 확인
-
-        future.get(); // 비동기 작업이 완료될 때까지 기다림
         assertTrue(future.isDone()); // 비동기 작업이 완료되었는지 확인
-        System.out.println("future.isDone() = " + future.isDone());
     }
 
-//    @Test
-//    @DisplayName("비동기 작업 테스트 - 예외 발생 시 핸들러로 처리되는지 확인")
-//    public void testAsyncExceptionHandling() throws ExecutionException, InterruptedException {
-//        // given
-//        StudyInfo study = new StudyInfo(); // 가짜 StudyInfo 생성
-//        StudyTodo todo = new StudyTodo(); // 가짜 StudyTodo 생성
-//
-//        // Mock Github API 서비스에서 예외를 던지도록 설정
-//        doThrow(new RuntimeException("비동기 작업 중 예외 발생")).when(githubApiService).fetchCommits(any(), any(), any(), any());
-//
-//        // when
-//        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> studyCommitAsyncService.fetchRemoteCommitsAndSaveAsync(study, todo));
-//
-//        // 예외 발생 확인
-//        try {
-//            future.get(); // 비동기 작업 중 예외 발생을 확인하기 위해 기다림
-//        } catch (ExecutionException e) {
-//            // then
-//            System.out.println("비동기 작업에서 발생한 예외가 정상적으로 처리되었습니다.");
-//            assertTrue(e.getCause() instanceof RuntimeException); // 발생한 예외가 RuntimeException인지 확인
-//            assertTrue(e.getCause().getMessage().contains("비동기 작업 중 예외 발생"));
-//        }
-//    }
+    @Test
+    public void 비동기_작업_병렬_성능_테스트() throws ExecutionException, InterruptedException {
+        // given: 유저와 여러 스터디 및 투두 생성
+        User user = userRepository.save(User.builder()
+                .platformId("1")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("테스트 유저")
+                .githubId(REPOSITORY_OWNER)
+                .profileImageUrl("프로필 이미지")
+                .build());
 
+        // 10개의 스터디와 각 투두를 생성
+        for (int i = 0; i < 10; i++) {
+            StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
+                    .userId(user.getId())
+                    .topic("Topic " + i)
+                    .status(StudyStatus.STUDY_PUBLIC)
+                    .repositoryInfo(RepositoryInfo.builder()
+                            .owner(REPOSITORY_OWNER)
+                            .name(REPOSITORY_NAME)
+                            .branchName("main")
+                            .build())
+                    .build());
+            studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
+
+            StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+            studyTodoRepository.save(todo);
+
+            studyTodoMappingRepository.save(StudyTodoMapping.builder()
+                    .todoId(todo.getId())
+                    .userId(user.getId())
+                    .status(StudyTodoStatus.TODO_INCOMPLETE)
+                    .build());
+        }
+
+        // 각 fetch가 2초 소요되도록 설정
+        when(githubApiService.fetchAllCommits(any(RepositoryInfo.class), anyInt(), anyInt()))
+                .thenAnswer(invocation -> {
+                    int pageNumber = invocation.getArgument(1);
+                    Thread.sleep(200); // 200ms 지연
+
+                    // 0번 페이지만 커밋 데이터를 반환하고, 이후 페이지는 빈 리스트 반환
+                    if (pageNumber == 0) {
+                        return List.of(GithubCommitResponse.builder()
+                                .authorName(user.getGithubId())
+                                .message("test commit")
+                                .commitDate(LocalDate.now())
+                                .sha("sha")
+                                .build());
+                    } else {
+                        return Collections.emptyList();
+                    }
+                });
+
+        // 비동기 스케줄링 메서드 실행 및 성능 측정
+        long startTime = System.currentTimeMillis();
+        CompletableFuture<Void> future = studyCommitAsyncService.fetchRemoteCommitsForAllStudiesAsync();
+        long responseTime = System.currentTimeMillis();
+
+        future.get(); // 모든 병렬 작업이 완료될 때까지 대기
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("UI 응답 시간: " + (responseTime - startTime) + "ms");
+        System.out.println("병렬 스케줄링 작업 전체 완료 시간: " + (endTime - startTime) + "ms");
+
+        // then: 병렬로 실행되었는지 확인 (동기식의 최소값보다 빨라야함)
+        assertTrue((endTime - startTime) < 2000, "병렬 작업이 예상보다 오래 걸렸습니다.");
+    }
+
+    @Test
+    public void 순차적_비동기_작업_성능_테스트() throws ExecutionException, InterruptedException {
+        // given: 유저와 여러 스터디 및 투두 생성
+        User user = userRepository.save(User.builder()
+                .platformId("1")
+                .platformType(GITHUB)
+                .role(USER)
+                .name("테스트 유저")
+                .githubId(REPOSITORY_OWNER)
+                .profileImageUrl("프로필 이미지")
+                .build());
+
+        // 10개의 스터디와 각 투두를 생성
+        for (int i = 0; i < 10; i++) {
+            StudyInfo study = studyInfoRepository.save(StudyInfo.builder()
+                    .userId(user.getId())
+                    .topic("Topic " + i)
+                    .status(StudyStatus.STUDY_PUBLIC)
+                    .repositoryInfo(RepositoryInfo.builder()
+                            .owner(REPOSITORY_OWNER)
+                            .name(REPOSITORY_NAME)
+                            .branchName("main")
+                            .build())
+                    .build());
+            studyMemberRepository.save(StudyMemberFixture.createDefaultStudyMember(user.getId(), study.getId()));
+
+            StudyTodo todo = StudyTodoFixture.createStudyTodo(study.getId());
+            studyTodoRepository.save(todo);
+
+            studyTodoMappingRepository.save(StudyTodoMapping.builder()
+                    .todoId(todo.getId())
+                    .userId(user.getId())
+                    .status(StudyTodoStatus.TODO_INCOMPLETE)
+                    .build());
+        }
+
+        // 각 fetch가 200ms 지연되도록 설정
+        when(githubApiService.fetchAllCommits(any(RepositoryInfo.class), anyInt(), anyInt()))
+                .thenAnswer(invocation -> {
+                    int pageNumber = invocation.getArgument(1);
+                    Thread.sleep(200); // 200ms 지연
+
+                    // 0번 페이지만 커밋 데이터를 반환하고, 이후 페이지는 빈 리스트 반환
+                    if (pageNumber == 0) {
+                        return List.of(GithubCommitResponse.builder()
+                                .authorName(user.getGithubId())
+                                .message("test commit")
+                                .commitDate(LocalDate.now())
+                                .sha("sha")
+                                .build());
+                    } else {
+                        return Collections.emptyList();
+                    }
+                });
+
+        // 순차적으로 스터디별로 비동기 메서드를 호출하고 성능 측정
+        long startTime = System.currentTimeMillis();
+        List<StudyInfo> studies = studyInfoRepository.findAll();
+        for (StudyInfo study : studies) {
+            StudyTodo todo = studyTodoRepository.findByStudyInfoId(study.getId()).get(0);
+            CompletableFuture<Void> future = studyCommitAsyncService.fetchRemoteCommitsForStudyAndTodoAsync(study, todo);
+            future.get();
+        }
+        long endTime = System.currentTimeMillis();
+
+        System.out.println("순차적 비동기 스케줄링 작업 전체 완료 시간: " + (endTime - startTime) + "ms");
+
+        // 예상대로 순차적으로 수행되었는지 확인
+        assertTrue((endTime - startTime) > 2000, "순차 작업이 예상보다 빠르게 완료되었습니다.");
+    }
 }
