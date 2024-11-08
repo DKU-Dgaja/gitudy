@@ -10,6 +10,8 @@ import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.time.LocalDate;
+
 @Getter
 @DynamicInsert
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -41,5 +43,13 @@ public class StudyTodoMapping extends BaseEntity {
 
     public void updateTodoMappingStatus(StudyTodoStatus status) {
         this.status = status;
+    }
+
+    public void updateStatusByDueDate(LocalDate commitDate, LocalDate dueDate) {
+        if (commitDate.isAfter(dueDate)) {
+            this.status = StudyTodoStatus.TODO_OVERDUE;
+        } else {
+            this.status = StudyTodoStatus.TODO_COMPLETE;
+        }
     }
 }
