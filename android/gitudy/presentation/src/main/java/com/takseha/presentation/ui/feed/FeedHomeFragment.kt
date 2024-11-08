@@ -20,7 +20,6 @@ import com.takseha.presentation.databinding.FragmentFeedHomeBinding
 import com.takseha.presentation.ui.home.MainHomeAlertActivity
 import com.takseha.presentation.viewmodel.feed.FeedHomeViewModel
 import com.takseha.presentation.viewmodel.feed.StudyInfoWithBookmarkStatus
-import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -32,15 +31,7 @@ class FeedHomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
         sortStatus = "score"
-
-        lifecycleScope.launch {
-            launch { viewModel.getFeedList(null, 100, sortStatus) }
-            launch { viewModel.getStudyCount() }
-            launch { viewModel.getAlertCount(null, 1) }
-        }
     }
 
     override fun onCreateView(

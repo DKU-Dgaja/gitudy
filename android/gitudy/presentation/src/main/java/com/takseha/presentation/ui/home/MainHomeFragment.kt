@@ -34,16 +34,6 @@ class MainHomeFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MainHomeViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = Color.argb(0xFF, 0x1B, 0x1B, 0x25)
-        lifecycleScope.launch {
-            launch { viewModel.getUserInfo() }
-            launch { viewModel.getMyStudyList(null, 50, "score") }
-            launch { viewModel.getAlertCount(null, 1) }
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -86,6 +76,7 @@ class MainHomeFragment : Fragment() {
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
+        requireActivity().window.statusBarColor = Color.argb(0xFF, 0x1B, 0x1B, 0x25)
         viewLifecycleOwner.lifecycleScope.launch {
             launch { viewModel.getUserInfo() }
             launch { viewModel.getMyStudyList(null, 50, "score") }
