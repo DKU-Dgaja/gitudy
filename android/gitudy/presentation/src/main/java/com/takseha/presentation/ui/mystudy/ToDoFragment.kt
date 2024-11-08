@@ -37,11 +37,9 @@ class ToDoFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor = ContextCompat.getColor(requireContext(), R.color.WHITE)
         studyInfoId = requireActivity().intent?.getIntExtra("studyInfoId", 0) ?: 0
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
-        viewModel.getTodoList(studyInfoId)
     }
 
     override fun onCreateView(
