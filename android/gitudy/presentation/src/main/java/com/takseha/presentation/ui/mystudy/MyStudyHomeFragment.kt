@@ -9,17 +9,14 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyStatus
-import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
 import com.takseha.presentation.ui.home.MainHomeAlertActivity
-import com.takseha.presentation.viewmodel.home.MainHomeViewModel
 import com.takseha.presentation.viewmodel.home.MyStudyWithTodo
 import com.takseha.presentation.viewmodel.mystudy.MyStudyHomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -34,15 +31,7 @@ class MyStudyHomeFragment : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
         sortStatus = "score"
-
-        lifecycleScope.launch {
-            launch { viewModel.getMyStudyList(null, 100, sortStatus) }
-            launch { viewModel.getStudyCount() }
-            launch { viewModel.getAlertCount(null, 1) }
-        }
     }
 
     override fun onCreateView(
