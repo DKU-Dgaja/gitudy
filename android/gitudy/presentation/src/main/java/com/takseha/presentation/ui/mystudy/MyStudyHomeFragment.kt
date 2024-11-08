@@ -9,11 +9,13 @@ import android.view.View.GONE
 import android.view.View.INVISIBLE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.takseha.data.dto.feed.StudyStatus
+import com.takseha.presentation.R
 import com.takseha.presentation.adapter.MyStudyRVAdapter
 import com.takseha.presentation.databinding.FragmentMyStudyHomeBinding
 import com.takseha.presentation.ui.home.MainHomeAlertActivity
@@ -103,6 +105,8 @@ class MyStudyHomeFragment : Fragment() {
     // 원래 페이지로 돌아왔을 때 state 업데이트
     override fun onResume() {
         super.onResume()
+        requireActivity().window.statusBarColor =
+            ContextCompat.getColor(requireContext(), R.color.BACKGROUND)
         viewLifecycleOwner.lifecycleScope.launch {
             launch { viewModel.getMyStudyList(null, 100, sortStatus) }
             launch { viewModel.getStudyCount() }
