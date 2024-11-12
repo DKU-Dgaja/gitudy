@@ -31,13 +31,6 @@ class MainHomeAlertFragment : Fragment() {
     private val binding get() = _binding!!
     private val viewModel: MainHomeAlertViewModel by activityViewModels()
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        requireActivity().window.statusBarColor =
-            ContextCompat.getColor(requireContext(), R.color.WHITE)
-        viewModel.getNoticeList(null, 50)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

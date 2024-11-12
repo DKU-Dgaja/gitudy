@@ -14,7 +14,6 @@ import android.view.View.GONE
 import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
 import android.widget.EditText
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
@@ -68,13 +67,6 @@ class MyStudyMainFragment : Fragment() {
         isLeader = requireActivity().intent.getBooleanExtra("isLeader", false)
         studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
         studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
-        lifecycleScope.launch {
-            launch { viewModel.getMyStudyInfo(studyInfoId) }
-            launch { viewModel.getUrgentTodo(studyInfoId) }
-            launch { viewModel.getStudyMemberList(studyInfoId) }
-            launch { viewModel.getStudyRankAndScore(studyInfoId) }
-            launch { viewModel.getStudyComments(studyInfoId, 3) }
-        }
     }
 
     override fun onCreateView(

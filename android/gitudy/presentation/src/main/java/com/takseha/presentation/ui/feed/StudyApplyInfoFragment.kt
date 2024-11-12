@@ -52,11 +52,6 @@ class StudyApplyInfoFragment : Fragment() {
         studyInfoId = requireActivity().intent.getIntExtra("studyInfoId", 0)
         studyImgColor = requireActivity().intent.getStringExtra("studyImgColor") ?: "0"
         studyStatus = requireActivity().intent.getSerializableExtra("studyStatus") as StudyStatus
-        lifecycleScope.launch {
-            launch { viewModel.getStudyInfo(studyInfoId) }
-            launch { viewModel.getStudyRank(studyInfoId) }
-            launch { viewModel.checkBookmarkStatus(studyInfoId) }
-        }
     }
 
     override fun onCreateView(
