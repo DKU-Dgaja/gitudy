@@ -166,4 +166,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 ErrorResponse.from(UNAUTHORIZED.value(), UNAUTHORIZED.getReasonPhrase(), message.getText())));
     }
 
+    
+
 }
